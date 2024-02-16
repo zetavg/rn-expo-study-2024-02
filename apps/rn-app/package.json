@@ -8,6 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit --pretty"
   },
   "installConfig": {
@@ -21,8 +22,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@rnstudy/eslint-config": "workspace:^",
     "@rnstudy/tsconfig": "workspace:^",
+    "@types/eslint": "^8",
     "@types/react": "~18.2.45",
+    "eslint": "^8",
     "typescript": "^5"
   }
 }
