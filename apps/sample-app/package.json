@@ -1,0 +1,24 @@
+{
+  "name": "@rnstudy/sample-app",
+  "private": true,
+  "scripts": {
+    "start": "ts-node index.ts",
+    "typecheck": "tsc --noEmit --pretty",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@rnstudy/plus-two": "workspace:^",
+    "ts-node": "^10"
+  },
+  "devDependencies": {
+    "@rnstudy/eslint-config": "workspace:^",
+    "@rnstudy/jest-config": "workspace:^",
+    "@rnstudy/tsconfig": "workspace:^",
+    "@types/eslint": "^8",
+    "@types/jest": "^29",
+    "eslint": "^8",
+    "jest": "^29",
+    "tsconfig-paths": "^4",
+    "typescript": "^4"
+  }
+}

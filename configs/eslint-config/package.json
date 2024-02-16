@@ -1,0 +1,25 @@
+{
+  "name": "@rnstudy/eslint-config",
+  "scripts": {
+    "lint": "eslint .",
+    "pack-package": "yarn pack",
+    "publish-packed-package": "npm publish package.tgz --access public"
+  },
+  "peerDependencies": {
+    "@types/eslint": "^8",
+    "eslint": "^8"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8",
+    "eslint": "^8"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6",
+    "@typescript-eslint/parser": "^6",
+    "eslint-config-prettier": "^9",
+    "eslint-plugin-jest": "^27",
+    "eslint-plugin-prettier": "^5",
+    "eslint-plugin-simple-import-sort": "^10",
+    "prettier": "^3"
+  }
+}
