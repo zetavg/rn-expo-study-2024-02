@@ -5,7 +5,11 @@
   ],
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      // For the following workspace dependencies, use the uncompiled source code from to avoid the need to build them during development.
+      // To simulate using the compiled code as installing the packages from npm, comment out the following path mappings.
+      "@rnstudy/plus-two": ["../../packages/plus-two/src"],
+      "@rnstudy/sum": ["../../packages/sum/src"]
     }
   },
   "include": [

@@ -18,6 +18,7 @@
     "clean": "FORCE_COLOR=true yarn workspaces foreach --all --exclude . run clean"
   },
   "dependencies": {
+    "@babel/runtime": "7.23.9",
     "@yarnpkg/types": "^4.0.0"
   },
   "devDependencies": {
