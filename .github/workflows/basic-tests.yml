@@ -36,7 +36,7 @@ jobs:
         uses: ./.github/actions/setup-environment
       - name: Typecheck
         run: |
-          yarn typecheck
+          FORCE_COLOR=true yarn typecheck
 
   prepare-test:
     name: Prepare Test
@@ -77,4 +77,4 @@ jobs:
         uses: ./.github/actions/setup-environment
       - name: Test
         run: |
-          yarn test
+          FORCE_COLOR=true yarn test
