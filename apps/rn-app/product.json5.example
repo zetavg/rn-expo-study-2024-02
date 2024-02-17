@@ -1,0 +1,32 @@
+{
+  "development": {
+    "name": "RN App (Development)",
+    "slug": "rn-app-2024-02-dev",
+    "icon": "./assets/icon.png",
+    "scheme": [
+      "z-rn-app-2024-02-dev",
+      "z-rn-app-dev"
+    ],
+    "ios": {
+      "bundleIdentifier": "app.ztg.dev.study.rnapp202402.dev"
+    },
+    "android": {
+      "package": "app.ztg.dev.study.rnapp202402.dev"
+    }
+  },
+  "default": {
+    "name": "RN App",
+    "slug": "rn-app-2024-02",
+    "icon": "./assets/icon.png",
+    "scheme": [
+      "z-rn-app-2024-02",
+      "z-rn-app"
+    ],
+    "ios": {
+      "bundleIdentifier": "app.ztg.dev.study.rnapp202402"
+    },
+    "android": {
+      "package": "app.ztg.dev.study.rnapp202402"
+    }
+  }
+}

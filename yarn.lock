@@ -10845,6 +10845,7 @@ __metadata:
     expo-status-bar: "npm:~1.11.1"
     jest: "npm:^29"
     jest-expo: "npm:^50.0.2"
+    json5: "npm:^2.2.3"
     react: "npm:18.2.0"
     react-native: "npm:0.73.4"
     ts-node: "patch:ts-node@npm%3A11.0.0-beta.1#~/.yarn/patches/ts-node-npm-11.0.0-beta.1-cb10a2a461.patch"

@@ -33,3 +33,10 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# generated code
+/ios
+/android
+
+# local config
+product.json5
