@@ -8,7 +8,13 @@ const product = JSON5.parse(
   readFileSync(resolve(__dirname, 'product.json5'), 'utf8'),
 );
 
-const productConfig = product[process.env.ENVIRONMENT || 'default'];
+let productConfig = product[process.env.ENVIRONMENT || 'default'];
+
+if (!productConfig) {
+  if (process.env.ENVIRONMENT === 'develop') {
+    productConfig = product['development'];
+  }
+}
 
 if (!productConfig) {
   throw new Error(
