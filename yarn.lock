@@ -10191,6 +10191,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pod-install@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "pod-install@npm:0.2.0"
+  bin:
+    pod-install: build/index.js
+  checksum: 10c0/7519dc70ed583f1aaa4c64a26546c530b2f606f740acb1957382b0a35f0e7813a1c4c505b95ef031a53549ee052162c1a2a559fa82f5264808a628f6912fb485
+  languageName: node
+  linkType: hard
+
 "postcss@npm:~8.4.32":
   version: 8.4.35
   resolution: "postcss@npm:8.4.35"
@@ -10945,6 +10954,7 @@ __metadata:
     jest: "npm:^29"
     jest-expo: "npm:^50.0.2"
     json5: "npm:^2.2.3"
+    pod-install: "npm:^0.2.0"
     react: "npm:18.2.0"
     react-native: "npm:0.73.4"
     ts-node: "patch:ts-node@npm%3A11.0.0-beta.1#~/.yarn/patches/ts-node-npm-11.0.0-beta.1-cb10a2a461.patch"

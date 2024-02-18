@@ -1,0 +1,74 @@
+name: Build iOS App
+run-name: Build iOS App
+on:
+  push: # TODO: remove me
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    name: "Build iOS"
+    runs-on: macos-13
+    timeout-minutes: 60
+    environment:
+      name: iOS
+    defaults:
+      run:
+        working-directory: apps/rn-app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+      - name: Prepare product info
+        run: |
+          # TODO: Read product info from environment variable.
+          cp product.json5.example product.json5
+      - name: Prebuild
+        run: |
+          yarn prebuild default ios
+      - name: Install CocoaPods and Fastlane
+        run: |
+          gem install cocoapods:1.15.2 fastlane:2.219.0
+          echo "CocoaPods version: $(pod --version)"
+      - name: Cache Pods
+        uses: actions/cache@v4
+        env:
+          cache-name: rn-app-pods
+        with:
+          path: apps/rn-app/ios/Pods
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('apps/rn-app/ios/Podfile') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-
+      - name: Pod install
+        run: |
+          yarn pod-install
+      - name: Prepare code signing certificates and profiles
+        env:
+          GIT_URL: ${{ vars.CODE_SIGNING_STORAGE_GIT_URL }}
+          SSH_PRIVATE_KEY: ${{ secrets.CODE_SIGNING_STORAGE_GIT_SSH_PRIVATE_KEY }}
+          MATCH_PASSWORD: ${{ secrets.CODE_SIGNING_STORAGE_PASSPHRASE }}
+        run: |
+          if [ -z "$GIT_URL" ]; then
+            echo '[ERROR] Environment variable "CODE_SIGNING_STORAGE_GIT_URL" is not set.'
+          fi
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo '[ERROR] Environment secret "CODE_SIGNING_STORAGE_GIT_SSH_PRIVATE_KEY" is not set.'
+          fi
+          if [ -z "$MATCH_PASSWORD" ]; then
+            echo '[ERROR] Environment secret "CODE_SIGNING_STORAGE_PASSPHRASE" is not set.'
+          fi
+
+          ssh-agent sh -c 'echo "$SSH_PRIVATE_KEY"' | ssh-add -
+
+          fastlane sync_code_signing development --readonly --storage_mode git --git_url "$GIT_URL" --app_identifier "app.ztg.dev.study.rnapp202402" --force_for_new_devices
+          fastlane sync_code_signing appstore --readonly --storage_mode git --git_url "$GIT_URL" --app_identifier "app.ztg.dev.study.rnapp202402" --force_for_new_devices
+
+      - name: Debugging with ssh
+        uses: lhotari/action-upterm@v1
+        # with:
+        #   limit-access-to-users: zetavg
+
+      # - name: Debugging with ssh
+      #   uses: lhotari/action-upterm@v1

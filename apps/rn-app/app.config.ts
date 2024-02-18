@@ -30,7 +30,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'rn-app',
   slug: 'rn-app',
-  version: '1.0.0',
+  version: config.version || '1.0.0',
   orientation: 'default',
   userInterfaceStyle: 'automatic',
   icon: './assets/icon.png',
