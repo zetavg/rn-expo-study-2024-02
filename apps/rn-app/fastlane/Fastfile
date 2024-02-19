@@ -1,0 +1,96 @@
+require 'rb_json5'
+
+product_file_path = File.join(__dir__, '..', 'product.json5')
+product_file_contents = File.read(product_file_path)
+product_data = RbJSON5.parse(product_file_contents)
+
+ios_dir_path = File.join(__dir__, '..', 'ios')
+xcode_workspace_file_pattern = File.join(ios_dir_path, '*.xcworkspace')
+xcode_workspace = File.basename(Dir.glob(xcode_workspace_file_pattern).first)
+xcode_project_file_pattern = File.join(ios_dir_path, '*.xcodeproj')
+xcode_project = File.basename(Dir.glob(xcode_project_file_pattern).first)
+
+environment = ENV['ENVIRONMENT']
+
+if environment.nil? || environment.empty?
+  raise "Environment variable 'ENVIRONMENT' is not set."
+end
+
+unless product_data.has_key?(environment)
+  raise "No configuration found for the '#{environment}' environment."
+end
+
+unless product_data[environment].has_key?('ios')
+  raise "No iOS configuration found for the '#{environment}' environment."
+end
+
+unless product_data[environment]['ios'].has_key?('bundleIdentifier')
+  raise "No bundleIdentifier found under iOS configuration for the '#{environment}' environment."
+end
+
+app_identifier = product_data[environment]['ios']['bundleIdentifier']
+
+code_signing_storage_git_url = ENV['CODE_SIGNING_STORAGE_GIT_URL']
+
+if code_signing_storage_git_url.nil? || code_signing_storage_git_url.empty?
+  raise "Environment variable 'CODE_SIGNING_STORAGE_GIT_URL' is not set."
+end
+
+platform :ios do
+  lane :build do
+    if ENV['CI']
+      # Setup the keychain and match to work with CI.
+      setup_ci
+    end
+
+    [
+      'development',
+      'appstore',
+    ].each do |type|
+      sync_code_signing(
+        type: type,
+        git_url: code_signing_storage_git_url,
+        app_identifier: app_identifier,
+        readonly: true,
+        # force: true,
+      )
+    end
+
+    appstore_certificate_name = ENV["sigh_#{app_identifier}_appstore_certificate-name"]
+    raise "Cannot get appstore_certificate_name" unless appstore_certificate_name
+
+    provisioning_profile_path = ENV["sigh_#{app_identifier}_appstore_profile-path"]
+    raise "Cannot get provisioning_profile_path" unless provisioning_profile_path
+
+    team_id = ENV["sigh_#{app_identifier}_appstore_team-id"]
+    raise "Cannot get team_id" unless team_id
+
+    # provisioning_profile_mapping = lane_context[SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING]
+    # raise "Cannot get provisioning_profile_mapping" unless provisioning_profile_mapping
+
+    # puts 'aaaa 892389423894'
+    # puts ENV.to_h.to_json
+
+
+    update_code_signing_settings(
+      path: "ios/#{xcode_project}",
+      use_automatic_signing: false,
+      team_id: team_id,
+      code_sign_identity: "iPhone Distribution",
+    )
+
+    update_project_provisioning(
+      xcodeproj: "ios/#{xcode_project}",
+      profile: provisioning_profile_path,
+    )
+
+    build_app(
+      workspace: "ios/#{xcode_workspace}",
+      export_method: "app-store",
+      # export_options: {
+      #   provisioningProfiles: lane_context['MATCH_PROVISIONING_PROFILE_MAPPING'],
+      #   signingCertificate: appstore_certificate_name,
+      # }
+    )
+  end
+end
