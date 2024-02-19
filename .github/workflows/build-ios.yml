@@ -52,12 +52,18 @@ jobs:
             echo '[ERROR] Environment secret "CODE_SIGNING_STORAGE_GIT_SSH_PRIVATE_KEY" is not set.'
           fi
           ssh-agent sh -c 'echo "$SSH_PRIVATE_KEY"' | ssh-add -
-      - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2
+      # - name: ccache
+      #   uses: hendrikmuhs/ccache-action@v1.2
+      #   env:
+      #     cache-name: rn-app-ccache
+      #   with:
+      #     key: ${{ runner.os }}-${{ env.cache-name }}
+      - name: BuildCache
+        uses: mikehardy/buildcache-action@v2
         env:
-          cache-name: rn-app-ccache
+          cache-name: rn-app-buildcache
         with:
-          key: ${{ runner.os }}-${{ env.cache-name }}
+          cache_key: ${{ runner.os }}-${{ env.cache-name }}
       - name: Build
         env:
           ENVIRONMENT: ${{ vars.ENVIRONMENT }}
@@ -76,12 +82,13 @@ jobs:
 
           echo "export NODE_BINARY=$(command -v node)" > ios/.xcode.env.local
 
+          # See: https://reactnative.dev/docs/build-speed#xcode-specific-setup
           export CCACHE_SLOPPINESS=clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
           export CCACHE_FILECLONE=true
           export CCACHE_DEPEND=true
           export CCACHE_INODECACHE=true
 
-          CLANG=clang CLANGPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ fastlane ios build
+          fastlane ios build
 
 
       # - name: Prepare code signing certificates and profiles
