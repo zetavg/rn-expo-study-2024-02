@@ -21,6 +21,30 @@ on:
         required: false
         description: Changelog to be attached for the build.
 
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+        description: GitHub environment used for the build.
+      version:
+        type: string
+        required: true
+        description: Version number to be marked on the build.
+        default: '0.0.0-undefined'
+      merge-pr:
+        type: number
+        required: false
+        description: Merge a specific PR (by PR number) before building.
+      changelog:
+        type: string
+        required: false
+        description: Changelog to be attached for the build.
+    outputs:
+      build-number:
+        description: "The build number of the build."
+        value: ${{ jobs.build-ios.outputs.build-number }}
+
 jobs:
   build-ios:
     name: "Build iOS"
@@ -31,6 +55,8 @@ jobs:
     timeout-minutes: 60
     environment:
       name: ${{ inputs.environment }}
+    outputs:
+      build-number: ${{ steps.update-build-number.outputs.build_number }}
     defaults:
       run:
         working-directory: apps/rn-app
@@ -125,6 +151,7 @@ jobs:
           ssh-agent sh -c 'echo "$SSH_PRIVATE_KEY"' | ssh-add -
 
       - name: Update build number
+        id: update-build-number
         env:
           ENVIRONMENT: ${{ vars.ENVIRONMENT }}
           APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
@@ -135,6 +162,10 @@ jobs:
           GITHUB_ENVIRONMENT: ${{ inputs.environment }}
         run: |
           fastlane ios update_build_number
+
+          current_build_number=$(jq '.ios.currentBuildNumber' app.json)
+          echo "Current build number: $current_build_number"
+          echo "build_number=$current_build_number" >> $GITHUB_OUTPUT
 
       - name: BuildCache
         uses: mikehardy/buildcache-action@v2
