@@ -20,9 +20,9 @@ end
 platform :ios do
   ios_dir_path = File.join(__dir__, '..', 'ios')
   xcode_workspace_file_pattern = File.join(ios_dir_path, '*.xcworkspace')
-  xcode_workspace = File.basename(Dir.glob(xcode_workspace_file_pattern).first)
+  xcode_workspace = File.basename(Dir.glob(xcode_workspace_file_pattern).first || '')
   xcode_project_file_pattern = File.join(ios_dir_path, '*.xcodeproj')
-  xcode_project = File.basename(Dir.glob(xcode_project_file_pattern).first)
+  xcode_project = File.basename(Dir.glob(xcode_project_file_pattern).first || '')
 
   unless product_data[environment].has_key?('ios')
     raise "No iOS configuration found for the '#{environment}' environment."
@@ -162,8 +162,8 @@ platform :ios do
         type: type,
         git_url: code_signing_storage_git_url,
         app_identifier: app_identifier,
-        readonly: true,
-        # force: true,
+        readonly: !ENV['UPDATE_CODE_SIGNING'],
+        force: !!ENV['UPDATE_CODE_SIGNING'],
       )
     end
 
