@@ -61,7 +61,7 @@ jobs:
           IS_PR_SKIP_BUILD: ${{ contains(github.event.pull_request.labels.*.name, 'skip-app-build') }}
           IS_PR_DRAFT: ${{ github.event.pull_request.draft }}
           IS_PR_FROM_FORK: ${{ github.event.pull_request.head.repo.fork }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.merge-pr }}
         run: |
           if [ "$IS_PR_SKIP_BUILD" = 'true' ]; then
             echo "PR has the 'skip-app-build' label, skipping build."
@@ -109,7 +109,7 @@ jobs:
     with:
       environment: iOS
       version: ${{ needs.collect-build-info.outputs.version }}
-      merge-pr: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.number || 0 }}
+      merge-pr: ${{ github.event.pull_request.number || (inputs.merge-pr && fromJson(inputs.merge-pr)) || 0 }}
       changelog: ${{ needs.collect-build-info.outputs.build-notes }}
 
   publish-results:
@@ -130,7 +130,7 @@ jobs:
           GITHUB_API_URL: ${{ github.api_url }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.merge-pr }}
         run: |
           curl -L --silent \
             -X POST \

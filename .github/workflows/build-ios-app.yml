@@ -127,7 +127,7 @@ jobs:
           VERSION: ${{ steps.get-version-number.outputs.version }}
           FULL_VERSION: ${{ steps.get-version-number.outputs.full_version }}
         run: |
-          echo "{\"version\": \"$VERSION\", \"fullVersion\": \"$FULL_VERSION\"}" | jq '.' > app.json
+          echo "{\"version\": \"$VERSION\", \"fullVersion\": \"$FULL_VERSION\", \"extra\": { \"fullVersion\": \"$FULL_VERSION\" } }" | jq '.' > app.json
           cat app.json
 
       - name: Prebuild
