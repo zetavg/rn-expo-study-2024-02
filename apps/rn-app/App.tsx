@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import plusTwo from '@rnstudy/plus-two';
 
 export default function App() {
+  const a = 1;
   return (
     <View style={styles.container}>
       <Text>
