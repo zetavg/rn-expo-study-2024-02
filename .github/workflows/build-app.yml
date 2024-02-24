@@ -1,5 +1,9 @@
 name: Build App
-run-name: Build App
+run-name: ${{ (
+    ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && format('Build for PR {0}{1}', '#', github.event.pull_request.number)) ||
+    (inputs.merge-pr && format('Build for PR {0}{1}', '#', inputs.merge-pr)) ||
+    'Build App'
+  ) }}
 on:
   push:
     branches:
@@ -51,7 +55,7 @@ jobs:
         uses: zetavg/generate-build-notes-action@b81a0186d75ad772b3bf7b4a602ca9a0c8bbb34f
         with:
           github-token: ${{ github.token }}
-          debug: true
+          pr-number: ${{ github.event.pull_request.number || (inputs.merge-pr && fromJson(inputs.merge-pr)) || 0 }}
       - name: Determine if we should build
         id: should-build
         env:
