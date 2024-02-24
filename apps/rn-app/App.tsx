@@ -5,6 +5,7 @@ import plusTwo from '@rnstudy/plus-two';
 
 export default function App() {
   const a = 1;
+  const b = 1;
   return (
     <View style={styles.container}>
       <Text>
