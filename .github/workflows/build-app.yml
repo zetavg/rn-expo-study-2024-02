@@ -74,7 +74,7 @@ jobs:
           GITHUB_API_URL: ${{ github.api_url }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ github.token }}
-          IS_PR_SKIP_BUILD: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-build') }}
+          IS_PR_SKIP_BUILD: ${{ contains(github.event.pull_request.labels.*.name, 'skip-build') }}
           IS_PR_FROM_FORK: ${{ github.event.pull_request.head.repo.fork }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
