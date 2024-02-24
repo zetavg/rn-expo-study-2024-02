@@ -220,9 +220,11 @@ platform :ios do
   lane :lane_upload_to_testflight do
     setup_app_store_connect
 
+    changelog = ENV['CHANGELOG']
+
     upload_to_testflight(
       skip_waiting_for_build_processing: true,
-      changelog: ENV['CHANGELOG'],
+      changelog: changelog,
     )
   end
 end
