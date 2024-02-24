@@ -41,6 +41,9 @@ on:
         required: false
         description: Changelog to be attached for the build.
     outputs:
+      version:
+        description: "The version of the build."
+        value: ${{ jobs.build-ios.outputs.version }}
       build-number:
         description: "The build number of the build."
         value: ${{ jobs.build-ios.outputs.build-number }}
@@ -56,6 +59,7 @@ jobs:
     environment:
       name: ${{ inputs.environment }}
     outputs:
+      version: ${{ steps.get-version-number.outputs.version }}
       build-number: ${{ steps.update-build-number.outputs.build_number }}
     defaults:
       run:
@@ -67,7 +71,7 @@ jobs:
           fetch-depth: 1
 
       - name: Merge PR
-        if: ${{ inputs.merge-pr }}
+        if: ${{ inputs.merge-pr && inputs.merge-pr != '0' }}
         uses: ./.github/actions/merge-pr
         with:
           pr-number: ${{ inputs.merge-pr }}
