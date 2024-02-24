@@ -7,7 +7,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text>
-        One plus two equals{' '}
+        This is from test-branch-1. One plus two equals{' '}
         <Text style={{ fontWeight: '700' }}>{plusTwo(1)}</Text>.
       </Text>
       <StatusBar style="auto" />
