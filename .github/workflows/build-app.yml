@@ -53,12 +53,12 @@ jobs:
       - name: Determine if we should build
         id: should-build
         env:
-          IS_PR_SKIP_BUILD: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-build') }}
+          IS_PR_SKIP_BUILD: ${{ contains(github.event.pull_request.labels.*.name, 'skip-app-build') }}
           IS_PR_DRAFT: ${{ github.event.pull_request.draft }}
           IS_PR_FROM_FORK: ${{ github.event.pull_request.head.repo.fork }}
         run: |
           if [ "$IS_PR_SKIP_BUILD" = 'true' ]; then
-            echo "PR has the 'skip-build' label, skipping build."
+            echo "PR has the 'skip-app-build' label, skipping build."
             echo "should_build=false" >> $GITHUB_OUTPUT
           elif [ "$IS_PR_DRAFT" = 'true' ]; then
             echo "PR is a draft, skipping build."
@@ -74,7 +74,7 @@ jobs:
           GITHUB_API_URL: ${{ github.api_url }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ github.token }}
-          IS_PR_SKIP_BUILD: ${{ contains(github.event.pull_request.labels.*.name, 'skip-build') }}
+          IS_PR_SKIP_BUILD: ${{ contains(github.event.pull_request.labels.*.name, 'skip-app-build') }}
           IS_PR_FROM_FORK: ${{ github.event.pull_request.head.repo.fork }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
@@ -95,7 +95,7 @@ jobs:
               -H "Authorization: Bearer $GITHUB_TOKEN" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
               "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels" \
-              -d '{"labels":["skip-build"]}'
+              -d '{"labels":["skip-app-build"]}'
           fi
 
   build-ios-app:
