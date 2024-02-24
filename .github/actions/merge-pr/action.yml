@@ -10,6 +10,7 @@ runs:
   using: 'composite'
   steps:
     - name: Merge PR
+      shell: bash
       env:
         INPUT: ${{ inputs.pr-number }}
         GITHUB_TOKEN: ${{ inputs.github-token }}
