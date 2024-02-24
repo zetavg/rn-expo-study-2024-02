@@ -81,8 +81,7 @@ jobs:
               -H "Authorization: Bearer $GITHUB_TOKEN" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
               "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
-              -d '{"body":"Thanks for the PR! Since this PR is from a fork, building the app will be skipped for security reasons. You'\''ll need help from a maintainer to trigger a build manually.\\n\\nIf you are a maintainer, once you'\''ve confirmed that the changes are safe[^1], you can run the [Build App workflow](${{ github.server_url }}/${{ github.repository }}/actions/workflows/build-app.yml) with \\"merge-pr\\" `${{ github.event.pull_request.number }}` to start a build for this PR.\\n\\n[^1]: Check for code that may expose or abuse build secrets, and code that might abuse or damage the user'\''s data or device."}'
-
+              -d '{"body":"Thanks for the PR! Since this PR is from a fork, building the app will be skipped for security reasons. You'\''ll need help from a maintainer to trigger a build manually.\n\nIf you are a maintainer, once you'\''ve confirmed that the changes are safe[^1], you can run the [Build App workflow](${{ github.server_url }}/${{ github.repository }}/actions/workflows/build-app.yml) with \"merge-pr\" `${{ github.event.pull_request.number }}` to start a build for this PR.\n\n[^1]: Check for code that may expose or abuse build secrets, and code that might abuse or damage the user'\''s data or device."}'
             curl -L --silent \
               -X POST \
               -H "Accept: application/vnd.github+json" \
