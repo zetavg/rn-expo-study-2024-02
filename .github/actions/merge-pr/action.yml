@@ -1,0 +1,45 @@
+name: Merge PR
+inputs:
+  pr-number:
+    required: true
+    type: number
+  github-token:
+    required: true
+    type: string
+runs:
+  using: 'composite'
+  steps:
+    - name: Merge PR
+      env:
+        INPUT: ${{ inputs.pr-number }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        GITHUB_API_URL: ${{ github.api_url }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+      run: |
+        # Extract PR number from the input
+        PR_NUMBER="$(echo $INPUT | sed 's/[^0-9]*//g')"
+
+        PR_DETAILS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER")
+
+        if [[ $(echo "$PR_DETAILS" | jq -r '.message // empty') == "Not Found" ]]; then
+          echo "::error ::Pull request #$PR_NUMBER not found."
+          exit 1
+        fi
+
+        BASE_REPO_CLONE_URL=$(echo "$PR_DETAILS" | jq -r '.base.repo.clone_url')
+        BASE_REF=$(echo "$PR_DETAILS" | jq -r '.base.ref')
+        HEAD_REPO_CLONE_URL=$(echo "$PR_DETAILS" | jq -r '.head.repo.clone_url')
+        HEAD_REF=$(echo "$PR_DETAILS" | jq -r '.head.ref')
+
+        git remote add base_repo $BASE_REPO_CLONE_URL
+        git fetch --depth=10000 base_repo $BASE_REF
+        git remote add head_repo $HEAD_REPO_CLONE_URL
+        git fetch --depth=10000 head_repo $HEAD_REF
+
+        git checkout "base_repo/$BASE_REF"
+        git config --global user.email "ci@example.com"
+        git config --global user.name "CI"
+        git merge "head_repo/$HEAD_REF" --no-edit
+
+        echo "Last commits:"
+        git log --oneline -n 16

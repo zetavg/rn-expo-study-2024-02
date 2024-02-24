@@ -1,0 +1,176 @@
+name: Build iOS App
+run-name: Build iOS App - ${{ inputs.environment }} ${{ inputs.version }}
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: string
+        required: true
+        description: GitHub environment used for the build.
+      version:
+        type: string
+        required: true
+        description: Version number to be marked on the build.
+        default: '0.0.0-undefined'
+      changelog:
+        type: string
+        required: false
+        description: Changelog to be attached for the build.
+
+jobs:
+  build-ios:
+    name: "Build iOS"
+    runs-on: macos-13
+    timeout-minutes: 60
+    environment:
+      name: ${{ inputs.environment }}
+    defaults:
+      run:
+        working-directory: apps/rn-app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Get version number
+        id: get-version-number
+        env:
+          VERSION: ${{ inputs.version || '0.0.0-undefined' }}
+          IGNORE_PATCH_VERSION: ${{ vars.IGNORE_PATCH_VERSION }}
+        run: |
+          full_version="${VERSION/#v/}"
+          echo "Full Version: ${full_version}"
+          echo "full_version=${full_version}" >> $GITHUB_OUTPUT
+          version=$(echo $full_version | cut -d'-' -f1)
+          if [ -z "$IGNORE_PATCH_VERSION" ]; then
+            # Make the patch version 0 if it is not 0
+            version=$(echo $version | awk -F. '{print $1"."$2".0"}')
+          fi
+          echo "Version: ${version}"
+          echo "version=${version}" >> $GITHUB_OUTPUT
+
+      - name: Prepare product info
+        env:
+          PRODUCT_JSON: ${{ vars.PRODUCT_JSON }}
+        run: |
+          if [ -z "$PRODUCT_JSON" ]; then
+            cp product.json5.example product.json5
+          else
+            echo "$PRODUCT_JSON" > product.json5
+          fi
+
+          cat product.json5
+
+      - name: Write app.json
+        env:
+          VERSION: ${{ steps.get-version-number.outputs.version }}
+          FULL_VERSION: ${{ steps.get-version-number.outputs.full_version }}
+        run: |
+          echo "{\"version\": \"$VERSION\", \"fullVersion\": \"$FULL_VERSION\"}" | jq '.' > app.json
+          cat app.json
+
+      - name: Prebuild
+        run: |
+          yarn prebuild default ios
+
+      - name: Install CocoaPods and Fastlane
+        run: |
+          gem install cocoapods:1.15.2 fastlane:2.219.0 rb_json5
+          echo "CocoaPods version: $(pod --version)"
+
+      - name: Cache Pods
+        uses: actions/cache@v4
+        env:
+          cache-name: rn-app-pods
+        with:
+          path: apps/rn-app/ios/Pods
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('apps/rn-app/ios/Podfile') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-
+
+      - name: Pod install
+        run: |
+          yarn pod-install
+
+      - name: Prepare code signing storage Git SSH private key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.CODE_SIGNING_STORAGE_GIT_SSH_PRIVATE_KEY }}
+        run: |
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo '[ERROR] Environment secret "CODE_SIGNING_STORAGE_GIT_SSH_PRIVATE_KEY" is not set.'
+          fi
+          ssh-agent sh -c 'echo "$SSH_PRIVATE_KEY"' | ssh-add -
+
+      - name: Update build number
+        env:
+          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          GITHUB_REPOSITORY_ID: ${{ github.repository_id }}
+          GITHUB_ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          fastlane ios update_build_number
+
+      - name: BuildCache
+        uses: mikehardy/buildcache-action@v2
+        env:
+          cache-name: rn-app
+        with:
+          cache_key: ${{ runner.os }}-${{ env.cache-name }}
+      # - name: ccache
+      #   uses: hendrikmuhs/ccache-action@v1.2
+      #   env:
+      #     cache-name: rn-app-ccache
+      #   with:
+      #     key: ${{ runner.os }}-${{ env.cache-name }}
+
+      - name: Build
+        env:
+          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+          CODE_SIGNING_STORAGE_GIT_URL: ${{ vars.CODE_SIGNING_STORAGE_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.CODE_SIGNING_STORAGE_PASSPHRASE }}
+        run: |
+          if [ -z "$ENVIRONMENT" ]; then
+            echo '[ERROR] Environment variable "ENVIRONMENT" is not set.'
+          fi
+          if [ -z "$CODE_SIGNING_STORAGE_GIT_URL" ]; then
+            echo '[ERROR] Environment variable "CODE_SIGNING_STORAGE_GIT_URL" is not set.'
+          fi
+          if [ -z "$MATCH_PASSWORD" ]; then
+            echo '[ERROR] Environment secret "CODE_SIGNING_STORAGE_PASSPHRASE" is not set.'
+          fi
+
+          echo "export NODE_BINARY=$(command -v node)" > ios/.xcode.env.local
+
+          # See: https://reactnative.dev/docs/build-speed#xcode-specific-setup
+          export CCACHE_SLOPPINESS=clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
+          export CCACHE_FILECLONE=true
+          export CCACHE_DEPEND=true
+          export CCACHE_INODECACHE=true
+
+          fastlane ios build
+
+      - name: Upload Archive
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: Archive ${{ inputs.environment }}
+          path: |
+            apps/rn-app/*.xcarchive
+            apps/rn-app/*.xcarchive.zip
+
+      - name: Upload to TestFlight
+        continue-on-error: true
+        timeout-minutes: 16
+        env:
+          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          CHANGELOG: ${{ inputs.changelog }}
+        run: |
+          echo "Changelog:"
+          echo "$CHANGELOG"
+          fastlane ios lane_upload_to_testflight

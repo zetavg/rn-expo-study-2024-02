@@ -1,14 +1,11 @@
+require 'json'
 require 'rb_json5'
+require 'net/http'
+require 'uri'
 
 product_file_path = File.join(__dir__, '..', 'product.json5')
 product_file_contents = File.read(product_file_path)
 product_data = RbJSON5.parse(product_file_contents)
-
-ios_dir_path = File.join(__dir__, '..', 'ios')
-xcode_workspace_file_pattern = File.join(ios_dir_path, '*.xcworkspace')
-xcode_workspace = File.basename(Dir.glob(xcode_workspace_file_pattern).first)
-xcode_project_file_pattern = File.join(ios_dir_path, '*.xcodeproj')
-xcode_project = File.basename(Dir.glob(xcode_project_file_pattern).first)
 
 environment = ENV['ENVIRONMENT']
 
@@ -20,27 +17,141 @@ unless product_data.has_key?(environment)
   raise "No configuration found for the '#{environment}' environment."
 end
 
-unless product_data[environment].has_key?('ios')
-  raise "No iOS configuration found for the '#{environment}' environment."
-end
-
-unless product_data[environment]['ios'].has_key?('bundleIdentifier')
-  raise "No bundleIdentifier found under iOS configuration for the '#{environment}' environment."
-end
-
-app_identifier = product_data[environment]['ios']['bundleIdentifier']
-
-code_signing_storage_git_url = ENV['CODE_SIGNING_STORAGE_GIT_URL']
-
-if code_signing_storage_git_url.nil? || code_signing_storage_git_url.empty?
-  raise "Environment variable 'CODE_SIGNING_STORAGE_GIT_URL' is not set."
-end
-
 platform :ios do
-  lane :build do
+  ios_dir_path = File.join(__dir__, '..', 'ios')
+  xcode_workspace_file_pattern = File.join(ios_dir_path, '*.xcworkspace')
+  xcode_workspace = File.basename(Dir.glob(xcode_workspace_file_pattern).first)
+  xcode_project_file_pattern = File.join(ios_dir_path, '*.xcodeproj')
+  xcode_project = File.basename(Dir.glob(xcode_project_file_pattern).first)
+
+  unless product_data[environment].has_key?('ios')
+    raise "No iOS configuration found for the '#{environment}' environment."
+  end
+
+  unless product_data[environment]['ios'].has_key?('bundleIdentifier')
+    raise "No bundleIdentifier found under iOS configuration for the '#{environment}' environment."
+  end
+
+  app_identifier = product_data[environment]['ios']['bundleIdentifier']
+
+  lane :setup_app_store_connect do
+    app_store_connect_api_key_id = ENV['APP_STORE_CONNECT_API_KEY_ID']
+    app_store_connect_api_issuer_id = ENV['APP_STORE_CONNECT_API_ISSUER_ID']
+    app_store_connect_api_key_content = ENV['APP_STORE_CONNECT_API_KEY_CONTENT']
+
+    raise "Environment variable 'APP_STORE_CONNECT_API_KEY_ID' is not set." if app_store_connect_api_key_id.nil? || app_store_connect_api_key_id.empty?
+    raise "Environment variable 'APP_STORE_CONNECT_API_ISSUER_ID' is not set." if app_store_connect_api_issuer_id.nil? || app_store_connect_api_issuer_id.empty?
+    raise "Environment variable 'APP_STORE_CONNECT_API_KEY_CONTENT' is not set." if app_store_connect_api_key_content.nil? || app_store_connect_api_key_content.empty?
+
+    app_store_connect_api_key(
+      key_id: app_store_connect_api_key_id,
+      issuer_id: app_store_connect_api_issuer_id,
+      key_content: app_store_connect_api_key_content,
+    )
+  end
+
+  lane :update_build_number do
+    setup_app_store_connect
+
+    app_json_file_path = File.join(__dir__, '..', 'app.json')
+    app_json_file_contents = File.read(app_json_file_path)
+    app_json_data = RbJSON5.parse(app_json_file_contents)
+    version = app_json_data['version']
+
+    raise "Cannot get version from 'app.json'" if version.nil? || version.empty?
+
+    last_build_number_from_app_store = app_store_build_number(
+      live: false,
+      app_identifier: app_identifier,
+      version: version,
+      initial_build_number: 2,
+    )
+
+    github_access_token = ENV['GH_ACCESS_TOKEN']
+    github_repository_id = ENV['GITHUB_REPOSITORY_ID']
+    github_environment = ENV['GITHUB_ENVIRONMENT']
+    using_build_numbers_from_github = true
+    if (github_access_token.nil? || github_access_token.empty?) || (github_repository_id.nil? || github_repository_id.empty?) || (github_environment.nil? || github_environment.empty?)
+      puts "[ERROR] GH_ACCESS_TOKEN, GITHUB_REPOSITORY_ID or GITHUB_ENVIRONMENT is not set. Will skip using the build number from the GitHub environment. This might cause build number collision and fail to upload the app to the App Store."
+      using_build_numbers_from_github = false
+    end
+    using_build_numbers_from_github_error_notes = "This might cause build number collision and fail to upload the app to the App Store. Please make sure that the GH_ACCESS_TOKEN secret has the correct permissions and is not expired. Also, make sure that the varialbe IOS_LAST_BUILD_NUMBERS exists in the GitHub environment #{github_environment}, if not, you'll need to create it with value set to '{}' manually."
+
+    last_build_numbers = {}
+    if using_build_numbers_from_github
+      uri = URI("https://api.github.com/repositories/#{github_repository_id}/environments/#{github_environment}/variables/IOS_LAST_BUILD_NUMBERS")
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+
+      request = Net::HTTP::Get.new(uri.request_uri, get_gh_headers(github_access_token))
+
+      begin
+        response = http.request(request)
+        if response.is_a?(Net::HTTPSuccess)
+          response_json = JSON.parse(response.body)
+          last_build_numbers = JSON.parse(response_json['value'])
+        else
+          puts "[ERROR] Getting GitHub Envirement Variable 'IOS_LAST_BUILD_NUMBERS' failed with HTTP status code: #{response.code}. #{using_build_numbers_from_github_error_notes}"
+          puts "Response body: #{response.body}"
+          using_build_numbers_from_github = false
+        end
+      rescue => e
+        puts "[ERROR] An error occurred while getting GitHub Envirement Variable 'IOS_LAST_BUILD_NUMBERS': #{e.message}. #{using_build_numbers_from_github_error_notes}"
+        using_build_numbers_from_github = false
+      end
+    end
+
+    last_build_number = last_build_numbers[version] || 0
+
+    build_number = [last_build_number_from_app_store, last_build_number].max + 2
+    last_build_numbers[version] = build_number
+
+    # Write the current build number to app.json
+    app_json_data['ios'] ||= {}
+    app_json_data['ios']['currentBuildNumber'] = build_number
+    File.write(app_json_file_path, app_json_data.to_json)
+
+    increment_build_number(
+      xcodeproj: "ios/#{xcode_project}",
+      build_number: build_number,
+    )
+
+    if using_build_numbers_from_github
+      uri = URI("https://api.github.com/repositories/#{github_repository_id}/environments/#{github_environment}/variables/IOS_LAST_BUILD_NUMBERS")
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+
+      request = Net::HTTP::Patch.new(uri.request_uri, get_gh_headers(github_access_token))
+
+      request.body = {
+        "name" => 'IOS_LAST_BUILD_NUMBERS',
+        "value" => JSON.pretty_generate(last_build_numbers),
+      }.to_json
+
+      begin
+        response = http.request(request)
+        if response.is_a?(Net::HTTPSuccess)
+          puts "Update GitHub Envirement Variable 'IOS_LAST_BUILD_NUMBERS' succeeded."
+        else
+          puts "[ERROR] Update GitHub Envirement Variable 'IOS_LAST_BUILD_NUMBERS' failed with HTTP status code: #{response.code}. #{using_build_numbers_from_github_error_notes}"
+          puts "Response body: #{response.body}"
+        end
+      rescue => e
+        puts "[ERROR] An error occurred while updating GitHub Envirement Variable 'IOS_LAST_BUILD_NUMBERS': #{e.message}. #{using_build_numbers_from_github_error_notes}"
+      end
+    end
+  end
+
+  lane :setup_code_signing do
     if ENV['CI']
       # Setup the keychain and match to work with CI.
       setup_ci
+    end
+
+    code_signing_storage_git_url = ENV['CODE_SIGNING_STORAGE_GIT_URL']
+
+    if code_signing_storage_git_url.nil? || code_signing_storage_git_url.empty?
+      raise "Environment variable 'CODE_SIGNING_STORAGE_GIT_URL' is not set."
     end
 
     [
@@ -65,13 +176,6 @@ platform :ios do
     team_id = ENV["sigh_#{app_identifier}_appstore_team-id"]
     raise "Cannot get team_id" unless team_id
 
-    # provisioning_profile_mapping = lane_context[SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING]
-    # raise "Cannot get provisioning_profile_mapping" unless provisioning_profile_mapping
-
-    # puts 'aaaa 892389423894'
-    # puts ENV.to_h.to_json
-
-
     update_code_signing_settings(
       path: "ios/#{xcode_project}",
       use_automatic_signing: false,
@@ -83,14 +187,51 @@ platform :ios do
       xcodeproj: "ios/#{xcode_project}",
       profile: provisioning_profile_path,
     )
+  end
+
+  lane :build do
+    setup_code_signing
 
     build_app(
       workspace: "ios/#{xcode_workspace}",
       export_method: "app-store",
-      # export_options: {
-      #   provisioningProfiles: lane_context['MATCH_PROVISIONING_PROFILE_MAPPING'],
-      #   signingCertificate: appstore_certificate_name,
-      # }
+    )
+
+    app_json_file_path = File.join(__dir__, '..', 'app.json')
+    if File.exist?(app_json_file_path)
+      backup_xcarchive(
+        destination: File.join(__dir__), # Note: '..' is not needed here
+        versioned: false,
+        zip: false,
+      )
+
+      app_json_file_contents = File.read(app_json_file_path)
+      app_json_data = RbJSON5.parse(app_json_file_contents)
+      version = app_json_data['fullVersion'] || app_json_data['version']
+
+      app_dir_path = File.join(__dir__, '..')
+      xcarchive_file_pattern = File.join(app_dir_path, '*.xcarchive')
+      xcarchive_file_path = Dir.glob(xcarchive_file_pattern).first
+      xcarchive_name = "#{product_data[environment]['name']} #{version}.xcarchive"
+      File.rename(xcarchive_file_path, File.join(app_dir_path, xcarchive_name))
+    end
+  end
+
+  lane :lane_upload_to_testflight do
+    setup_app_store_connect
+
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      changelog: ENV['CHANGELOG'],
     )
   end
+end
+
+def get_gh_headers(access_token)
+  {
+    "Accept" => "application/vnd.github+json",
+    "Authorization" => "token #{access_token}",
+    "X-GitHub-Api-Version" => "2022-11-28",
+    "Content-Type" => "application/json"
+  }
 end
