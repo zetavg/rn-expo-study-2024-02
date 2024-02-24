@@ -1,5 +1,5 @@
 name: Build iOS App
-run-name: Build iOS App - ${{ inputs.environment }} ${{ inputs.version }}
+run-name: Build iOS App - ${{ inputs.environment }}, ${{ inputs.version }}
 on:
   workflow_dispatch:
     inputs:
@@ -12,6 +12,10 @@ on:
         required: true
         description: Version number to be marked on the build.
         default: '0.0.0-undefined'
+      merge-pr:
+        type: number
+        required: false
+        description: Merge a specific PR (by PR number) before building.
       changelog:
         type: string
         required: false
@@ -21,6 +25,9 @@ jobs:
   build-ios:
     name: "Build iOS"
     runs-on: macos-13
+    permissions:
+      contents: read
+      pull-requests: read
     timeout-minutes: 60
     environment:
       name: ${{ inputs.environment }}
@@ -30,6 +37,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Merge PR
+        if: ${{ inputs.merge-pr }}
+        uses: ./.github/actions/merge-pr
+        with:
+          pr-number: ${{ inputs.merge-pr }}
+          github-token: ${{ github.token }}
+
       - name: Setup environment
         uses: ./.github/actions/setup-environment
 
@@ -43,20 +60,25 @@ jobs:
           echo "Full Version: ${full_version}"
           echo "full_version=${full_version}" >> $GITHUB_OUTPUT
           version=$(echo $full_version | cut -d'-' -f1)
-          if [ -z "$IGNORE_PATCH_VERSION" ]; then
+          if [ ! -z "$IGNORE_PATCH_VERSION" ]; then
             # Make the patch version 0 if it is not 0
             version=$(echo $version | awk -F. '{print $1"."$2".0"}')
           fi
           echo "Version: ${version}"
           echo "version=${version}" >> $GITHUB_OUTPUT
+          if [ ! -z "$IGNORE_PATCH_VERSION" ]; then
+            echo "(Patch Version is ignored and set to 0 because IGNORE_PATCH_VERSION is set)"
+          fi
 
       - name: Prepare product info
         env:
           PRODUCT_JSON: ${{ vars.PRODUCT_JSON }}
         run: |
           if [ -z "$PRODUCT_JSON" ]; then
+            echo "Using product.json5.example"
             cp product.json5.example product.json5
           else
+            echo "Using PRODUCT_JSON environment variable"
             echo "$PRODUCT_JSON" > product.json5
           fi
 
