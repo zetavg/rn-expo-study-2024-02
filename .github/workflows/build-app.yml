@@ -47,7 +47,7 @@ jobs:
         id: generate-build-notes
         uses: zetavg/generate-build-notes-action@v0.1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ github.token }}
       - name: Determine if we should build
         id: should-build
         env:
