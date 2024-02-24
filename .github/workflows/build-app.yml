@@ -79,7 +79,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           if [ "$IS_PR_SKIP_BUILD" = 'true' ]; then
-            # Do nothing
+            : # Do nothing
           elif [ "$IS_PR_FROM_FORK" = 'true' ]; then
             curl -L \
               -X POST \
