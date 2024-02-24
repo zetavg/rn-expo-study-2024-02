@@ -45,7 +45,7 @@ jobs:
           echo "version=${version}" >> $GITHUB_OUTPUT
       - name: Generate build notes
         id: generate-build-notes
-        uses: zetavg/generate-build-notes-action@41960af0f46662572c35b78b4acf6983f51584ea
+        uses: zetavg/generate-build-notes-action@57ab7dd483898bfee3e563ceca1b335c172c5e00
         with:
           github-token: ${{ github.token }}
       - name: Determine if we should build
