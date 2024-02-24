@@ -162,8 +162,8 @@ platform :ios do
         type: type,
         git_url: code_signing_storage_git_url,
         app_identifier: app_identifier,
-        readonly: true,
-        # force: true,
+        readonly: !ENV['UPDATE_CODE_SIGNING'],
+        force: !!ENV['UPDATE_CODE_SIGNING'],
       )
     end
 
