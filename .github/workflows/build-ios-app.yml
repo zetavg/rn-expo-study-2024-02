@@ -53,6 +53,12 @@ on:
       archive-artifact-url:
         description: "The artifact URL of the Xcode archive."
         value: ${{ jobs.build-ios.outputs.archive-artifact-url }}
+      archive-artifact-name:
+        description: "The artifact name of the Xcode archive."
+        value: ${{ jobs.build-ios.outputs.archive-artifact-name }}
+      testflight-upload-succeeded:
+        description: "Whether the TestFlight upload succeeded."
+        value: ${{ jobs.build-ios.outputs.testflight-upload-succeeded }}
 
 jobs:
   build-ios:
@@ -69,6 +75,8 @@ jobs:
       build-number: ${{ steps.update-build-number.outputs.build_number }}
       archive-artifact-id: ${{ steps.upload-archive.outputs.artifact-id }}
       archive-artifact-url: ${{ steps.upload-archive.outputs.artifact-url }}
+      archive-artifact-name: ${{ steps.get-archive-artifact-name.outputs.archive_name }}
+      testflight-upload-succeeded: ${{ steps.upload-to-testflight.outputs.testflight_upload_succeeded }}
     defaults:
       run:
         working-directory: apps/rn-app
@@ -218,16 +226,23 @@ jobs:
 
           fastlane ios build
 
+      - name: Get Archive Artifact name
+        id: get-archive-artifact-name
+        run: |
+          archive_name="Archive ${{ inputs.environment }}"
+          echo "Archive name: $archive_name"
+          echo "archive_name=$archive_name" >> $GITHUB_OUTPUT
+
       - name: Upload Archive
         id: upload-archive
         uses: actions/upload-artifact@v4.3.1
         with:
-          name: Archive ${{ inputs.environment }}
+          name: ${{ steps.get-archive-artifact-name.outputs.archive_name }}
           path: |
             apps/rn-app/*.xcarchive
-            apps/rn-app/*.xcarchive.zip
 
       - name: Upload to TestFlight
+        id: upload-to-testflight
         continue-on-error: true
         timeout-minutes: 16
         env:
@@ -237,6 +252,5 @@ jobs:
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
           CHANGELOG: ${{ inputs.changelog }}
         run: |
-          echo "Changelog:"
-          echo "$CHANGELOG"
           fastlane ios lane_upload_to_testflight
+          echo "testflight_upload_succeeded=true" >> $GITHUB_OUTPUT
