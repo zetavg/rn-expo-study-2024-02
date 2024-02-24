@@ -6,6 +6,12 @@ on:
       - main
     paths-ignore:
       - '**/README.md'
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - main
+    paths-ignore:
+      - '**/README.md'
 
   workflow_dispatch:
     inputs:
@@ -16,6 +22,7 @@ on:
 
 jobs:
   collect-build-info:
+    name: Collect Build Info
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,6 +30,7 @@ jobs:
     outputs:
       version: ${{ steps.get-version.outputs.version }}
       build-notes: ${{ steps.generate-build-notes.outputs.build-notes }}
+      should-build: ${{ steps.should-build.outputs.should_build }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -40,8 +48,22 @@ jobs:
         uses: zetavg/generate-build-notes-action@v0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Determine if we should build
+        id: should-build
+        env:
+          IS_PR_DRAFT: ${{ github.event.pull_request.draft }}
+        run: |
+          echo "IS_PR_DRAFT: $IS_PR_DRAFT"
+          if [ "$IS_PR_DRAFT" = "true" ]; then
+            echo "PR is a draft, skipping build"
+            echo "should_build=false" >> $GITHUB_OUTPUT
+          else
+            echo "should_build=true" >> $GITHUB_OUTPUT
+          fi
 
   build-ios-app:
+    name: Build iOS App
+    if: ${{ needs.collect-build-info.outputs.should-build == 'true' }}
     needs:
       - collect-build-info
     uses: ./.github/workflows/build-ios-app.yml
@@ -55,6 +77,7 @@ jobs:
       changelog: ${{ needs.collect-build-info.outputs.build-notes }}
 
   publish-results:
+    name: Publish Results
     needs:
       - collect-build-info
       - build-ios-app
