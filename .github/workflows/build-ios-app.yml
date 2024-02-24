@@ -47,6 +47,12 @@ on:
       build-number:
         description: "The build number of the build."
         value: ${{ jobs.build-ios.outputs.build-number }}
+      archive-artifact-id:
+        description: "The artifact id of the Xcode archive."
+        value: ${{ jobs.build-ios.outputs.archive-artifact-id }}
+      archive-artifact-url:
+        description: "The artifact URL of the Xcode archive."
+        value: ${{ jobs.build-ios.outputs.archive-artifact-url }}
 
 jobs:
   build-ios:
@@ -61,6 +67,8 @@ jobs:
     outputs:
       version: ${{ steps.get-version-number.outputs.version }}
       build-number: ${{ steps.update-build-number.outputs.build_number }}
+      archive-artifact-id: ${{ steps.upload-archive.outputs.artifact-id }}
+      archive-artifact-url: ${{ steps.upload-archive.outputs.artifact-url }}
     defaults:
       run:
         working-directory: apps/rn-app
@@ -211,6 +219,7 @@ jobs:
           fastlane ios build
 
       - name: Upload Archive
+        id: upload-archive
         uses: actions/upload-artifact@v4.3.1
         with:
           name: Archive ${{ inputs.environment }}
