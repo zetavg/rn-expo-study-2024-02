@@ -36,6 +36,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           fetch-tags: true
           filter: 'blob:none' # https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/#user-content-blobless-clones
       - name: Get version
@@ -108,7 +109,7 @@ jobs:
     with:
       environment: iOS
       version: ${{ needs.collect-build-info.outputs.version }}
-      merge-pr: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.number || null }}
+      merge-pr: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.number || 0 }}
       changelog: ${{ needs.collect-build-info.outputs.build-notes }}
 
   publish-results:

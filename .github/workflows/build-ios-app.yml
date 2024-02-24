@@ -71,7 +71,7 @@ jobs:
           fetch-depth: 1
 
       - name: Merge PR
-        if: ${{ inputs.merge-pr }}
+        if: ${{ inputs.merge-pr && inputs.merge-pr != '0' }}
         uses: ./.github/actions/merge-pr
         with:
           pr-number: ${{ inputs.merge-pr }}
