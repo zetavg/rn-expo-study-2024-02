@@ -78,6 +78,7 @@ jobs:
 
   publish-results:
     name: Publish Results
+    if: ${{ needs.collect-build-info.outputs.should-build == 'true' }}
     needs:
       - collect-build-info
       - build-ios-app
