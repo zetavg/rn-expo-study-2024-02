@@ -243,6 +243,7 @@ jobs:
 
       - name: Upload to TestFlight
         id: upload-to-testflight
+        if: ${{ vars.SKIP_UPLOAD_TO_TESTFLIGHT != 'true' }}
         continue-on-error: true
         timeout-minutes: 16
         env:
