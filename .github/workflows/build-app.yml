@@ -107,6 +107,22 @@ jobs:
             echo "should_build=true" >> $GITHUB_OUTPUT
           fi
 
+  build-ios-development-app:
+    name: Build iOS Development Container
+    if: ${{ needs.collect-build-info.outputs.should-build == 'true' }}
+    needs:
+      - collect-build-info
+    uses: ./.github/workflows/build-ios-app.yml
+    secrets: inherit
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      environment: iOS (Development)
+      version: ${{ needs.collect-build-info.outputs.version }}
+      merge-pr: ${{ github.event.pull_request.number || (inputs.merge-pr && fromJson(inputs.merge-pr)) || 0 }}
+      changelog: ${{ needs.collect-build-info.outputs.build-notes }}
+
   build-ios-app:
     name: Build iOS App
     if: ${{ needs.collect-build-info.outputs.should-build == 'true' }}
@@ -129,6 +145,7 @@ jobs:
     needs:
       - collect-build-info
       - build-ios-app
+      - build-ios-development-app
     permissions:
       contents: write
       issues: write
@@ -149,7 +166,7 @@ jobs:
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
-            -d '{"body":"⚒️ A [build](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) has been made for this PR. Check the details below to see how to get it.\n<details><summary>Details</summary>\n\n* **iOS**: ${{ needs.build-ios-app.outputs.testflight-upload-succeeded && format('`{0} ({1})` has been uploaded to TestFlight. You can also download the Xcode archive [here]({2}).', needs.build-ios-app.outputs.version, needs.build-ios-app.outputs.build-number, needs.build-ios-app.outputs.archive-artifact-url) || format('Download the Xcode archive of `{0} ({1})` [here]({2}). This build is not being uploaded to TestFlight.', needs.build-ios-app.outputs.version, needs.build-ios-app.outputs.build-number, needs.build-ios-app.outputs.archive-artifact-url) }}\n\n> <small>\n> If you are in the Internal Developer group on TestFlight, the iOS build should appear on TestFlight in a few minutes (if uploaded).\n> If you are not in the in the Internal Developer group and want to try the build, please contact a maintainer for access.\n> </small>\n\n**Tip**: Add the `skip-app-build` label to this PR or convert this PR to draft to disable automatic builds.</details>"}'
+            -d '{"body":"⚒️ A [build](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) has been made for this PR. Check the details below to see how to get it.\n<details><summary>Details</summary>\n\n* **iOS**: ${{ needs.build-ios-app.outputs.testflight-upload-succeeded && format('`{0} ({1})` has been uploaded to TestFlight. You can also download the Xcode archive [here]({2}).', needs.build-ios-app.outputs.version, needs.build-ios-app.outputs.build-number, needs.build-ios-app.outputs.archive-artifact-url) || format('Download the Xcode archive of `{0} ({1})` [here]({2}). This build is not being uploaded to TestFlight.', needs.build-ios-app.outputs.version, needs.build-ios-app.outputs.build-number, needs.build-ios-app.outputs.archive-artifact-url) }}\n* **iOS Development Container**: ${{ needs.build-ios-development-app.outputs.testflight-upload-succeeded && format('`{0} ({1})` has been uploaded to TestFlight. You can also download the Xcode archive [here]({2}).', needs.build-ios-development-app.outputs.version, needs.build-ios-development-app.outputs.build-number, needs.build-ios-development-app.outputs.archive-artifact-url) || format('Download the Xcode archive of `{0} ({1})` [here]({2}). This build is not being uploaded to TestFlight.', needs.build-ios-development-app.outputs.version, needs.build-ios-development-app.outputs.build-number, needs.build-ios-development-app.outputs.archive-artifact-url) }}\n\n> <small>\n> If you are in the Internal Developer group on TestFlight, the iOS build should appear on TestFlight in a few minutes (if uploaded).\n> If you are not in the in the Internal Developer group and want to try the build, please contact a maintainer for access.\n> </small>\n\n**Tip**: Add the `skip-app-build` label to this PR or convert this PR to draft to disable automatic builds.</details>"}'
       - name: Download iOS Archive artifact for release
         uses: actions/download-artifact@v4
         if: ${{ github.event_name == 'release' }}

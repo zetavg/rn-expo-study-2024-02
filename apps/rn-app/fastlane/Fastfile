@@ -192,8 +192,15 @@ platform :ios do
   lane :build do
     setup_code_signing
 
+    configuration = "Release"
+    if environment == 'development'
+      puts 'Using build configuration "Debug" for development.'
+      configuration = "Debug"
+    end
+
     build_app(
       workspace: "ios/#{xcode_workspace}",
+      configuration: configuration,
       export_method: "app-store",
     )
 

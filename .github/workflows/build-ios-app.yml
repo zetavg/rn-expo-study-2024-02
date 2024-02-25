@@ -106,14 +106,14 @@ jobs:
           echo "Full Version: ${full_version}"
           echo "full_version=${full_version}" >> $GITHUB_OUTPUT
           version=$(echo $full_version | cut -d'-' -f1)
-          if [ ! -z "$IGNORE_PATCH_VERSION" ]; then
+          if [ "$IGNORE_PATCH_VERSION" = 'true' ]; then
             # Make the patch version 0 if it is not 0
             version=$(echo $version | awk -F. '{print $1"."$2".0"}')
           fi
           echo "Version: ${version}"
           echo "version=${version}" >> $GITHUB_OUTPUT
-          if [ ! -z "$IGNORE_PATCH_VERSION" ]; then
-            echo "(Patch Version is ignored and set to 0 because IGNORE_PATCH_VERSION is set)"
+          if [ "$IGNORE_PATCH_VERSION" = 'true' ]; then
+            echo "(Patch Version is ignored and set to 0 because IGNORE_PATCH_VERSION is set to true)"
           fi
 
       - name: Prepare product info
