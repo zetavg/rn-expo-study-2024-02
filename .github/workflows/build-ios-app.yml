@@ -194,13 +194,13 @@ jobs:
         env:
           cache-name: rn-app
         with:
-          cache_key: ${{ runner.os }}-${{ env.cache-name }}
+          cache_key: ${{ runner.os }}-${{ env.cache-name }}-${{ vars.environment }}
       # - name: ccache
       #   uses: hendrikmuhs/ccache-action@v1.2
       #   env:
       #     cache-name: rn-app-ccache
       #   with:
-      #     key: ${{ runner.os }}-${{ env.cache-name }}
+      #     key: ${{ runner.os }}-${{ env.cache-name }}-${{ vars.environment }}
 
       - name: Build
         env:
