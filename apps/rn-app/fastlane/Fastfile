@@ -167,20 +167,20 @@ platform :ios do
       )
     end
 
-    appstore_certificate_name = ENV["sigh_#{app_identifier}_appstore_certificate-name"]
-    raise "Cannot get appstore_certificate_name" unless appstore_certificate_name
+    certificate_name = ENV["sigh_#{app_identifier}_development_certificate-name"]
+    raise "Cannot get certificate_name" unless certificate_name
 
-    provisioning_profile_path = ENV["sigh_#{app_identifier}_appstore_profile-path"]
+    provisioning_profile_path = ENV["sigh_#{app_identifier}_development_profile-path"]
     raise "Cannot get provisioning_profile_path" unless provisioning_profile_path
 
-    team_id = ENV["sigh_#{app_identifier}_appstore_team-id"]
+    team_id = ENV["sigh_#{app_identifier}_development_team-id"]
     raise "Cannot get team_id" unless team_id
 
     update_code_signing_settings(
       path: "ios/#{xcode_project}",
       use_automatic_signing: false,
       team_id: team_id,
-      code_sign_identity: "iPhone Distribution",
+      code_sign_identity: "Apple Development",
     )
 
     update_project_provisioning(
