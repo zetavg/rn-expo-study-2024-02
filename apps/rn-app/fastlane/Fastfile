@@ -78,8 +78,9 @@ platform :ios do
     using_build_numbers_from_github_error_notes = "This might cause build number collision and fail to upload the app to the App Store. Please make sure that the GH_ACCESS_TOKEN secret has the correct permissions and is not expired. Also, make sure that the varialbe IOS_LAST_BUILD_NUMBERS exists in the GitHub environment #{github_environment}, if not, you'll need to create it with value set to '{}' manually."
 
     last_build_numbers = {}
+    uri_escaped_github_environment = URI::DEFAULT_PARSER.escape(github_environment)
     if using_build_numbers_from_github
-      uri = URI("https://api.github.com/repositories/#{github_repository_id}/environments/#{github_environment}/variables/IOS_LAST_BUILD_NUMBERS")
+      uri = URI("https://api.github.com/repositories/#{github_repository_id}/environments/#{uri_escaped_github_environment}/variables/IOS_LAST_BUILD_NUMBERS")
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
 
@@ -117,7 +118,7 @@ platform :ios do
     )
 
     if using_build_numbers_from_github
-      uri = URI("https://api.github.com/repositories/#{github_repository_id}/environments/#{github_environment}/variables/IOS_LAST_BUILD_NUMBERS")
+      uri = URI("https://api.github.com/repositories/#{github_repository_id}/environments/#{uri_escaped_github_environment}/variables/IOS_LAST_BUILD_NUMBERS")
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
 
