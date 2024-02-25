@@ -20,9 +20,9 @@ end
 platform :ios do
   ios_dir_path = File.join(__dir__, '..', 'ios')
   xcode_workspace_file_pattern = File.join(ios_dir_path, '*.xcworkspace')
-  xcode_workspace = File.basename(Dir.glob(xcode_workspace_file_pattern).first)
+  xcode_workspace = File.basename(Dir.glob(xcode_workspace_file_pattern).first || '')
   xcode_project_file_pattern = File.join(ios_dir_path, '*.xcodeproj')
-  xcode_project = File.basename(Dir.glob(xcode_project_file_pattern).first)
+  xcode_project = File.basename(Dir.glob(xcode_project_file_pattern).first || '')
 
   unless product_data[environment].has_key?('ios')
     raise "No iOS configuration found for the '#{environment}' environment."
@@ -78,8 +78,9 @@ platform :ios do
     using_build_numbers_from_github_error_notes = "This might cause build number collision and fail to upload the app to the App Store. Please make sure that the GH_ACCESS_TOKEN secret has the correct permissions and is not expired. Also, make sure that the varialbe IOS_LAST_BUILD_NUMBERS exists in the GitHub environment #{github_environment}, if not, you'll need to create it with value set to '{}' manually."
 
     last_build_numbers = {}
+    uri_escaped_github_environment = URI::DEFAULT_PARSER.escape(github_environment)
     if using_build_numbers_from_github
-      uri = URI("https://api.github.com/repositories/#{github_repository_id}/environments/#{github_environment}/variables/IOS_LAST_BUILD_NUMBERS")
+      uri = URI("https://api.github.com/repositories/#{github_repository_id}/environments/#{uri_escaped_github_environment}/variables/IOS_LAST_BUILD_NUMBERS")
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
 
@@ -117,7 +118,7 @@ platform :ios do
     )
 
     if using_build_numbers_from_github
-      uri = URI("https://api.github.com/repositories/#{github_repository_id}/environments/#{github_environment}/variables/IOS_LAST_BUILD_NUMBERS")
+      uri = URI("https://api.github.com/repositories/#{github_repository_id}/environments/#{uri_escaped_github_environment}/variables/IOS_LAST_BUILD_NUMBERS")
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
 
@@ -162,25 +163,25 @@ platform :ios do
         type: type,
         git_url: code_signing_storage_git_url,
         app_identifier: app_identifier,
-        readonly: true,
-        # force: true,
+        readonly: !ENV['UPDATE_CODE_SIGNING'],
+        force: !!ENV['UPDATE_CODE_SIGNING'],
       )
     end
 
-    appstore_certificate_name = ENV["sigh_#{app_identifier}_appstore_certificate-name"]
-    raise "Cannot get appstore_certificate_name" unless appstore_certificate_name
+    certificate_name = ENV["sigh_#{app_identifier}_development_certificate-name"]
+    raise "Cannot get certificate_name" unless certificate_name
 
-    provisioning_profile_path = ENV["sigh_#{app_identifier}_appstore_profile-path"]
+    provisioning_profile_path = ENV["sigh_#{app_identifier}_development_profile-path"]
     raise "Cannot get provisioning_profile_path" unless provisioning_profile_path
 
-    team_id = ENV["sigh_#{app_identifier}_appstore_team-id"]
+    team_id = ENV["sigh_#{app_identifier}_development_team-id"]
     raise "Cannot get team_id" unless team_id
 
     update_code_signing_settings(
       path: "ios/#{xcode_project}",
       use_automatic_signing: false,
       team_id: team_id,
-      code_sign_identity: "iPhone Distribution",
+      code_sign_identity: "Apple Development",
     )
 
     update_project_provisioning(
@@ -192,8 +193,15 @@ platform :ios do
   lane :build do
     setup_code_signing
 
+    configuration = "Release"
+    if environment == 'development'
+      puts 'Using build configuration "Debug" for development.'
+      configuration = "Debug"
+    end
+
     build_app(
       workspace: "ios/#{xcode_workspace}",
+      configuration: configuration,
       export_method: "app-store",
     )
 

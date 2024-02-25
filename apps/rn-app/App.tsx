@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import Constants from 'expo-constants';
 import { StatusBar } from 'expo-status-bar';
 
 import plusTwo from '@rnstudy/plus-two';
@@ -7,6 +8,10 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text>This is from test-branch-5. Edited.</Text>
+      <Text>
+        Version:{' '}
+        {Constants.expoConfig?.extra?.fullVersion || 'cannot find version'}.
+      </Text>
       <Text>
         One plus two equals{' '}
         <Text style={{ fontWeight: '700' }}>{plusTwo(1)}</Text>.
