@@ -3,36 +3,60 @@ require 'rb_json5'
 require 'net/http'
 require 'uri'
 
-product_file_path = File.join(__dir__, '..', 'product.json5')
-product_file_contents = File.read(product_file_path)
-product_data = RbJSON5.parse(product_file_contents)
+def get_environment(platform)
+  platform_dir_path = File.join(__dir__, '..', platform)
 
-environment = ENV['ENVIRONMENT']
+  env_file_path = File.join(platform_dir_path, 'ENVIRONMENT.txt')
+  unless File.exist?(env_file_path)
+    raise "File 'ENVIRONMENT.txt' does not exist in '#{platform_dir_path}'. 'ENVIRONMENT.txt' is expected to be created by running `yarn prebuild #{platform} <environment>`, please make sure that you have run this command before running the Fastlane lanes."
+  end
 
-if environment.nil? || environment.empty?
-  raise "Environment variable 'ENVIRONMENT' is not set."
+  environment = File.read(env_file_path).strip
+
+  if environment.nil? || environment.empty?
+    raise "File 'ENVIRONMENT.txt' in '#{platform_dir_path}' is empty. Running `yarn prebuild #{platform} <environment>` again might solve the problem."
+  end
+
+  return environment
 end
 
-unless product_data.has_key?(environment)
-  raise "No configuration found for the '#{environment}' environment."
+def get_product_config(environment)
+  product_file_path = File.join(__dir__, '..', 'product.json5')
+
+  unless File.exist?(product_file_path)
+    raise "File 'product.json5' does not exist."
+  end
+
+  product_file_contents = File.read(product_file_path)
+  parsed_product_file_contents = RbJSON5.parse(product_file_contents)
+
+  unless parsed_product_file_contents.has_key?(environment)
+    raise "No product configuration found for the '#{environment}' environment. Please check #{product_file_path}, or run `yarn prebuild #{platform} <environment>` again."
+  end
+
+  return parsed_product_file_contents[environment]
 end
 
 platform :ios do
+  environment = get_environment('ios')
+  product_config = get_product_config(environment)
+
   ios_dir_path = File.join(__dir__, '..', 'ios')
+
   xcode_workspace_file_pattern = File.join(ios_dir_path, '*.xcworkspace')
   xcode_workspace = File.basename(Dir.glob(xcode_workspace_file_pattern).first || '')
   xcode_project_file_pattern = File.join(ios_dir_path, '*.xcodeproj')
   xcode_project = File.basename(Dir.glob(xcode_project_file_pattern).first || '')
 
-  unless product_data[environment].has_key?('ios')
+  unless product_config.has_key?('ios')
     raise "No iOS configuration found for the '#{environment}' environment."
   end
 
-  unless product_data[environment]['ios'].has_key?('bundleIdentifier')
+  unless product_config['ios'].has_key?('bundleIdentifier')
     raise "No bundleIdentifier found under iOS configuration for the '#{environment}' environment."
   end
 
-  app_identifier = product_data[environment]['ios']['bundleIdentifier']
+  app_identifier = product_config['ios']['bundleIdentifier']
 
   lane :setup_app_store_connect do
     app_store_connect_api_key_id = ENV['APP_STORE_CONNECT_API_KEY_ID']
@@ -143,7 +167,7 @@ platform :ios do
     end
   end
 
-  lane :setup_code_signing do
+  lane :setup_code_signing do |options|
     if ENV['CI']
       # Setup the keychain and match to work with CI.
       setup_ci
@@ -163,8 +187,10 @@ platform :ios do
         type: type,
         git_url: code_signing_storage_git_url,
         app_identifier: app_identifier,
-        readonly: !ENV['UPDATE_CODE_SIGNING'],
-        force: !!ENV['UPDATE_CODE_SIGNING'],
+        readonly: !options[:update],
+        force: !!options[:update],
+        username: options[:username],
+        team_id: options[:team_id],
       )
     end
 
@@ -191,8 +217,6 @@ platform :ios do
   end
 
   lane :build do
-    setup_code_signing
-
     configuration = "Release"
     if environment == 'development'
       puts 'Using build configuration "Debug" for development.'
@@ -202,7 +226,7 @@ platform :ios do
     build_app(
       workspace: "ios/#{xcode_workspace}",
       configuration: configuration,
-      export_method: "app-store",
+      export_method: 'development',
     )
 
     app_json_file_path = File.join(__dir__, '..', 'app.json')
@@ -220,15 +244,15 @@ platform :ios do
       app_dir_path = File.join(__dir__, '..')
       xcarchive_file_pattern = File.join(app_dir_path, '*.xcarchive')
       xcarchive_file_path = Dir.glob(xcarchive_file_pattern).first
-      xcarchive_name = "#{product_data[environment]['name']} #{version}.xcarchive"
+      xcarchive_name = "#{product_config['name']} #{version}.xcarchive"
       File.rename(xcarchive_file_path, File.join(app_dir_path, xcarchive_name))
     end
   end
 
-  lane :lane_upload_to_testflight do
+  lane :lane_upload_to_testflight do |options|
     setup_app_store_connect
 
-    changelog = ENV['CHANGELOG']
+    changelog = options[:changelog] || ENV['CHANGELOG']
 
     upload_to_testflight(
       skip_waiting_for_build_processing: true,

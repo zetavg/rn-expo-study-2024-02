@@ -142,6 +142,10 @@ jobs:
         env:
           ENVIRONMENT: ${{ vars.ENVIRONMENT }}
         run: |
+          if [ -z "$ENVIRONMENT" ]; then
+            echo '[ERROR] Environment variable "ENVIRONMENT" is not set.'
+          fi
+
           yarn prebuild ios "$ENVIRONMENT"
 
       - name: Install CocoaPods and Fastlane
@@ -172,10 +176,23 @@ jobs:
           fi
           ssh-agent sh -c 'echo "$SSH_PRIVATE_KEY"' | ssh-add -
 
+      - name: Setup code signing
+        env:
+          CODE_SIGNING_STORAGE_GIT_URL: ${{ vars.CODE_SIGNING_STORAGE_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.CODE_SIGNING_STORAGE_PASSPHRASE }}
+        run: |
+          if [ -z "$CODE_SIGNING_STORAGE_GIT_URL" ]; then
+            echo '[ERROR] Environment variable "CODE_SIGNING_STORAGE_GIT_URL" is not set.'
+          fi
+          if [ -z "$MATCH_PASSWORD" ]; then
+            echo '[ERROR] Environment secret "CODE_SIGNING_STORAGE_PASSPHRASE" is not set.'
+          fi
+
+          fastlane ios setup_code_signing
+
       - name: Update build number
         id: update-build-number
         env:
-          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
           APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
@@ -203,21 +220,7 @@ jobs:
       #     key: ${{ runner.os }}-${{ env.cache-name }}-${{ vars.environment }}
 
       - name: Build
-        env:
-          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
-          CODE_SIGNING_STORAGE_GIT_URL: ${{ vars.CODE_SIGNING_STORAGE_GIT_URL }}
-          MATCH_PASSWORD: ${{ secrets.CODE_SIGNING_STORAGE_PASSPHRASE }}
         run: |
-          if [ -z "$ENVIRONMENT" ]; then
-            echo '[ERROR] Environment variable "ENVIRONMENT" is not set.'
-          fi
-          if [ -z "$CODE_SIGNING_STORAGE_GIT_URL" ]; then
-            echo '[ERROR] Environment variable "CODE_SIGNING_STORAGE_GIT_URL" is not set.'
-          fi
-          if [ -z "$MATCH_PASSWORD" ]; then
-            echo '[ERROR] Environment secret "CODE_SIGNING_STORAGE_PASSPHRASE" is not set.'
-          fi
-
           echo "export NODE_BINARY=$(command -v node)" > ios/.xcode.env.local
 
           # See: https://reactnative.dev/docs/build-speed#xcode-specific-setup
@@ -249,7 +252,6 @@ jobs:
         continue-on-error: true
         timeout-minutes: 16
         env:
-          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
           APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
