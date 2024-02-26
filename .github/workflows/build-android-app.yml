@@ -56,6 +56,15 @@ on:
       apk-artifact-name:
         description: "The artifact name of the APK."
         value: ${{ jobs.build.outputs.apk-artifact-name }}
+      aab-artifact-id:
+        description: "The artifact id of the AAB."
+        value: ${{ jobs.build.outputs.aab-artifact-id }}
+      aab-artifact-url:
+        description: "The artifact URL of the AAB."
+        value: ${{ jobs.build.outputs.aab-artifact-url }}
+      aab-artifact-name:
+        description: "The artifact name of the AAB."
+        value: ${{ jobs.build.outputs.aab-artifact-name }}
 
 jobs:
   build:
@@ -73,6 +82,9 @@ jobs:
       apk-artifact-id: ${{ steps.upload-apk.outputs.artifact-id }}
       apk-artifact-url: ${{ steps.upload-apk.outputs.artifact-url }}
       apk-artifact-name: ${{ steps.get-apk-artifact-name.outputs.apk_artifact_name }}
+      aab-artifact-id: ${{ steps.upload-aab.outputs.artifact-id }}
+      aab-artifact-url: ${{ steps.upload-aab.outputs.artifact-url }}
+      aab-artifact-name: ${{ steps.get-aab-artifact-name.outputs.aab_artifact_name }}
     defaults:
       run:
         working-directory: apps/rn-app
@@ -216,3 +228,18 @@ jobs:
           name: ${{ steps.get-apk-artifact-name.outputs.apk_artifact_name }}
           path: |
             apps/rn-app/*.apk
+
+      - name: Get AAB Artifact name
+        id: get-aab-artifact-name
+        run: |
+          aab_artifact_name="${{ inputs.environment }} AAB"
+          echo "AAB Artifact name: $aab_artifact_name"
+          echo "aab_artifact_name=$aab_artifact_name" >> $GITHUB_OUTPUT
+
+      - name: Upload AAB
+        id: upload-aab
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: ${{ steps.get-aab-artifact-name.outputs.aab_artifact_name }}
+          path: |
+            apps/rn-app/*.aab

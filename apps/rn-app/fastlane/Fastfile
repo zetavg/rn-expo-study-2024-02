@@ -240,18 +240,23 @@ platform :android do
     raise "Environment variable 'KEY_ALIAS' is not set." if key_alias.nil? || key_alias.empty?
     raise "Environment variable 'KEY_PASSWORD' is not set." if key_password.nil? || key_password.empty?
 
-    gradle(
-      project_dir: android_dir_path,
-      task: "assemble",
-      build_type: build_type,
-      print_command: false,
-      properties: {
-        "KEYSTORE_FILE" => keystore_file_path,
-        "KEYSTORE_PASSWORD" => keystore_password,
-        "KEY_ALIAS" => key_alias,
-        "KEY_PASSWORD" => key_password,
-      }
-    )
+    [
+      'assemble',
+      'bundle',
+    ].each do |task|
+      gradle(
+        project_dir: android_dir_path,
+        task: task,
+        build_type: build_type,
+        print_command: false,
+        properties: {
+          "KEYSTORE_FILE" => keystore_file_path,
+          "KEYSTORE_PASSWORD" => keystore_password,
+          "KEY_ALIAS" => key_alias,
+          "KEY_PASSWORD" => key_password,
+        }
+      )
+    end
 
     app_json_file_path = File.join(File.expand_path(__dir__), '..', 'app.json')
     if File.exist?(app_json_file_path)
@@ -267,6 +272,15 @@ platform :android do
 
       # Move the apk file to the root directory
       File.rename(output_apk_path, File.join(File.expand_path(__dir__), '..', "#{product_config['name']} #{version}.apk"))
+
+      output_aab_path = File.join(android_dir_path, 'app', 'build', 'outputs', 'bundle', build_type.downcase, "app-#{build_type.downcase}.aab")
+
+      unless File.exist?(output_aab_path)
+        raise "Expect AAB file to be at '#{output_aab_path}', but it does not exist."
+      end
+
+      # Move the aab file to the root directory
+      File.rename(output_aab_path, File.join(File.expand_path(__dir__), '..', "#{product_config['name']} #{version}.aab"))
     end
   end
 end

@@ -322,7 +322,7 @@ jobs:
             "$asset_upload_url" \
             --data-binary "@xcode-archive.zip" --fail --show-error
 
-      - name: Download iOS Archive artifact for release
+      - name: Download Android APK artifact for release
         uses: actions/download-artifact@v4
         if: ${{ github.event_name == 'release' }}
         with:
@@ -346,3 +346,28 @@ jobs:
             -H "Content-Type: application/octet-stream" \
             "$asset_upload_url" \
             --data-binary "@android-apk.zip" --fail --show-error
+
+      - name: Download Android AAB artifact for release
+        uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'release' }}
+        with:
+          name: ${{ needs.build-android-app.outputs.aab-artifact-name }}
+      - name: Upload Android AAB for release
+        if: ${{ github.event_name == 'release' }}
+        env:
+          UPLOAD_URL: ${{ github.event.release.upload_url }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          zip -r android-aab.zip *.aab
+
+          asset_name='android-aab.zip'
+          asset_upload_url="$(echo $UPLOAD_URL | sed "s/{[^}]*}\$/?name=${asset_name}/")"
+
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/octet-stream" \
+            "$asset_upload_url" \
+            --data-binary "@android-aab.zip" --fail --show-error
