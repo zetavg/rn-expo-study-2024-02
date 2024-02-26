@@ -1,0 +1,252 @@
+name: Build Android App
+run-name: Build Android App - ${{ inputs.environment }}, ${{ inputs.version }}
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: string
+        required: true
+        description: GitHub environment used for the build.
+      version:
+        type: string
+        required: true
+        description: Version number to be marked on the build.
+        default: '0.0.0-undefined'
+      merge-pr:
+        type: number
+        required: false
+        description: Merge a specific PR (by PR number) before building.
+      changelog:
+        type: string
+        required: false
+        description: Changelog to be attached for the build.
+
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+        description: GitHub environment used for the build.
+      version:
+        type: string
+        required: true
+        description: Version number to be marked on the build.
+        default: '0.0.0-undefined'
+      merge-pr:
+        type: number
+        required: false
+        description: Merge a specific PR (by PR number) before building.
+      changelog:
+        type: string
+        required: false
+        description: Changelog to be attached for the build.
+    outputs:
+      version:
+        description: "The version of the build."
+        value: ${{ jobs.build.outputs.version }}
+      build-number:
+        description: "The build number of the build."
+        value: ${{ jobs.build.outputs.build-number }}
+      archive-artifact-id:
+        description: "The artifact id of the Xcode archive."
+        value: ${{ jobs.build.outputs.archive-artifact-id }}
+      archive-artifact-url:
+        description: "The artifact URL of the Xcode archive."
+        value: ${{ jobs.build.outputs.archive-artifact-url }}
+      archive-artifact-name:
+        description: "The artifact name of the Xcode archive."
+        value: ${{ jobs.build.outputs.archive-artifact-name }}
+      testflight-upload-succeeded:
+        description: "Whether the TestFlight upload succeeded."
+        value: ${{ jobs.build.outputs.testflight-upload-succeeded }}
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    timeout-minutes: 60
+    environment:
+      name: ${{ inputs.environment }}
+    outputs:
+      version: ${{ steps.get-version-number.outputs.version }}
+      build-number: ${{ steps.update-build-number.outputs.build_number }}
+      archive-artifact-id: ${{ steps.upload-archive.outputs.artifact-id }}
+      archive-artifact-url: ${{ steps.upload-archive.outputs.artifact-url }}
+      archive-artifact-name: ${{ steps.get-archive-artifact-name.outputs.archive_name }}
+      testflight-upload-succeeded: ${{ steps.upload-to-testflight.outputs.testflight_upload_succeeded }}
+    defaults:
+      run:
+        working-directory: apps/rn-app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Merge PR
+        if: ${{ inputs.merge-pr && inputs.merge-pr != '0' }}
+        uses: ./.github/actions/merge-pr
+        with:
+          pr-number: ${{ inputs.merge-pr }}
+          github-token: ${{ github.token }}
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Get version number
+        id: get-version-number
+        env:
+          VERSION: ${{ inputs.version || '0.0.0-undefined' }}
+          IGNORE_PATCH_VERSION: ${{ vars.IGNORE_PATCH_VERSION }}
+        run: |
+          full_version="${VERSION/#v/}"
+          echo "Full Version: ${full_version}"
+          echo "full_version=${full_version}" >> $GITHUB_OUTPUT
+          version=$(echo $full_version | cut -d'-' -f1)
+          if [ "$IGNORE_PATCH_VERSION" = 'true' ]; then
+            # Make the patch version 0 if it is not 0
+            version=$(echo $version | awk -F. '{print $1"."$2".0"}')
+          fi
+          echo "Version: ${version}"
+          echo "version=${version}" >> $GITHUB_OUTPUT
+          if [ "$IGNORE_PATCH_VERSION" = 'true' ]; then
+            echo "(Patch Version is ignored and set to 0 because IGNORE_PATCH_VERSION is set to true)"
+          fi
+
+      - name: Prepare product info
+        env:
+          PRODUCT_JSON: ${{ vars.PRODUCT_JSON }}
+        run: |
+          if [ -z "$PRODUCT_JSON" ]; then
+            echo "Using product.json5.example"
+            cp product.json5.example product.json5
+          else
+            echo "Using PRODUCT_JSON environment variable"
+            echo "$PRODUCT_JSON" > product.json5
+          fi
+
+          cat product.json5
+
+      - name: Write app.json
+        env:
+          VERSION: ${{ steps.get-version-number.outputs.version }}
+          FULL_VERSION: ${{ steps.get-version-number.outputs.full_version }}
+        run: |
+          echo "{\"version\": \"$VERSION\", \"fullVersion\": \"$FULL_VERSION\", \"extra\": { \"fullVersion\": \"$FULL_VERSION\" } }" | jq '.' > app.json
+          cat app.json
+
+      - name: Prebuild
+        env:
+          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+        run: |
+          if [ -z "$ENVIRONMENT" ]; then
+            echo '[ERROR] Environment variable "ENVIRONMENT" is not set.'
+          fi
+
+          yarn prebuild android "$ENVIRONMENT"
+
+      - name: Install Fastlane
+        run: |
+          gem install fastlane:2.219.0 rb_json5
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Prepare keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo '[ERROR] Environment secret "KEYSTORE_BASE64" is not set.'
+          fi
+          base64 -d -i "$KEYSTORE_BASE64" > keystore.keystore
+
+      - name: Update build number
+        id: update-build-number
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          GITHUB_REPOSITORY_ID: ${{ github.repository_id }}
+          GITHUB_ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          fastlane ios update_build_number
+
+          current_build_number=$(jq '.ios.currentBuildNumber' app.json)
+          echo "Current build number: $current_build_number"
+          echo "build_number=$current_build_number" >> $GITHUB_OUTPUT
+
+      - name: BuildCache
+        uses: mikehardy/buildcache-action@v2
+        env:
+          cache-name: rn-app
+        with:
+          cache_key: ${{ runner.os }}-${{ env.cache-name }}-${{ vars.environment }}
+      # - name: ccache
+      #   uses: hendrikmuhs/ccache-action@v1.2
+      #   env:
+      #     cache-name: rn-app-ccache
+      #   with:
+      #     key: ${{ runner.os }}-${{ env.cache-name }}-${{ vars.environment }}
+
+      - name: Build
+        env:
+          CODE_SIGNING_STORAGE_GIT_URL: ${{ vars.CODE_SIGNING_STORAGE_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.CODE_SIGNING_STORAGE_PASSPHRASE }}
+        run: |
+          if [ -z "$CODE_SIGNING_STORAGE_GIT_URL" ]; then
+            echo '[ERROR] Environment variable "CODE_SIGNING_STORAGE_GIT_URL" is not set.'
+          fi
+          if [ -z "$MATCH_PASSWORD" ]; then
+            echo '[ERROR] Environment secret "CODE_SIGNING_STORAGE_PASSPHRASE" is not set.'
+          fi
+
+          echo "export NODE_BINARY=$(command -v node)" > ios/.xcode.env.local
+
+          # See: https://reactnative.dev/docs/build-speed#xcode-specific-setup
+          export CCACHE_SLOPPINESS=clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
+          export CCACHE_FILECLONE=true
+          export CCACHE_DEPEND=true
+          export CCACHE_INODECACHE=true
+
+          # setup_code_signing needs to be run with build for build_app to find the correct provisioning profiles from ENV
+          fastlane ios build setup_code_signing:true
+
+      - name: Get Archive Artifact name
+        id: get-archive-artifact-name
+        run: |
+          archive_name="Archive ${{ inputs.environment }}"
+          echo "Archive name: $archive_name"
+          echo "archive_name=$archive_name" >> $GITHUB_OUTPUT
+
+      - name: Upload Archive
+        id: upload-archive
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: ${{ steps.get-archive-artifact-name.outputs.archive_name }}
+          path: |
+            apps/rn-app/*.xcarchive
+
+      - name: Upload to TestFlight
+        id: upload-to-testflight
+        if: ${{ vars.SKIP_UPLOAD_TO_TESTFLIGHT != 'true' }}
+        continue-on-error: true
+        timeout-minutes: 16
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          CHANGELOG: ${{ inputs.changelog }}
+        run: |
+          fastlane ios lane_upload_to_testflight
+          echo "testflight_upload_succeeded=true" >> $GITHUB_OUTPUT

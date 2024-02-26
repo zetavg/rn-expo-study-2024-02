@@ -72,7 +72,7 @@ jobs:
           echo "version=${version}" >> $GITHUB_OUTPUT
       - name: Generate build notes
         id: generate-build-notes
-        uses: zetavg/generate-build-notes-action@b81a0186d75ad772b3bf7b4a602ca9a0c8bbb34f
+        uses: zetavg/generate-build-notes-action@v0.2
         with:
           github-token: ${{ github.token }}
           pr-number: ${{ github.event.pull_request.number || (inputs.merge-pr && fromJson(inputs.merge-pr)) || 0 }}
