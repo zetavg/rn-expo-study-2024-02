@@ -142,7 +142,7 @@ jobs:
         env:
           ENVIRONMENT: ${{ vars.ENVIRONMENT }}
         run: |
-          yarn prebuild "$ENVIRONMENT" ios
+          yarn prebuild ios "$ENVIRONMENT"
 
       - name: Install CocoaPods and Fastlane
         run: |
