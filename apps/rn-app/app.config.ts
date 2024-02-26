@@ -31,7 +31,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'rn-app',
   slug: 'rn-app',
-  version: config.version || '1.0.0',
+  version: config.version || '0.0.1',
   orientation: 'default',
   userInterfaceStyle: 'automatic',
   icon: './assets/icon.png',
@@ -59,6 +59,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ...productConfig.android,
   },
   plugins: [withInjectToPodfile],
+  extra: {
+    ...config.extra,
+  },
 });
 
 function withInjectToPodfile(config: ExpoConfig) {
