@@ -4,9 +4,10 @@ run-name: ${{ (
     (inputs.merge-pr && format('Build for PR {0}{1}', '#', inputs.merge-pr)) ||
     (github.event_name == 'release' && format('Release {0}', github.event.release.tag_name)) ||
     (github.event_name == 'workflow_dispatch' && format(
-        'Manual Build{0}{1}',
+        'Manual Build{0}{1}{2}',
         (inputs.build-ios && ' iOS' || ''),
-        (inputs.build-ios-development && ' iOS-dev' || '')
+        (inputs.build-ios-development && ' iOS-dev' || ''),
+        (inputs.build-android && ' Android' || '')
       )) ||
     (github.event_name == 'schedule' && format('Scheduled Build')) ||
     'Build App'
@@ -43,6 +44,10 @@ on:
         type: boolean
         default: true
         description: Build the iOS Development Container app.
+      build-android:
+        type: boolean
+        default: true
+        description: Build the Android app.
 
 jobs:
   collect-build-info:
@@ -164,6 +169,28 @@ jobs:
       merge-pr: ${{ github.event.pull_request.number || (inputs.merge-pr && fromJson(inputs.merge-pr)) || 0 }}
       changelog: ${{ needs.collect-build-info.outputs.build-notes }}
 
+  build-android-app:
+    name: Build Android App
+    if: ${{
+        needs.collect-build-info.outputs.should-build == 'true' &&
+        (
+          inputs.build-android ||
+          github.event_name != 'workflow_dispatch'
+        )
+      }}
+    needs:
+      - collect-build-info
+    uses: ./.github/workflows/build-android-app.yml
+    secrets: inherit
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      environment: Android
+      version: ${{ needs.collect-build-info.outputs.version }}
+      merge-pr: ${{ github.event.pull_request.number || (inputs.merge-pr && fromJson(inputs.merge-pr)) || 0 }}
+      changelog: ${{ needs.collect-build-info.outputs.build-notes }}
+
   publish-results:
     name: Publish Results
     # See: https://github.com/orgs/community/discussions/26945#discussioncomment-3254081 & https://github.com/orgs/community/discussions/26303#discussioncomment-5821344
@@ -172,6 +199,7 @@ jobs:
       - collect-build-info
       - build-ios-app
       - build-ios-development-app
+      - build-android-app
     permissions:
       contents: write
       issues: write
@@ -198,6 +226,12 @@ jobs:
                 "build_number": ${{ needs.build-ios-development-app.outputs.build-number || '0' }},
                 "archive_artifact_url": "${{ needs.build-ios-development-app.outputs.archive-artifact-url || '' }}",
                 "testflight_upload_succeeded": ${{ needs.build-ios-development-app.outputs.testflight-upload-succeeded || 'false' }}
+              },
+              "android": {
+                "type": "android",
+                "name": "Android",
+                "version": "${{ needs.build-android-app.outputs.version || '' }}",
+                "apk_artifact_url": "${{ needs.build-android-app.outputs.apk-artifact-url || '' }}"
               }
             }
           '
@@ -228,6 +262,7 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
             -d '{"body":"⚒️ A [build](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) has been made for this PR. Check the details below to see how to get it.\n<details><summary>Details</summary>\n\n${{ steps.generate-md-build-results.outputs.build-results-md-json-text }}\n\n> <small>\n> If you are in the Internal Developer group on TestFlight, the iOS build should appear on TestFlight in a few minutes (if uploaded).\n> If you are not in the in the Internal Developer group and want to try the build, please contact a maintainer for access.\n> </small>${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && '\n\n**Tip**: Add the `skip-app-build` label to this PR or convert this PR to draft to disable automatic builds.' || '' }}</details>"}'
+
       - name: Download iOS Archive artifact for release
         uses: actions/download-artifact@v4
         if: ${{ github.event_name == 'release' }}
@@ -252,3 +287,28 @@ jobs:
             -H "Content-Type: application/octet-stream" \
             "$asset_upload_url" \
             --data-binary "@xcode-archive.zip" --fail --show-error
+
+      - name: Download iOS Archive artifact for release
+        uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'release' }}
+        with:
+          name: ${{ needs.build-android-app.outputs.apk-artifact-name }}
+      - name: Upload Android APK for release
+        if: ${{ github.event_name == 'release' }}
+        env:
+          UPLOAD_URL: ${{ github.event.release.upload_url }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          zip -r android-apk.zip *.apk
+
+          asset_name='android-apk.zip'
+          asset_upload_url="$(echo $UPLOAD_URL | sed "s/{[^}]*}\$/?name=${asset_name}/")"
+
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/octet-stream" \
+            "$asset_upload_url" \
+            --data-binary "@android-apk.zip" --fail --show-error

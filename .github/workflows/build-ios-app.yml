@@ -75,7 +75,7 @@ jobs:
       build-number: ${{ steps.update-build-number.outputs.build_number }}
       archive-artifact-id: ${{ steps.upload-archive.outputs.artifact-id }}
       archive-artifact-url: ${{ steps.upload-archive.outputs.artifact-url }}
-      archive-artifact-name: ${{ steps.get-archive-artifact-name.outputs.archive_name }}
+      archive-artifact-name: ${{ steps.get-archive-artifact-name.outputs.archive_artifact_name }}
       testflight-upload-succeeded: ${{ steps.upload-to-testflight.outputs.testflight_upload_succeeded }}
     defaults:
       run:
@@ -231,15 +231,15 @@ jobs:
       - name: Get Archive Artifact name
         id: get-archive-artifact-name
         run: |
-          archive_name="Archive ${{ inputs.environment }}"
-          echo "Archive name: $archive_name"
-          echo "archive_name=$archive_name" >> $GITHUB_OUTPUT
+          archive_artifact_name="${{ inputs.environment }} Archive"
+          echo "Archive name: $archive_artifact_name"
+          echo "archive_artifact_name=$archive_artifact_name" >> $GITHUB_OUTPUT
 
       - name: Upload Archive
         id: upload-archive
         uses: actions/upload-artifact@v4.3.1
         with:
-          name: ${{ steps.get-archive-artifact-name.outputs.archive_name }}
+          name: ${{ steps.get-archive-artifact-name.outputs.archive_artifact_name }}
           path: |
             apps/rn-app/*.xcarchive
 

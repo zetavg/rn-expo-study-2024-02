@@ -44,21 +44,18 @@ on:
       version:
         description: "The version of the build."
         value: ${{ jobs.build.outputs.version }}
-      build-number:
-        description: "The build number of the build."
-        value: ${{ jobs.build.outputs.build-number }}
-      archive-artifact-id:
-        description: "The artifact id of the Xcode archive."
-        value: ${{ jobs.build.outputs.archive-artifact-id }}
-      archive-artifact-url:
-        description: "The artifact URL of the Xcode archive."
-        value: ${{ jobs.build.outputs.archive-artifact-url }}
-      archive-artifact-name:
-        description: "The artifact name of the Xcode archive."
-        value: ${{ jobs.build.outputs.archive-artifact-name }}
-      testflight-upload-succeeded:
-        description: "Whether the TestFlight upload succeeded."
-        value: ${{ jobs.build.outputs.testflight-upload-succeeded }}
+      # build-number:
+      #   description: "The build number of the build."
+      #   value: ${{ jobs.build.outputs.build-number }}
+      apk-artifact-id:
+        description: "The artifact id of the APK."
+        value: ${{ jobs.build.outputs.apk-artifact-id }}
+      apk-artifact-url:
+        description: "The artifact URL of the APK."
+        value: ${{ jobs.build.outputs.apk-artifact-url }}
+      apk-artifact-name:
+        description: "The artifact name of the APK."
+        value: ${{ jobs.build.outputs.apk-artifact-name }}
 
 jobs:
   build:
@@ -72,11 +69,10 @@ jobs:
       name: ${{ inputs.environment }}
     outputs:
       version: ${{ steps.get-version-number.outputs.version }}
-      build-number: ${{ steps.update-build-number.outputs.build_number }}
-      archive-artifact-id: ${{ steps.upload-archive.outputs.artifact-id }}
-      archive-artifact-url: ${{ steps.upload-archive.outputs.artifact-url }}
-      archive-artifact-name: ${{ steps.get-archive-artifact-name.outputs.archive_name }}
-      testflight-upload-succeeded: ${{ steps.upload-to-testflight.outputs.testflight_upload_succeeded }}
+      # build-number: ${{ steps.update-build-number.outputs.build_number }}
+      apk-artifact-id: ${{ steps.upload-apk.outputs.artifact-id }}
+      apk-artifact-url: ${{ steps.upload-apk.outputs.artifact-url }}
+      apk-artifact-name: ${{ steps.get-apk-artifact-name.outputs.apk_artifact_name }}
     defaults:
       run:
         working-directory: apps/rn-app
@@ -170,28 +166,12 @@ jobs:
           fi
           base64 -d -i "$KEYSTORE_BASE64" > keystore.keystore
 
-      - name: Update build number
-        id: update-build-number
-        env:
-          APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APP_STORE_CONNECT_API_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
-          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-          GITHUB_REPOSITORY_ID: ${{ github.repository_id }}
-          GITHUB_ENVIRONMENT: ${{ inputs.environment }}
-        run: |
-          fastlane ios update_build_number
-
-          current_build_number=$(jq '.ios.currentBuildNumber' app.json)
-          echo "Current build number: $current_build_number"
-          echo "build_number=$current_build_number" >> $GITHUB_OUTPUT
-
-      - name: BuildCache
-        uses: mikehardy/buildcache-action@v2
-        env:
-          cache-name: rn-app
-        with:
-          cache_key: ${{ runner.os }}-${{ env.cache-name }}-${{ vars.environment }}
+      # - name: BuildCache
+      #   uses: mikehardy/buildcache-action@v2
+      #   env:
+      #     cache-name: rn-app
+      #   with:
+      #     cache_key: ${{ runner.os }}-${{ env.cache-name }}-${{ vars.environment }}
       # - name: ccache
       #   uses: hendrikmuhs/ccache-action@v1.2
       #   env:
@@ -201,52 +181,33 @@ jobs:
 
       - name: Build
         env:
-          CODE_SIGNING_STORAGE_GIT_URL: ${{ vars.CODE_SIGNING_STORAGE_GIT_URL }}
-          MATCH_PASSWORD: ${{ secrets.CODE_SIGNING_STORAGE_PASSPHRASE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ vars.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          if [ -z "$CODE_SIGNING_STORAGE_GIT_URL" ]; then
-            echo '[ERROR] Environment variable "CODE_SIGNING_STORAGE_GIT_URL" is not set.'
+          if [ -z "$KEYSTORE_PASSWORD" ]; then
+            echo '[ERROR] Environment secret "KEYSTORE_PASSWORD" is not set.'
           fi
-          if [ -z "$MATCH_PASSWORD" ]; then
-            echo '[ERROR] Environment secret "CODE_SIGNING_STORAGE_PASSPHRASE" is not set.'
+          if [ -z "$KEY_ALIAS" ]; then
+            echo '[ERROR] Environment variable "KEY_ALIAS" is not set.'
+          fi
+          if [ -z "$KEY_PASSWORD" ]; then
+            echo '[ERROR] Environment secret "KEY_PASSWORD" is not set.'
           fi
 
-          echo "export NODE_BINARY=$(command -v node)" > ios/.xcode.env.local
+          fastlane android build
 
-          # See: https://reactnative.dev/docs/build-speed#xcode-specific-setup
-          export CCACHE_SLOPPINESS=clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
-          export CCACHE_FILECLONE=true
-          export CCACHE_DEPEND=true
-          export CCACHE_INODECACHE=true
-
-          # setup_code_signing needs to be run with build for build_app to find the correct provisioning profiles from ENV
-          fastlane ios build setup_code_signing:true
-
-      - name: Get Archive Artifact name
-        id: get-archive-artifact-name
+      - name: Get APK Artifact name
+        id: get-apk-artifact-name
         run: |
-          archive_name="Archive ${{ inputs.environment }}"
-          echo "Archive name: $archive_name"
-          echo "archive_name=$archive_name" >> $GITHUB_OUTPUT
+          apk_artifact_name="${{ inputs.environment }} APK"
+          echo "APK Artifact name: $apk_artifact_name"
+          echo "apk_artifact_name=$apk_artifact_name" >> $GITHUB_OUTPUT
 
-      - name: Upload Archive
-        id: upload-archive
+      - name: Upload APK
+        id: upload-apk
         uses: actions/upload-artifact@v4.3.1
         with:
-          name: ${{ steps.get-archive-artifact-name.outputs.archive_name }}
+          name: ${{ steps.get-apk-artifact-name.outputs.apk_artifact_name }}
           path: |
-            apps/rn-app/*.xcarchive
-
-      - name: Upload to TestFlight
-        id: upload-to-testflight
-        if: ${{ vars.SKIP_UPLOAD_TO_TESTFLIGHT != 'true' }}
-        continue-on-error: true
-        timeout-minutes: 16
-        env:
-          APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APP_STORE_CONNECT_API_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
-          CHANGELOG: ${{ inputs.changelog }}
-        run: |
-          fastlane ios lane_upload_to_testflight
-          echo "testflight_upload_succeeded=true" >> $GITHUB_OUTPUT
+            apps/rn-app/*.apk
