@@ -169,7 +169,7 @@ jobs:
           if [ -z "$KEYSTORE_BASE64" ]; then
             echo '[ERROR] Environment secret "KEYSTORE_BASE64" is not set.'
           fi
-          base64 -d -i "$KEYSTORE_BASE64" > keystore.keystore
+          echo $KEYSTORE_BASE64 | base64 --decode > keystore.keystore
 
       # - name: BuildCache
       #   uses: mikehardy/buildcache-action@v2
