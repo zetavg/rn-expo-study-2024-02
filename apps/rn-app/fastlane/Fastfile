@@ -228,6 +228,7 @@ platform :ios do
     build_app(
       workspace: "ios/#{xcode_workspace}",
       configuration: configuration,
+      export_method: 'development',
     )
 
     app_json_file_path = File.join(__dir__, '..', 'app.json')
