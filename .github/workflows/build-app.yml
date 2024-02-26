@@ -178,6 +178,35 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
+      - name: 'Collect build results'
+        id: collect-build-results
+        run: |
+          build_results_raw='
+            {
+              "ios": {
+                "type": "ios",
+                "name": "iOS",
+                "version": "${{ needs.build-ios-app.outputs.version || '' }}",
+                "build_number": ${{ needs.build-ios-app.outputs.build-number || 'null' }},
+                "archive_artifact_url": "${{ needs.build-ios-app.outputs.archive-artifact-url || '' }}",
+                "testflight_upload_succeeded": ${{ needs.build-ios-app.outputs.testflight-upload-succeeded || 'false' }}
+              },
+              "ios-development": {
+                "type": "ios",
+                "name": "iOS (Development)",
+                "version": "${{ needs.build-ios-development-app.outputs.version || '' }}",
+                "build_number": ${{ needs.build-ios-development-app.outputs.build-number || 'null' }},
+                "archive_artifact_url": "${{ needs.build-ios-development-app.outputs.archive-artifact-url || '' }}",
+                "testflight_upload_succeeded": ${{ needs.build-ios-app.outputs.testflight-upload-succeeded || 'false' }}
+              }
+            }
+          '
+          build_results_json="$(echo "$build_results_raw" | jq '.')"
+          echo "Build results (JSON):"
+          echo "${build_results_json}"
+          build_results_single_line_json="$(echo "$build_results_json" | jq -c '.')"
+          echo "build_results_json=${build_results_single_line_json}" >> $GITHUB_OUTPUT
+
       - name: 'Comment on PR'
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || inputs.merge-pr }}
         env:
