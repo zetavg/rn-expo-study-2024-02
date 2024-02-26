@@ -144,6 +144,11 @@ jobs:
 
           yarn prebuild android "$ENVIRONMENT"
 
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1.172.0
+        with:
+          ruby-version: '3.0'
+
       - name: Install Fastlane
         run: |
           gem install fastlane:2.219.0 rb_json5
