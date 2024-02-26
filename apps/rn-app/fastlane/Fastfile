@@ -216,7 +216,9 @@ platform :ios do
     )
   end
 
-  lane :build do
+  lane :build do |options|
+    setup_code_signing if options[:setup_code_signing]
+
     configuration = "Release"
     if environment == 'development'
       puts 'Using build configuration "Debug" for development.'
@@ -226,7 +228,6 @@ platform :ios do
     build_app(
       workspace: "ios/#{xcode_workspace}",
       configuration: configuration,
-      export_method: 'development',
     )
 
     app_json_file_path = File.join(__dir__, '..', 'app.json')

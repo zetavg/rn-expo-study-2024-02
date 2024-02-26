@@ -40,3 +40,8 @@ yarn-error.*
 
 # local config
 product.json5
+
+# Xcode
+/*.ipa
+/*.DSYM.zip
+/*.xcarchive
