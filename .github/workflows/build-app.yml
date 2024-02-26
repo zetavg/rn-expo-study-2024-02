@@ -178,7 +178,7 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - name: 'Collect build results'
+      - name: Collect build results
         id: collect-build-results
         run: |
           build_results_raw='
@@ -187,7 +187,7 @@ jobs:
                 "type": "ios",
                 "name": "iOS",
                 "version": "${{ needs.build-ios-app.outputs.version || '' }}",
-                "build_number": ${{ needs.build-ios-app.outputs.build-number || 'null' }},
+                "build_number": ${{ needs.build-ios-app.outputs.build-number || '0' }},
                 "archive_artifact_url": "${{ needs.build-ios-app.outputs.archive-artifact-url || '' }}",
                 "testflight_upload_succeeded": ${{ needs.build-ios-app.outputs.testflight-upload-succeeded || 'false' }}
               },
@@ -195,7 +195,7 @@ jobs:
                 "type": "ios",
                 "name": "iOS (Development)",
                 "version": "${{ needs.build-ios-development-app.outputs.version || '' }}",
-                "build_number": ${{ needs.build-ios-development-app.outputs.build-number || 'null' }},
+                "build_number": ${{ needs.build-ios-development-app.outputs.build-number || '0' }},
                 "archive_artifact_url": "${{ needs.build-ios-development-app.outputs.archive-artifact-url || '' }}",
                 "testflight_upload_succeeded": ${{ needs.build-ios-app.outputs.testflight-upload-succeeded || 'false' }}
               }
@@ -207,8 +207,14 @@ jobs:
           build_results_single_line_json="$(echo "$build_results_json" | jq -c '.')"
           echo "build_results_json=${build_results_single_line_json}" >> $GITHUB_OUTPUT
 
+      - name: Generate Markdown build results
+        id: generate-md-build-results
+        uses: zetavg/generate-build-results-md-action@75f1db44946856ec9fb4d2958afae6e7b215696a
+        with:
+          build-results-json: ${{ steps.collect-build-results.outputs.build_results_json }}
+
       - name: 'Comment on PR'
-        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || inputs.merge-pr }}
+        if: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || inputs.merge-pr) && steps.generate-md-build-results.outputs.build-results-md }}
         env:
           GITHUB_API_URL: ${{ github.api_url }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -221,7 +227,7 @@ jobs:
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
-            -d '{"body":"⚒️ A [build](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) has been made for this PR. Check the details below to see how to get it.\n<details><summary>Details</summary>\n\n* **iOS**: ${{ needs.build-ios-app.outputs.testflight-upload-succeeded && format('`{0} ({1})` has been uploaded to TestFlight. You can also download the Xcode archive [here]({2}).', needs.build-ios-app.outputs.version, needs.build-ios-app.outputs.build-number, needs.build-ios-app.outputs.archive-artifact-url) || format('Download the Xcode archive of `{0} ({1})` [here]({2}). This build is not being uploaded to TestFlight.', needs.build-ios-app.outputs.version, needs.build-ios-app.outputs.build-number, needs.build-ios-app.outputs.archive-artifact-url) }}\n\n> <small>\n> If you are in the Internal Developer group on TestFlight, the iOS build should appear on TestFlight in a few minutes (if uploaded).\n> If you are not in the in the Internal Developer group and want to try the build, please contact a maintainer for access.\n> </small>\n\n**Tip**: Add the `skip-app-build` label to this PR or convert this PR to draft to disable automatic builds.</details>"}'
+            -d '{"body":"⚒️ A [build](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) has been made for this PR. Check the details below to see how to get it.\n<details><summary>Details</summary>\n\n${{ steps.generate-md-build-results.outputs.build-results-md-json-text }}\n\n> <small>\n> If you are in the Internal Developer group on TestFlight, the iOS build should appear on TestFlight in a few minutes (if uploaded).\n> If you are not in the in the Internal Developer group and want to try the build, please contact a maintainer for access.\n> </small>\n\n**Tip**: Add the `skip-app-build` label to this PR or convert this PR to draft to disable automatic builds.</details>"}'
       - name: Download iOS Archive artifact for release
         uses: actions/download-artifact@v4
         if: ${{ github.event_name == 'release' }}
