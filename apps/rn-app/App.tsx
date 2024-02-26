@@ -6,7 +6,7 @@ import plusTwo from '@rnstudy/plus-two';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>This is from a PR. The PR is from a fork.</Text>
+      <Text>This is from a PR. The PR is from a fork. Hi!</Text>
       <Text>
         One plus two equals{' '}
         <Text style={{ fontWeight: '700' }}>{plusTwo(1)}</Text>.
