@@ -4,10 +4,11 @@ run-name: ${{ (
     (inputs.merge-pr && format('Build for PR {0}{1}', '#', inputs.merge-pr)) ||
     (github.event_name == 'release' && format('Release {0}', github.event.release.tag_name)) ||
     (github.event_name == 'workflow_dispatch' && format(
-        'Manual Build{0}{1}{2}',
+        'Manual Build{0}{1}{2}{3}',
         (inputs.build-ios && ' iOS' || ''),
         (inputs.build-ios-development && ' iOS-dev' || ''),
-        (inputs.build-android && ' Android' || '')
+        (inputs.build-android && ' Android' || ''),
+        (inputs.build-android-development && ' Android-dev' || '')
       )) ||
     (github.event_name == 'schedule' && format('Scheduled Build')) ||
     'Build App'
@@ -48,6 +49,10 @@ on:
         type: boolean
         default: true
         description: Build the Android app.
+      build-android-development:
+        type: boolean
+        default: true
+        description: Build the Android Development Container app.
 
 jobs:
   collect-build-info:
@@ -169,6 +174,28 @@ jobs:
       merge-pr: ${{ github.event.pull_request.number || (inputs.merge-pr && fromJson(inputs.merge-pr)) || 0 }}
       changelog: ${{ needs.collect-build-info.outputs.build-notes }}
 
+  build-android-development-app:
+    name: Build Android Development Container
+    if: ${{
+        needs.collect-build-info.outputs.should-build == 'true' &&
+        (
+          inputs.build-ios-development ||
+          github.event_name == 'push'
+        )
+      }}
+    needs:
+      - collect-build-info
+    uses: ./.github/workflows/build-android-app.yml
+    secrets: inherit
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      environment: Android (Development)
+      version: ${{ needs.collect-build-info.outputs.version }}
+      merge-pr: ${{ github.event.pull_request.number || (inputs.merge-pr && fromJson(inputs.merge-pr)) || 0 }}
+      changelog: ${{ needs.collect-build-info.outputs.build-notes }}
+
   build-android-app:
     name: Build Android App
     if: ${{
@@ -200,6 +227,7 @@ jobs:
       - build-ios-app
       - build-ios-development-app
       - build-android-app
+      - build-android-development-app
     permissions:
       contents: write
       issues: write
@@ -232,6 +260,12 @@ jobs:
                 "name": "Android",
                 "version": "${{ needs.build-android-app.outputs.version || '' }}",
                 "apk_artifact_url": "${{ needs.build-android-app.outputs.apk-artifact-url || '' }}"
+              },
+              "android-development": {
+                "type": "android",
+                "name": "Android (Development)",
+                "version": "${{ needs.build-android-development-app.outputs.version || '' }}",
+                "apk_artifact_url": "${{ needs.build-android-development-app.outputs.apk-artifact-url || '' }}"
               }
             }
           '
