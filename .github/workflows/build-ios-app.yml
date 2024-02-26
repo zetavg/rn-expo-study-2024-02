@@ -176,20 +176,6 @@ jobs:
           fi
           ssh-agent sh -c 'echo "$SSH_PRIVATE_KEY"' | ssh-add -
 
-      - name: Setup code signing
-        env:
-          CODE_SIGNING_STORAGE_GIT_URL: ${{ vars.CODE_SIGNING_STORAGE_GIT_URL }}
-          MATCH_PASSWORD: ${{ secrets.CODE_SIGNING_STORAGE_PASSPHRASE }}
-        run: |
-          if [ -z "$CODE_SIGNING_STORAGE_GIT_URL" ]; then
-            echo '[ERROR] Environment variable "CODE_SIGNING_STORAGE_GIT_URL" is not set.'
-          fi
-          if [ -z "$MATCH_PASSWORD" ]; then
-            echo '[ERROR] Environment secret "CODE_SIGNING_STORAGE_PASSPHRASE" is not set.'
-          fi
-
-          fastlane ios setup_code_signing
-
       - name: Update build number
         id: update-build-number
         env:
@@ -220,7 +206,17 @@ jobs:
       #     key: ${{ runner.os }}-${{ env.cache-name }}-${{ vars.environment }}
 
       - name: Build
+        env:
+          CODE_SIGNING_STORAGE_GIT_URL: ${{ vars.CODE_SIGNING_STORAGE_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.CODE_SIGNING_STORAGE_PASSPHRASE }}
         run: |
+          if [ -z "$CODE_SIGNING_STORAGE_GIT_URL" ]; then
+            echo '[ERROR] Environment variable "CODE_SIGNING_STORAGE_GIT_URL" is not set.'
+          fi
+          if [ -z "$MATCH_PASSWORD" ]; then
+            echo '[ERROR] Environment secret "CODE_SIGNING_STORAGE_PASSPHRASE" is not set.'
+          fi
+
           echo "export NODE_BINARY=$(command -v node)" > ios/.xcode.env.local
 
           # See: https://reactnative.dev/docs/build-speed#xcode-specific-setup
@@ -229,7 +225,8 @@ jobs:
           export CCACHE_DEPEND=true
           export CCACHE_INODECACHE=true
 
-          fastlane ios build
+          # setup_code_signing needs to be run with build for build_app to find the correct provisioning profiles from ENV
+          fastlane ios build setup_code_signing:true
 
       - name: Get Archive Artifact name
         id: get-archive-artifact-name
