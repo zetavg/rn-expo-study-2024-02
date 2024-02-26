@@ -3,6 +3,11 @@ run-name: ${{ (
     ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && format('Build for PR {0}{1}', '#', github.event.pull_request.number)) ||
     (inputs.merge-pr && format('Build for PR {0}{1}', '#', inputs.merge-pr)) ||
     (github.event_name == 'release' && format('Release {0}', github.event.release.tag_name)) ||
+    (github.event_name == 'workflow_dispatch' && format(
+        'Manual Build{0}{1}',
+        (inputs.build-ios && ' iOS' || ''),
+        (inputs.build-ios-development && ' iOS-dev' || '')
+      )) ||
     (github.event_name == 'schedule' && format('Scheduled Build')) ||
     'Build App'
   ) }}
@@ -161,7 +166,7 @@ jobs:
 
   publish-results:
     name: Publish Results
-    # https://github.com/orgs/community/discussions/26945#discussioncomment-3254081
+    # See: https://github.com/orgs/community/discussions/26945#discussioncomment-3254081 & https://github.com/orgs/community/discussions/26303#discussioncomment-5821344
     if: ${{ !cancelled() && needs.collect-build-info.outputs.should-build == 'true' }}
     needs:
       - collect-build-info

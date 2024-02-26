@@ -62,7 +62,7 @@ on:
 
 jobs:
   build-ios:
-    name: "Build iOS"
+    name: Build
     runs-on: macos-13
     permissions:
       contents: read
