@@ -120,7 +120,7 @@ jobs:
     if: ${{
         needs.collect-build-info.outputs.should-build == 'true' &&
         (
-          inputs.build-ios-development == 'true' ||
+          inputs.build-ios-development ||
           github.event_name == 'push'
         )
       }}
@@ -142,7 +142,7 @@ jobs:
     if: ${{
         needs.collect-build-info.outputs.should-build == 'true' &&
         (
-          inputs.build-ios == 'true' ||
+          inputs.build-ios ||
           github.event_name != 'workflow_dispatch'
         )
       }}
@@ -161,7 +161,8 @@ jobs:
 
   publish-results:
     name: Publish Results
-    if: ${{ needs.collect-build-info.outputs.should-build == 'true' }}
+    # https://github.com/orgs/community/discussions/26945#discussioncomment-3254081
+    if: ${{ !cancelled() && needs.collect-build-info.outputs.should-build == 'true' }}
     needs:
       - collect-build-info
       - build-ios-app
