@@ -197,7 +197,7 @@ jobs:
                 "version": "${{ needs.build-ios-development-app.outputs.version || '' }}",
                 "build_number": ${{ needs.build-ios-development-app.outputs.build-number || '0' }},
                 "archive_artifact_url": "${{ needs.build-ios-development-app.outputs.archive-artifact-url || '' }}",
-                "testflight_upload_succeeded": ${{ needs.build-ios-app.outputs.testflight-upload-succeeded || 'false' }}
+                "testflight_upload_succeeded": ${{ needs.build-ios-development-app.outputs.testflight-upload-succeeded || 'false' }}
               }
             }
           '
