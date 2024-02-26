@@ -118,6 +118,7 @@ platform :ios do
 
   lane :setup_code_signing do |options|
     app_identifier = get_ios_app_identifier
+    xcode_project = get_xcode_project
 
     if ENV['CI']
       # Setup the keychain and match to work with CI.
