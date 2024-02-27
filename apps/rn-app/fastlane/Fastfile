@@ -200,10 +200,16 @@ platform :ios do
       version = app_json_data['fullVersion'] || app_json_data['version']
 
       app_dir_path = File.join(__dir__, '..')
+
       xcarchive_file_pattern = File.join(app_dir_path, '*.xcarchive')
       xcarchive_file_path = Dir.glob(xcarchive_file_pattern).first
       xcarchive_name = "#{product_config['name']} #{version}.xcarchive"
       File.rename(xcarchive_file_path, File.join(app_dir_path, xcarchive_name))
+
+      ipa_file_pattern = File.join(app_dir_path, '*.ipa')
+      ipa_file_path = Dir.glob(ipa_file_pattern).first
+      ipa_name = "#{product_config['name']} #{version}.ipa"
+      File.rename(ipa_file_path, File.join(app_dir_path, ipa_name))
     end
   end
 
