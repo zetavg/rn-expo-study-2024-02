@@ -176,8 +176,9 @@ jobs:
           cache-name: rn-app-pods
         with:
           path: apps/rn-app/ios/Pods
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('apps/rn-app/ios/Podfile') }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('apps/rn-app/ios/Podfile') }}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('apps/rn-app/ios/Podfile') }}-
             ${{ runner.os }}-${{ env.cache-name }}-
 
       - name: Pod install
