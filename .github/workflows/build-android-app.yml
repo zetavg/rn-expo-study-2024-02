@@ -79,7 +79,7 @@ jobs:
     timeout-minutes: 60
     environment:
       name: ${{ inputs.environment }}
-      url: ${{ steps.upload-to-appsend.outputs.install_url }}
+      url: ${{ steps.upload-to-appsend.outputs.install_url || null }}
     outputs:
       version: ${{ steps.get-version-number.outputs.version }}
       # build-number: ${{ steps.update-build-number.outputs.build_number }}

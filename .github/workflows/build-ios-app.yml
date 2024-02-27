@@ -82,7 +82,7 @@ jobs:
     timeout-minutes: 60
     environment:
       name: ${{ inputs.environment }}
-      url: ${{ steps.upload-to-appsend.outputs.install_url }}
+      url: ${{ steps.upload-to-appsend.outputs.install_url || null }}
     outputs:
       version: ${{ steps.get-version-number.outputs.version }}
       build-number: ${{ steps.update-build-number.outputs.build_number }}
@@ -245,6 +245,10 @@ jobs:
           # setup_code_signing needs to be run with build for build_app to find the correct provisioning profiles from ENV
           fastlane ios build setup_code_signing:true
 
+      - name: Export IPA
+        run: |
+          fastlane ios export_ipa
+
       - name: Get Archive Artifact name
         id: get-archive-artifact-name
         run: |
@@ -275,20 +279,6 @@ jobs:
           path: |
             apps/rn-app/*.ipa
 
-      - name: Upload to TestFlight
-        id: upload-to-testflight
-        if: ${{ vars.SKIP_UPLOAD_TO_TESTFLIGHT != 'true' }}
-        continue-on-error: true
-        timeout-minutes: 16
-        env:
-          APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APP_STORE_CONNECT_API_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
-          CHANGELOG: ${{ inputs.changelog }}
-        run: |
-          fastlane ios lane_upload_to_testflight
-          echo "testflight_upload_succeeded=true" >> $GITHUB_OUTPUT
-
       - name: Upload to AppSend
         id: upload-to-appsend
         if: ${{ vars.SKIP_UPLOAD != 'true' }}
@@ -304,3 +294,17 @@ jobs:
           install_url="https://appsend.dev/i/$uid"
           echo "Download URL: $install_url"
           echo "install_url=$install_url" >> $GITHUB_OUTPUT
+
+      - name: Upload to TestFlight
+        id: upload-to-testflight
+        if: ${{ vars.SKIP_UPLOAD_TO_TESTFLIGHT != 'true' }}
+        continue-on-error: true
+        timeout-minutes: 16
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          CHANGELOG: ${{ inputs.changelog }}
+        run: |
+          fastlane ios lane_upload_to_testflight
+          echo "testflight_upload_succeeded=true" >> $GITHUB_OUTPUT

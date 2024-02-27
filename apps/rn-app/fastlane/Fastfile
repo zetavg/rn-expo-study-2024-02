@@ -185,7 +185,7 @@ platform :ios do
     build_app(
       workspace: "ios/#{xcode_workspace}",
       configuration: configuration,
-      export_method: 'development',
+      skip_package_ipa: true,
     )
 
     app_json_file_path = File.join(__dir__, '..', 'app.json')
@@ -203,12 +203,40 @@ platform :ios do
       app_dir_path = File.join(__dir__, '..')
 
       xcarchive_file_pattern = File.join(app_dir_path, '*.xcarchive')
-      xcarchive_file_path = Dir.glob(xcarchive_file_pattern).first
+      xcarchive_file_path = Dir.glob(xcarchive_file_pattern).max_by { |file| File.mtime(file) }
       xcarchive_name = "#{product_config['name']} #{version}.xcarchive"
       File.rename(xcarchive_file_path, File.join(app_dir_path, xcarchive_name))
+    end
+  end
+
+  lane :export_ipa do
+    environment = get_environment('ios')
+    product_config = get_product_config(environment)
+    xcode_workspace = get_xcode_workspace
+
+    app_dir_path = File.join(File.expand_path(__dir__), '..')
+    xcarchive_file_pattern = File.join(app_dir_path, '*.xcarchive')
+    xcarchive_file_path = Dir.glob(xcarchive_file_pattern).max_by { |file| File.mtime(file) }
+
+    if xcarchive_file_path.nil? || xcarchive_file_path.empty?
+      raise "No *.xcarchive found in '#{app_dir_path}'. Please run the 'build' lane first."
+    end
+
+    build_app(
+      workspace: "ios/#{xcode_workspace}",
+      skip_build_archive: true,
+      archive_path: xcarchive_file_path,
+      export_method: 'development',
+    )
+
+    app_json_file_path = File.join(__dir__, '..', 'app.json')
+    if File.exist?(app_json_file_path)
+      app_json_file_contents = File.read(app_json_file_path)
+      app_json_data = RbJSON5.parse(app_json_file_contents)
+      version = app_json_data['fullVersion'] || app_json_data['version']
 
       ipa_file_pattern = File.join(app_dir_path, '*.ipa')
-      ipa_file_path = Dir.glob(ipa_file_pattern).first
+      ipa_file_path = Dir.glob(ipa_file_pattern).max_by { |file| File.mtime(file) }
       ipa_name = "#{product_config['name']} #{version}.ipa"
       File.rename(ipa_file_path, File.join(app_dir_path, ipa_name))
     end
