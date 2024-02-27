@@ -87,7 +87,7 @@ jobs:
       archive-artifact-name: ${{ steps.get-archive-artifact-name.outputs.archive_artifact_name }}
       ipa-artifact-id: ${{ steps.upload-ipa.outputs.artifact-id }}
       ipa-artifact-url: ${{ steps.upload-ipa.outputs.artifact-url }}
-      ipa-artifact-name: ${{ steps.get-ipa-artifact-name.outputs.archive_artifact_name }}
+      ipa-artifact-name: ${{ steps.get-ipa-artifact-name.outputs.ipa_artifact_name }}
       testflight-upload-succeeded: ${{ steps.upload-to-testflight.outputs.testflight_upload_succeeded }}
     defaults:
       run:
