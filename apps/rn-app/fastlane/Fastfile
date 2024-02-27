@@ -26,7 +26,7 @@ platform :ios do
 
     setup_app_store_connect
 
-    app_json_file_path = File.join(__dir__, '..', 'app.json')
+    app_json_file_path = File.join(File.expand_path(__dir__), '..', 'app.json')
     app_json_file_contents = File.read(app_json_file_path)
     app_json_data = RbJSON5.parse(app_json_file_contents)
     version = app_json_data['version']
@@ -188,10 +188,10 @@ platform :ios do
       # skip_package_ipa: true,
     )
 
-    app_json_file_path = File.join(__dir__, '..', 'app.json')
+    app_json_file_path = File.join(File.expand_path(__dir__), '..', 'app.json')
     if File.exist?(app_json_file_path)
       backup_xcarchive(
-        destination: File.join(__dir__), # Note: '..' is not needed here
+        destination: File.join(File.expand_path(__dir__), '..'),
         versioned: false,
         zip: false,
       )
@@ -200,7 +200,7 @@ platform :ios do
       app_json_data = RbJSON5.parse(app_json_file_contents)
       version = app_json_data['fullVersion'] || app_json_data['version']
 
-      app_dir_path = File.join(__dir__, '..')
+      app_dir_path = File.join(File.expand_path(__dir__), '..')
 
       xcarchive_file_pattern = File.join(app_dir_path, '*.xcarchive')
       xcarchive_file_path = Dir.glob(xcarchive_file_pattern).max_by { |file| File.mtime(file) }
@@ -229,7 +229,7 @@ platform :ios do
       export_method: 'development',
     )
 
-    app_json_file_path = File.join(__dir__, '..', 'app.json')
+    app_json_file_path = File.join(File.expand_path(__dir__), '..', 'app.json')
     if File.exist?(app_json_file_path)
       app_json_file_contents = File.read(app_json_file_path)
       app_json_data = RbJSON5.parse(app_json_file_contents)
@@ -322,7 +322,7 @@ end
 
 
 def get_environment(platform)
-  platform_dir_path = File.join(__dir__, '..', platform)
+  platform_dir_path = File.join(File.expand_path(__dir__), '..', platform)
 
   env_file_path = File.join(platform_dir_path, 'ENVIRONMENT.txt')
   unless File.exist?(env_file_path)
@@ -340,7 +340,7 @@ end
 
 
 def get_product_config(environment)
-  product_file_path = File.join(__dir__, '..', 'product.json5')
+  product_file_path = File.join(File.expand_path(__dir__), '..', 'product.json5')
 
   unless File.exist?(product_file_path)
     raise "File 'product.json5' does not exist."
@@ -358,7 +358,7 @@ end
 
 
 def get_xcode_project
-  ios_dir_path = File.join(__dir__, '..', 'ios')
+  ios_dir_path = File.join(File.expand_path(__dir__), '..', 'ios')
 
   xcode_project_file_pattern = File.join(ios_dir_path, '*.xcodeproj')
   xcode_project = File.basename(Dir.glob(xcode_project_file_pattern).first)
@@ -368,7 +368,7 @@ end
 
 
 def get_xcode_workspace
-  ios_dir_path = File.join(__dir__, '..', 'ios')
+  ios_dir_path = File.join(File.expand_path(__dir__), '..', 'ios')
 
   xcode_workspace_file_pattern = File.join(ios_dir_path, '*.xcworkspace')
   xcode_workspace = File.basename(Dir.glob(xcode_workspace_file_pattern).first)
