@@ -259,8 +259,8 @@ jobs:
         id: get-ipa-artifact-name
         run: |
           ipa_artifact_name="${{ inputs.environment }} IPA"
-          echo "IPA artifact name: $artifact"
-          echo "artifact=$artifact" >> $GITHUB_OUTPUT
+          echo "IPA artifact name: $ipa_artifact_name"
+          echo "ipa_artifact_name=$ipa_artifact_name" >> $GITHUB_OUTPUT
 
       - name: Upload IPA
         id: upload-ipa
