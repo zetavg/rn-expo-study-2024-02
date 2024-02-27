@@ -56,9 +56,21 @@ on:
       archive-artifact-name:
         description: "The artifact name of the Xcode archive."
         value: ${{ jobs.build-ios.outputs.archive-artifact-name }}
+      ipa-artifact-id:
+        description: "The artifact id of the IPA."
+        value: ${{ jobs.build-ios.outputs.ipa-artifact-id }}
+      ipa-artifact-url:
+        description: "The artifact URL of the IPA."
+        value: ${{ jobs.build-ios.outputs.ipa-artifact-url }}
+      ipa-artifact-name:
+        description: "The artifact name of the IPA."
+        value: ${{ jobs.build-ios.outputs.ipa-artifact-name }}
       testflight-upload-succeeded:
         description: "Whether the TestFlight upload succeeded."
         value: ${{ jobs.build-ios.outputs.testflight-upload-succeeded }}
+      install-url:
+        description: "URL to install the built app."
+        value: ${{ jobs.build-ios.outputs.install-url }}
 
 jobs:
   build-ios:
@@ -70,13 +82,18 @@ jobs:
     timeout-minutes: 60
     environment:
       name: ${{ inputs.environment }}
+      url: ${{ steps.upload-to-appsend.outputs.install_url }}
     outputs:
       version: ${{ steps.get-version-number.outputs.version }}
       build-number: ${{ steps.update-build-number.outputs.build_number }}
       archive-artifact-id: ${{ steps.upload-archive.outputs.artifact-id }}
       archive-artifact-url: ${{ steps.upload-archive.outputs.artifact-url }}
-      archive-artifact-name: ${{ steps.get-archive-artifact-name.outputs.archive_name }}
+      archive-artifact-name: ${{ steps.get-archive-artifact-name.outputs.archive_artifact_name }}
+      ipa-artifact-id: ${{ steps.upload-ipa.outputs.artifact-id }}
+      ipa-artifact-url: ${{ steps.upload-ipa.outputs.artifact-url }}
+      ipa-artifact-name: ${{ steps.get-ipa-artifact-name.outputs.ipa_artifact_name }}
       testflight-upload-succeeded: ${{ steps.upload-to-testflight.outputs.testflight_upload_succeeded }}
+      install-url: ${{ steps.upload-to-appsend.outputs.install_url }}
     defaults:
       run:
         working-directory: apps/rn-app
@@ -142,7 +159,11 @@ jobs:
         env:
           ENVIRONMENT: ${{ vars.ENVIRONMENT }}
         run: |
-          yarn prebuild "$ENVIRONMENT" ios
+          if [ -z "$ENVIRONMENT" ]; then
+            echo '[ERROR] Environment variable "ENVIRONMENT" is not set.'
+          fi
+
+          yarn prebuild ios "$ENVIRONMENT"
 
       - name: Install CocoaPods and Fastlane
         run: |
@@ -175,7 +196,6 @@ jobs:
       - name: Update build number
         id: update-build-number
         env:
-          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
           APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
@@ -204,13 +224,9 @@ jobs:
 
       - name: Build
         env:
-          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
           CODE_SIGNING_STORAGE_GIT_URL: ${{ vars.CODE_SIGNING_STORAGE_GIT_URL }}
           MATCH_PASSWORD: ${{ secrets.CODE_SIGNING_STORAGE_PASSPHRASE }}
         run: |
-          if [ -z "$ENVIRONMENT" ]; then
-            echo '[ERROR] Environment variable "ENVIRONMENT" is not set.'
-          fi
           if [ -z "$CODE_SIGNING_STORAGE_GIT_URL" ]; then
             echo '[ERROR] Environment variable "CODE_SIGNING_STORAGE_GIT_URL" is not set.'
           fi
@@ -226,22 +242,38 @@ jobs:
           export CCACHE_DEPEND=true
           export CCACHE_INODECACHE=true
 
-          fastlane ios build
+          # setup_code_signing needs to be run with build for build_app to find the correct provisioning profiles from ENV
+          fastlane ios build setup_code_signing:true
 
       - name: Get Archive Artifact name
         id: get-archive-artifact-name
         run: |
-          archive_name="Archive ${{ inputs.environment }}"
-          echo "Archive name: $archive_name"
-          echo "archive_name=$archive_name" >> $GITHUB_OUTPUT
+          archive_artifact_name="${{ inputs.environment }} Archive"
+          echo "Archive artifact name: $archive_artifact_name"
+          echo "archive_artifact_name=$archive_artifact_name" >> $GITHUB_OUTPUT
 
       - name: Upload Archive
         id: upload-archive
         uses: actions/upload-artifact@v4.3.1
         with:
-          name: ${{ steps.get-archive-artifact-name.outputs.archive_name }}
+          name: ${{ steps.get-archive-artifact-name.outputs.archive_artifact_name }}
           path: |
             apps/rn-app/*.xcarchive
+
+      - name: Get IPA Artifact name
+        id: get-ipa-artifact-name
+        run: |
+          ipa_artifact_name="${{ inputs.environment }} IPA"
+          echo "IPA artifact name: $ipa_artifact_name"
+          echo "ipa_artifact_name=$ipa_artifact_name" >> $GITHUB_OUTPUT
+
+      - name: Upload IPA
+        id: upload-ipa
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: ${{ steps.get-ipa-artifact-name.outputs.ipa_artifact_name }}
+          path: |
+            apps/rn-app/*.ipa
 
       - name: Upload to TestFlight
         id: upload-to-testflight
@@ -249,7 +281,6 @@ jobs:
         continue-on-error: true
         timeout-minutes: 16
         env:
-          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
           APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
@@ -257,3 +288,19 @@ jobs:
         run: |
           fastlane ios lane_upload_to_testflight
           echo "testflight_upload_succeeded=true" >> $GITHUB_OUTPUT
+
+      - name: Upload to AppSend
+        id: upload-to-appsend
+        if: ${{ vars.SKIP_UPLOAD != 'true' }}
+        continue-on-error: true
+        run: |
+          result=$(curl --insecure https://api.appsend.dev/v1/uploads/ -F file=@"$(ls *.ipa | head -n 1)") # we have encountered issues with the SSL certificate of this server on the GitHub Actions runner, therefore --insecure is used
+          echo $result | jq '.'
+          uid="$(echo $result | jq -r '.uid')"
+          if [ -z "$uid" ]; then
+            echo "[ERROR] Failed to upload to AppSend: $result"
+            exit 1
+          fi
+          install_url="https://appsend.dev/i/$uid"
+          echo "Download URL: $install_url"
+          echo "install_url=$install_url" >> $GITHUB_OUTPUT

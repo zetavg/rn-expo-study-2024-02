@@ -3,37 +3,7 @@ require 'rb_json5'
 require 'net/http'
 require 'uri'
 
-product_file_path = File.join(__dir__, '..', 'product.json5')
-product_file_contents = File.read(product_file_path)
-product_data = RbJSON5.parse(product_file_contents)
-
-environment = ENV['ENVIRONMENT']
-
-if environment.nil? || environment.empty?
-  raise "Environment variable 'ENVIRONMENT' is not set."
-end
-
-unless product_data.has_key?(environment)
-  raise "No configuration found for the '#{environment}' environment."
-end
-
 platform :ios do
-  ios_dir_path = File.join(__dir__, '..', 'ios')
-  xcode_workspace_file_pattern = File.join(ios_dir_path, '*.xcworkspace')
-  xcode_workspace = File.basename(Dir.glob(xcode_workspace_file_pattern).first || '')
-  xcode_project_file_pattern = File.join(ios_dir_path, '*.xcodeproj')
-  xcode_project = File.basename(Dir.glob(xcode_project_file_pattern).first || '')
-
-  unless product_data[environment].has_key?('ios')
-    raise "No iOS configuration found for the '#{environment}' environment."
-  end
-
-  unless product_data[environment]['ios'].has_key?('bundleIdentifier')
-    raise "No bundleIdentifier found under iOS configuration for the '#{environment}' environment."
-  end
-
-  app_identifier = product_data[environment]['ios']['bundleIdentifier']
-
   lane :setup_app_store_connect do
     app_store_connect_api_key_id = ENV['APP_STORE_CONNECT_API_KEY_ID']
     app_store_connect_api_issuer_id = ENV['APP_STORE_CONNECT_API_ISSUER_ID']
@@ -51,6 +21,9 @@ platform :ios do
   end
 
   lane :update_build_number do
+    xcode_project = get_xcode_project
+    app_identifier = get_ios_app_identifier
+
     setup_app_store_connect
 
     app_json_file_path = File.join(__dir__, '..', 'app.json')
@@ -143,7 +116,10 @@ platform :ios do
     end
   end
 
-  lane :setup_code_signing do
+  lane :setup_code_signing do |options|
+    app_identifier = get_ios_app_identifier
+    xcode_project = get_xcode_project
+
     if ENV['CI']
       # Setup the keychain and match to work with CI.
       setup_ci
@@ -163,8 +139,10 @@ platform :ios do
         type: type,
         git_url: code_signing_storage_git_url,
         app_identifier: app_identifier,
-        readonly: !ENV['UPDATE_CODE_SIGNING'],
-        force: !!ENV['UPDATE_CODE_SIGNING'],
+        readonly: !options[:update],
+        force: !!options[:update],
+        username: options[:username],
+        team_id: options[:team_id],
       )
     end
 
@@ -190,8 +168,13 @@ platform :ios do
     )
   end
 
-  lane :build do
-    setup_code_signing
+  lane :build do |options|
+    environment = get_environment('ios')
+    product_config = get_product_config(environment)
+    xcode_project = get_xcode_project
+    xcode_workspace = get_xcode_workspace
+
+    setup_code_signing if options[:setup_code_signing]
 
     configuration = "Release"
     if environment == 'development'
@@ -202,7 +185,6 @@ platform :ios do
     build_app(
       workspace: "ios/#{xcode_workspace}",
       configuration: configuration,
-      export_method: "app-store",
     )
 
     app_json_file_path = File.join(__dir__, '..', 'app.json')
@@ -218,17 +200,23 @@ platform :ios do
       version = app_json_data['fullVersion'] || app_json_data['version']
 
       app_dir_path = File.join(__dir__, '..')
+
       xcarchive_file_pattern = File.join(app_dir_path, '*.xcarchive')
       xcarchive_file_path = Dir.glob(xcarchive_file_pattern).first
-      xcarchive_name = "#{product_data[environment]['name']} #{version}.xcarchive"
+      xcarchive_name = "#{product_config['name']} #{version}.xcarchive"
       File.rename(xcarchive_file_path, File.join(app_dir_path, xcarchive_name))
+
+      ipa_file_pattern = File.join(app_dir_path, '*.ipa')
+      ipa_file_path = Dir.glob(ipa_file_pattern).first
+      ipa_name = "#{product_config['name']} #{version}.ipa"
+      File.rename(ipa_file_path, File.join(app_dir_path, ipa_name))
     end
   end
 
-  lane :lane_upload_to_testflight do
+  lane :lane_upload_to_testflight do |options|
     setup_app_store_connect
 
-    changelog = ENV['CHANGELOG']
+    changelog = options[:changelog] || ENV['CHANGELOG']
 
     upload_to_testflight(
       skip_waiting_for_build_processing: true,
@@ -236,6 +224,145 @@ platform :ios do
     )
   end
 end
+
+platform :android do
+  lane :build do |options|
+    environment = get_environment('android')
+    product_config = get_product_config(environment)
+    android_dir_path = File.join(File.expand_path(__dir__), '..', 'android')
+
+    build_type = "Release"
+    if environment == 'development'
+      puts 'Using build build_type "Debug" for development.'
+      build_type = "Debug"
+    end
+
+    keystore_file_path = ENV['KEYSTORE_FILE_PATH'] || File.join(File.expand_path(__dir__), '..', 'keystore.keystore')
+    keystore_password = ENV['KEYSTORE_PASSWORD']
+    key_alias = ENV['KEY_ALIAS']
+    key_password = ENV['KEY_PASSWORD']
+
+    raise "Environment variable 'KEYSTORE_PASSWORD' is not set." if keystore_password.nil? || keystore_password.empty?
+    raise "Environment variable 'KEY_ALIAS' is not set." if key_alias.nil? || key_alias.empty?
+    raise "Environment variable 'KEY_PASSWORD' is not set." if key_password.nil? || key_password.empty?
+
+    [
+      'assemble',
+      'bundle',
+    ].each do |task|
+      gradle(
+        project_dir: android_dir_path,
+        task: task,
+        build_type: build_type,
+        print_command: false,
+        properties: {
+          "KEYSTORE_FILE" => keystore_file_path,
+          "KEYSTORE_PASSWORD" => keystore_password,
+          "KEY_ALIAS" => key_alias,
+          "KEY_PASSWORD" => key_password,
+        }
+      )
+    end
+
+    app_json_file_path = File.join(File.expand_path(__dir__), '..', 'app.json')
+    if File.exist?(app_json_file_path)
+      app_json_file_contents = File.read(app_json_file_path)
+      app_json_data = RbJSON5.parse(app_json_file_contents)
+      version = app_json_data['fullVersion'] || app_json_data['version']
+
+      output_apk_path = File.join(android_dir_path, 'app', 'build', 'outputs', 'apk', build_type.downcase, "app-#{build_type.downcase}.apk")
+
+      unless File.exist?(output_apk_path)
+        raise "Expect APK file to be at '#{output_apk_path}', but it does not exist."
+      end
+
+      # Move the apk file to the root directory
+      File.rename(output_apk_path, File.join(File.expand_path(__dir__), '..', "#{product_config['name']} #{version}.apk"))
+
+      output_aab_path = File.join(android_dir_path, 'app', 'build', 'outputs', 'bundle', build_type.downcase, "app-#{build_type.downcase}.aab")
+
+      unless File.exist?(output_aab_path)
+        raise "Expect AAB file to be at '#{output_aab_path}', but it does not exist."
+      end
+
+      # Move the aab file to the root directory
+      File.rename(output_aab_path, File.join(File.expand_path(__dir__), '..', "#{product_config['name']} #{version}.aab"))
+    end
+  end
+end
+
+
+def get_environment(platform)
+  platform_dir_path = File.join(__dir__, '..', platform)
+
+  env_file_path = File.join(platform_dir_path, 'ENVIRONMENT.txt')
+  unless File.exist?(env_file_path)
+    raise "File 'ENVIRONMENT.txt' does not exist in '#{platform_dir_path}'. 'ENVIRONMENT.txt' is expected to be created by running `yarn prebuild #{platform} <environment>`, please make sure that you have run this command before running the Fastlane lanes."
+  end
+
+  environment = File.read(env_file_path).strip
+
+  if environment.nil? || environment.empty?
+    raise "File 'ENVIRONMENT.txt' in '#{platform_dir_path}' is empty. Running `yarn prebuild #{platform} <environment>` again might solve the problem."
+  end
+
+  return environment
+end
+
+
+def get_product_config(environment)
+  product_file_path = File.join(__dir__, '..', 'product.json5')
+
+  unless File.exist?(product_file_path)
+    raise "File 'product.json5' does not exist."
+  end
+
+  product_file_contents = File.read(product_file_path)
+  parsed_product_file_contents = RbJSON5.parse(product_file_contents)
+
+  unless parsed_product_file_contents.has_key?(environment)
+    raise "No product configuration found for the '#{environment}' environment. Please check #{product_file_path}, or run `yarn prebuild #{platform} <environment>` again."
+  end
+
+  return parsed_product_file_contents[environment]
+end
+
+
+def get_xcode_project
+  ios_dir_path = File.join(__dir__, '..', 'ios')
+
+  xcode_project_file_pattern = File.join(ios_dir_path, '*.xcodeproj')
+  xcode_project = File.basename(Dir.glob(xcode_project_file_pattern).first)
+
+  return xcode_project
+end
+
+
+def get_xcode_workspace
+  ios_dir_path = File.join(__dir__, '..', 'ios')
+
+  xcode_workspace_file_pattern = File.join(ios_dir_path, '*.xcworkspace')
+  xcode_workspace = File.basename(Dir.glob(xcode_workspace_file_pattern).first)
+
+  return xcode_workspace
+end
+
+
+def get_ios_app_identifier
+  environment = get_environment('ios')
+  product_config = get_product_config(environment)
+
+  unless product_config.has_key?('ios')
+    raise "No iOS configuration found for the '#{environment}' environment."
+  end
+
+  unless product_config['ios'].has_key?('bundleIdentifier')
+    raise "No bundleIdentifier found under iOS configuration for the '#{environment}' environment."
+  end
+
+  app_identifier = product_config['ios']['bundleIdentifier']
+end
+
 
 def get_gh_headers(access_token)
   {

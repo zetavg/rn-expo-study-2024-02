@@ -40,3 +40,16 @@ yarn-error.*
 
 # local config
 product.json5
+
+# CI
+/app.json
+
+# Xcode
+/*.ipa
+/*.DSYM.zip
+/*.xcarchive
+
+# Android
+/*.keystore
+/*.apk
+/*.aab

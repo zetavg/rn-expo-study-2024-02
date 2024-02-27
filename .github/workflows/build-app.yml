@@ -4,9 +4,11 @@ run-name: ${{ (
     (inputs.merge-pr && format('Build for PR {0}{1}', '#', inputs.merge-pr)) ||
     (github.event_name == 'release' && format('Release {0}', github.event.release.tag_name)) ||
     (github.event_name == 'workflow_dispatch' && format(
-        'Manual Build{0}{1}',
+        'Manual Build{0}{1}{2}{3}',
         (inputs.build-ios && ' iOS' || ''),
-        (inputs.build-ios-development && ' iOS-dev' || '')
+        (inputs.build-ios-development && ' iOS-dev' || ''),
+        (inputs.build-android && ' Android' || ''),
+        (inputs.build-android-development && ' Android-dev' || '')
       )) ||
     (github.event_name == 'schedule' && format('Scheduled Build')) ||
     'Build App'
@@ -25,9 +27,9 @@ on:
       - '**/README.md'
   release:
     types: [published]
-  # schedule:
-  #   # Every 5 minutes
-  #   - cron: '*/5 * * * *'
+  schedule:
+    # Every Sunday
+    - cron: 0 0 * * 0
 
   workflow_dispatch:
     inputs:
@@ -43,6 +45,14 @@ on:
         type: boolean
         default: true
         description: Build the iOS Development Container app.
+      build-android:
+        type: boolean
+        default: true
+        description: Build the Android app.
+      build-android-development:
+        type: boolean
+        default: true
+        description: Build the Android Development Container app.
 
 jobs:
   collect-build-info:
@@ -72,7 +82,7 @@ jobs:
           echo "version=${version}" >> $GITHUB_OUTPUT
       - name: Generate build notes
         id: generate-build-notes
-        uses: zetavg/generate-build-notes-action@b81a0186d75ad772b3bf7b4a602ca9a0c8bbb34f
+        uses: zetavg/generate-build-notes-action@v0.2
         with:
           github-token: ${{ github.token }}
           pr-number: ${{ github.event.pull_request.number || (inputs.merge-pr && fromJson(inputs.merge-pr)) || 0 }}
@@ -164,6 +174,50 @@ jobs:
       merge-pr: ${{ github.event.pull_request.number || (inputs.merge-pr && fromJson(inputs.merge-pr)) || 0 }}
       changelog: ${{ needs.collect-build-info.outputs.build-notes }}
 
+  build-android-development-app:
+    name: Build Android Development Container
+    if: ${{
+        needs.collect-build-info.outputs.should-build == 'true' &&
+        (
+          inputs.build-ios-development ||
+          github.event_name == 'push'
+        )
+      }}
+    needs:
+      - collect-build-info
+    uses: ./.github/workflows/build-android-app.yml
+    secrets: inherit
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      environment: Android (Development)
+      version: ${{ needs.collect-build-info.outputs.version }}
+      merge-pr: ${{ github.event.pull_request.number || (inputs.merge-pr && fromJson(inputs.merge-pr)) || 0 }}
+      changelog: ${{ needs.collect-build-info.outputs.build-notes }}
+
+  build-android-app:
+    name: Build Android App
+    if: ${{
+        needs.collect-build-info.outputs.should-build == 'true' &&
+        (
+          inputs.build-android ||
+          github.event_name != 'workflow_dispatch'
+        )
+      }}
+    needs:
+      - collect-build-info
+    uses: ./.github/workflows/build-android-app.yml
+    secrets: inherit
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      environment: Android
+      version: ${{ needs.collect-build-info.outputs.version }}
+      merge-pr: ${{ github.event.pull_request.number || (inputs.merge-pr && fromJson(inputs.merge-pr)) || 0 }}
+      changelog: ${{ needs.collect-build-info.outputs.build-notes }}
+
   publish-results:
     name: Publish Results
     # See: https://github.com/orgs/community/discussions/26945#discussioncomment-3254081 & https://github.com/orgs/community/discussions/26303#discussioncomment-5821344
@@ -172,6 +226,8 @@ jobs:
       - collect-build-info
       - build-ios-app
       - build-ios-development-app
+      - build-android-app
+      - build-android-development-app
     permissions:
       contents: write
       issues: write
@@ -189,7 +245,8 @@ jobs:
                 "version": "${{ needs.build-ios-app.outputs.version || '' }}",
                 "build_number": ${{ needs.build-ios-app.outputs.build-number || '0' }},
                 "archive_artifact_url": "${{ needs.build-ios-app.outputs.archive-artifact-url || '' }}",
-                "testflight_upload_succeeded": ${{ needs.build-ios-app.outputs.testflight-upload-succeeded || 'false' }}
+                "testflight_upload_succeeded": ${{ needs.build-ios-app.outputs.testflight-upload-succeeded || 'false' }},
+                "install_url": "${{ needs.build-ios-app.outputs.install-url || '' }}"
               },
               "ios-development": {
                 "type": "ios",
@@ -197,7 +254,22 @@ jobs:
                 "version": "${{ needs.build-ios-development-app.outputs.version || '' }}",
                 "build_number": ${{ needs.build-ios-development-app.outputs.build-number || '0' }},
                 "archive_artifact_url": "${{ needs.build-ios-development-app.outputs.archive-artifact-url || '' }}",
-                "testflight_upload_succeeded": ${{ needs.build-ios-app.outputs.testflight-upload-succeeded || 'false' }}
+                "testflight_upload_succeeded": ${{ needs.build-ios-development-app.outputs.testflight-upload-succeeded || 'false' }},
+                "install_url": "${{ needs.build-ios-development-app.outputs.install-url || '' }}"
+              },
+              "android": {
+                "type": "android",
+                "name": "Android",
+                "version": "${{ needs.build-android-app.outputs.version || '' }}",
+                "apk_artifact_url": "${{ needs.build-android-app.outputs.apk-artifact-url || '' }}",
+                "install_url": "${{ needs.build-android-app.outputs.install-url || '' }}"
+              },
+              "android-development": {
+                "type": "android",
+                "name": "Android (Development)",
+                "version": "${{ needs.build-android-development-app.outputs.version || '' }}",
+                "apk_artifact_url": "${{ needs.build-android-development-app.outputs.apk-artifact-url || '' }}",
+                "install_url": "${{ needs.build-android-development-app.outputs.install-url || '' }}"
               }
             }
           '
@@ -209,25 +281,28 @@ jobs:
 
       - name: Generate Markdown build results
         id: generate-md-build-results
-        uses: zetavg/generate-build-results-md-action@75f1db44946856ec9fb4d2958afae6e7b215696a
+        uses: zetavg/generate-build-results-md-action@d765c0f1ed9bcc669b26422e7b8da218ad77f9d3
         with:
           build-results-json: ${{ steps.collect-build-results.outputs.build_results_json }}
 
       - name: 'Comment on PR'
         if: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || inputs.merge-pr) && steps.generate-md-build-results.outputs.build-results-md }}
-        env:
-          GITHUB_API_URL: ${{ github.api_url }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number || inputs.merge-pr }}
-        run: |
-          curl -L --silent \
-            -X POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
-            -d '{"body":"⚒️ A [build](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) has been made for this PR. Check the details below to see how to get it.\n<details><summary>Details</summary>\n\n${{ steps.generate-md-build-results.outputs.build-results-md-json-text }}\n\n> <small>\n> If you are in the Internal Developer group on TestFlight, the iOS build should appear on TestFlight in a few minutes (if uploaded).\n> If you are not in the in the Internal Developer group and want to try the build, please contact a maintainer for access.\n> </small>${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && '\n\n**Tip**: Add the `skip-app-build` label to this PR or convert this PR to draft to disable automatic builds.' || '' }}</details>"}'
+        uses: zetavg/comment-on-issue-or-pr-action@9982fb28422fce8f10ef02ebc8ee0546584d6213
+        with:
+          issue-or-pr-number: ${{ github.event.pull_request.number || inputs.merge-pr }}
+          content: |
+            ⚒️ A [build](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) has been made for this PR. Check the details below to see how to get it.
+
+            <details><summary>Details</summary>
+
+            ${{ steps.generate-md-build-results.outputs.build-results-md }}
+
+            > If you are in the Internal Developer group on TestFlight, the iOS build should appear on TestFlight in a few minutes (if uploaded).
+            > The installation links for iOS only work for pre-registered devices and may expire after a period of time.
+            > If you are not in the Internal Developer group nor have pre-registered devices and want to try the build, please contact a maintainer for access.
+            ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && '\n**Tip**: Add the `skip-app-build` label to this PR or convert this PR to draft to disable automatic builds.' || '' }}
+            </details>
+
       - name: Download iOS Archive artifact for release
         uses: actions/download-artifact@v4
         if: ${{ github.event_name == 'release' }}
@@ -239,9 +314,9 @@ jobs:
           UPLOAD_URL: ${{ github.event.release.upload_url }}
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          zip -r xcode-archive.zip *.xcarchive
+          zip -r ios-archive.zip *.xcarchive
 
-          asset_name='xcode-archive.zip'
+          asset_name='ios-archive.zip'
           asset_upload_url="$(echo $UPLOAD_URL | sed "s/{[^}]*}\$/?name=${asset_name}/")"
 
           curl -L \
@@ -251,4 +326,79 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             -H "Content-Type: application/octet-stream" \
             "$asset_upload_url" \
-            --data-binary "@xcode-archive.zip" --fail --show-error
+            --data-binary "@ios-archive.zip" --fail --show-error
+
+      - name: Download iOS IPA artifact for release
+        uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'release' }}
+        with:
+          name: ${{ needs.build-ios-app.outputs.ipa-artifact-name }}
+      - name: Upload iOS IPA for release
+        if: ${{ github.event_name == 'release' }}
+        env:
+          UPLOAD_URL: ${{ github.event.release.upload_url }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          zip -r ios-ipa.zip *.ipa
+
+          asset_name='ios-ipa.zip'
+          asset_upload_url="$(echo $UPLOAD_URL | sed "s/{[^}]*}\$/?name=${asset_name}/")"
+
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/octet-stream" \
+            "$asset_upload_url" \
+            --data-binary "@ios-ipa.zip" --fail --show-error
+
+      - name: Download Android APK artifact for release
+        uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'release' }}
+        with:
+          name: ${{ needs.build-android-app.outputs.apk-artifact-name }}
+      - name: Upload Android APK for release
+        if: ${{ github.event_name == 'release' }}
+        env:
+          UPLOAD_URL: ${{ github.event.release.upload_url }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          zip -r android-apk.zip *.apk
+
+          asset_name='android-apk.zip'
+          asset_upload_url="$(echo $UPLOAD_URL | sed "s/{[^}]*}\$/?name=${asset_name}/")"
+
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/octet-stream" \
+            "$asset_upload_url" \
+            --data-binary "@android-apk.zip" --fail --show-error
+
+      - name: Download Android AAB artifact for release
+        uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'release' }}
+        with:
+          name: ${{ needs.build-android-app.outputs.aab-artifact-name }}
+      - name: Upload Android AAB for release
+        if: ${{ github.event_name == 'release' }}
+        env:
+          UPLOAD_URL: ${{ github.event.release.upload_url }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          zip -r android-aab.zip *.aab
+
+          asset_name='android-aab.zip'
+          asset_upload_url="$(echo $UPLOAD_URL | sed "s/{[^}]*}\$/?name=${asset_name}/")"
+
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/octet-stream" \
+            "$asset_upload_url" \
+            --data-binary "@android-aab.zip" --fail --show-error

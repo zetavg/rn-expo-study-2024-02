@@ -21,13 +21,13 @@ And change the values in `product.json5` to match your needs.
 This app uses [Continuous Native Generation (CNG)](https://docs.expo.dev/workflow/continuous-native-generation/), meaning that the iOS/Android project files are generated from configuration files. This can be done by running the following command:
 
 ```bash
-yarn prebuild <environment> <platform>
+yarn prebuild <platform> <environment>
 ```
 
 For example, to generate the iOS project for development, run:
 
 ```bash
-yarn prebuild development ios
+yarn prebuild ios development
 ```
 
 > [!NOTE]

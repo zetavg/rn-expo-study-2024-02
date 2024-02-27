@@ -5,7 +5,7 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "prebuild": "ENVIRONMENT=$0 expo prebuild --skip-dependency-update react-native,react --no-install --platform $1",
+    "prebuild": "ENVIRONMENT=$1 expo prebuild --skip-dependency-update react-native,react --no-install --platform $0 && echo \"$1\" > \"$0/ENVIRONMENT.txt\"",
     "pod-install": "pod-install && rm -rf ios/.xcode.env.local",
     "ios": "expo run:ios",
     "android": "expo run:android",
