@@ -7,6 +7,7 @@ import plusTwo from '@rnstudy/plus-two';
 export default function App() {
   return (
     <View style={styles.container}>
+      <Text>This is from a PR. The PR is from a fork. Hi!</Text>
       <Text>
         Version:{' '}
         {Constants.expoConfig?.extra?.fullVersion || 'cannot find version'}.
