@@ -245,7 +245,8 @@ jobs:
                 "version": "${{ needs.build-ios-app.outputs.version || '' }}",
                 "build_number": ${{ needs.build-ios-app.outputs.build-number || '0' }},
                 "archive_artifact_url": "${{ needs.build-ios-app.outputs.archive-artifact-url || '' }}",
-                "testflight_upload_succeeded": ${{ needs.build-ios-app.outputs.testflight-upload-succeeded || 'false' }}
+                "testflight_upload_succeeded": ${{ needs.build-ios-app.outputs.testflight-upload-succeeded || 'false' }},
+                "install_url": "${{ needs.build-ios-app.outputs.install-url || '' }}"
               },
               "ios-development": {
                 "type": "ios",
@@ -253,19 +254,22 @@ jobs:
                 "version": "${{ needs.build-ios-development-app.outputs.version || '' }}",
                 "build_number": ${{ needs.build-ios-development-app.outputs.build-number || '0' }},
                 "archive_artifact_url": "${{ needs.build-ios-development-app.outputs.archive-artifact-url || '' }}",
-                "testflight_upload_succeeded": ${{ needs.build-ios-development-app.outputs.testflight-upload-succeeded || 'false' }}
+                "testflight_upload_succeeded": ${{ needs.build-ios-development-app.outputs.testflight-upload-succeeded || 'false' }},
+                "install_url": "${{ needs.build-ios-development-app.outputs.install-url || '' }}"
               },
               "android": {
                 "type": "android",
                 "name": "Android",
                 "version": "${{ needs.build-android-app.outputs.version || '' }}",
-                "apk_artifact_url": "${{ needs.build-android-app.outputs.apk-artifact-url || '' }}"
+                "apk_artifact_url": "${{ needs.build-android-app.outputs.apk-artifact-url || '' }}",
+                "install_url": "${{ needs.build-android-app.outputs.install-url || '' }}"
               },
               "android-development": {
                 "type": "android",
                 "name": "Android (Development)",
                 "version": "${{ needs.build-android-development-app.outputs.version || '' }}",
-                "apk_artifact_url": "${{ needs.build-android-development-app.outputs.apk-artifact-url || '' }}"
+                "apk_artifact_url": "${{ needs.build-android-development-app.outputs.apk-artifact-url || '' }}",
+                "install_url": "${{ needs.build-android-development-app.outputs.install-url || '' }}"
               }
             }
           '
@@ -277,7 +281,7 @@ jobs:
 
       - name: Generate Markdown build results
         id: generate-md-build-results
-        uses: zetavg/generate-build-results-md-action@6331d3bea48f1794f88794c5a7587b205c9aa2ea
+        uses: zetavg/generate-build-results-md-action@d765c0f1ed9bcc669b26422e7b8da218ad77f9d3
         with:
           build-results-json: ${{ steps.collect-build-results.outputs.build_results_json }}
 

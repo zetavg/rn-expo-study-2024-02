@@ -68,6 +68,9 @@ on:
       testflight-upload-succeeded:
         description: "Whether the TestFlight upload succeeded."
         value: ${{ jobs.build-ios.outputs.testflight-upload-succeeded }}
+      install-url:
+        description: "URL to install the built app."
+        value: ${{ jobs.build-ios.outputs.install-url }}
 
 jobs:
   build-ios:
@@ -79,6 +82,7 @@ jobs:
     timeout-minutes: 60
     environment:
       name: ${{ inputs.environment }}
+      url: ${{ steps.upload-to-appsend.outputs.install_url }}
     outputs:
       version: ${{ steps.get-version-number.outputs.version }}
       build-number: ${{ steps.update-build-number.outputs.build_number }}
@@ -89,6 +93,7 @@ jobs:
       ipa-artifact-url: ${{ steps.upload-ipa.outputs.artifact-url }}
       ipa-artifact-name: ${{ steps.get-ipa-artifact-name.outputs.ipa_artifact_name }}
       testflight-upload-succeeded: ${{ steps.upload-to-testflight.outputs.testflight_upload_succeeded }}
+      install-url: ${{ steps.upload-to-appsend.outputs.install_url }}
     defaults:
       run:
         working-directory: apps/rn-app
@@ -283,3 +288,19 @@ jobs:
         run: |
           fastlane ios lane_upload_to_testflight
           echo "testflight_upload_succeeded=true" >> $GITHUB_OUTPUT
+
+      - name: Upload to AppSend
+        id: upload-to-appsend
+        if: ${{ vars.SKIP_UPLOAD != 'true' }}
+        continue-on-error: true
+        run: |
+          result=$(curl --insecure https://api.appsend.dev/v1/uploads/ -F file=@"$(ls *.ipa | head -n 1)") # we have encountered issues with the SSL certificate of this server on the GitHub Actions runner, therefore --insecure is used
+          echo $result | jq '.'
+          uid="$(echo $result | jq -r '.uid')"
+          if [ -z "$uid" ]; then
+            echo "[ERROR] Failed to upload to AppSend: $result"
+            exit 1
+          fi
+          install_url="https://appsend.dev/i/$uid"
+          echo "Download URL: $install_url"
+          echo "install_url=$install_url" >> $GITHUB_OUTPUT
