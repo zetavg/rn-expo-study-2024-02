@@ -11331,6 +11331,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-sfsymbols@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "react-native-sfsymbols@npm:1.2.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/fcf9f8ad32ac218af12a4759a54b043f3ebdffc15180b9364e2227bbbb816a606f7d3779fd6c243060d565feafdcfa34de42fc6616c194c7a5a07ef31b03f604
+  languageName: node
+  linkType: hard
+
 "react-native@npm:0.72":
   version: 0.72.10
   resolution: "react-native@npm:0.72.10"
@@ -11894,6 +11904,8 @@ __metadata:
     react-native: "npm:0.73.4"
     react-native-safe-area-context: "npm:4.8.2"
     react-native-screens: "npm:~3.29.0"
+    react-native-sfsymbols: "npm:^1.2.1"
+    sweet-sfsymbols: "npm:^0.5.0"
     ts-node: "patch:ts-node@npm%3A11.0.0-beta.1#~/.yarn/patches/ts-node-npm-11.0.0-beta.1-cb10a2a461.patch"
     typescript: "npm:^5"
   languageName: unknown
@@ -12757,6 +12769,17 @@ __metadata:
   version: 1.0.0
   resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
   checksum: 10c0/6c4032340701a9950865f7ae8ef38578d8d7053f5e10518076e6554a9381fa91bd9c6850193695c141f32b21f979c985db07265a758867bac95de05f7d8aeb39
+  languageName: node
+  linkType: hard
+
+"sweet-sfsymbols@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "sweet-sfsymbols@npm:0.5.0"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/382b258396363d85888262800649103ce9db6a61b6974c9eff4356cf66a6c42af3726c1f2eda6bdbe6cbd32c1e74de2158f4803c3b1852eb2658e24b49e4d388
   languageName: node
   linkType: hard
 
