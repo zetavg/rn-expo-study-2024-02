@@ -11,7 +11,8 @@
     "android": "expo run:android",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit --pretty",
-    "test": "jest"
+    "test": "jest",
+    "clean": "find . -maxdepth 1 \\( -name '*.ipa' -o -name '*.dSYM.zip' -o -name '*.xcarchive' -o -name '*.apk' -o -name '*.aab' \\) -exec rm -rf {} +"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
