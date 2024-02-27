@@ -219,6 +219,27 @@ jobs:
 
           fastlane android build
 
+      - name: Verify APK
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ vars.KEY_ALIAS }}
+        run: |
+          apk_file=$(ls *.apk | head -n 1)
+          if [ -z "$apk_file" ]; then
+            echo ":error::No APK file found."
+            exit 1
+          fi
+
+          expected_key_sha1="$(keytool -list -v -keystore keystore.keystore -alias "$KEY_ALIAS" -storepass "$KEYSTORE_PASSWORD" | grep "SHA1:" | awk '{print $2}')"
+          actual_key_sha1="$(keytool -printcert -jarfile "$apk_file" | grep "SHA1:" | awk '{print $2}')"
+          if [ "$expected_key_sha1" != "$actual_key_sha1" ]; then
+            echo ":error::APK is not signed with the expected key."
+            echo "Expected SHA1: $expected_key_sha1"
+            echo "Actual SHA1: $actual_key_sha1"
+            exit 1
+          fi
+          echo "'$apk_file' is signed with a key with SHA1: $actual_key_sha1"
+
       - name: Get APK Artifact name
         id: get-apk-artifact-name
         run: |
