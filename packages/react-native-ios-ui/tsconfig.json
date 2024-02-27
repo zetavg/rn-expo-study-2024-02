@@ -1,0 +1,9 @@
+{
+  "extends": "@rnstudy/tsconfig",
+  "compilerOptions": {
+    "jsx": "preserve"
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}
