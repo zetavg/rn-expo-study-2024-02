@@ -185,7 +185,7 @@ platform :ios do
     build_app(
       workspace: "ios/#{xcode_workspace}",
       configuration: configuration,
-      # skip_package_ipa: true,
+      suppress_xcode_output: true,
     )
 
     app_json_file_path = File.join(File.expand_path(__dir__), '..', 'app.json')
