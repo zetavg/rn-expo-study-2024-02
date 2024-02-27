@@ -79,7 +79,21 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     ...productConfig.android,
   },
-  plugins: [withInjectToPodfile, withAndroidDynamicProperties],
+  plugins: [
+    [
+      'expo-build-properties',
+      {
+        ios: {
+          newArchEnabled: true,
+        },
+        android: {
+          newArchEnabled: true,
+        },
+      },
+    ],
+    withInjectToPodfile,
+    withAndroidDynamicProperties,
+  ],
   extra: {
     ...config.extra,
   },
