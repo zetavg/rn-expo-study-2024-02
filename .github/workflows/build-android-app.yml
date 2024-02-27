@@ -191,13 +191,13 @@ jobs:
       # - name: BuildCache
       #   uses: mikehardy/buildcache-action@v2
       #   env:
-      #     cache-name: rn-app
+      #     cache-name: rn-app-android
       #   with:
       #     cache_key: ${{ runner.os }}-${{ env.cache-name }}-${{ vars.environment }}
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2
         env:
-          cache-name: rn-app-android-ccache
+          cache-name: rn-app-android
         with:
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ vars.environment }}
 
