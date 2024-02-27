@@ -259,8 +259,9 @@ jobs:
           fastlane ios lane_upload_to_testflight
           echo "testflight_upload_succeeded=true" >> $GITHUB_OUTPUT
 
-      - name: Export IPA
+      - name: Re-export IPA
         run: |
+          find . -maxdepth 1 \( -name '*.ipa' \) -exec rm -rf {} +
           fastlane ios export_ipa
 
       - name: Get Archive Artifact name
