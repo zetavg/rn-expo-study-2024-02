@@ -1,6 +1,11 @@
-import { Button, Text, View } from 'react-native';
+import { Button, Text } from 'react-native';
 
-import { MainStackScreenProps, StackScreenContent } from '@/navigation';
+import {
+  MainStackScreenProps,
+  StackScreenContent,
+  useMainStackNavigation,
+  useModalStackNavigation,
+} from '@/navigation';
 
 export type Params = undefined;
 
@@ -8,13 +13,19 @@ export function Example1ListScreen({
   route,
   navigation,
 }: MainStackScreenProps<'Example1List'>) {
+  const nav = useMainStackNavigation();
+  const modalStackNav = useModalStackNavigation();
   return (
     <StackScreenContent navigation={navigation} headerLargeTitle>
       <StackScreenContent.ScrollView>
         <Text>Example 1 List Screen</Text>
         <Button
           title="Go to Details"
-          onPress={() => navigation.navigate('Example1Details', { name: 'Hi' })}
+          onPress={() => nav.push('Example1Details', { name: 'Hi' })}
+        />
+        <Button
+          title="Go to Edit"
+          onPress={() => modalStackNav.push('Example1Edit', { name: 'Hi' })}
         />
 
         <Button

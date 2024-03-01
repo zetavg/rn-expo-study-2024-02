@@ -1,7 +1,5 @@
-import React, { useMemo } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { BlurView } from 'expo-blur';
 
 import {
   type MainStackParamList as ExampleFeature1MainStackParamList,
@@ -13,7 +11,7 @@ import {
 } from '@/features/example-feature-2/screens';
 
 import { useStackNavigatorScreenOptions } from './options/useStackNavigatorScreenOptions';
-import { MainStack } from './navigators';
+import { MainStack, mainStackNavigatorID } from './navigators';
 
 // 1. Compose MainStackNavigation by including MainStackScreens from each feature
 export function MainStackNavigation({
@@ -25,6 +23,7 @@ export function MainStackNavigation({
 
   return (
     <MainStack.Navigator
+      id={mainStackNavigatorID}
       initialRouteName={initialRouteName}
       screenOptions={screenOptions}
     >
