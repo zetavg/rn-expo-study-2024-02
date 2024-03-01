@@ -6774,6 +6774,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-system-ui@npm:~2.9.3":
+  version: 2.9.3
+  resolution: "expo-system-ui@npm:2.9.3"
+  dependencies:
+    "@react-native/normalize-color": "npm:^2.0.0"
+    debug: "npm:^4.3.2"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/145427e8c097db5d9735224eda9496aa1f9ac3d4ee081c44714272d4f29a27649c0dd3fccc0fc62063850b034e5dfcc0042a71ee4de0a3cebfacf68fbca567ae
+  languageName: node
+  linkType: hard
+
 "expo-updates-interface@npm:~0.15.1":
   version: 0.15.3
   resolution: "expo-updates-interface@npm:0.15.3"
@@ -11367,16 +11379,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-screens@npm:~3.29.0":
-  version: 3.29.0
-  resolution: "react-native-screens@npm:3.29.0"
+"react-native-screens@npm:3.28.0":
+  version: 3.28.0
+  resolution: "react-native-screens@npm:3.28.0"
   dependencies:
     react-freeze: "npm:^1.0.0"
     warn-once: "npm:^0.1.0"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/90c32eb5452007f64c2f56412c671de98b4b89f09cf09cc7a7dca1cb23b1ac6de9bc726c67e774c7cb68dbd05bb329c053c1c2f071f534ad4e27d9d60be76eb0
+  checksum: 10c0/83b881a76aa44da52c12b88a2bdbb5b2183436e7a281de52a192897a92ae029c0dc89dbe9f7eb15f8dd1521cd8620eac44a64503206dab11a0dd7f4ebae39e8e
   languageName: node
   linkType: hard
 
@@ -11947,6 +11959,7 @@ __metadata:
     expo-constants: "npm:~15.4.5"
     expo-dev-client: "npm:~3.3.8"
     expo-status-bar: "npm:~1.11.1"
+    expo-system-ui: "npm:~2.9.3"
     jest: "npm:^29"
     jest-expo: "npm:^50.0.2"
     json5: "npm:^2.2.3"
@@ -11954,7 +11967,7 @@ __metadata:
     react: "npm:18.2.0"
     react-native: "npm:0.73.4"
     react-native-safe-area-context: "npm:4.8.2"
-    react-native-screens: "npm:~3.29.0"
+    react-native-screens: "npm:3.28.0"
     react-native-sfsymbols: "npm:^1.2.1"
     sweet-sfsymbols: "npm:^0.5.0"
     ts-node: "patch:ts-node@npm%3A11.0.0-beta.1#~/.yarn/patches/ts-node-npm-11.0.0-beta.1-cb10a2a461.patch"

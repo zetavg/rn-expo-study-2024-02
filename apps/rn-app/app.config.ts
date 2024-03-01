@@ -84,7 +84,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'expo-build-properties',
       {
         ios: {
-          newArchEnabled: true,
+          // Header `blurEffect` of react-native-screens (used by @react-navigation/native-stack) is not supported in the new architecture yet.
+          // See: https://github.com/software-mansion/react-native-screens/blob/421e22c61243a8c0761c786ccb68c3b209aa1131/ios/RNSScreenStackHeaderConfig.mm#L385-L387
+          newArchEnabled: false,
         },
         android: {
           newArchEnabled: true,
