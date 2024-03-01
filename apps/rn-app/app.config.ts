@@ -177,10 +177,10 @@ function withAndroidDynamicProperties(config: ExpoConfig) {
 const android_signing_configs = `
     signingConfigs {
         release {
-            storeFile file(KEYSTORE_FILE)
-            storePassword KEYSTORE_PASSWORD
-            keyAlias KEY_ALIAS
-            keyPassword KEY_PASSWORD
+            storeFile file(project.hasProperty('KEYSTORE_FILE') ? KEYSTORE_FILE : 'debug.keystore')
+            storePassword project.hasProperty('KEYSTORE_PASSWORD') ? KEYSTORE_PASSWORD : 'android'
+            keyAlias project.hasProperty('KEY_ALIAS') ? KEY_ALIAS : 'androiddebugkey'
+            keyPassword project.hasProperty('KEY_PASSWORD') ? KEY_PASSWORD : 'android'
         }
     }
 `;
