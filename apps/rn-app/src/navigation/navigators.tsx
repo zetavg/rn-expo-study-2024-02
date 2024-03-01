@@ -5,7 +5,7 @@
  *
  * Instead of defining navigators inside every navigation file, circular dependencies can be avoided by defining them here.
  *
- * Here is an diagram to illustrate the relationship between navigators and screens, as "A → B" means "B imports A":
+ * Here is an diagram to illustrate the relationship between navigators and screens, as "A → B" means "A is imported by B":
  *
  *   navigation/navigators → features/.../screens
  *     │                       ↓

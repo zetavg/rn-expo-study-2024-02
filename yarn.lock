@@ -11379,16 +11379,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-screens@npm:3.28.0":
-  version: 3.28.0
-  resolution: "react-native-screens@npm:3.28.0"
+"react-native-screens@npm:3.29.0":
+  version: 3.29.0
+  resolution: "react-native-screens@npm:3.29.0"
   dependencies:
     react-freeze: "npm:^1.0.0"
     warn-once: "npm:^0.1.0"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/83b881a76aa44da52c12b88a2bdbb5b2183436e7a281de52a192897a92ae029c0dc89dbe9f7eb15f8dd1521cd8620eac44a64503206dab11a0dd7f4ebae39e8e
+  checksum: 10c0/90c32eb5452007f64c2f56412c671de98b4b89f09cf09cc7a7dca1cb23b1ac6de9bc726c67e774c7cb68dbd05bb329c053c1c2f071f534ad4e27d9d60be76eb0
   languageName: node
   linkType: hard
 
@@ -11967,7 +11967,7 @@ __metadata:
     react: "npm:18.2.0"
     react-native: "npm:0.73.4"
     react-native-safe-area-context: "npm:4.8.2"
-    react-native-screens: "npm:3.28.0"
+    react-native-screens: "npm:3.29.0"
     react-native-sfsymbols: "npm:^1.2.1"
     sweet-sfsymbols: "npm:^0.5.0"
     ts-node: "patch:ts-node@npm%3A11.0.0-beta.1#~/.yarn/patches/ts-node-npm-11.0.0-beta.1-cb10a2a461.patch"

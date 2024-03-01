@@ -89,7 +89,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           newArchEnabled: false,
         },
         android: {
-          newArchEnabled: true,
+          // `@react-navigation/native-stack` isn't working with the new architecture on some Android devices.
+          newArchEnabled: false,
         },
       },
     ],
