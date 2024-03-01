@@ -3377,6 +3377,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@rnstudy/ios-colors@workspace:^, @rnstudy/ios-colors@workspace:packages/ios-colors":
+  version: 0.0.0-use.local
+  resolution: "@rnstudy/ios-colors@workspace:packages/ios-colors"
+  dependencies:
+    "@rnstudy/eslint-config": "workspace:^"
+    "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/tsconfig": "workspace:^"
+    "@types/eslint": "npm:^8"
+    "@types/jest": "npm:^29"
+    eslint: "npm:^8"
+    jest: "npm:^29"
+    typescript: "npm:^5"
+  languageName: unknown
+  linkType: soft
+
 "@rnstudy/jest-config@workspace:^, @rnstudy/jest-config@workspace:configs/jest-config":
   version: 0.0.0-use.local
   resolution: "@rnstudy/jest-config@workspace:configs/jest-config"
@@ -3413,6 +3428,7 @@ __metadata:
   resolution: "@rnstudy/react-native-ios-ui@workspace:packages/react-native-ios-ui"
   dependencies:
     "@rnstudy/eslint-config": "workspace:^"
+    "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
     "@types/eslint": "npm:^8"
@@ -6592,6 +6608,15 @@ __metadata:
     invariant: "npm:^2.2.4"
     md5-file: "npm:^3.2.3"
   checksum: 10c0/45fd52075e98a8813184727890ef9e992bd727684ca896ab097e4e380503fad62e8bb5a7f98b7fc78665764f54c84f6d889d2d1d913f769f1df7adf34f8965b2
+  languageName: node
+  linkType: hard
+
+"expo-blur@npm:~12.9.2":
+  version: 12.9.2
+  resolution: "expo-blur@npm:12.9.2"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/dbe6dc66ff8b047d069c4d99abef6594201487a807af032572d4006837081bb074bbbf2da066a680b7f5583d4d9753187130979c356d8c9f275ffc51691bc610
   languageName: node
   linkType: hard
 
@@ -11917,6 +11942,7 @@ __metadata:
     "@types/react-test-renderer": "npm:^18.0.7"
     eslint: "npm:^8"
     expo: "npm:~50.0.6"
+    expo-blur: "npm:~12.9.2"
     expo-build-properties: "npm:~0.11.1"
     expo-constants: "npm:~15.4.5"
     expo-dev-client: "npm:~3.3.8"
