@@ -2,7 +2,7 @@
   "name": "rn-app",
   "private": true,
   "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "index.ts",
   "scripts": {
     "start": "expo start",
     "prebuild": "ENVIRONMENT=$1 expo prebuild --skip-dependency-update react-native,react --no-install --platform $0 && echo \"$1\" > \"$0/ENVIRONMENT.txt\"",
