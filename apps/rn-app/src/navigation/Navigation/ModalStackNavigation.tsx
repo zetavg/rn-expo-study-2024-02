@@ -1,9 +1,10 @@
 import { modalStackScreens as feature1ModalStackScreens } from '@/features/example1/screens';
 import { createModalStackNavigator } from '@rnstudy/react-native-navigation';
 
+import config from '../config';
+import { registerModalStackNavigation } from '../hooks';
+
 import { BottomTabNavigation } from './BottomTabNavigation';
-import { registerModalStackNavigation } from './hooks';
-import { navConfig } from './navConfig';
 
 export const ModalStackNavigation = createModalStackNavigator({
   id: 'modal-stack',
@@ -12,7 +13,7 @@ export const ModalStackNavigation = createModalStackNavigator({
     ...feature1ModalStackScreens,
   },
   defaultInitialRouteName: 'Main',
-  config: navConfig,
+  config,
 });
 
 export type ModalStackNavigationType = typeof ModalStackNavigation;

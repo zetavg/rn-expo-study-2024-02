@@ -6,6 +6,6 @@ export type UseColorSchemeHook = () => 'dark' | 'light';
 /**
  * Configuration for the navigation library.
  */
-export type NavConfig = {
+export type NavigationConfig = {
   useColorScheme: UseColorSchemeHook;
 };

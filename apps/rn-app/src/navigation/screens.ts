@@ -1,6 +1,6 @@
 import { getScreenContentComponents } from '@rnstudy/react-native-navigation';
 
-import { navConfig } from './navConfig';
+import config from './config';
 
 export const { StackScreenContent, ModalScreenContent } =
-  getScreenContentComponents(navConfig);
+  getScreenContentComponents(config);

@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import * as iosColors from '@rnstudy/ios-colors';
 
-import { NavConfig } from '../../types';
+import { NavigationConfig } from '../../types';
 
 type HeaderSearchBarOptions = {
   /** A callback that gets called when the text changes. It receives the current text value of the search bar. */
@@ -40,7 +40,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export function getStackScreenContentComponent(config: NavConfig) {
+export function getStackScreenContentComponent(config: NavigationConfig) {
   const { useColorScheme } = config;
 
   function StackScreenContent({

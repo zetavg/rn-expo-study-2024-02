@@ -8,14 +8,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import * as iosColors from '@rnstudy/ios-colors';
 
-import { NavConfig } from '../../types';
+import { NavigationConfig } from '../../types';
 
 type Props = {
   title: string;
   children: React.ReactNode;
 };
 
-export function getModalScreenContentComponent(config: NavConfig) {
+export function getModalScreenContentComponent(config: NavigationConfig) {
   const { useColorScheme } = config;
 
   function ModalScreenContent({ title, children }: Props) {

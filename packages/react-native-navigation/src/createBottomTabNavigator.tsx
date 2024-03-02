@@ -6,7 +6,7 @@ import { BlurView } from 'expo-blur';
 import {
   AnyBottomTabNavigatorScreens,
   GeneratedBottomTabNavigator,
-  NavConfig,
+  NavigationConfig,
 } from './types';
 
 /**
@@ -25,7 +25,7 @@ export function createBottomTabNavigator<
   /** Screens in the navigator. */
   screens: S;
   /** Config object. */
-  config: NavConfig;
+  config: NavigationConfig;
 }): GeneratedBottomTabNavigator<ID, S> {
   const BottomTab = rnCreateBottomTabNavigator();
 

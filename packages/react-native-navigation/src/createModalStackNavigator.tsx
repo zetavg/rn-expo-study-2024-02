@@ -7,7 +7,7 @@ import * as iosColors from '@rnstudy/ios-colors';
 import {
   AnyStackNavigatorScreens,
   GeneratedStackNavigator,
-  NavConfig,
+  NavigationConfig,
   StackParamListOfScreens,
 } from './types';
 
@@ -30,7 +30,7 @@ export function createModalStackNavigator<
   /** The default initial route name of the navigator. */
   defaultInitialRouteName: keyof S;
   /** Config object. */
-  config: NavConfig;
+  config: NavigationConfig;
 }) {
   const Stack = createStackNavigator<StackParamListOfScreens<S>>();
 
