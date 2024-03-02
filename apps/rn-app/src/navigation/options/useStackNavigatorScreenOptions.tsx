@@ -2,8 +2,12 @@ import React, { useMemo } from 'react';
 import { Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import useColorScheme from '@/hooks/useColorScheme';
+import * as iosColors from '@rnstudy/ios-colors';
+
 export function useStackNavigatorScreenOptions() {
-  const isDarkMode = false;
+  const colorScheme = useColorScheme();
+
   const screenOptions = useMemo<
     React.ComponentProps<
       ReturnType<typeof createNativeStackNavigator>['Navigator']
@@ -12,9 +16,12 @@ export function useStackNavigatorScreenOptions() {
     () => ({
       ...(Platform.OS === 'ios'
         ? {
+            headerTitleStyle: {
+              color: iosColors[colorScheme].uiColors.label,
+            },
             // Blur effect.
             headerTransparent: true,
-            headerBlurEffect: 'light',
+            headerBlurEffect: colorScheme,
             headerShadowVisible: true,
             // Set a close-to-transparent background to make `headerShadowVisible: true` work.
             // See: https://github.com/react-navigation/react-navigation/issues/10845#issuecomment-1276312567
@@ -47,7 +54,7 @@ export function useStackNavigatorScreenOptions() {
           }
         : {}),
     }),
-    [isDarkMode],
+    [colorScheme],
   );
 
   return screenOptions;

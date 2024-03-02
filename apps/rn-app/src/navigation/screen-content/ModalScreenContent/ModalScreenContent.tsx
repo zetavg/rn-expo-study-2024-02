@@ -3,10 +3,12 @@ import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import { ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 
-import * as iosColors from '@rnstudy/ios-colors';
-import useColorScheme from '@/hooks/useColorScheme';
+import { useStackNavigatorScreenOptions } from '../../options/useStackNavigatorScreenOptions';
 
 type Props<
   ParamList extends ParamListBase,
@@ -14,30 +16,52 @@ type Props<
   NavigatorID extends string | undefined = undefined,
 > = {
   navigation: NativeStackNavigationProp<ParamList, RouteName, NavigatorID>;
-  /**
-   * Whether to enable header with large title which collapses to regular header on scroll.
-   *
-   * Only supported on iOS.
-   */
-  headerLargeTitle?: boolean;
+  title: string;
   children: React.ReactNode;
 };
 
-export function StackScreenContent<
+export function ModalScreenContent<
   ParamList extends ParamListBase,
   RouteName extends keyof ParamList = string,
   NavigatorID extends string | undefined = undefined,
->({
-  navigation,
-  headerLargeTitle,
-  children,
-}: Props<ParamList, RouteName, NavigatorID>) {
-  const colorScheme = useColorScheme();
+>({ navigation, title, children }: Props<ParamList, RouteName, NavigatorID>) {
+  /**
+   * This navigator is only used to render native styled stack navigator header.
+   */
+  const Stack = createNativeStackNavigator();
 
-  const backgroundColor = useMemo(
-    () => iosColors[colorScheme].uiColors.systemGroupedBackground,
-    [colorScheme],
+  const Content = useMemo(() => () => <>{children}</>, []);
+
+  const screenOptions = useMemo<
+    React.ComponentProps<
+      ReturnType<typeof createNativeStackNavigator>['Navigator']
+    >['screenOptions']
+  >(
+    () => ({
+      ...(Platform.OS === 'ios'
+        ? {
+            // Blur effect.
+            headerTransparent: true,
+            headerBlurEffect: 'light',
+            headerShadowVisible: true,
+            // Set a close-to-transparent background to make `headerShadowVisible: true` work.
+            // See: https://github.com/react-navigation/react-navigation/issues/10845#issuecomment-1276312567
+            headerStyle: { backgroundColor: 'rgba(255, 255, 255, 0.002)' },
+          }
+        : {}),
+    }),
+    [],
   );
+
+  return (
+    <Stack.Navigator screenOptions={screenOptions}>
+      <Stack.Screen name="ModalScreenContent" options={{ title }}>
+        {() => children}
+      </Stack.Screen>
+    </Stack.Navigator>
+  );
+  // TODO: Use dynamic color
+  const backgroundColor = '#eeeeee';
 
   useEffect(() => {
     navigation.setOptions({
@@ -61,16 +85,16 @@ export function StackScreenContent<
         };
       })(),
     });
-  }, [headerLargeTitle, navigation, backgroundColor]);
+  }, []);
 
   return (
-    <View style={[styles.stackScreenContent, { backgroundColor }]}>
+    <View style={[styles.modalScreenContent, { backgroundColor }]}>
       {children}
     </View>
   );
 }
 
-StackScreenContent.ScrollView = function StackScreenContentScrollView(
+ModalScreenContent.ScrollView = function ModalScreenContentScrollView(
   props: React.ComponentProps<typeof ScrollView>,
 ) {
   const safeAreaInsets = useSafeAreaInsets();
@@ -91,7 +115,7 @@ StackScreenContent.ScrollView = function StackScreenContentScrollView(
             bottom: Math.max(0, bottomTabBarHeight - safeAreaInsets.bottom),
           }
         : undefined,
-    [bottomTabBarHeight, safeAreaInsets.bottom],
+    [bottomTabBarHeight],
   );
 
   return (
@@ -109,9 +133,9 @@ StackScreenContent.ScrollView = function StackScreenContentScrollView(
 };
 
 const styles = StyleSheet.create({
-  stackScreenContent: {
+  modalScreenContent: {
     flex: 1,
   },
 });
 
-export default StackScreenContent;
+export default ModalScreenContent;

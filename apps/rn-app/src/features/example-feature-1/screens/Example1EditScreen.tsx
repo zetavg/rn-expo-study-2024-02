@@ -1,6 +1,7 @@
-import { Button, Text } from 'react-native';
+import { useState } from 'react';
+import { Button, Text, TextInput } from 'react-native';
 
-import { ModalStackScreenProps, StackScreenContent } from '@/navigation';
+import { ModalScreenContent, ModalStackScreenProps } from '@/navigation';
 
 export type Params = { name: string };
 
@@ -8,9 +9,11 @@ export function Example1EditScreen({
   route,
   navigation,
 }: ModalStackScreenProps<'Example1Edit'>) {
+  const [text, setText] = useState('');
+
   return (
-    <StackScreenContent navigation={navigation} headerLargeTitle>
-      <StackScreenContent.ScrollView>
+    <ModalScreenContent navigation={navigation} title="Example Edit">
+      <ModalScreenContent.ScrollView>
         <Text>Edit Screen: {route.params.name}</Text>
         <Button
           title="Go to Edit... again"
@@ -21,9 +24,125 @@ export function Example1EditScreen({
           title="Go back to first screen in stack"
           onPress={() => navigation.popToTop()}
         />
+        <TextInput value={text} onChangeText={setText} />
         <Text>Edit Screen: {route.params.name}</Text>
-      </StackScreenContent.ScrollView>
-    </StackScreenContent>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <TextInput value={text} onChangeText={setText} />
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <TextInput value={text} onChangeText={setText} />
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <TextInput value={text} onChangeText={setText} />
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <Text>Edit Screen: {route.params.name}</Text>
+        <TextInput value={text} onChangeText={setText} />
+        <Text>Edit Screen: {route.params.name}</Text>
+      </ModalScreenContent.ScrollView>
+    </ModalScreenContent>
   );
 }
 

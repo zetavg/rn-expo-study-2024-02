@@ -12302,6 +12302,7 @@ __metadata:
     "@react-navigation/native-stack": "npm:^7.0.0-alpha.11"
     "@react-navigation/stack": "npm:^7.0.0-alpha.11"
     "@rnstudy/eslint-config": "workspace:^"
+    "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
     "@rnstudy/react-native-ios-ui": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"

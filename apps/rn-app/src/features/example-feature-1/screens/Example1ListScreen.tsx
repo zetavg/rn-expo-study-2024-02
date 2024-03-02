@@ -1,4 +1,5 @@
-import { Button, Text } from 'react-native';
+import { useState } from 'react';
+import { Button, Text, TextInput } from 'react-native';
 
 import {
   MainStackScreenProps,
@@ -15,6 +16,8 @@ export function Example1ListScreen({
 }: MainStackScreenProps<'Example1List'>) {
   const nav = useMainStackNavigation();
   const modalStackNav = useModalStackNavigation();
+  const [text, setText] = useState('');
+
   return (
     <StackScreenContent navigation={navigation} headerLargeTitle>
       <StackScreenContent.ScrollView>
@@ -32,6 +35,25 @@ export function Example1ListScreen({
           title="Go to Example 2 List"
           onPress={() => navigation.navigate('Example2List')}
         />
+        <TextInput value={text} onChangeText={setText} />
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <Text>Example 1 List Screen</Text>
+        <TextInput value={text} onChangeText={setText} />
         <Text>Example 1 List Screen</Text>
         <Text>Example 1 List Screen</Text>
         <Text>Example 1 List Screen</Text>
@@ -56,27 +78,12 @@ export function Example1ListScreen({
         <Text>Example 1 List Screen</Text>
         <Text>Example 1 List Screen</Text>
         <Text>Example 1 List Screen</Text>
+        <TextInput value={text} onChangeText={setText} />
         <Text>Example 1 List Screen</Text>
         <Text>Example 1 List Screen</Text>
         <Text>Example 1 List Screen</Text>
         <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
-        <Text>Example 1 List Screen</Text>
+        <TextInput value={text} onChangeText={setText} />
         <Text>Example 1 List Screen</Text>
         <Text>End</Text>
       </StackScreenContent.ScrollView>
