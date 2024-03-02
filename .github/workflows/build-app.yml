@@ -1,6 +1,6 @@
 name: Build App
 run-name: ${{ (
-    ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && format('Build for PR {0}{1}', '#', github.event.pull_request.number)) ||
+    ((github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && format('Build for PR {0}{1} - {2}', '#', github.event.pull_request.number, github.event.pull_request.title)) ||
     (inputs.merge-pr && format('Build for PR {0}{1}', '#', inputs.merge-pr)) ||
     (github.event_name == 'release' && format('Release {0}', github.event.release.tag_name)) ||
     (github.event_name == 'workflow_dispatch' && format(
@@ -11,7 +11,7 @@ run-name: ${{ (
         (inputs.build-android-development && ' Android-dev' || '')
       )) ||
     (github.event_name == 'schedule' && format('Scheduled Build')) ||
-    'Build App'
+    format('Build App - {0}', github.event.head_commit.message)
   ) }}
 on:
   push:
