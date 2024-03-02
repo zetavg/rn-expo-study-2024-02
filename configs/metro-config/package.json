@@ -7,9 +7,6 @@
     "pack-package": "yarn pack",
     "publish-packed-package": "npm publish package.tgz --access public"
   },
-  "peerDependencies": {
-    "expo": ">=50"
-  },
   "dependencies": {
     "@yarnpkg/core": "^4"
   },

@@ -3707,8 +3707,6 @@ __metadata:
     "@yarnpkg/core": "npm:^4"
     eslint: "npm:^8"
     expo: "npm:>=50"
-  peerDependencies:
-    expo: ">=50"
   languageName: unknown
   linkType: soft
 
