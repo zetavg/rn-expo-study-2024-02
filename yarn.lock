@@ -3678,8 +3678,6 @@ __metadata:
     eslint: "npm:^8"
     expo: "npm:>=50"
     json5: "npm:*"
-  peerDependencies:
-    expo: ">=50"
   languageName: unknown
   linkType: soft
 
