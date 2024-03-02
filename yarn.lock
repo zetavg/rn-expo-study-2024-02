@@ -3668,6 +3668,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@rnstudy/expo-app-config@workspace:^, @rnstudy/expo-app-config@workspace:configs/expo-app-config":
+  version: 0.0.0-use.local
+  resolution: "@rnstudy/expo-app-config@workspace:configs/expo-app-config"
+  dependencies:
+    "@rnstudy/eslint-config": "workspace:^"
+    "@types/eslint": "npm:^8"
+    "@types/node": "npm:*"
+    eslint: "npm:^8"
+    expo: "npm:>=50"
+    json5: "npm:*"
+  peerDependencies:
+    expo: ">=50"
+  languageName: unknown
+  linkType: soft
+
 "@rnstudy/ios-colors@workspace:^, @rnstudy/ios-colors@workspace:packages/ios-colors":
   version: 0.0.0-use.local
   resolution: "@rnstudy/ios-colors@workspace:packages/ios-colors"
@@ -12873,6 +12888,7 @@ __metadata:
     "@babel/runtime": "npm:7.23.9"
     "@expo/config-plugins": "npm:^7.8.4"
     "@rnstudy/eslint-config": "workspace:^"
+    "@rnstudy/expo-app-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
     "@rnstudy/metro-config": "workspace:^"
