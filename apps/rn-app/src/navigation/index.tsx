@@ -1,12 +1,22 @@
-export {
-  type MainStackParamList,
-  type MainStackScreenProps,
-} from './MainStackNavigation';
-export {
-  type ModalStackParamList,
-  type ModalStackScreenProps,
-} from './ModalStackNavigation';
-export * from './navigators';
-export * from './screen-content';
+import React from 'react';
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from '@react-navigation/native';
 
-// Note: the Navigation root ("./Navigation") is not re-exported from here to avoid circular dependencies.
+import { BottomTabNavigation } from './BottomTabNavigation';
+import { MainStackNavigation } from './MainStackNavigation';
+import { ModalStackNavigation } from './ModalStackNavigation';
+
+/**
+ * Navigation root. Use this component in the main app file to render the whole navigation tree.
+ */
+export default function Navigation() {
+  const navigationRef = useNavigationContainerRef();
+
+  return (
+    <NavigationContainer ref={navigationRef}>
+      <ModalStackNavigation />
+    </NavigationContainer>
+  );
+}

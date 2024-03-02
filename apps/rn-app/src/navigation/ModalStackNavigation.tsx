@@ -1,38 +1,20 @@
-import React from 'react';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { modalStackScreens as feature1ModalStackScreens } from '@/features/example1/screens';
+import { createModalStackNavigator } from '@/navigation-lib';
 
-import {
-  type ModalStackParamList as ExampleFeature1ModalStackParamList,
-  ModalStackScreens as ExampleFeature1ModalStackScreens,
-} from '@/features/example-feature-1/screens';
+import { BottomTabNavigation } from './BottomTabNavigation';
+import { registerModalStackNavigation } from './hooks';
+import { navConfig } from './navConfig';
 
-import { useModalStackNavigatorScreenOptions } from './options/useModalStackNavigatorScreenOptions';
-import BottomTabNavigation from './BottomTabNavigation';
-import { ModalStack, modalStackNavigatorID } from './navigators';
+export const ModalStackNavigation = createModalStackNavigator({
+  id: 'modal-stack',
+  screens: {
+    Main: BottomTabNavigation,
+    ...feature1ModalStackScreens,
+  },
+  defaultInitialRouteName: 'Main',
+  config: navConfig,
+});
 
-// 1. Compose ModalStackNavigation by including ModalStackScreens from each feature
-export function ModalStackNavigation() {
-  const screenOptions = useModalStackNavigatorScreenOptions();
+export type ModalStackNavigationType = typeof ModalStackNavigation;
 
-  return (
-    <ModalStack.Navigator
-      id={modalStackNavigatorID}
-      initialRouteName="Main"
-      screenOptions={screenOptions}
-    >
-      <ModalStack.Screen name="Main" component={BottomTabNavigation} />
-
-      {ExampleFeature1ModalStackScreens}
-    </ModalStack.Navigator>
-  );
-}
-
-// 2. Create ModalStackParamList by combining ModalStackParamList from each feature
-export type ModalStackParamList = {
-  Main: undefined;
-} & ExampleFeature1ModalStackParamList;
-
-export type ModalStackScreenProps<
-  RouteName extends keyof ModalStackParamList,
-  NavigatorID extends string | undefined = undefined,
-> = NativeStackScreenProps<ModalStackParamList, RouteName, NavigatorID>;
+registerModalStackNavigation(ModalStackNavigation);

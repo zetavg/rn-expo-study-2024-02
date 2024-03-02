@@ -1,26 +1,21 @@
-import React, { useMemo } from 'react';
-import { Platform, StyleSheet } from 'react-native';
-import { BlurView } from 'expo-blur';
+import { createBottomTabNavigator } from '@/navigation-lib';
 
-import { useBottomTabNavigatorScreenOptions } from './options/useBottomTabNavigatorScreenOptions';
-import { getMainStackNavigationWithInitialRouteName } from './MainStackNavigation';
-import { BottomTab } from './navigators';
+import { MainStackNavigation } from './MainStackNavigation';
+import { navConfig } from './navConfig';
 
-export function BottomTabNavigation() {
-  const screenOptions = useBottomTabNavigatorScreenOptions();
+export const BottomTabNavigation = createBottomTabNavigator({
+  id: 'bottom-tab',
+  screens: {
+    Home: {
+      screen: MainStackNavigation.withInitialRouteName('Example1List'),
+      options: {},
+    },
+    Details: {
+      screen: MainStackNavigation.withInitialRouteName('Example1Details'),
+      options: {},
+    },
+  },
+  config: navConfig,
+});
 
-  return (
-    <BottomTab.Navigator screenOptions={screenOptions}>
-      <BottomTab.Screen
-        name="Example1"
-        component={getMainStackNavigationWithInitialRouteName('Example1List')}
-      />
-      <BottomTab.Screen
-        name="Example2"
-        component={getMainStackNavigationWithInitialRouteName('Example2List')}
-      />
-    </BottomTab.Navigator>
-  );
-}
-
-export default BottomTabNavigation;
+export type BottomTabNavigationType = typeof BottomTabNavigation;
