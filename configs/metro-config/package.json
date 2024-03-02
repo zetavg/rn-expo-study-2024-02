@@ -1,0 +1,22 @@
+{
+  "name": "@rnstudy/metro-config",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit --pretty",
+    "pack-package": "yarn pack",
+    "publish-packed-package": "npm publish package.tgz --access public"
+  },
+  "peerDependencies": {
+    "expo": ">=50"
+  },
+  "dependencies": {
+    "@yarnpkg/core": "^4"
+  },
+  "devDependencies": {
+    "@rnstudy/eslint-config": "workspace:^",
+    "@types/eslint": "^8",
+    "eslint": "^8",
+    "expo": ">=50"
+  }
+}

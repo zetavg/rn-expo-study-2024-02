@@ -1,0 +1,53 @@
+const path = require('path');
+
+const { getDefaultConfig } = require('expo/metro-config');
+const { Project, Configuration } = require('@yarnpkg/core');
+
+async function getMetroConfig(dirname) {
+  /** @type {import('expo/metro-config').MetroConfig} */
+  const config = getDefaultConfig(dirname);
+
+  // Stops Metro from resolving modules from node_modules in the root workspace if there is a match in the current workspace
+  config.resolver.disableHierarchicalLookup = true;
+
+  await addLocalDependencyNodeModulesToNodeModulesPath(config, dirname);
+
+  return config;
+}
+
+/**
+ * Sometimes, dependencies of workspaces are not hoisted to the root node_modules and will be installed in the node_modules directory inside the workspace, for example, `packages/some-package/node_modules`.
+ * In such case, Metro have trouble resolving those workspace dependencies. To resolve this, here we add all the possible node_modules paths of local dependencies to the `nodeModulesPaths` of Metro to make sure Metro can resolve them.
+ */
+async function addLocalDependencyNodeModulesToNodeModulesPath(config, dirname) {
+  const configuration = await Configuration.find(dirname, null, {
+    strict: false,
+  });
+
+  const { project } = await Project.find(configuration, dirname);
+  const localPackageMap = Object.fromEntries(
+    project.workspaces.map((w) => [w.manifest.raw.name, w.cwd]),
+  );
+
+  const packageJsonPath = path.join(dirname, 'package.json');
+  const package = require(packageJsonPath);
+  const localDependencyNames = Object.entries(package.dependencies)
+    .filter(([_name, version]) => version.startsWith('workspace:'))
+    .map(([name, _version]) => name);
+  const localDependencyDirectories = localDependencyNames.map((d) => {
+    const directory = localPackageMap[d];
+    if (!directory) {
+      throw new Error(
+        `Cannot locate package directory for local dependency "${d}" specified in ${packageJsonPath}. Known local packages in yarn project: ${Object.keys(localPackageMap).join(', ')}.`,
+      );
+    }
+
+    return directory;
+  });
+
+  config.resolver.nodeModulesPaths.push(
+    ...localDependencyDirectories.map((d) => path.join(d, 'node_modules')),
+  );
+}
+
+exports.getMetroConfig = getMetroConfig;
