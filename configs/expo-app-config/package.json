@@ -9,6 +9,7 @@
     "publish-packed-package": "npm publish package.tgz --access public"
   },
   "dependencies": {
+    "@expo/config-plugins": "^7",
     "@types/node": "*",
     "json5": "*"
   },

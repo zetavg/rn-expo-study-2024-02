@@ -1,6 +1,11 @@
 const { withPlugins } = require('expo/config-plugins');
 
 const withProductJson = require('./withProductJson').default;
+const withAutoAndroidVersionCode =
+  require('./withAutoAndroidVersionCode').default;
+const withAndroidCustomizableSigningConfig =
+  require('./withAndroidCustomizableSigningConfig').default;
+const withIOSBuildCacheSupport = require('./withIOSBuildCacheSupport').default;
 
 /**
  * Applies a default set of plugins.
@@ -15,6 +20,9 @@ function withDefaultPlugins(config, { dirname, environment }) {
   return withPlugins(config, [
     // List of plugins and their inputs
     [withProductJson, { dirname, environment }],
+    withAutoAndroidVersionCode,
+    withAndroidCustomizableSigningConfig,
+    withIOSBuildCacheSupport,
   ]);
 }
 
