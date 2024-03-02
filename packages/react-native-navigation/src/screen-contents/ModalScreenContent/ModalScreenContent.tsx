@@ -24,6 +24,16 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
      */
     const Stack = createNativeStackNavigator();
 
+    const colorScheme = useColorScheme();
+
+    const backgroundColor = useMemo(() => {
+      switch (Platform.OS) {
+        default:
+        case 'ios':
+          return iosColors[colorScheme].uiColors.systemGroupedBackground;
+      }
+    }, [colorScheme]);
+
     const screenOptions = useMemo<
       React.ComponentProps<
         ReturnType<typeof createNativeStackNavigator>['Navigator']
@@ -39,16 +49,26 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
               // Set a close-to-transparent background to make `headerShadowVisible: true` work.
               // See: https://github.com/react-navigation/react-navigation/issues/10845#issuecomment-1276312567
               headerStyle: { backgroundColor: 'rgba(255, 255, 255, 0.002)' },
+
+              headerLargeTitleShadowVisible: false,
+              headerLargeStyle: {
+                // There's no way to set the background color of the large title header as transparent, so we need to set it to the same color as the background here
+                backgroundColor,
+              },
             }
           : {}),
       }),
-      [],
+      [backgroundColor],
     );
 
     return (
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen name="ModalScreenContent" options={{ title }}>
-          {() => children}
+          {() => (
+            <View style={[styles.modalScreenContent, { backgroundColor }]}>
+              {children}
+            </View>
+          )}
         </Stack.Screen>
       </Stack.Navigator>
     );
@@ -94,5 +114,11 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
 
   return ModalScreenContent;
 }
+
+const styles = StyleSheet.create({
+  modalScreenContent: {
+    flex: 1,
+  },
+});
 
 export default getModalScreenContentComponent;
