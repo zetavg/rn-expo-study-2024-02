@@ -3,7 +3,7 @@ import { Button, Text } from 'react-native';
 
 import { useMainStackNavigation } from '@/navigation/hooks';
 import { StackScreenContent } from '@/navigation/screens';
-import type { StackScreenProps } from '@/navigation-lib';
+import type { StackScreenProps } from '@rnstudy/react-native-navigation';
 
 export default function Example1ListScreen({ route }: StackScreenProps) {
   const navigation = useMainStackNavigation();

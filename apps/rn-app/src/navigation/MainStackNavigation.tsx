@@ -1,5 +1,5 @@
 import { mainStackScreens as feature1MainStackScreens } from '@/features/example1/screens';
-import { createStackNavigator } from '@/navigation-lib';
+import { createStackNavigator } from '@rnstudy/react-native-navigation';
 
 import { registerMainStackNavigation } from './hooks';
 import { navConfig } from './navConfig';

@@ -1,4 +1,4 @@
-import { createBottomTabNavigator } from '@/navigation-lib';
+import { createBottomTabNavigator } from '@rnstudy/react-native-navigation';
 
 import { MainStackNavigation } from './MainStackNavigation';
 import { navConfig } from './navConfig';

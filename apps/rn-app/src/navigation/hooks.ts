@@ -1,4 +1,4 @@
-import { generateUseNavigationHook } from '@/navigation-lib';
+import { generateUseNavigationHook } from '@rnstudy/react-native-navigation';
 
 import type { MainStackNavigationType } from './MainStackNavigation';
 import type { ModalStackNavigationType } from './ModalStackNavigation';

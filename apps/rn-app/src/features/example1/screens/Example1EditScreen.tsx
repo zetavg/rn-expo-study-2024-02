@@ -6,7 +6,7 @@ import {
   useModalStackNavigation,
 } from '@/navigation/hooks';
 import { ModalScreenContent } from '@/navigation/screens';
-import type { StackScreenProps } from '@/navigation-lib';
+import type { StackScreenProps } from '@rnstudy/react-native-navigation';
 
 export default function Example1EditScreen({
   route,

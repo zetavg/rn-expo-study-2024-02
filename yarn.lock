@@ -3609,6 +3609,40 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@rnstudy/react-native-navigation@workspace:^, @rnstudy/react-native-navigation@workspace:packages/react-native-navigation":
+  version: 0.0.0-use.local
+  resolution: "@rnstudy/react-native-navigation@workspace:packages/react-native-navigation"
+  dependencies:
+    "@react-navigation/bottom-tabs": "npm:^7.0.0-alpha.11"
+    "@react-navigation/native": "npm:^7.0.0-alpha.10"
+    "@react-navigation/native-stack": "npm:^7.0.0-alpha.11"
+    "@react-navigation/stack": "npm:^7.0.0-alpha.11"
+    "@rnstudy/eslint-config": "workspace:^"
+    "@rnstudy/ios-colors": "workspace:^"
+    "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/tsconfig": "workspace:^"
+    "@types/eslint": "npm:^8"
+    "@types/jest": "npm:^29"
+    "@types/react": "npm:^18"
+    eslint: "npm:^8"
+    expo: "npm:~50.0.6"
+    expo-blur: "npm:~12.9.2"
+    jest: "npm:^29"
+    react-native: "npm:0.72"
+    react-native-safe-area-context: "npm:4.8.2"
+    react-native-screens: "npm:3.29.0"
+    typescript: "npm:^5"
+  peerDependencies:
+    "@react-navigation/native": ^7.0.0-alpha.10
+    expo-blur: ~12.9.2
+    react: ^18
+    react-native: ">=0.71"
+    react-native-gesture-handler: ~2.14
+    react-native-safe-area-context: ">=4.8"
+    react-native-screens: ">=3.28.0"
+  languageName: unknown
+  linkType: soft
+
 "@rnstudy/sample-app@workspace:apps/sample-app":
   version: 0.0.0-use.local
   resolution: "@rnstudy/sample-app@workspace:apps/sample-app"
@@ -12305,6 +12339,7 @@ __metadata:
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
     "@rnstudy/react-native-ios-ui": "workspace:^"
+    "@rnstudy/react-native-navigation": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
     "@testing-library/react-native": "npm:^12.4.3"
     "@types/eslint": "npm:^8"

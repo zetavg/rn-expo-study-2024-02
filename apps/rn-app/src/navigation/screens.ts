@@ -1,4 +1,4 @@
-import { getScreenContentComponents } from '@/navigation-lib';
+import { getScreenContentComponents } from '@rnstudy/react-native-navigation';
 
 import { navConfig } from './navConfig';
 

@@ -1,5 +1,5 @@
 import { modalStackScreens as feature1ModalStackScreens } from '@/features/example1/screens';
-import { createModalStackNavigator } from '@/navigation-lib';
+import { createModalStackNavigator } from '@rnstudy/react-native-navigation';
 
 import { BottomTabNavigation } from './BottomTabNavigation';
 import { registerModalStackNavigation } from './hooks';

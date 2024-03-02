@@ -1,8 +1,9 @@
 import React from 'react';
+
 import {
   NavigationContainer,
   useNavigationContainerRef,
-} from '@react-navigation/native';
+} from '@rnstudy/react-native-navigation';
 
 import { BottomTabNavigation } from './BottomTabNavigation';
 import { MainStackNavigation } from './MainStackNavigation';
