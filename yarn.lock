@@ -3634,7 +3634,6 @@ __metadata:
     react-native-screens: "npm:3.29.0"
     typescript: "npm:^5"
   peerDependencies:
-    "@react-navigation/native": ^7.0.0-alpha.10
     expo-blur: ~12.9.2
     react: ^18
     react-native: ">=0.71"
@@ -12369,10 +12368,6 @@ __metadata:
     "@babel/core": "npm:^7.20.0"
     "@babel/runtime": "npm:7.23.9"
     "@expo/config-plugins": "npm:^7.8.4"
-    "@react-navigation/bottom-tabs": "npm:^7.0.0-alpha.11"
-    "@react-navigation/native": "npm:^7.0.0-alpha.10"
-    "@react-navigation/native-stack": "npm:^7.0.0-alpha.11"
-    "@react-navigation/stack": "npm:^7.0.0-alpha.11"
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
