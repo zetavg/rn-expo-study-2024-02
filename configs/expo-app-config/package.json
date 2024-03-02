@@ -4,7 +4,6 @@
   "type": "index.d.ts",
   "scripts": {
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit --pretty",
     "pack-package": "yarn pack",
     "publish-packed-package": "npm publish package.tgz --access public"
   },
