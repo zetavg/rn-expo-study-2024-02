@@ -3535,6 +3535,7 @@ __metadata:
     eslint-plugin-jest: "npm:^27"
     eslint-plugin-prettier: "npm:^5"
     eslint-plugin-simple-import-sort: "npm:^10"
+    hermes-eslint: "npm:^0"
     prettier: "npm:^3"
   peerDependencies:
     "@types/eslint": ^8
@@ -3653,6 +3654,7 @@ __metadata:
     "@rnstudy/tsconfig": "workspace:^"
     "@types/eslint": "npm:^8"
     "@types/jest": "npm:^29"
+    "@types/node": "npm:^20"
     eslint: "npm:^8"
     jest: "npm:^29"
     ts-node: "patch:ts-node@npm%3A11.0.0-beta.1#~/.yarn/patches/ts-node-npm-11.0.0-beta.1-cb10a2a461.patch"
@@ -3948,6 +3950,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10c0/1f30dae80b416cbf38f133a619ffb0e9fb9e7bc58f82d900bf73816ae5781740c4640892bf5971dd9c12570d5d05241646be3e7540bb4e059322ec6af4e51e15
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20":
+  version: 20.11.24
+  resolution: "@types/node@npm:20.11.24"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/5a62225eb4797b41e6953f9c08c4611d607b5422ddd153312fc81ed6ed37115228ae27e3e3caa1a3bf52d88310306a196ba1cfbd8b2ec918a20f64d80dfa22c9
   languageName: node
   linkType: hard
 
@@ -7887,6 +7898,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hermes-eslint@npm:^0":
+  version: 0.20.0
+  resolution: "hermes-eslint@npm:0.20.0"
+  dependencies:
+    esrecurse: "npm:^4.3.0"
+    hermes-estree: "npm:0.20.0"
+    hermes-parser: "npm:0.20.0"
+  checksum: 10c0/728ba8e33c14530e5550f9fa0a5f0a72da1beee73328dad6c0e6336acf93a74362dd916079619e7819b7bb21dcece86be1617433f0da5ac51544f8818a4317ee
+  languageName: node
+  linkType: hard
+
 "hermes-estree@npm:0.12.0":
   version: 0.12.0
   resolution: "hermes-estree@npm:0.12.0"
@@ -7905,6 +7927,13 @@ __metadata:
   version: 0.19.1
   resolution: "hermes-estree@npm:0.19.1"
   checksum: 10c0/98c79807c15146c745aca7a9c74b9f1ba20a463c8b9f058caed9b3f2741fc4a8609e7e4c06d163f67d819db35cb6871fc7b25085bb9a084bc53d777f67d9d620
+  languageName: node
+  linkType: hard
+
+"hermes-estree@npm:0.20.0":
+  version: 0.20.0
+  resolution: "hermes-estree@npm:0.20.0"
+  checksum: 10c0/1b3ff6ccf4ba00906cd47e7193545770c92422582bf3f3fac3fa0f08d998b70d170bae8631de05bf55bb30152edbc26dadfb845d2b997701abfbca079122ffc3
   languageName: node
   linkType: hard
 
@@ -7932,6 +7961,15 @@ __metadata:
   dependencies:
     hermes-estree: "npm:0.19.1"
   checksum: 10c0/940ccef90673b8e905016332d2660ae00ad747e2d32c694a52dce4ea220835dc1bae299554a7a8eeccb449561065bd97f3690363c087fbf69ad7cbff2deeec35
+  languageName: node
+  linkType: hard
+
+"hermes-parser@npm:0.20.0":
+  version: 0.20.0
+  resolution: "hermes-parser@npm:0.20.0"
+  dependencies:
+    hermes-estree: "npm:0.20.0"
+  checksum: 10c0/3be3b6e60fdda8a356c16ad203b4e500b21df251bc40809ec0c068899521d9d215724387be4cc1c61a83362643936fe1f394a3042a2c3c4acfdef1abe98bdd7b
   languageName: node
   linkType: hard
 
@@ -11918,7 +11956,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-test-renderer@npm:18.2.0":
+"react-test-renderer@npm:18.2.0, react-test-renderer@npm:^18":
   version: 18.2.0
   resolution: "react-test-renderer@npm:18.2.0"
   dependencies:
@@ -12344,6 +12382,7 @@ __metadata:
     "@testing-library/react-native": "npm:^12.4.3"
     "@types/eslint": "npm:^8"
     "@types/jest": "npm:^29"
+    "@types/node": "npm:^20"
     "@types/react": "npm:~18.2.45"
     "@types/react-test-renderer": "npm:^18.0.7"
     eslint: "npm:^8"
@@ -12364,6 +12403,7 @@ __metadata:
     react-native-safe-area-context: "npm:4.8.2"
     react-native-screens: "npm:3.29.0"
     react-native-sfsymbols: "npm:^1.2.1"
+    react-test-renderer: "npm:^18"
     sweet-sfsymbols: "npm:^0.5.0"
     ts-node: "patch:ts-node@npm%3A11.0.0-beta.1#~/.yarn/patches/ts-node-npm-11.0.0-beta.1-cb10a2a461.patch"
     typescript: "npm:^5"
