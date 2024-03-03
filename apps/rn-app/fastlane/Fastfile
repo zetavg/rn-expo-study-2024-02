@@ -131,20 +131,33 @@ platform :ios do
       raise "Environment variable 'CODE_SIGNING_STORAGE_GIT_URL' is not set."
     end
 
-    [
-      'development',
-      'appstore',
-    ].each do |type|
-      sleep 2 # Prevent "fatal: a branch named 'master' already exists" errors
-      sync_code_signing(
-        type: type,
-        git_url: code_signing_storage_git_url,
-        app_identifier: app_identifier,
-        readonly: !options[:update],
-        force: !!options[:update],
-        username: options[:username],
-        team_id: options[:team_id],
-      )
+    max_attempts = ENV['CI'] ? 4 : 1
+    attempts = 0
+
+    begin
+      attempts += 1
+      [
+        'development',
+        'appstore',
+      ].each do |type|
+        sync_code_signing(
+          type: type,
+          git_url: code_signing_storage_git_url,
+          app_identifier: app_identifier,
+          readonly: !options[:update],
+          force: !!options[:update],
+          username: options[:username],
+          team_id: options[:team_id],
+        )
+      end
+    rescue => e
+      if attempts < max_attempts
+        puts "Error: #{e.message}. Attempting retry #{attempts} of #{max_attempts}."
+        sleep 4 * attempts
+        retry
+      else
+        raise e
+      end
     end
 
     certificate_name = ENV["sigh_#{app_identifier}_development_certificate-name"]
