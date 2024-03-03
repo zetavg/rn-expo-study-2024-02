@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { forwardRef, useEffect, useMemo } from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SearchBarProps as RNScreensSearchBarProps } from 'react-native-screens';
-import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 
 import * as iosColors from '@rnstudy/ios-colors';
 
 import { NavigationConfig } from '../../types';
+import { useContentInset } from '../hooks';
 
 type HeaderSearchBarOptions = {
   /** A callback that gets called when the text changes. It receives the current text value of the search bar. */
@@ -114,32 +113,19 @@ export function getStackScreenContentComponent(config: NavigationConfig) {
     );
   }
 
-  StackScreenContent.ScrollView = function StackScreenContentScrollView(
+  StackScreenContent.ScrollView = forwardRef<
+    ScrollView,
+    React.ComponentProps<typeof ScrollView>
+  >(function StackScreenContentScrollView(
     props: React.ComponentProps<typeof ScrollView>,
+    ref,
   ) {
-    const safeAreaInsets = useSafeAreaInsets();
-
-    /**
-     * Since we may be using a TabBar with BlurView as the background, `position: 'absolute'` will be set in such TabBar's style. as React Navigation will not add margins to the content to account for the absolute-positioned TabBar automatically, we will need to handle it ourselves.
-     *
-     * See:
-     * * Using BlurView as `tabBarBackground`: https://reactnavigation.org/docs/7.x/bottom-tab-navigator#tabbarbackground
-     * * Using `position: 'absolute'` in `tabBarStyle`: https://reactnavigation.org/docs/7.x/bottom-tab-navigator#tabbarstyle
-     */
-    const bottomTabBarHeight = React.useContext(BottomTabBarHeightContext) || 0;
-
-    const contentInset = useMemo(
-      () =>
-        bottomTabBarHeight > 0
-          ? {
-              bottom: Math.max(0, bottomTabBarHeight - safeAreaInsets.bottom),
-            }
-          : undefined,
-      [bottomTabBarHeight, safeAreaInsets.bottom],
-    );
+    const contentInset = useContentInset(props.contentInset);
 
     return (
       <ScrollView
+        ref={ref}
+        {...props}
         keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
         automaticallyAdjustKeyboardInsets
@@ -147,10 +133,9 @@ export function getStackScreenContentComponent(config: NavigationConfig) {
         contentInsetAdjustmentBehavior="automatic"
         contentInset={contentInset}
         scrollIndicatorInsets={contentInset}
-        {...props}
       />
     );
-  };
+  });
 
   return StackScreenContent;
 }

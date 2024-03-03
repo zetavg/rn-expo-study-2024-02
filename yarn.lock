@@ -3781,6 +3781,7 @@ __metadata:
     expo-blur: "npm:~12.9.2"
     jest: "npm:^29"
     react-native: "npm:0.72"
+    react-native-gesture-handler: "npm:~2.14"
     react-native-safe-area-context: "npm:4.8.2"
     react-native-screens: "npm:3.29.0"
     typescript: "npm:^5"
@@ -12283,7 +12284,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gesture-handler@npm:~2.14.0":
+"react-native-gesture-handler@npm:~2.14, react-native-gesture-handler@npm:~2.14.0":
   version: 2.14.1
   resolution: "react-native-gesture-handler@npm:2.14.1"
   dependencies:

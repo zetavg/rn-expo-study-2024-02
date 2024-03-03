@@ -60,6 +60,8 @@ export function createModalStackNavigator<
           headerShown: false,
           presentation: 'modal',
           detachPreviousScreen: false, // This also fixes the "navigation header stuck outside of safe area when re-mounted" issue on iOS
+          gestureEnabled: true,
+          gestureResponseDistance: 4000, // Let the dismissible(ScrollView) determine if it should capture the scroll event, or let the navigator handle it and use the gesture to close the modal.
         }),
         [],
       );

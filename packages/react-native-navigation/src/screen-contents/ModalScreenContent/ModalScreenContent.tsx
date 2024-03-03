@@ -1,14 +1,14 @@
-import React, { useEffect, useMemo } from 'react';
-import { Platform, ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SearchBarProps as RNScreensSearchBarProps } from 'react-native-screens';
-import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
-import { useNavigation } from '@react-navigation/native';
+import React, { forwardRef, useMemo } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import * as iosColors from '@rnstudy/ios-colors';
 
 import { NavigationConfig } from '../../types';
+import { useContentInset } from '../hooks';
+
+import dismissible from './dismissible';
 
 type Props = {
   title: string;
@@ -84,32 +84,19 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
     );
   }
 
-  ModalScreenContent.ScrollView = function ModalScreenContentScrollView(
-    props: React.ComponentProps<typeof ScrollView>,
+  ModalScreenContent.ScrollView = forwardRef<
+    typeof DismissibleScrollView,
+    React.ComponentProps<typeof DismissibleScrollView>
+  >(function ModalScreenContentScrollView(
+    props: React.ComponentProps<typeof DismissibleScrollView>,
+    ref,
   ) {
-    const safeAreaInsets = useSafeAreaInsets();
-
-    /**
-     * Since we may be using a TabBar with BlurView as the background, `position: 'absolute'` will be set in such TabBar's style. as React Navigation will not add margins to the content to account for the absolute-positioned TabBar automatically, we will need to handle it ourselves.
-     *
-     * See:
-     * * Using BlurView as `tabBarBackground`: https://reactnavigation.org/docs/7.x/bottom-tab-navigator#tabbarbackground
-     * * Using `position: 'absolute'` in `tabBarStyle`: https://reactnavigation.org/docs/7.x/bottom-tab-navigator#tabbarstyle
-     */
-    const bottomTabBarHeight = React.useContext(BottomTabBarHeightContext) || 0;
-
-    const contentInset = useMemo(
-      () =>
-        bottomTabBarHeight > 0
-          ? {
-              bottom: Math.max(0, bottomTabBarHeight - safeAreaInsets.bottom),
-            }
-          : undefined,
-      [bottomTabBarHeight, safeAreaInsets.bottom],
-    );
+    const contentInset = useContentInset(props.contentInset);
 
     return (
-      <ScrollView
+      <DismissibleScrollView
+        ref={ref}
+        {...props}
         keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
         automaticallyAdjustKeyboardInsets
@@ -117,13 +104,14 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
         contentInsetAdjustmentBehavior="automatic"
         contentInset={contentInset}
         scrollIndicatorInsets={contentInset}
-        {...props}
       />
     );
-  };
+  });
 
   return ModalScreenContent;
 }
+
+const DismissibleScrollView = dismissible(ScrollView);
 
 const styles = StyleSheet.create({
   modalScreenContent: {
