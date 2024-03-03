@@ -136,7 +136,8 @@ jobs:
         needs.collect-build-info.outputs.should-build == 'true' &&
         (
           inputs.build-ios-development ||
-          github.event_name == 'push'
+          github.event_name == 'push' ||
+          github.event_name == 'schedule'
         )
       }}
     needs:
@@ -180,7 +181,8 @@ jobs:
         needs.collect-build-info.outputs.should-build == 'true' &&
         (
           inputs.build-ios-development ||
-          github.event_name == 'push'
+          github.event_name == 'push' ||
+          github.event_name == 'schedule'
         )
       }}
     needs:

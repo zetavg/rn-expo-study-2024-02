@@ -249,6 +249,7 @@ platform :ios do
     upload_to_testflight(
       skip_waiting_for_build_processing: true,
       changelog: changelog,
+      wait_processing_interval: 15,
     )
   end
 end
