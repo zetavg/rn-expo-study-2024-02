@@ -3,6 +3,7 @@ import { Platform, StyleSheet } from 'react-native';
 import { createBottomTabNavigator as rnCreateBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
 
+import { BottomTabNavigationContext } from './screen-contents/contexts';
 import {
   AnyBottomTabNavigatorScreens,
   GeneratedBottomTabNavigator,
@@ -79,16 +80,22 @@ export function createBottomTabNavigator<
         <BottomTab.Navigator id={id} screenOptions={screenOptions}>
           {useMemo(
             () =>
-              Object.entries(screens).map(([name, { screen, options }]) => {
-                return (
-                  <BottomTab.Screen
-                    key={name}
-                    name={name}
-                    component={screen}
-                    options={options}
-                  />
-                );
-              }),
+              Object.entries(screens).map(
+                ([name, { screen: Screen, options }]) => {
+                  return (
+                    <BottomTab.Screen key={name} name={name} options={options}>
+                      {(props) => (
+                        <BottomTabNavigationContext.Provider
+                          value={props.navigation}
+                        >
+                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                          <Screen {...(props as any)} />
+                        </BottomTabNavigationContext.Provider>
+                      )}
+                    </BottomTab.Screen>
+                  );
+                },
+              ),
             [],
           )}
         </BottomTab.Navigator>

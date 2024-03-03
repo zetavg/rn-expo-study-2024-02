@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as iosColors from '@rnstudy/ios-colors';
 
 import { NavigationConfig } from '../../types';
+import bottomTabPressReactive from '../bottomTabPressReactive';
 import { useContentInset } from '../hooks';
 
 import dismissible from './dismissible';
@@ -72,7 +73,10 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
     );
 
     return (
-      <Stack.Navigator screenOptions={screenOptions}>
+      <Stack.Navigator
+        id="modal-screen-content-navigator"
+        screenOptions={screenOptions}
+      >
         <Stack.Screen name="ModalScreenContent" options={{ title }}>
           {() => (
             <View style={[styles.modalScreenContent, { backgroundColor }]}>
@@ -85,7 +89,11 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
   }
 
   ModalScreenContent.ScrollView = forwardRef<
-    typeof DismissibleScrollView,
+    typeof DismissibleScrollView extends React.ForwardRefExoticComponent<
+      React.RefAttributes<infer C>
+    >
+      ? C
+      : never,
     React.ComponentProps<typeof DismissibleScrollView>
   >(function ModalScreenContentScrollView(
     props: React.ComponentProps<typeof DismissibleScrollView>,
@@ -94,7 +102,7 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
     const contentInset = useContentInset(props.contentInset);
 
     return (
-      <DismissibleScrollView
+      <BottomTabPressReactiveAndDismissibleScrollView
         ref={ref}
         {...props}
         keyboardDismissMode="interactive"
@@ -112,6 +120,9 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
 }
 
 const DismissibleScrollView = dismissible(ScrollView);
+const BottomTabPressReactiveAndDismissibleScrollView = bottomTabPressReactive(
+  DismissibleScrollView,
+);
 
 const styles = StyleSheet.create({
   modalScreenContent: {

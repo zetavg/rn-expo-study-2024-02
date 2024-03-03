@@ -2,6 +2,8 @@ import { useContext, useMemo } from 'react';
 import { Insets } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
+import { NavigationContext, ParamListBase } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
 
 /**
  * Handles common content inset for bottom tab bar, etc.
@@ -38,4 +40,28 @@ export function useContentInset(contentInsetFromProps: Insets | undefined) {
   );
 
   return contentInset;
+}
+
+type StackNavigation = StackScreenProps<ParamListBase>['navigation'];
+export function useNearestStackNavigation(): StackNavigation | null {
+  const navigation = useContext(NavigationContext);
+
+  return useMemo<StackNavigation | null>(() => {
+    let currentNavigation = navigation;
+
+    while (currentNavigation) {
+      if (
+        !currentNavigation
+          .getId()
+          ?.startsWith('modal-screen-content-navigator') &&
+        currentNavigation.getState().type === 'stack'
+      ) {
+        return currentNavigation as StackNavigation;
+      }
+
+      currentNavigation = currentNavigation.getParent();
+    }
+
+    return null;
+  }, [navigation]);
 }

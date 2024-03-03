@@ -1,0 +1,6 @@
+{
+  "extends": "@rnstudy/tsconfig",
+  "include": [
+    "**/*.ts"
+  ]
+}

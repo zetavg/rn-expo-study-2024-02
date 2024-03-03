@@ -20,6 +20,7 @@
   "dependencies": {
     "@babel/runtime": "7.23.9",
     "@rnstudy/ios-colors": "workspace:^",
+    "@rnstudy/react-hooks": "workspace:^",
     "@rnstudy/react-native-ios-ui": "workspace:^",
     "@rnstudy/react-native-navigation": "workspace:^",
     "expo": "~50.0.6",

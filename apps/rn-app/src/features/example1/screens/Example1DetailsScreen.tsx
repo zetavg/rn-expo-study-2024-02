@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Text } from 'react-native';
 
 import {
@@ -14,12 +14,23 @@ export default function Example1DetailsScreen({
   const navigation = useMainStackNavigation();
   const modalNavigation = useModalStackNavigation();
 
+  const [counter, setCounter] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCounter((c) => c + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <StackScreenContent>
       <StackScreenContent.ScrollView>
         <Text>
           This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
         </Text>
+        <Text>Counter: {counter}</Text>
         <Button
           title="Go to details"
           onPress={() => navigation.push('Example1Details', { name: 'hi' })}
@@ -29,6 +40,102 @@ export default function Example1DetailsScreen({
           title="Go to edit"
           onPress={() => modalNavigation.push('Example1Edit', { name: 'hi' })}
         />
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
+        <Text>
+          This is Example1DetailsScreen. Route: {JSON.stringify(route, null, 2)}
+        </Text>
       </StackScreenContent.ScrollView>
     </StackScreenContent>
   );

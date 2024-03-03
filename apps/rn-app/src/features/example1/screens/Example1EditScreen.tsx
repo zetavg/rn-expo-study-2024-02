@@ -37,7 +37,10 @@ export default function Example1EditScreen({
         <Text>This is Example1EditScreen</Text>
         <Text>This is Example1EditScreen</Text>
         <Text>This is Example1EditScreen</Text>
-        <TextInput value={text} onChangeText={setText} />
+        <Text>Right</Text>
+        <TextInput value={text} onChangeText={setText} textAlign="right" />
+        <Text>Center</Text>
+        <TextInput value={text} onChangeText={setText} textAlign="center" />
         <Text>This is Example1EditScreen</Text>
         <Text>This is Example1EditScreen</Text>
         <Text>This is Example1EditScreen</Text>

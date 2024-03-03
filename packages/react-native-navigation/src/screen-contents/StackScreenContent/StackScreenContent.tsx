@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as iosColors from '@rnstudy/ios-colors';
 
 import { NavigationConfig } from '../../types';
+import bottomTabPressReactive from '../bottomTabPressReactive';
 import { useContentInset } from '../hooks';
 import { HeaderSearchBarOptions } from '../types';
 
@@ -105,7 +106,7 @@ export function getStackScreenContentComponent(config: NavigationConfig) {
     const contentInset = useContentInset(props.contentInset);
 
     return (
-      <ScrollView
+      <BottomTabPressReactiveScrollView
         ref={ref}
         {...props}
         keyboardDismissMode="interactive"
@@ -121,6 +122,8 @@ export function getStackScreenContentComponent(config: NavigationConfig) {
 
   return StackScreenContent;
 }
+
+const BottomTabPressReactiveScrollView = bottomTabPressReactive(ScrollView);
 
 const styles = StyleSheet.create({
   stackScreenContent: {

@@ -26,22 +26,24 @@ type DismissibleScrollableComponentProps<T extends ScrollViewComponentType> = {
 } & React.ComponentProps<T>;
 
 /**
- * Makes a ScrollView-like component allowing parent gesture handler to handle the modal dismissing gesture when over-scrolled.
+ * Makes a `ScrollView`-like component allowing parent gesture handler to handle the modal dismissing gesture when over-scrolled.
  *
  * Note that you will need to set the `gestureResponseDistance` in the screen options to a much larger value for this to have noticeable effect.
  */
-export default function dismissible<ST extends ScrollViewComponentType>(
-  ScrollViewComponent: ST,
+export default function dismissible<S extends ScrollViewComponentType>(
+  ScrollViewComponent: S,
 ) {
   return forwardRef<
-    typeof ScrollViewComponent,
-    DismissibleScrollableComponentProps<typeof ScrollViewComponent>
+    S extends React.ForwardRefExoticComponent<React.RefAttributes<infer C>>
+      ? C
+      : never,
+    DismissibleScrollableComponentProps<S>
   >(function DismissibleScrollableComponent(
     {
       disableScrollToDismiss,
       debug,
       ...props
-    }: DismissibleScrollableComponentProps<typeof ScrollViewComponent>,
+    }: DismissibleScrollableComponentProps<S>,
     ref,
   ) {
     const {
@@ -49,6 +51,7 @@ export default function dismissible<ST extends ScrollViewComponentType>(
       onScrollBeginDrag,
       onScrollEndDrag,
       onMomentumScrollEnd,
+      scrollEventThrottle,
     } = props;
 
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
@@ -168,7 +171,7 @@ export default function dismissible<ST extends ScrollViewComponentType>(
                 shouldScrollToDismissTakeAction ? gestureHandlerRef : undefined
               }
               bounces={shouldScrollViewBounce}
-              scrollEventThrottle={4}
+              scrollEventThrottle={Math.min(scrollEventThrottle || Infinity, 4)}
             />
           );
           if (debug)
