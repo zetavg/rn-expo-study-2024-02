@@ -37,6 +37,8 @@ type Props = {
   headerLargeTitle?: boolean;
   /** Options to render a search bar on the header. **Note that this should not be changed during the component's lifecycle.** */
   headerSearchBarOptions?: HeaderSearchBarOptions;
+  /** Specify a custom background color. */
+  backgroundColor?: string;
   children: React.ReactNode;
 };
 
@@ -46,15 +48,21 @@ export function getStackScreenContentComponent(config: NavigationConfig) {
   function StackScreenContent({
     headerLargeTitle,
     headerSearchBarOptions,
+    backgroundColor: backgroundColorProp,
     children,
   }: Props) {
     const navigation = useNavigation();
     const colorScheme = useColorScheme();
 
-    const backgroundColor = useMemo(
-      () => iosColors[colorScheme].uiColors.systemGroupedBackground,
-      [colorScheme],
-    );
+    const backgroundColor = useMemo(() => {
+      if (backgroundColorProp) return backgroundColorProp;
+
+      switch (Platform.OS) {
+        case 'ios':
+        default:
+          return iosColors[colorScheme].uiColors.systemGroupedBackground;
+      }
+    }, [backgroundColorProp, colorScheme]);
 
     const memoizedHeaderSearchBarOptions = useMemo(
       () => headerSearchBarOptions,
@@ -86,7 +94,10 @@ export function getStackScreenContentComponent(config: NavigationConfig) {
         ...(() => {
           if (Platform.OS !== 'ios') return {};
 
-          return { headerLargeTitle };
+          return {
+            headerLargeTitle,
+            headerLargeStyle: { backgroundColor },
+          };
         })(),
       });
     }, [

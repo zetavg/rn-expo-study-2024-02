@@ -12,13 +12,19 @@ import { NavigationConfig } from '../../types';
 
 type Props = {
   title: string;
+  /** Specify a custom background color. */
+  backgroundColor?: string;
   children: React.ReactNode;
 };
 
 export function getModalScreenContentComponent(config: NavigationConfig) {
   const { useColorScheme } = config;
 
-  function ModalScreenContent({ title, children }: Props) {
+  function ModalScreenContent({
+    title,
+    backgroundColor: backgroundColorProp,
+    children,
+  }: Props) {
     /**
      * This navigator is only used to render native styled stack navigator header.
      */
@@ -27,12 +33,13 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
     const colorScheme = useColorScheme();
 
     const backgroundColor = useMemo(() => {
+      if (backgroundColorProp) return backgroundColorProp;
       switch (Platform.OS) {
         default:
         case 'ios':
           return iosColors[colorScheme].uiColors.systemGroupedBackground;
       }
-    }, [colorScheme]);
+    }, [backgroundColorProp, colorScheme]);
 
     const screenOptions = useMemo<
       React.ComponentProps<
@@ -42,9 +49,12 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
       () => ({
         ...(Platform.OS === 'ios'
           ? {
+              headerTitleStyle: {
+                color: iosColors[colorScheme].uiColors.label,
+              },
               // Blur effect.
               headerTransparent: true,
-              headerBlurEffect: 'light',
+              headerBlurEffect: colorScheme,
               headerShadowVisible: true,
               // Set a close-to-transparent background to make `headerShadowVisible: true` work.
               // See: https://github.com/react-navigation/react-navigation/issues/10845#issuecomment-1276312567
@@ -58,7 +68,7 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
             }
           : {}),
       }),
-      [backgroundColor],
+      [colorScheme, backgroundColor],
     );
 
     return (
