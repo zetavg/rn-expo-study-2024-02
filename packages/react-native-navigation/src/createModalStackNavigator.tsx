@@ -77,28 +77,32 @@ export function createModalStackNavigator<
             name={MAIN_SCREEN_NAME}
             component={MainScreenComponent}
           />
-          {Object.entries(screens).map(([name, screenDefinition]) => {
-            const screen =
-              'screen' in screenDefinition
-                ? screenDefinition.screen
-                : screenDefinition;
+          {useMemo(
+            () =>
+              Object.entries(screens).map(([name, screenDefinition]) => {
+                const screen =
+                  'screen' in screenDefinition
+                    ? screenDefinition.screen
+                    : screenDefinition;
 
-            const options =
-              'options' in screenDefinition
-                ? screenDefinition.options
-                : undefined;
+                const options =
+                  'options' in screenDefinition
+                    ? screenDefinition.options
+                    : undefined;
 
-            return (
-              <Stack.Screen
-                key={name}
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                name={name as any}
-                component={screen}
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                options={options as any}
-              />
-            );
-          })}
+                return (
+                  <Stack.Screen
+                    key={name}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    name={name as any}
+                    component={screen}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    options={options as any}
+                  />
+                );
+              }),
+            [],
+          )}
         </Stack.Navigator>
       );
     };

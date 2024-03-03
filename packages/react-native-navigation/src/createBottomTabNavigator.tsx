@@ -77,16 +77,20 @@ export function createBottomTabNavigator<
 
       return (
         <BottomTab.Navigator id={id} screenOptions={screenOptions}>
-          {Object.entries(screens).map(([name, { screen, options }]) => {
-            return (
-              <BottomTab.Screen
-                key={name}
-                name={name}
-                component={screen}
-                options={options}
-              />
-            );
-          })}
+          {useMemo(
+            () =>
+              Object.entries(screens).map(([name, { screen, options }]) => {
+                return (
+                  <BottomTab.Screen
+                    key={name}
+                    name={name}
+                    component={screen}
+                    options={options}
+                  />
+                );
+              }),
+            [],
+          )}
         </BottomTab.Navigator>
       );
     };
