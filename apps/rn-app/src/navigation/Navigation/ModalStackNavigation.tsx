@@ -5,10 +5,11 @@ import config from '../config';
 import { registerModalStackNavigation } from '../hooks';
 
 import { BottomTabNavigation } from './BottomTabNavigation';
+import { MainStackNavigation } from './MainStackNavigation';
 
 export const ModalStackNavigation = createModalStackNavigator({
   id: 'modal-stack',
-  mainScreen: BottomTabNavigation,
+  mainScreen: MainStackNavigation,
   screens: {
     ...feature1ModalStackScreens,
   },

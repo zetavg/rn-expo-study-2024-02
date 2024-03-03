@@ -3,16 +3,21 @@ import { createBottomTabNavigator } from '@rnstudy/react-native-navigation';
 import config from '../config';
 
 import { MainStackNavigation } from './MainStackNavigation';
+import { ModalStackNavigation } from './ModalStackNavigation';
 
 export const BottomTabNavigation = createBottomTabNavigator({
   id: 'bottom-tab',
   screens: {
     Home: {
-      screen: MainStackNavigation.withInitialRouteName('Example1List'),
+      screen: ModalStackNavigation.withMainScreen(
+        MainStackNavigation.withInitialRouteName('Example1List'),
+      ),
       options: {},
     },
     Details: {
-      screen: MainStackNavigation.withInitialRouteName('Example1Details'),
+      screen: ModalStackNavigation.withMainScreen(
+        MainStackNavigation.withInitialRouteName('Example1Details'),
+      ),
       options: {},
     },
   },

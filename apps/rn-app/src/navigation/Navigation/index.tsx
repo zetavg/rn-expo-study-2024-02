@@ -17,7 +17,7 @@ export default function Navigation() {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      <ModalStackNavigation />
+      <BottomTabNavigation />
     </NavigationContainer>
   );
 }
