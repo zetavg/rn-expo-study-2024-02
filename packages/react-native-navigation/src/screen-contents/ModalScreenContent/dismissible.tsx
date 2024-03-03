@@ -18,6 +18,13 @@ import { GestureHandlerRefContext } from '@react-navigation/stack';
 
 type ScrollViewComponentType = typeof ScrollView | typeof FlatList;
 
+type DismissibleScrollableComponentProps<T extends ScrollViewComponentType> = {
+  /** Disable the overscroll-to-dismiss behavior. */
+  disableScrollToDismiss?: boolean;
+  /** Show debug info on the screen. */
+  debug?: boolean;
+} & React.ComponentProps<T>;
+
 /**
  * Makes a ScrollView-like component allowing parent gesture handler to handle the modal dismissing gesture when over-scrolled.
  *
@@ -26,17 +33,15 @@ type ScrollViewComponentType = typeof ScrollView | typeof FlatList;
 export default function dismissible<ST extends ScrollViewComponentType>(
   ScrollViewComponent: ST,
 ) {
-  return forwardRef(function DismissibleScrollableComponent(
+  return forwardRef<
+    typeof ScrollViewComponent,
+    DismissibleScrollableComponentProps<typeof ScrollViewComponent>
+  >(function DismissibleScrollableComponent(
     {
       disableScrollToDismiss,
       debug,
       ...props
-    }: {
-      /** Disable the overscroll-to-dismiss behavior. */
-      disableScrollToDismiss?: boolean;
-      /** Show debug info on the screen. */
-      debug?: boolean;
-    } & React.ComponentProps<typeof ScrollViewComponent>,
+    }: DismissibleScrollableComponentProps<typeof ScrollViewComponent>,
     ref,
   ) {
     const {
@@ -45,9 +50,6 @@ export default function dismissible<ST extends ScrollViewComponentType>(
       onScrollEndDrag,
       onMomentumScrollEnd,
     } = props;
-
-    const localScrollViewRef = useRef<typeof ScrollViewComponent>(null);
-    const scrollViewRef = ref || localScrollViewRef;
 
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
     useEffect(() => {
@@ -154,10 +156,10 @@ export default function dismissible<ST extends ScrollViewComponentType>(
       <GestureHandlerRefContext.Consumer>
         {(gestureHandlerRef) => {
           const scrollViewElement = (
-            <ScrollView
-              {...props}
+            <ScrollViewComponent
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              ref={scrollViewRef as any}
+              {...(props as any)}
+              ref={ref}
               onScroll={disableScrollToDismiss ? onScroll : handleScroll}
               onScrollBeginDrag={handleScrollBeginDrag}
               onScrollEndDrag={handleScrollEndDrag}
