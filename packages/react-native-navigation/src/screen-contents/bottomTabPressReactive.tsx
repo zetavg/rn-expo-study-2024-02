@@ -48,7 +48,7 @@ export default function bottomTabPressReactive<
     props: React.ComponentProps<S>,
     ref,
   ) {
-    const { onScroll, scrollEventThrottle } = props;
+    const { onScroll, onScrollBeginDrag, scrollEventThrottle } = props;
 
     const [scrollViewRef, scrollViewRefObject] = useInterceptedRef(ref);
 
@@ -72,6 +72,23 @@ export default function bottomTabPressReactive<
       [onScroll],
     );
 
+    const hasBeenScrolledToTopByTabPress = useRef(false);
+    const hasBeenScrolledToTopByTabPressTimer = useRef<null | ReturnType<
+      typeof setTimeout
+    >>(null);
+    const handleScrollBeginDrag = useCallback(
+      (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        if (onScrollBeginDrag) onScrollBeginDrag(event);
+
+        if (hasBeenScrolledToTopByTabPressTimer.current) {
+          clearTimeout(hasBeenScrolledToTopByTabPressTimer.current);
+          hasBeenScrolledToTopByTabPressTimer.current = null;
+        }
+        hasBeenScrolledToTopByTabPress.current = false;
+      },
+      [onScrollBeginDrag],
+    );
+
     const isFocused = useIsFocused();
     const stackNavigation = useNearestStackNavigation();
     React.useEffect(() => {
@@ -81,7 +98,10 @@ export default function bottomTabPressReactive<
       const unsubscribe = bottomTabNavigation.addListener('tabPress', (e) => {
         e.preventDefault();
 
-        if (isScrolledToTopRef.current) {
+        if (
+          isScrolledToTopRef.current ||
+          hasBeenScrolledToTopByTabPress.current
+        ) {
           // Already scrolled to top. Pop to top if there's a parent stack navigator and it has more than 1 screen.
           if ((stackNavigation?.getState()?.routes.length || 0) > 1) {
             stackNavigation?.dispatch(StackActions.popToTop());
@@ -108,6 +128,13 @@ export default function bottomTabPressReactive<
                 animated: true,
               });
             }
+
+            if (!hasBeenScrolledToTopByTabPressTimer.current) {
+              hasBeenScrolledToTopByTabPressTimer.current = setTimeout(() => {
+                hasBeenScrolledToTopByTabPress.current = true;
+                hasBeenScrolledToTopByTabPressTimer.current = null;
+              }, 250);
+            }
           }
         }
       });
@@ -130,6 +157,7 @@ export default function bottomTabPressReactive<
         {...props}
         scrollToOverflowEnabled={true}
         onScroll={handleScroll}
+        onScrollBeginDrag={handleScrollBeginDrag}
         scrollEventThrottle={Math.min(scrollEventThrottle || Infinity, 16)}
       />
     );
