@@ -135,6 +135,7 @@ platform :ios do
       'development',
       'appstore',
     ].each do |type|
+      sleep 2 # Prevent "fatal: a branch named 'master' already exists" errors
       sync_code_signing(
         type: type,
         git_url: code_signing_storage_git_url,
