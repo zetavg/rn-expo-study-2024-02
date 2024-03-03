@@ -39,9 +39,7 @@ export function createModalStackNavigator<
 
   const { useColorScheme } = config;
 
-  const getNavigatorWithMainScreen = (
-    MainScreenComponent: () => JSX.Element,
-  ) => {
+  const getNavigatorWithMainScreen = (MainScreenComponent: () => JSX.Element) =>
     function StackNavigator() {
       const colorScheme = useColorScheme();
 
@@ -101,10 +99,7 @@ export function createModalStackNavigator<
           })}
         </Stack.Navigator>
       );
-    }
-
-    return StackNavigator;
-  };
+    };
 
   type Navigator = GeneratedStackNavigator<ID, S> & {
     withMainScreen: (mainScreen: () => JSX.Element) => () => JSX.Element;
