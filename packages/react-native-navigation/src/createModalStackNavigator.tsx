@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
-import { Platform } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { Platform, Text } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import * as iosColors from '@rnstudy/ios-colors';
@@ -11,6 +12,8 @@ import {
   StackParamListOfScreens,
 } from './types';
 
+const MAIN_SCREEN_NAME = 'MAIN';
+
 /**
  * Creates a pre-configured modal stack navigator.
  */
@@ -19,16 +22,16 @@ export function createModalStackNavigator<
   S extends AnyStackNavigatorScreens,
 >({
   id,
+  mainScreen,
   screens,
-  defaultInitialRouteName,
   config,
 }: {
   /** The ID of the navigator. It should be unique within the app. */
   id: ID;
+  /** A component to be rendered as the base screen. */
+  mainScreen: () => JSX.Element;
   /** Screens in the navigator. */
   screens: S;
-  /** The default initial route name of the navigator. */
-  defaultInitialRouteName: keyof S;
   /** Config object. */
   config: NavigationConfig;
 }) {
@@ -36,7 +39,9 @@ export function createModalStackNavigator<
 
   const { useColorScheme } = config;
 
-  const getNavigatorWithInitialRouteName = (initialRouteName: keyof S) =>
+  const getNavigatorWithMainScreen = (
+    MainScreenComponent: () => JSX.Element,
+  ) => {
     function StackNavigator() {
       const colorScheme = useColorScheme();
 
@@ -56,6 +61,7 @@ export function createModalStackNavigator<
         () => ({
           headerShown: false,
           presentation: 'modal',
+          detachPreviousScreen: false, // This also fixes the "navigation header stuck outside of safe area when re-mounted" issue on iOS
         }),
         [],
       );
@@ -64,9 +70,13 @@ export function createModalStackNavigator<
         <Stack.Navigator
           id={id}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          initialRouteName={initialRouteName as any}
+          initialRouteName={MAIN_SCREEN_NAME as any}
           screenOptions={screenOptions}
         >
+          <Stack.Screen
+            name={MAIN_SCREEN_NAME}
+            component={MainScreenComponent}
+          />
           {Object.entries(screens).map(([name, screenDefinition]) => {
             const screen =
               'screen' in screenDefinition
@@ -91,19 +101,22 @@ export function createModalStackNavigator<
           })}
         </Stack.Navigator>
       );
-    };
+    }
 
-  type Navigator = GeneratedStackNavigator<ID, S> & {
-    withInitialRouteName: (initialRouteName: keyof S) => () => JSX.Element;
+    return StackNavigator;
   };
 
-  const navigator: Partial<Navigator> = getNavigatorWithInitialRouteName(
-    defaultInitialRouteName,
+  type Navigator = GeneratedStackNavigator<ID, S> & {
+    withMainScreen: (mainScreen: () => JSX.Element) => () => JSX.Element;
+  };
+
+  const navigator: Partial<Navigator> = getNavigatorWithMainScreen(
+    mainScreen,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) as any;
   navigator._id = id;
   navigator._screens = screens;
-  navigator.withInitialRouteName = getNavigatorWithInitialRouteName;
+  navigator.withMainScreen = getNavigatorWithMainScreen;
 
   return navigator as Navigator;
 }

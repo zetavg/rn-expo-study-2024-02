@@ -8,11 +8,10 @@ import { BottomTabNavigation } from './BottomTabNavigation';
 
 export const ModalStackNavigation = createModalStackNavigator({
   id: 'modal-stack',
+  mainScreen: BottomTabNavigation,
   screens: {
-    Main: BottomTabNavigation,
     ...feature1ModalStackScreens,
   },
-  defaultInitialRouteName: 'Main',
   config,
 });
 

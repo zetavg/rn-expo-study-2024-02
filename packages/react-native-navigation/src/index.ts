@@ -6,5 +6,6 @@ export * from './screen-contents';
 export * from './types';
 export {
   NavigationContainer,
+  useFocusEffect,
   useNavigationContainerRef,
 } from '@react-navigation/native';
