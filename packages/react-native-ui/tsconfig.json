@@ -1,0 +1,15 @@
+{
+  "extends": "@rnstudy/tsconfig",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "paths": {
+      // For the following workspace dependencies, use the uncompiled source code from to avoid the need to build them during development.
+      // To simulate using the compiled code as installing the packages from npm, comment out the following path mappings.
+      "@rnstudy/react-native-ios-ui": ["../../packages/react-native-ios-ui/src"],
+      "@rnstudy/ios-colors": ["../../packages/ios-colors/src"]
+    }
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}

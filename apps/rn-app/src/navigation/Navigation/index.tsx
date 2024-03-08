@@ -20,13 +20,13 @@ const NavigationContainer = getNavigationContainerComponent(config);
 export default function Navigation() {
   const navigationRef = useNavigationContainerRef();
 
-  useEffect(() => {
-    setTimeout(() => {
-      navigationRef.current?.dispatch(
-        StackActions.push('Example1Details', { name: 'hi from nav' }),
-      );
-    }, 1000);
-  }, [navigationRef]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     navigationRef.current?.dispatch(
+  //       StackActions.push('Example1Details', { name: 'hi from nav' }),
+  //     );
+  //   }, 1000);
+  // }, [navigationRef]);
 
   return (
     <NavigationContainer ref={navigationRef}>
