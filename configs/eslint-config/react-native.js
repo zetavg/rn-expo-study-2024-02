@@ -4,6 +4,7 @@ const base = require('./index');
 const config = {
   ...base,
   extends: [...base.extends, 'universe/native', '@react-native-community'],
+  ignorePatterns: ['ios/*', 'android/*', '!.storybook'],
   rules: {
     ...base.rules,
     'import/order': 'off', // we use `simple-import-sort/imports` instead
