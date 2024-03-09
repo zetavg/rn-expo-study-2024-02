@@ -17,7 +17,11 @@ function withProductJson(config, { dirname, environment }) {
     readFileSync(resolve(dirname, 'product.json5'), 'utf8'),
   );
 
-  let productConfig = product[environment || 'default'];
+  let productConfig =
+    product[
+      environment ||
+        ['develop', 'development', 'default'].filter((env) => env in product)[0]
+    ];
 
   if (!productConfig) {
     if (environment === 'develop') {
