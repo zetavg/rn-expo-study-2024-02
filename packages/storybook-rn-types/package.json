@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit --pretty",
     "pack-package": "yarn pack",
-    "publish-packed-package": "npm publish package.tgz --access public"
+    "publish-packed-package": "npm publish package.tgz --access public",
+    "clean": "rm -rf package.tgz"
   },
   "peerDependencies": {
     "@storybook/react-native": "8.0.0-alpha.2",
