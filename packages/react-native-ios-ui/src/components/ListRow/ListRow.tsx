@@ -133,3 +133,5 @@ const containerStyles = StyleSheet.create({
     borderRadius: 10,
   },
 });
+
+export default ListRow;

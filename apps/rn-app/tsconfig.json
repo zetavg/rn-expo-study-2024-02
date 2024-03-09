@@ -13,6 +13,7 @@
       "@rnstudy/react-native-navigation": ["../../packages/react-native-navigation/src"],
       "@rnstudy/react-native-ios-ui": ["../../packages/react-native-ios-ui/src"],
       "@rnstudy/ios-colors": ["../../packages/ios-colors/src"],
+      "@rnstudy/storybook-rn": ["../../packages/storybook-rn/src"],
       "@rnstudy/plus-two": ["../../packages/plus-two/src"],
       "@rnstudy/sum": ["../../packages/sum/src"]
     }
