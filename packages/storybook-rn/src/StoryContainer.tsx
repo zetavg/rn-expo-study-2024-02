@@ -54,13 +54,20 @@ export function StoryContainer({
 
   const content = (
     <ThemeProvider theme={theme}>
-      <ScrollView style={styles.previewContent}>
-        <View style={containerStyle} onLayout={handleContainerLayout}>
+      <ScrollView
+        style={styles.previewContent}
+        contentContainerStyle={styles.previewContentContainer}
+      >
+        <View
+          style={[styles.previewWrapper, containerStyle]}
+          onLayout={handleContainerLayout}
+        >
           <Story />
           {!!specOverlay && showSpecOverlay && (
             <View style={styles.specOverlayContainer}>{specOverlay}</View>
           )}
         </View>
+
         {showBoundaryLines && (
           <>
             <View
@@ -100,6 +107,11 @@ export function StoryContainer({
                     (containerLayout?.x || 0) + (containerLayout?.width || 0),
                 },
               ]}
+            />
+
+            {/* Required for the bottom boundary line to be visiable on Android. */}
+            <View
+              style={{ height: styles.horizontalBoundaryLine.height * 32 }}
             />
           </>
         )}
@@ -207,9 +219,11 @@ const styles = StyleSheet.create({
   previewContent: {
     flex: 1,
   },
-  previewWrapper: {
-    flex: 1,
+  previewContentContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+  previewWrapper: {},
   previewControls: {
     borderTopWidth: StyleSheet.hairlineWidth,
     flexGrow: 0,
