@@ -855,7 +855,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-arrow-functions@npm:^7.0.0, @babel/plugin-transform-arrow-functions@npm:^7.23.3":
+"@babel/plugin-transform-arrow-functions@npm:^7.0.0, @babel/plugin-transform-arrow-functions@npm:^7.0.0-0, @babel/plugin-transform-arrow-functions@npm:^7.23.3":
   version: 7.23.3
   resolution: "@babel/plugin-transform-arrow-functions@npm:7.23.3"
   dependencies:
@@ -1197,7 +1197,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-nullish-coalescing-operator@npm:^7.23.4":
+"@babel/plugin-transform-nullish-coalescing-operator@npm:^7.0.0-0, @babel/plugin-transform-nullish-coalescing-operator@npm:^7.23.4":
   version: 7.23.4
   resolution: "@babel/plugin-transform-nullish-coalescing-operator@npm:7.23.4"
   dependencies:
@@ -1260,7 +1260,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-optional-chaining@npm:^7.23.3, @babel/plugin-transform-optional-chaining@npm:^7.23.4":
+"@babel/plugin-transform-optional-chaining@npm:^7.0.0-0, @babel/plugin-transform-optional-chaining@npm:^7.23.3, @babel/plugin-transform-optional-chaining@npm:^7.23.4":
   version: 7.23.4
   resolution: "@babel/plugin-transform-optional-chaining@npm:7.23.4"
   dependencies:
@@ -1431,7 +1431,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-shorthand-properties@npm:^7.0.0, @babel/plugin-transform-shorthand-properties@npm:^7.23.3":
+"@babel/plugin-transform-shorthand-properties@npm:^7.0.0, @babel/plugin-transform-shorthand-properties@npm:^7.0.0-0, @babel/plugin-transform-shorthand-properties@npm:^7.23.3":
   version: 7.23.3
   resolution: "@babel/plugin-transform-shorthand-properties@npm:7.23.3"
   dependencies:
@@ -1465,7 +1465,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-template-literals@npm:^7.0.0, @babel/plugin-transform-template-literals@npm:^7.23.3":
+"@babel/plugin-transform-template-literals@npm:^7.0.0, @babel/plugin-transform-template-literals@npm:^7.0.0-0, @babel/plugin-transform-template-literals@npm:^7.23.3":
   version: 7.23.3
   resolution: "@babel/plugin-transform-template-literals@npm:7.23.3"
   dependencies:
@@ -1680,7 +1680,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-typescript@npm:^7.13.0":
+"@babel/preset-typescript@npm:^7.13.0, @babel/preset-typescript@npm:^7.16.7":
   version: 7.23.3
   resolution: "@babel/preset-typescript@npm:7.23.3"
   dependencies:
@@ -14037,7 +14037,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gesture-handler@npm:~2.14, react-native-gesture-handler@npm:~2.14.0":
+"react-native-gesture-handler@npm:~2.14":
   version: 2.14.1
   resolution: "react-native-gesture-handler@npm:2.14.1"
   dependencies:
@@ -14071,6 +14071,26 @@ __metadata:
   dependencies:
     prop-types: "npm:^15.5.10"
   checksum: 10c0/651c6b6b0f1c2d82e372f3188ad5a8eb478728135a05b1c97315646f4fdbee446a0dd5bc8f79a96e7ab379a08c0a04bcdb2911f7dcf3bb6511f0cced7d55f0f0
+  languageName: node
+  linkType: hard
+
+"react-native-reanimated@npm:^3":
+  version: 3.8.0
+  resolution: "react-native-reanimated@npm:3.8.0"
+  dependencies:
+    "@babel/plugin-transform-arrow-functions": "npm:^7.0.0-0"
+    "@babel/plugin-transform-nullish-coalescing-operator": "npm:^7.0.0-0"
+    "@babel/plugin-transform-optional-chaining": "npm:^7.0.0-0"
+    "@babel/plugin-transform-shorthand-properties": "npm:^7.0.0-0"
+    "@babel/plugin-transform-template-literals": "npm:^7.0.0-0"
+    "@babel/preset-typescript": "npm:^7.16.7"
+    convert-source-map: "npm:^2.0.0"
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/26895c041ae5df2db3d4ddb54e2c741e962c434051473f2d3c7f21701ac7b35b668985136fd07ef09cfabe5b2f75d0f2b81878c1c22fd51f513c7c27fbc09b6f
   languageName: node
   linkType: hard
 
@@ -14753,7 +14773,8 @@ __metadata:
     pod-install: "npm:^0.2.0"
     react: "npm:18.2.0"
     react-native: "npm:0.73.4"
-    react-native-gesture-handler: "npm:~2.14.0"
+    react-native-gesture-handler: "npm:~2.14"
+    react-native-reanimated: "npm:^3"
     react-native-safe-area-context: "npm:4.8.2"
     react-native-screens: "npm:3.29.0"
     react-native-sfsymbols: "npm:^1.2.1"
