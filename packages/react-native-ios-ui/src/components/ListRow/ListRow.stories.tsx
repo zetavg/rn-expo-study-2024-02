@@ -1,5 +1,5 @@
 import React from 'react';
-import { ViewStyle } from 'react-native';
+import { Image, Text, View, ViewStyle } from 'react-native';
 
 import type { Meta } from '@rnstudy/storybook-rn-types';
 
@@ -12,16 +12,9 @@ const containerStyle: ViewStyle = {
 const meta: Meta<typeof ListRow> = {
   title: 'iOS UI/ListRow',
   component: ListRow,
-  // args: {
-  //   listStyle: 'insetGrouped',
-  // },
-  // argTypes: {
-  //   listStyle: {
-  //     description: 'The style of the list',
-  //     options: ['plain', 'grouped', 'insetGrouped'],
-  //     control: 'radio',
-  //   },
-  // },
+  args: {
+    children: 'Title',
+  },
   parameters: {
     containerStyle,
   },
@@ -33,8 +26,75 @@ export const Default: Meta<typeof ListRow> = {
   args: {},
 };
 
-export const InsetGrouped: Meta<typeof ListRow> = {
+export const Simple: Meta<typeof ListRow> = {
   args: {
     listStyle: 'insetGrouped',
+    children: 'Title',
+  },
+};
+
+export const Example1: Meta<typeof ListRow> = {
+  args: {
+    listStyle: 'insetGrouped',
+  },
+  render: (args) => (
+    <ListRow {...args}>
+      {({ textProps, textStyles }) => (
+        <>
+          <Text {...textProps}>Title Title Title Title Title</Text>
+          <Text {...textProps} style={[textProps.style, textStyles.footnote]}>
+            Details Details Details Details Details
+          </Text>
+        </>
+      )}
+    </ListRow>
+  ),
+  parameters: {
+    containerStyle: {
+      width: 393,
+    },
+    specOverlay: (
+      <Image
+        source={require('./specs/example-1.png')}
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{ width: 393, height: 44 }}
+      />
+    ),
+  },
+};
+
+export const Example2: Meta<typeof ListRow> = {
+  args: {
+    listStyle: 'insetGrouped',
+  },
+  parameters: {
+    containerStyle: {
+      width: 393,
+    },
+    specOverlay: (
+      <Image
+        source={require('./specs/example-2.png')}
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{ width: 393, height: 44 }}
+      />
+    ),
+  },
+};
+
+export const ExampleLG: Meta<typeof ListRow> = {
+  args: {
+    listStyle: 'insetGrouped',
+  },
+  parameters: {
+    containerStyle: {
+      width: 393,
+    },
+    specOverlay: (
+      <Image
+        source={require('./specs/example-lg.png')}
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{ width: 393, height: 44 }}
+      />
+    ),
   },
 };

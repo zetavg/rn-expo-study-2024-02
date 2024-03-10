@@ -23,10 +23,11 @@ export function StoryContainer({
   story: PartialStoryFn<ReactRenderer>;
   parameters: Parameters;
 }) {
-  const { containerStyle } = parameters;
+  const { containerStyle, specOverlay } = parameters;
   const [darkMode, setDarkMode] = useState(useColorScheme() === 'dark');
   const [solidBackground, setSolidBackground] = useState(true);
   const [showBoundaryLines, setShowBoundaryLines] = useState(false);
+  const [showSpecOverlay, setShowSpecOverlay] = useState(false);
 
   const theme = useMemo(() => {
     const baseTheme = darkMode ? themes.dark : themes.light;
@@ -56,6 +57,9 @@ export function StoryContainer({
       <ScrollView style={styles.previewContent}>
         <View style={containerStyle} onLayout={handleContainerLayout}>
           <Story />
+          {!!specOverlay && showSpecOverlay && (
+            <View style={styles.specOverlayContainer}>{specOverlay}</View>
+          )}
         </View>
         {showBoundaryLines && (
           <>
@@ -109,6 +113,23 @@ export function StoryContainer({
         ]}
         contentContainerStyle={styles.previewControlsContent}
       >
+        {!!specOverlay && (
+          <View style={styles.previewControlGroup}>
+            <Text
+              style={[
+                styles.previewControlLabelText,
+                { color: previewUiTextColor },
+              ]}
+            >
+              Spec Overlay
+            </Text>
+            <Switch
+              value={showSpecOverlay}
+              onValueChange={setShowSpecOverlay}
+            />
+          </View>
+        )}
+
         <View style={styles.previewControlGroup}>
           <Text
             style={[
@@ -225,6 +246,14 @@ const styles = StyleSheet.create({
     width: 9999999,
     height: 1,
     backgroundColor: '#0C8CE9',
+  },
+  specOverlayContainer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    opacity: 0.5,
   },
 });
 

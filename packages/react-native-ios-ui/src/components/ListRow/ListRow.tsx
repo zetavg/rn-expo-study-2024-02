@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import {
   PixelRatio,
   StyleSheet,
@@ -9,6 +9,7 @@ import {
 
 import textStyles from '../../styles/textStyles';
 import ThemeContext from '../../ThemeContext';
+import { Theme } from '../../themes/type';
 
 import DrillInIcon from './DrillInIcon';
 
@@ -17,12 +18,28 @@ type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 type Props = {
   /** The style of the list. */
   listStyle?: ListStyle;
+  children:
+    | string
+    | ((context: {
+        textProps: React.ComponentProps<typeof Text>;
+        textStyles: typeof textStyles;
+        colors: Theme['colors'];
+      }) => React.ReactNode);
+  // details?: string;
 };
 
-export function ListRow({ listStyle = 'insetGrouped' }: Props) {
+export function ListRow({ listStyle = 'insetGrouped', children }: Props) {
   const theme = useContext(ThemeContext);
   const windowDimensions = useWindowDimensions();
   const uiScale = Math.max(windowDimensions.fontScale, 1);
+
+  const textProps = useMemo<React.ComponentProps<typeof Text>>(
+    () => ({
+      numberOfLines: 1,
+      style: [textStyles.body, { color: theme.colors.label }],
+    }),
+    [theme.colors.label],
+  );
   return (
     <View
       style={[
@@ -30,24 +47,19 @@ export function ListRow({ listStyle = 'insetGrouped' }: Props) {
         containerStyles[listStyle],
         {
           backgroundColor: theme.colors.secondarySystemGroupedBackground,
-          minHeight: 44 * uiScale,
+          minHeight: 44 * Math.max(1, Math.min(uiScale, 1.2)),
         },
       ]}
     >
       <View style={styles.titleAndTrailingAccessoriesContainer}>
-        <View style={styles.titleAndDetailContainer}>
-          <Text
-            numberOfLines={1}
-            style={[textStyles.body, { color: theme.colors.label }]}
-          >
-            Title Title Title Title Title Title
-          </Text>
-          <Text
-            numberOfLines={1}
-            style={[textStyles.footnote, { color: theme.colors.label }]}
-          >
-            Details Details Details Details Details Details
-          </Text>
+        <View style={styles.contentContainer}>
+          {(() => {
+            if (typeof children === 'string') {
+              return <Text {...textProps}>{children}</Text>;
+            }
+
+            return children({ textProps, textStyles, colors: theme.colors });
+          })()}
 
           {/* <Text style={[textStyles.body, { color: theme.colors.label }]}>
             iCloud - {windowDimensions.fontScale}
@@ -74,7 +86,7 @@ export function ListRow({ listStyle = 'insetGrouped' }: Props) {
               ]}
               numberOfLines={1}
             >
-              Detail Detail Detail
+              Detail
             </Text>
             <DrillInIcon
               style={styles.trailingIcon}
@@ -108,10 +120,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: -2,
   },
+  contentContainer: {
+    flexGrow: 1,
+    flexShrink: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    gap: -2,
+  },
   accessoriesAndGrabberContainer: {
     flexGrow: 1,
     flexShrink: 3,
     flexDirection: 'row',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   trailingContentsContainer: {

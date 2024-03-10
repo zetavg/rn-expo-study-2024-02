@@ -8,4 +8,6 @@ export type Parameters = SBParameters & {
 
 export type Meta<T> = SBMeta<T> & {
   parameters?: Parameters;
+  /** A React element which renders a specification of the component and can be displayed as an overlay in the Storybook UI. */
+  specOverlay?: JSX.Element;
 };
