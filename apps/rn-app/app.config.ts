@@ -34,7 +34,6 @@ export default ({ config }: ConfigContext): ExpoConfig =>
       },
       extra: {
         ...config.extra,
-        storybookMode: process.env.STORYBOOK_MODE,
       },
     },
     [

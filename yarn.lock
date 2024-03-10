@@ -6183,6 +6183,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"babel-helper-evaluate-path@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "babel-helper-evaluate-path@npm:0.5.0"
+  checksum: 10c0/e79a455c10ada2c6033c25f63cee6dbd8034a233ec1be4063089d28005aa5219a3dc43d847feeb915168ab7da92b1a5a4edc91ccc907892b9a1e69e91422cda7
+  languageName: node
+  linkType: hard
+
+"babel-helper-mark-eval-scopes@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "babel-helper-mark-eval-scopes@npm:0.4.3"
+  checksum: 10c0/36955d83f1d810ea316dea3057a2d9949cd9c4238390903f525b30267218051c383d71a23989b240300a2829be2f9d77ccc78ba2bae76edb5142592cb765191e
+  languageName: node
+  linkType: hard
+
+"babel-helper-remove-or-void@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "babel-helper-remove-or-void@npm:0.4.3"
+  checksum: 10c0/c0f1572f2817e45883a404cb24b91a0695b05ac75ec366a785d1681aae777a07e404bee63d2700fb54b98deab98dfac8aa91f796f6be6ec71d389cce80b0e1aa
+  languageName: node
+  linkType: hard
+
 "babel-jest@npm:^29.2.1, babel-jest@npm:^29.7.0":
   version: 29.7.0
   resolution: "babel-jest@npm:29.7.0"
@@ -6225,6 +6246,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"babel-plugin-minify-dead-code-elimination@npm:^0":
+  version: 0.5.2
+  resolution: "babel-plugin-minify-dead-code-elimination@npm:0.5.2"
+  dependencies:
+    babel-helper-evaluate-path: "npm:^0.5.0"
+    babel-helper-mark-eval-scopes: "npm:^0.4.3"
+    babel-helper-remove-or-void: "npm:^0.4.3"
+    lodash: "npm:^4.17.11"
+  checksum: 10c0/0b16867e296c6fa8f489ac9cae39707d10580210392d2613d5e43925c288d0ff760acd3ef850bdff2b3bdb60ad30fef2a8692c181dd5e1c816e81937cce1fc38
+  languageName: node
+  linkType: hard
+
 "babel-plugin-polyfill-corejs2@npm:^0.4.8":
   version: 0.4.8
   resolution: "babel-plugin-polyfill-corejs2@npm:0.4.8"
@@ -6261,7 +6294,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-react-docgen@npm:^4.2.1":
+"babel-plugin-react-docgen@npm:^4":
   version: 4.2.1
   resolution: "babel-plugin-react-docgen@npm:4.2.1"
   dependencies:
@@ -6283,6 +6316,16 @@ __metadata:
   version: 7.0.0-beta.0
   resolution: "babel-plugin-syntax-trailing-function-commas@npm:7.0.0-beta.0"
   checksum: 10c0/67e3d6a706637097526b2d3046d3124d3efd3aac28b47af940c2f8df01b8d7ffeb4cdf5648f3b5eac3f098f5b61c4845e306f34301c869e5e14db6ae8b77f699
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-define@npm:^2":
+  version: 2.1.4
+  resolution: "babel-plugin-transform-define@npm:2.1.4"
+  dependencies:
+    lodash: "npm:^4.17.11"
+    traverse: "npm:0.6.6"
+  checksum: 10c0/a9f8a7a075315f1a66f9624269bc4b22ebdbb059537aea16d55faa413989d8db0967f43b2b4d5130e4351aed5f2fff76ef5d32f77f993c361786cba419d778e2
   languageName: node
   linkType: hard
 
@@ -11755,7 +11798,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.13, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.21, lodash@npm:^4.17.4":
+"lodash@npm:^4.17.11, lodash@npm:^4.17.13, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.21, lodash@npm:^4.17.4":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: 10c0/d8cbea072bb08655bb4c989da418994b073a608dffa608b09ac04b43a791b12aeae7cd7ad919aa4c925f33b48490b5cfe6c1f71d827956071dae2e7bb3a6b74c
@@ -14693,7 +14736,9 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/react": "npm:~18.2.45"
     "@types/react-test-renderer": "npm:^18.0.7"
-    babel-plugin-react-docgen: "npm:^4.2.1"
+    babel-plugin-minify-dead-code-elimination: "npm:^0"
+    babel-plugin-react-docgen: "npm:^4"
+    babel-plugin-transform-define: "npm:^2"
     eslint: "npm:^8"
     expo: "npm:~50.0.6"
     expo-blur: "npm:~12.9.2"
@@ -15903,6 +15948,13 @@ __metadata:
   version: 0.0.3
   resolution: "tr46@npm:0.0.3"
   checksum: 10c0/047cb209a6b60c742f05c9d3ace8fa510bff609995c129a37ace03476a9b12db4dbf975e74600830ef0796e18882b2381fb5fb1f6b4f96b832c374de3ab91a11
+  languageName: node
+  linkType: hard
+
+"traverse@npm:0.6.6":
+  version: 0.6.6
+  resolution: "traverse@npm:0.6.6"
+  checksum: 10c0/72b2c95463e991063cfa3603dc80e8ca35cae4bf1a736e5b6df3a50226dca341777699f702b55f61b9a329e7be0a76fb77d994f4981f49de98bb02065ca1e7d9
   languageName: node
   linkType: hard
 
