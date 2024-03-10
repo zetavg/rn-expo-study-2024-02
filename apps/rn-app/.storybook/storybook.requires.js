@@ -24,6 +24,18 @@ const normalizedStories = [
   },
   {
     titlePrefix: '',
+    directory: '../../packages/react-native-ui/src',
+    files: '**/*.stories.?(ts|tsx|js|jsx)',
+    importPathMatcher:
+      /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.stories\.(?:ts|tsx|js|jsx)?)$/,
+    req: require.context(
+      '../../../packages/react-native-ui/src',
+      true,
+      /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.stories\.(?:ts|tsx|js|jsx)?)$/,
+    ),
+  },
+  {
+    titlePrefix: '',
     directory: '../../packages/react-native-ios-ui/src',
     files: '**/*.stories.?(ts|tsx|js|jsx)',
     importPathMatcher:
