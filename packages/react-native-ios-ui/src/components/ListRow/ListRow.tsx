@@ -15,6 +15,7 @@ import DrillInIcon from './DrillInIcon';
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
 type Props = {
+  /** The style of the list. */
   listStyle?: ListStyle;
 };
 
@@ -96,7 +97,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   titleAndTrailingAccessoriesContainer: {
-    backgroundColor: 'red',
     flexGrow: 1,
     flexShrink: 1,
     flexDirection: 'row',
