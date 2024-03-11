@@ -4,7 +4,7 @@ import { useUIColors as useIosUIColors } from '@rnstudy/react-native-ios-ui';
 
 import { useUIPlatform } from '../UIPlatformContext';
 
-export function useSeparatorColor() {
+export function useSeparatorColor({ opaque }: { opaque?: boolean } = {}) {
   const uiPlatform = useUIPlatform();
 
   const iosUiColors = useIosUIColors();
@@ -12,12 +12,14 @@ export function useSeparatorColor() {
 
   switch (uiPlatform) {
     case 'ios': {
-      return iosUiColors.separator;
+      return opaque ? iosUiColors.opaqueSeparator : iosUiColors.separator;
     }
 
     case 'android':
     default: {
-      return paperTheme.colors.outlineVariant;
+      return opaque
+        ? paperTheme.colors.outline
+        : paperTheme.colors.outlineVariant;
     }
   }
 }

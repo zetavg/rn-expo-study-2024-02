@@ -39,7 +39,7 @@ export function StoryContainer({
 
   const previewUIControlsBackgroundColor = useBackgroundColor();
 
-  const previewUiBorderColor = useSeparatorColor();
+  const previewUiBorderColor = useSeparatorColor({ opaque: true });
 
   return (
     <>
