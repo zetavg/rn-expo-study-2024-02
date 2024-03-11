@@ -29,21 +29,20 @@ export function StoryContainer({
   const [showBoundaryLines, setShowBoundaryLines] = useState(false);
   const [showSpecOverlay, setShowSpecOverlay] = useState(false);
 
-  const theme = useMemo(() => {
-    const baseTheme = darkMode ? themes.dark : themes.light;
-    return baseTheme;
-  }, [darkMode]);
+  const colorScheme = darkMode ? 'dark' : 'light';
+
+  const theme = themes.blue;
 
   const solidBackgroundColor = useMemo(() => {
-    return theme.ios.colors.systemGroupedBackground;
-  }, [theme]);
+    return theme.ios.uiColors[colorScheme].systemGroupedBackground;
+  }, [theme, colorScheme]);
 
   const previewUiBorderColor = useMemo(() => {
-    return theme.ios.colors.separator;
-  }, [theme]);
+    return theme.ios.uiColors[colorScheme].separator;
+  }, [theme, colorScheme]);
   const previewUiTextColor = useMemo(() => {
-    return theme.ios.colors.secondaryLabel;
-  }, [theme]);
+    return theme.ios.uiColors[colorScheme].secondaryLabel;
+  }, [theme, colorScheme]);
 
   const [containerLayout, setContainerLayout] = useState<LayoutRectangle>();
   const handleContainerLayout = useCallback((event: LayoutChangeEvent) => {
@@ -53,7 +52,7 @@ export function StoryContainer({
   const Story = story;
 
   const content = (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider colorScheme={colorScheme}>
       <ScrollView
         style={styles.previewContent}
         contentContainerStyle={styles.previewContentContainer}

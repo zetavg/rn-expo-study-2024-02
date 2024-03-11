@@ -7,6 +7,7 @@ import ListRow from './ListRow';
 
 const containerStyle: ViewStyle = {
   marginTop: 16,
+  alignSelf: 'stretch',
 };
 
 const meta: Meta<typeof ListRow> = {

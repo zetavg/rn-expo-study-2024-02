@@ -1,19 +1,22 @@
 import React, { ReactNode } from 'react';
 
-import { ThemeProvider as IOSThemeProvider } from '@rnstudy/react-native-ios-ui';
+import { ContextProvider as IosUIContextProvider } from '@rnstudy/react-native-ios-ui';
 
-import { Theme } from './themes/type';
+import { Theme } from './themes/types';
+import themes from './themes';
 import UIPlatformContext, {
   AVAILABLE_UI_PLATFORMS,
   type UIPlatform,
 } from './UIPlatformContext';
 
 export const ThemeProvider = ({
-  theme,
+  colorScheme,
   platform = AVAILABLE_UI_PLATFORMS[0],
+  theme = themes.blue,
   children,
 }: {
-  theme: Theme;
+  theme?: Theme;
+  colorScheme: 'light' | 'dark';
   platform?: UIPlatform;
   children: ReactNode;
 }) => {
@@ -23,7 +26,12 @@ export const ThemeProvider = ({
 
   return (
     <UIPlatformContext.Provider value={validatedPlatform}>
-      <IOSThemeProvider theme={theme.ios}>{children}</IOSThemeProvider>
+      <IosUIContextProvider
+        colors={theme.ios.colors[colorScheme]}
+        uiColors={theme.ios.uiColors[colorScheme]}
+      >
+        {children}
+      </IosUIContextProvider>
     </UIPlatformContext.Provider>
   );
 };

@@ -26,7 +26,6 @@ export default function Example1ListScreen({ route }: StackScreenProps) {
           title="Go to details"
           onPress={() => navigation.push('Example1Details', { name: 'hi' })}
         />
-        <ListRow />
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <Text>{JSON.stringify((ListRow as any).__docgenInfo, null, 2)}</Text>
         <Text>This is Example1ListScreen</Text>

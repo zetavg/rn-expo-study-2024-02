@@ -7,9 +7,9 @@ import {
   View,
 } from 'react-native';
 
-import textStyles from '../../styles/textStyles';
-import ThemeContext from '../../ThemeContext';
-import { Theme } from '../../themes/type';
+import { useTextStyles } from '../../contexts/TextStylesContext';
+import { useUIColors } from '../../contexts/UIColorsContext';
+import { textStyles } from '../../tokens/text-styles';
 
 import DrillInIcon from './DrillInIcon';
 
@@ -23,22 +23,22 @@ type Props = {
     | ((context: {
         textProps: React.ComponentProps<typeof Text>;
         textStyles: typeof textStyles;
-        colors: Theme['colors'];
       }) => React.ReactNode);
   // details?: string;
 };
 
 export function ListRow({ listStyle = 'insetGrouped', children }: Props) {
-  const theme = useContext(ThemeContext);
+  const uiColors = useUIColors();
+  const textStyles = useTextStyles();
   const windowDimensions = useWindowDimensions();
   const uiScale = Math.max(windowDimensions.fontScale, 1);
 
   const textProps = useMemo<React.ComponentProps<typeof Text>>(
     () => ({
       numberOfLines: 1,
-      style: [textStyles.body, { color: theme.colors.label }],
+      style: [textStyles.body, { color: uiColors.label }],
     }),
-    [theme.colors.label],
+    [textStyles.body, uiColors.label],
   );
   return (
     <View
@@ -46,7 +46,7 @@ export function ListRow({ listStyle = 'insetGrouped', children }: Props) {
         styles.container,
         containerStyles[listStyle],
         {
-          backgroundColor: theme.colors.secondarySystemGroupedBackground,
+          backgroundColor: uiColors.secondarySystemGroupedBackground,
           minHeight: 44 * Math.max(1, Math.min(uiScale, 1.2)),
         },
       ]}
@@ -58,7 +58,7 @@ export function ListRow({ listStyle = 'insetGrouped', children }: Props) {
               return <Text {...textProps}>{children}</Text>;
             }
 
-            return children({ textProps, textStyles, colors: theme.colors });
+            return children({ textProps, textStyles });
           })()}
 
           {/* <Text style={[textStyles.body, { color: theme.colors.label }]}>
@@ -79,7 +79,7 @@ export function ListRow({ listStyle = 'insetGrouped', children }: Props) {
               style={[
                 textStyles.body,
                 {
-                  color: theme.colors.secondaryLabel,
+                  color: uiColors.secondaryLabel,
                   overflow: 'hidden',
                   flexShrink: 1,
                 },
@@ -90,7 +90,7 @@ export function ListRow({ listStyle = 'insetGrouped', children }: Props) {
             </Text>
             <DrillInIcon
               style={styles.trailingIcon}
-              fill={theme.colors.tertiaryLabel}
+              fill={uiColors.tertiaryLabel}
             />
           </View>
         </View>
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexDirection: 'column',
     justifyContent: 'center',
-    gap: -2,
+    gap: -4,
   },
   accessoriesAndGrabberContainer: {
     flexGrow: 1,
