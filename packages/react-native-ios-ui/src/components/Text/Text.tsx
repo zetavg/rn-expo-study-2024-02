@@ -8,7 +8,7 @@ import { TextStyles } from '../../tokens/text-styles/types';
 type Props = React.ComponentProps<typeof RNText> & {
   textStyle?: keyof TextStyles;
   emphasized?: boolean;
-  color?: 'secondary' | 'tertiary' | 'quaternary';
+  color?: 'secondary' | 'tertiary' | 'quaternary' | 'placeholder';
 };
 
 export function Text({
@@ -26,7 +26,15 @@ export function Text({
       style={[
         textStyles[textStyle],
         emphasized && textStyles[`${textStyle}_emphasized`],
-        { color: color ? uiColors[`${color}Label`] : uiColors.label },
+        {
+          color: color
+            ? uiColors[
+                color === 'placeholder'
+                  ? ('placeholderText' as const)
+                  : (`${color}Label` as const)
+              ]
+            : uiColors.label,
+        },
         style,
       ]}
     />
