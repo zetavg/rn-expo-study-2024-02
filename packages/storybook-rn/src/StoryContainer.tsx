@@ -3,6 +3,7 @@ import {
   ImageBackground,
   LayoutChangeEvent,
   LayoutRectangle,
+  Platform,
   ScrollView,
   StyleSheet,
   Switch,
@@ -73,6 +74,7 @@ export function StoryContainer({
           <View style={styles.previewControlGroup}>
             <Text style={[styles.previewControlLabelText]}>Altr. P.</Text>
             <Switch
+              style={styles.previewControlSwitch}
               value={useAlternativePlatform}
               onValueChange={setUseAlternativePlatform}
             />
@@ -82,6 +84,7 @@ export function StoryContainer({
           <View style={styles.previewControlGroup}>
             <Text style={[styles.previewControlLabelText]}>Spec Overlay</Text>
             <Switch
+              style={styles.previewControlSwitch}
               value={showSpecOverlay}
               onValueChange={setShowSpecOverlay}
             />
@@ -90,17 +93,26 @@ export function StoryContainer({
 
         <View style={styles.previewControlGroup}>
           <Text style={[styles.previewControlLabelText]}>Dark Mode</Text>
-          <Switch value={darkMode} onValueChange={setDarkMode} />
+          <Switch
+            style={styles.previewControlSwitch}
+            value={darkMode}
+            onValueChange={setDarkMode}
+          />
         </View>
 
         <View style={styles.previewControlGroup}>
           <Text style={[styles.previewControlLabelText]}>BG</Text>
-          <Switch value={solidBackground} onValueChange={setSolidBackground} />
+          <Switch
+            style={styles.previewControlSwitch}
+            value={solidBackground}
+            onValueChange={setSolidBackground}
+          />
         </View>
 
         <View style={styles.previewControlGroup}>
           <Text style={[styles.previewControlLabelText]}>Boundary L.</Text>
           <Switch
+            style={styles.previewControlSwitch}
             value={showBoundaryLines}
             onValueChange={setShowBoundaryLines}
           />
@@ -246,19 +258,24 @@ const styles = StyleSheet.create({
   previewControlsContent: {
     flexGrow: 1,
     paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingHorizontal: 16,
     flexDirection: 'row',
-    gap: 16,
+    gap: 8,
     justifyContent: 'space-around',
     alignItems: 'center',
   },
   previewControlGroup: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 4,
     alignItems: 'center',
   },
   previewControlLabelText: {
     fontSize: 12,
+  },
+  previewControlSwitch: {
+    ...Platform.select({
+      ios: { transform: [{ scale: 0.8 }] },
+    }),
   },
   transparentBackgroundImage: {
     resizeMode: 'repeat',
