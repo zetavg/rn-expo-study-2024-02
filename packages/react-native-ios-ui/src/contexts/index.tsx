@@ -31,3 +31,7 @@ export function ContextProvider({
     </ColorsContext.Provider>
   );
 }
+
+export { useColors } from './ColorsContext';
+export { useTextStyles } from './TextStylesContext';
+export { useUIColors } from './UIColorsContext';

@@ -24,10 +24,10 @@ export function Text({
     <RNText
       {...props}
       style={[
-        style,
         textStyles[textStyle],
         emphasized && textStyles[`${textStyle}_emphasized`],
         { color: color ? uiColors[`${color}Label`] : uiColors.label },
+        style,
       ]}
     />
   );

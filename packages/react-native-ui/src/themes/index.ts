@@ -3,19 +3,24 @@ import {
   MD3LightTheme as MD3DefaultLightTheme,
 } from 'react-native-paper';
 
-import { colors as iosColors } from '@rnstudy/react-native-ios-ui';
+import {
+  colors as iosColors,
+  textStyles as iosTextStyles,
+} from '@rnstudy/react-native-ios-ui';
 
 import { Theme } from './types';
 
 export const blue: Theme = {
   ios: {
-    colors: {
-      light: iosColors.light.colors,
-      dark: iosColors.dark.colors,
+    light: {
+      colors: iosColors.light.colors,
+      uiColors: iosColors.light.uiColors,
+      textStyles: iosTextStyles,
     },
-    uiColors: {
-      light: iosColors.light.uiColors,
-      dark: iosColors.dark.uiColors,
+    dark: {
+      colors: iosColors.dark.colors,
+      uiColors: iosColors.dark.uiColors,
+      textStyles: iosTextStyles,
     },
   },
   md3: {

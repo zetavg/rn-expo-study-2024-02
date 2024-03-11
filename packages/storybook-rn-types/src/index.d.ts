@@ -4,6 +4,7 @@ import type { Parameters as SBParameters } from '@storybook/types';
 
 export type Parameters = SBParameters & {
   containerStyle?: ViewStyle;
+  containerGroupedBackground?: boolean;
 };
 
 export type Meta<T> = SBMeta<T> & {

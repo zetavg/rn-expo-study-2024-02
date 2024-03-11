@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Text as RNText, View } from 'react-native';
 
 import Text from '../../components/Text';
 
@@ -71,6 +71,13 @@ export function Typography() {
         <Text caption2 emphasized>
           emphasized
         </Text>
+      </Text>
+      <Text> </Text>
+      <Text>Default</Text>
+      {/* eslint-disable-next-line react-native/no-inline-styles */}
+      <Text style={{ fontSize: 10, lineHeight: 12, fontStyle: 'italic' }}>
+        {/* eslint-disable-next-line react-native/no-inline-styles */}
+        Custom style <Text style={{ fontSize: 5 }}>Custom style</Text>
       </Text>
     </View>
   );

@@ -4,6 +4,7 @@ import { PaperProvider } from 'react-native-paper';
 import { ContextProvider as IosUIContextProvider } from '@rnstudy/react-native-ios-ui';
 
 import { Theme } from './themes/types';
+import ColorSchemeContext from './ColorSchemeContext';
 import themes from './themes';
 import UIPlatformContext, {
   AVAILABLE_UI_PLATFORMS,
@@ -27,14 +28,17 @@ export const ThemeProvider = ({
 
   return (
     <UIPlatformContext.Provider value={validatedPlatform}>
-      <PaperProvider theme={theme.md3[colorScheme]}>
-        <IosUIContextProvider
-          colors={theme.ios.colors[colorScheme]}
-          uiColors={theme.ios.uiColors[colorScheme]}
-        >
-          {children}
-        </IosUIContextProvider>
-      </PaperProvider>
+      <ColorSchemeContext.Provider value={colorScheme}>
+        <PaperProvider theme={theme.md3[colorScheme]}>
+          <IosUIContextProvider
+            colors={theme.ios[colorScheme].colors}
+            uiColors={theme.ios[colorScheme].uiColors}
+            textStyles={theme.ios[colorScheme].textStyles}
+          >
+            {children}
+          </IosUIContextProvider>
+        </PaperProvider>
+      </ColorSchemeContext.Provider>
     </UIPlatformContext.Provider>
   );
 };
