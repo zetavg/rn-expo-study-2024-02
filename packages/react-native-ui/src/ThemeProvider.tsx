@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import { PaperProvider } from 'react-native-paper';
 
 import { ContextProvider as IosUIContextProvider } from '@rnstudy/react-native-ios-ui';
 
@@ -26,12 +27,14 @@ export const ThemeProvider = ({
 
   return (
     <UIPlatformContext.Provider value={validatedPlatform}>
-      <IosUIContextProvider
-        colors={theme.ios.colors[colorScheme]}
-        uiColors={theme.ios.uiColors[colorScheme]}
-      >
-        {children}
-      </IosUIContextProvider>
+      <PaperProvider theme={theme.md3[colorScheme]}>
+        <IosUIContextProvider
+          colors={theme.ios.colors[colorScheme]}
+          uiColors={theme.ios.uiColors[colorScheme]}
+        >
+          {children}
+        </IosUIContextProvider>
+      </PaperProvider>
     </UIPlatformContext.Provider>
   );
 };

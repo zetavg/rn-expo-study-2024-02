@@ -1,3 +1,5 @@
+import { MD3Theme } from 'react-native-paper';
+
 import { Colors, UIColors } from '@rnstudy/react-native-ios-ui';
 
 export type Theme = {
@@ -10,5 +12,9 @@ export type Theme = {
       dark: UIColors;
       light: UIColors;
     };
+  };
+  md3: {
+    dark: MD3Theme;
+    light: MD3Theme;
   };
 };

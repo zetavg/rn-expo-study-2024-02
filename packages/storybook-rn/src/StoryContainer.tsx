@@ -13,7 +13,11 @@ import {
 import { ReactRenderer } from '@storybook/react';
 import { PartialStoryFn } from '@storybook/types';
 
-import { ThemeProvider, themes } from '@rnstudy/react-native-ui';
+import {
+  AVAILABLE_UI_PLATFORMS,
+  ThemeProvider,
+  themes,
+} from '@rnstudy/react-native-ui';
 import { Parameters } from '@rnstudy/storybook-rn-types';
 
 export function StoryContainer({
@@ -24,6 +28,7 @@ export function StoryContainer({
   parameters: Parameters;
 }) {
   const { containerStyle, specOverlay } = parameters;
+  const [useAlternativePlatform, setUseAlternativePlatform] = useState(false);
   const [darkMode, setDarkMode] = useState(useColorScheme() === 'dark');
   const [solidBackground, setSolidBackground] = useState(true);
   const [showBoundaryLines, setShowBoundaryLines] = useState(false);
@@ -52,7 +57,14 @@ export function StoryContainer({
   const Story = story;
 
   const content = (
-    <ThemeProvider colorScheme={colorScheme}>
+    <ThemeProvider
+      colorScheme={colorScheme}
+      platform={
+        useAlternativePlatform
+          ? AVAILABLE_UI_PLATFORMS[1]
+          : AVAILABLE_UI_PLATFORMS[0]
+      }
+    >
       <ScrollView
         style={styles.previewContent}
         contentContainerStyle={styles.previewContentContainer}
@@ -124,6 +136,22 @@ export function StoryContainer({
         ]}
         contentContainerStyle={styles.previewControlsContent}
       >
+        {AVAILABLE_UI_PLATFORMS.length > 1 && (
+          <View style={styles.previewControlGroup}>
+            <Text
+              style={[
+                styles.previewControlLabelText,
+                { color: previewUiTextColor },
+              ]}
+            >
+              Altr. P.
+            </Text>
+            <Switch
+              value={useAlternativePlatform}
+              onValueChange={setUseAlternativePlatform}
+            />
+          </View>
+        )}
         {!!specOverlay && (
           <View style={styles.previewControlGroup}>
             <Text

@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext, useContext } from 'react';
 import { Platform } from 'react-native';
 
 export type UIPlatform = 'ios' | 'android';
@@ -15,5 +15,9 @@ export const AVAILABLE_UI_PLATFORMS: readonly [UIPlatform, ...UIPlatform[]] =
   })();
 
 export const UIPlatformContext = createContext(AVAILABLE_UI_PLATFORMS[0]);
+
+export function useUIPlatform(): UIPlatform {
+  return useContext(UIPlatformContext);
+}
 
 export default UIPlatformContext;
