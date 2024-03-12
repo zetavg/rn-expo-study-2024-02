@@ -72,13 +72,23 @@ export function Typography() {
           emphasized
         </Text>
       </Text>
+
       <Text> </Text>
+
       <Text>Default</Text>
       {/* eslint-disable-next-line react-native/no-inline-styles */}
       <Text style={{ fontSize: 10, lineHeight: 12, fontStyle: 'italic' }}>
         {/* eslint-disable-next-line react-native/no-inline-styles */}
         Custom style <Text style={{ fontSize: 5 }}>Custom style</Text>
       </Text>
+
+      <Text> </Text>
+
+      <Text>Default Color</Text>
+      <Text secondary>Secondary Color</Text>
+      <Text tertiary>Tertiary Color</Text>
+      <Text quaternary>Quaternary Color</Text>
+      <Text placeholder>Placeholder Color</Text>
     </View>
   );
 }

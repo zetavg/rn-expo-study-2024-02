@@ -1,4 +1,4 @@
-import { MD3Theme } from 'react-native-paper';
+import { MD3Theme as PaperMD3Theme } from 'react-native-paper';
 
 import {
   Colors,
@@ -6,21 +6,23 @@ import {
   UIColors,
 } from '@rnstudy/react-native-ios-ui';
 
-export type IOSTheme = {
-  colors: Colors;
-  uiColors: UIColors;
-  textStyles: TextStyleTokens;
-};
+import { MD3Theme } from './md3/types';
 
 export type Theme = {
   ios: {
-    dark: IOSTheme;
-    light: IOSTheme;
+    schemes: {
+      light: {
+        colors: Colors;
+        uiColors: UIColors;
+      };
+      dark: {
+        colors: Colors;
+        uiColors: UIColors;
+      };
+    };
+    textStyles: TextStyleTokens;
   };
-  md3: {
-    dark: MD3Theme;
-    light: MD3Theme;
-  };
+  md3: MD3Theme;
 };
 
-export type { MD3Theme };
+export type { PaperMD3Theme };

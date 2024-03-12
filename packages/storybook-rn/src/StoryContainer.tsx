@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   ImageBackground,
   LayoutChangeEvent,
@@ -17,8 +17,8 @@ import {
   AVAILABLE_UI_PLATFORMS,
   Text,
   ThemeProvider,
-  useBackgroundColor,
-  useSeparatorColor,
+  WithBackgroundColor,
+  WithSeparatorColor,
 } from '@rnstudy/react-native-ui';
 import { Parameters } from '@rnstudy/storybook-rn-types';
 
@@ -29,96 +29,127 @@ export function StoryContainer({
   story: PartialStoryFn<ReactRenderer>;
   parameters: Parameters;
 }) {
-  const { specOverlay } = parameters;
+  const { containerBackground, specOverlay } = parameters;
+
   const [useAlternativePlatform, setUseAlternativePlatform] = useState(false);
   const [darkMode, setDarkMode] = useState(useColorScheme() === 'dark');
-  const [solidBackground, setSolidBackground] = useState(true);
+
+  const [showBackground, setShowBackground] = useState(
+    !['none', 'transparent'].includes(containerBackground || ''),
+  );
+  const [useGroupedBackground, setUseGroupedBackground] = useState(
+    containerBackground === 'grouped',
+  );
+
   const [showBoundaryLines, setShowBoundaryLines] = useState(false);
   const [showSpecOverlay, setShowSpecOverlay] = useState(false);
 
   const colorScheme = darkMode ? 'dark' : 'light';
-
-  const previewUIControlsBackgroundColor = useBackgroundColor();
-
-  const previewUiBorderColor = useSeparatorColor({ opaque: true });
+  const uiPlatform = useAlternativePlatform
+    ? AVAILABLE_UI_PLATFORMS[1]
+    : AVAILABLE_UI_PLATFORMS[0];
 
   return (
-    <>
-      <ThemeProvider
-        colorScheme={colorScheme}
-        platform={
-          useAlternativePlatform
-            ? AVAILABLE_UI_PLATFORMS[1]
-            : AVAILABLE_UI_PLATFORMS[0]
-        }
-      >
-        <StoryContainerContent
-          story={story}
-          parameters={parameters}
-          darkMode={darkMode}
-          solidBackground={solidBackground}
-          showSpecOverlay={showSpecOverlay}
-          showBoundaryLines={showBoundaryLines}
-        />
-      </ThemeProvider>
-      <ScrollView
-        horizontal
-        style={[
-          styles.previewControls,
-          { borderColor: previewUiBorderColor },
-          { backgroundColor: previewUIControlsBackgroundColor },
-        ]}
-        contentContainerStyle={styles.previewControlsContent}
-      >
-        {AVAILABLE_UI_PLATFORMS.length > 1 && (
-          <View style={styles.previewControlGroup}>
-            <Text style={[styles.previewControlLabelText]}>Altr. P.</Text>
-            <Switch
-              style={styles.previewControlSwitch}
-              value={useAlternativePlatform}
-              onValueChange={setUseAlternativePlatform}
-            />
-          </View>
+    <ThemeProvider colorScheme={colorScheme} platform={uiPlatform}>
+      <StoryContainerContent
+        story={story}
+        parameters={parameters}
+        darkMode={darkMode}
+        showBackground={showBackground}
+        useGroupedBackground={useGroupedBackground}
+        showSpecOverlay={showSpecOverlay}
+        showBoundaryLines={showBoundaryLines}
+      />
+
+      <WithBackgroundColor>
+        {(backgroundColor) => (
+          <WithSeparatorColor opaque>
+            {(separatorColor) => (
+              <>
+                <ScrollView
+                  horizontal
+                  style={[
+                    styles.previewControls,
+                    { borderColor: separatorColor },
+                    { backgroundColor },
+                  ]}
+                  contentContainerStyle={styles.previewControlsContent}
+                >
+                  {AVAILABLE_UI_PLATFORMS.length > 1 && (
+                    <View style={styles.previewControlGroup}>
+                      <Text style={[styles.previewControlLabelText]}>
+                        Altr. P.
+                      </Text>
+                      <Switch
+                        style={styles.previewControlSwitch}
+                        value={useAlternativePlatform}
+                        onValueChange={setUseAlternativePlatform}
+                      />
+                    </View>
+                  )}
+                  {!!specOverlay && (
+                    <View style={styles.previewControlGroup}>
+                      <Text style={[styles.previewControlLabelText]}>
+                        Spec Overlay
+                      </Text>
+                      <Switch
+                        style={styles.previewControlSwitch}
+                        value={showSpecOverlay}
+                        onValueChange={setShowSpecOverlay}
+                      />
+                    </View>
+                  )}
+
+                  <View style={styles.previewControlGroup}>
+                    <Text style={[styles.previewControlLabelText]}>
+                      Dark Mode
+                    </Text>
+                    <Switch
+                      style={styles.previewControlSwitch}
+                      value={darkMode}
+                      onValueChange={setDarkMode}
+                    />
+                  </View>
+
+                  <View style={styles.previewControlGroup}>
+                    <Text style={[styles.previewControlLabelText]}>BG</Text>
+                    <Switch
+                      style={styles.previewControlSwitch}
+                      value={showBackground}
+                      onValueChange={setShowBackground}
+                    />
+                  </View>
+
+                  {showBackground && (
+                    <View style={styles.previewControlGroup}>
+                      <Text style={[styles.previewControlLabelText]}>
+                        BG Grouped
+                      </Text>
+                      <Switch
+                        style={styles.previewControlSwitch}
+                        value={useGroupedBackground}
+                        onValueChange={setUseGroupedBackground}
+                      />
+                    </View>
+                  )}
+
+                  <View style={styles.previewControlGroup}>
+                    <Text style={[styles.previewControlLabelText]}>
+                      Boundary L.
+                    </Text>
+                    <Switch
+                      style={styles.previewControlSwitch}
+                      value={showBoundaryLines}
+                      onValueChange={setShowBoundaryLines}
+                    />
+                  </View>
+                </ScrollView>
+              </>
+            )}
+          </WithSeparatorColor>
         )}
-        {!!specOverlay && (
-          <View style={styles.previewControlGroup}>
-            <Text style={[styles.previewControlLabelText]}>Spec Overlay</Text>
-            <Switch
-              style={styles.previewControlSwitch}
-              value={showSpecOverlay}
-              onValueChange={setShowSpecOverlay}
-            />
-          </View>
-        )}
-
-        <View style={styles.previewControlGroup}>
-          <Text style={[styles.previewControlLabelText]}>Dark Mode</Text>
-          <Switch
-            style={styles.previewControlSwitch}
-            value={darkMode}
-            onValueChange={setDarkMode}
-          />
-        </View>
-
-        <View style={styles.previewControlGroup}>
-          <Text style={[styles.previewControlLabelText]}>BG</Text>
-          <Switch
-            style={styles.previewControlSwitch}
-            value={solidBackground}
-            onValueChange={setSolidBackground}
-          />
-        </View>
-
-        <View style={styles.previewControlGroup}>
-          <Text style={[styles.previewControlLabelText]}>Boundary L.</Text>
-          <Switch
-            style={styles.previewControlSwitch}
-            value={showBoundaryLines}
-            onValueChange={setShowBoundaryLines}
-          />
-        </View>
-      </ScrollView>
-    </>
+      </WithBackgroundColor>
+    </ThemeProvider>
   );
 }
 
@@ -126,23 +157,20 @@ function StoryContainerContent({
   story,
   parameters,
   darkMode,
-  solidBackground,
+  showBackground,
+  useGroupedBackground,
   showSpecOverlay,
   showBoundaryLines,
 }: {
   story: PartialStoryFn<ReactRenderer>;
   parameters: Parameters;
   darkMode: boolean;
-  solidBackground: boolean;
+  showBackground: boolean;
+  useGroupedBackground: boolean;
   showSpecOverlay: boolean;
   showBoundaryLines: boolean;
 }) {
-  const { containerGroupedBackground, containerStyle, specOverlay } =
-    parameters;
-
-  const solidBackgroundColor = useBackgroundColor({
-    grouped: containerGroupedBackground,
-  });
+  const { containerStyle, specOverlay } = parameters;
 
   const [containerLayout, setContainerLayout] = useState<LayoutRectangle>();
   const handleContainerLayout = useCallback((event: LayoutChangeEvent) => {
@@ -211,16 +239,15 @@ function StoryContainerContent({
     </ScrollView>
   );
 
-  if (solidBackground) {
+  if (showBackground) {
     return (
-      <View
-        style={[
-          styles.rootContainer,
-          { backgroundColor: solidBackgroundColor },
-        ]}
-      >
-        {content}
-      </View>
+      <WithBackgroundColor grouped={useGroupedBackground}>
+        {(backgroundColor) => (
+          <View style={[styles.rootContainer, { backgroundColor }]}>
+            {content}
+          </View>
+        )}
+      </WithBackgroundColor>
     );
   }
 

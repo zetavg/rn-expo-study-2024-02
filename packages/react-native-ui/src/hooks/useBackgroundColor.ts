@@ -1,47 +1,66 @@
-import { useTheme as usePaperTheme } from 'react-native-paper';
+import { useBackgroundColor as useBackgroundColorIOS } from '@rnstudy/react-native-ios-ui/src/hooks';
 
-import { useUIColors as useIosUIColors } from '@rnstudy/react-native-ios-ui';
-
+import { useColorScheme } from '../ColorSchemeContext';
+import { useGroupLevelMD3 } from '../contexts/GroupLevelContextMD3';
+import { useIsGroupedBackgroundMD3 } from '../contexts/IsGroupedBackgroundContextMD3';
 import { useUIPlatform } from '../UIPlatformContext';
 
+import useMD3Scheme from './useMD3Scheme';
+
+/**
+ * Returns the color that can be used as a view or container's background.
+ *
+ * @private It is not recommended to use this hook directly. Instead, use the `WithBackgroundColor` component.
+ */
 export function useBackgroundColor({
-  grouped = true,
+  grouped,
   level,
 }: {
   grouped?: boolean;
-  level?: null | 'secondary' | 'tertiary';
-  colorScheme?: 'light' | 'dark';
-} = {}) {
+  level?: null | number;
+} = {}): string {
   const uiPlatform = useUIPlatform();
+  const colorScheme = useColorScheme();
 
-  const iosUiColors = useIosUIColors();
-  const paperTheme = usePaperTheme();
+  const md3Scheme = useMD3Scheme();
+
+  const iosBackgroundColor = useBackgroundColorIOS({ grouped, level });
+
+  const md3LevelFromContext = useGroupLevelMD3();
+  const md3IsGroupedBackgroundFromContext = useIsGroupedBackgroundMD3();
 
   switch (uiPlatform) {
-    case 'ios': {
-      switch (level) {
-        case 'secondary':
-          return iosUiColors[
-            `secondarySystem${grouped ? 'Grouped' : ''}Background`
-          ];
-        case 'tertiary':
-          return iosUiColors[
-            `tertiarySystem${grouped ? 'Grouped' : ''}Background`
-          ];
-        default:
-          return iosUiColors[`system${grouped ? 'Grouped' : ''}Background`];
-      }
-    }
-
+    case 'ios':
+      return iosBackgroundColor;
     case 'android':
     default: {
-      switch (level) {
-        case 'secondary':
-          return paperTheme.colors.primaryContainer;
-        case 'tertiary':
-          return paperTheme.colors.secondaryContainer;
-        default:
-          return paperTheme.colors.surface;
+      if (level === undefined) {
+        level = md3LevelFromContext;
+      }
+
+      if (grouped === undefined) {
+        grouped = md3IsGroupedBackgroundFromContext;
+      }
+
+      const currentLevel = typeof level === 'number' ? level + 1 : 0;
+      if (colorScheme !== 'dark') {
+        if (currentLevel <= 0) {
+          return grouped ? md3Scheme.surfaceContainer : md3Scheme.surface;
+        } else if (currentLevel % 2 === 1) {
+          return grouped ? md3Scheme.surfaceBright : md3Scheme.surfaceContainer;
+        } else {
+          return grouped
+            ? md3Scheme.surfaceContainer
+            : md3Scheme.surfaceContainerHighest;
+        }
+      } else {
+        if (currentLevel <= 0) {
+          return md3Scheme.surface;
+        } else if (currentLevel % 2 === 1) {
+          return md3Scheme.surfaceContainer;
+        } else {
+          return md3Scheme.surfaceContainerHigh;
+        }
       }
     }
   }

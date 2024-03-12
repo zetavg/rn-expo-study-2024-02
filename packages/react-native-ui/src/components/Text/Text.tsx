@@ -7,6 +7,9 @@ import {
 
 import { Text as TextIOS } from '@rnstudy/react-native-ios-ui';
 
+import { useGroupLevelMD3 } from '../../contexts/GroupLevelContextMD3';
+import { useMD3Scheme } from '../../hooks';
+import { useMD3Theme } from '../../MD3ThemeContext';
 import { useUIPlatform } from '../../UIPlatformContext';
 
 type Variant =
@@ -22,18 +25,20 @@ type Variant =
   | 'caption1'
   | 'caption2';
 
+type Color = 'secondary' | 'tertiary' | 'quaternary' | 'placeholder';
+
 type Props = React.ComponentProps<typeof RNText> & {
   children: React.ReactNode;
   variant?: Variant;
+  color?: Color;
   emphasized?: boolean;
-  // textStyle?: keyof TextStyles;
-  // emphasized?: boolean;
-  // color?: 'secondary' | 'tertiary' | 'quaternary';
-} & { [V in Variant]?: boolean };
+} & { [V in Variant]?: boolean } & { [V in Color]?: boolean };
 
 export function Text({
-  variant,
   emphasized,
+
+  variant,
+
   largeTitle,
   title1,
   title2,
@@ -45,10 +50,20 @@ export function Text({
   footnote,
   caption1,
   caption2,
+
+  color,
+
+  secondary,
+  tertiary,
+  quaternary,
+  placeholder,
+
   ...props
 }: Props) {
   const platform = useUIPlatform();
-  const theme = usePaperTheme();
+  const md3Scheme = useMD3Scheme();
+  const md3Theme = useMD3Theme();
+  const md3GroupLevel = useGroupLevelMD3();
 
   if (!variant) {
     if (largeTitle) variant = 'largeTitle';
@@ -65,9 +80,23 @@ export function Text({
     else variant = 'body';
   }
 
+  if (!color) {
+    if (secondary) color = 'secondary';
+    else if (tertiary) color = 'tertiary';
+    else if (quaternary) color = 'quaternary';
+    else if (placeholder) color = 'placeholder';
+  }
+
   switch (platform) {
     case 'ios': {
-      return <TextIOS {...props} textStyle={variant} emphasized={emphasized} />;
+      return (
+        <TextIOS
+          {...props}
+          textStyle={variant}
+          emphasized={emphasized}
+          color={color}
+        />
+      );
     }
     case 'android': {
       const materialVariant: React.ComponentProps<typeof PaperText>['variant'] =
@@ -105,7 +134,7 @@ export function Text({
           }
         })();
 
-      const textStyle = theme.fonts[materialVariant];
+      const textStyle = md3Theme.fonts[materialVariant];
 
       const fontWeightStyle = emphasized
         ? {
@@ -121,15 +150,23 @@ export function Text({
             })(),
           }
         : null;
+
+      const colorStyle = (() => {
+        switch (color) {
+          case 'secondary':
+          case 'tertiary':
+          case 'quaternary':
+          case 'placeholder':
+            return { color: md3Scheme.onSurfaceVariant };
+          default:
+            return { color: md3Scheme.onSurface };
+        }
+      })();
+
       return (
         <RNText
           {...props}
-          style={[
-            textStyle,
-            { color: theme.colors.onSurface },
-            fontWeightStyle,
-            props.style,
-          ]}
+          style={[textStyle, colorStyle, fontWeightStyle, props.style]}
         />
       );
     }

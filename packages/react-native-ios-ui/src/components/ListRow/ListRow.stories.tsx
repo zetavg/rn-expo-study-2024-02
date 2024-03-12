@@ -25,6 +25,9 @@ export default meta;
 
 export const Default: Meta<typeof ListRow> = {
   args: {},
+  parameters: {
+    containerBackground: 'grouped',
+  },
 };
 
 export const Simple: Meta<typeof ListRow> = {
