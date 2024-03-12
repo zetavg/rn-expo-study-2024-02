@@ -5,7 +5,7 @@ import {
   useTheme as usePaperTheme,
 } from 'react-native-paper';
 
-import { Text as TextIOS } from '@rnstudy/react-native-ios-ui';
+import { Text as TextIOS } from '@rnstudy/react-native-ui-ios';
 
 import { useGroupLevelMD3 } from '../../contexts/GroupLevelContextMD3';
 import { useMD3Scheme } from '../../hooks';

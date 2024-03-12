@@ -4011,30 +4011,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@rnstudy/react-native-ios-ui@workspace:^, @rnstudy/react-native-ios-ui@workspace:packages/react-native-ios-ui":
-  version: 0.0.0-use.local
-  resolution: "@rnstudy/react-native-ios-ui@workspace:packages/react-native-ios-ui"
-  dependencies:
-    "@rnstudy/eslint-config": "workspace:^"
-    "@rnstudy/ios-colors": "workspace:^"
-    "@rnstudy/jest-config": "workspace:^"
-    "@rnstudy/storybook-rn-types": "workspace:^"
-    "@rnstudy/tsconfig": "workspace:^"
-    "@types/eslint": "npm:^8"
-    "@types/jest": "npm:^29"
-    "@types/react": "npm:^18"
-    eslint: "npm:^8"
-    jest: "npm:^29"
-    react-native: "npm:0.72"
-    react-native-svg: "npm:^14"
-    typescript: "npm:^5"
-  peerDependencies:
-    react: ^18
-    react-native: ">=0.71"
-    react-native-svg: ^14
-  languageName: unknown
-  linkType: soft
-
 "@rnstudy/react-native-navigation@workspace:^, @rnstudy/react-native-navigation@workspace:packages/react-native-navigation":
   version: 0.0.0-use.local
   resolution: "@rnstudy/react-native-navigation@workspace:packages/react-native-navigation"
@@ -4070,6 +4046,30 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@rnstudy/react-native-ui-ios@workspace:^, @rnstudy/react-native-ui-ios@workspace:packages/react-native-ui-ios":
+  version: 0.0.0-use.local
+  resolution: "@rnstudy/react-native-ui-ios@workspace:packages/react-native-ui-ios"
+  dependencies:
+    "@rnstudy/eslint-config": "workspace:^"
+    "@rnstudy/ios-colors": "workspace:^"
+    "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/storybook-rn-types": "workspace:^"
+    "@rnstudy/tsconfig": "workspace:^"
+    "@types/eslint": "npm:^8"
+    "@types/jest": "npm:^29"
+    "@types/react": "npm:^18"
+    eslint: "npm:^8"
+    jest: "npm:^29"
+    react-native: "npm:0.72"
+    react-native-svg: "npm:^14"
+    typescript: "npm:^5"
+  peerDependencies:
+    react: ^18
+    react-native: ">=0.71"
+    react-native-svg: ^14
+  languageName: unknown
+  linkType: soft
+
 "@rnstudy/react-native-ui@workspace:^, @rnstudy/react-native-ui@workspace:packages/react-native-ui":
   version: 0.0.0-use.local
   resolution: "@rnstudy/react-native-ui@workspace:packages/react-native-ui"
@@ -4077,7 +4077,7 @@ __metadata:
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
-    "@rnstudy/react-native-ios-ui": "workspace:^"
+    "@rnstudy/react-native-ui-ios": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
     "@types/eslint": "npm:^8"
     "@types/jest": "npm:^29"
@@ -14807,9 +14807,9 @@ __metadata:
     "@rnstudy/jest-config": "workspace:^"
     "@rnstudy/metro-config": "workspace:^"
     "@rnstudy/react-hooks": "workspace:^"
-    "@rnstudy/react-native-ios-ui": "workspace:^"
     "@rnstudy/react-native-navigation": "workspace:^"
     "@rnstudy/react-native-ui": "workspace:^"
+    "@rnstudy/react-native-ui-ios": "workspace:^"
     "@rnstudy/storybook-rn": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
     "@storybook/addon-ondevice-actions": "npm:8.0.0-alpha.2"

@@ -1,4 +1,4 @@
-import { useBackgroundColor as useBackgroundColorIOS } from '@rnstudy/react-native-ios-ui/src/hooks';
+import { useBackgroundColor as useBackgroundColorIOS } from '@rnstudy/react-native-ui-ios/src/hooks';
 
 import { useColorScheme } from '../ColorSchemeContext';
 import { useGroupLevelMD3 } from '../contexts/GroupLevelContextMD3';

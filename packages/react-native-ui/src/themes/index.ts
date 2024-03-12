@@ -3,7 +3,7 @@ import { MD3LightTheme as PaperMD3DefaultLightTheme } from 'react-native-paper';
 import {
   colors as iosColors,
   textStyles as iosTextStyles,
-} from '@rnstudy/react-native-ios-ui';
+} from '@rnstudy/react-native-ui-ios';
 
 import { blue as md3Blue, red as md3Red } from './md3/schemes';
 import { Theme } from './types';

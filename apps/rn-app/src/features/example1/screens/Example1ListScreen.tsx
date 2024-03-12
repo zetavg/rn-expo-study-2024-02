@@ -3,7 +3,7 @@ import { Button, Text } from 'react-native';
 
 import { useMainStackNavigation } from '@/navigation/hooks';
 import { StackScreenContent } from '@/navigation/screens';
-import { ListRow } from '@rnstudy/react-native-ios-ui';
+import { ListRow } from '@rnstudy/react-native-ui-ios';
 import type { StackScreenProps } from '@rnstudy/react-native-navigation';
 
 export default function Example1ListScreen({ route }: StackScreenProps) {

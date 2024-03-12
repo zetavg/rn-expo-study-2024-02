@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@rnstudy/ios-colors": "workspace:^",
-    "@rnstudy/react-native-ios-ui": "workspace:^",
+    "@rnstudy/react-native-ui-ios": "workspace:^",
     "react-native-paper": "^5"
   },
   "devDependencies": {

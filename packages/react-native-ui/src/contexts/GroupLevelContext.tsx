@@ -3,7 +3,7 @@ import React from 'react';
 import {
   GroupLevelContext as GroupLevelContextIOS,
   useGroupLevel as useGroupLevelIOS,
-} from '@rnstudy/react-native-ios-ui';
+} from '@rnstudy/react-native-ui-ios';
 
 import { useUIPlatform } from '../UIPlatformContext';
 

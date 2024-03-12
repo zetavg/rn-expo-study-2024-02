@@ -1,5 +1,5 @@
 {
-  "name": "@rnstudy/react-native-ios-ui",
+  "name": "@rnstudy/react-native-ui-ios",
   "version": "0.0.1",
   "main": "dist/cjs/index.js",
   "module": "dist/mjs/index.js",

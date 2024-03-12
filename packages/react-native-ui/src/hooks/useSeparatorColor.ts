@@ -1,6 +1,6 @@
 import { useTheme as usePaperTheme } from 'react-native-paper';
 
-import { useUIColors as useIosUIColors } from '@rnstudy/react-native-ios-ui';
+import { useUIColors as useIosUIColors } from '@rnstudy/react-native-ui-ios';
 
 import { useUIPlatform } from '../UIPlatformContext';
 

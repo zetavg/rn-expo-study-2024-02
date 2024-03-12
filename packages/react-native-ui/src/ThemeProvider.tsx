@@ -6,7 +6,7 @@ import {
   PaperProvider,
 } from 'react-native-paper';
 
-import { ContextProvider as IosUIContextProvider } from '@rnstudy/react-native-ios-ui';
+import { ContextProvider as IosUIContextProvider } from '@rnstudy/react-native-ui-ios';
 
 import { Theme } from './themes/types';
 import ColorSchemeContext from './ColorSchemeContext';

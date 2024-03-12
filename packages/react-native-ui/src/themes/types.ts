@@ -4,7 +4,7 @@ import {
   Colors,
   TextStyleTokens,
   UIColors,
-} from '@rnstudy/react-native-ios-ui';
+} from '@rnstudy/react-native-ui-ios';
 
 import { MD3Theme } from './md3/types';
 

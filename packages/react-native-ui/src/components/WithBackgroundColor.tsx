@@ -3,7 +3,7 @@ import React from 'react';
 import {
   IsGroupedBackgroundContext as IsGroupedBackgroundContextIOS,
   useGroupLevel as useGroupLevelIOS,
-} from '@rnstudy/react-native-ios-ui';
+} from '@rnstudy/react-native-ui-ios';
 
 import { GroupLevelContextProvider } from '../contexts/GroupLevelContext';
 import { useGroupLevelMD3 } from '../contexts/GroupLevelContextMD3';
