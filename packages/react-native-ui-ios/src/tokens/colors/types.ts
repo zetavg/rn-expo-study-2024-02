@@ -28,6 +28,9 @@ export type Colors = {
   brown: Color;
   /** A context-dependent gray color suitable for use in UI elements. */
   gray: Color;
+
+  /** A context-dependent foreground color suitable for use in UI elements. */
+  foreground: Color;
 };
 
 export type UIColors = {
@@ -88,7 +91,14 @@ export type UIColors = {
   link: Color;
 };
 
-export type ColorTokens = {
+export type ColorScheme = {
   colors: Colors;
   uiColors: UIColors;
+};
+
+export type ColorSchemes = {
+  dark: ColorScheme;
+  light: ColorScheme;
+  darkHighContrast: ColorScheme;
+  lightHighContrast: ColorScheme;
 };

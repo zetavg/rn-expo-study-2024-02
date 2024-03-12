@@ -1,0 +1,45 @@
+import { ColorScheme } from '../types';
+
+export const lightHighContrast: ColorScheme = {
+  colors: {
+    red: 'rgba(215, 0, 21, 1.0)',
+    orange: 'rgba(201, 52, 0, 1.0)',
+    yellow: 'rgba(178, 80, 0, 1.0)',
+    green: 'rgba(36, 138, 61, 1.0)',
+    mint: 'rgba(12, 129, 123, 1.0)',
+    teal: 'rgba(0, 130, 153, 1.0)',
+    cyan: 'rgba(0, 113, 164, 1.0)',
+    blue: 'rgba(0, 64, 221, 1.0)',
+    indigo: 'rgba(54, 52, 163, 1.0)',
+    purple: 'rgba(137, 68, 171, 1.0)',
+    pink: 'rgba(211, 15, 69, 1.0)',
+    brown: 'rgba(127, 101, 69, 1.0)',
+    gray: 'rgba(108, 108, 112, 1.0)',
+    foreground: 'rgba(38, 38, 42, 1.0)',
+  },
+  uiColors: {
+    systemGray: 'rgba(108, 108, 112, 1.0)',
+    systemGray2: 'rgba(142, 142, 147, 1.0)',
+    systemGray3: 'rgba(174, 174, 178, 1.0)',
+    systemGray4: 'rgba(188, 188, 192, 1.0)',
+    systemGray5: 'rgba(216, 216, 220, 1.0)',
+    systemGray6: 'rgba(235, 235, 240, 1.0)',
+    systemBackground: 'rgba(255, 255, 255, 1.0)',
+    secondarySystemBackground: 'rgba(235, 235, 240, 1.0)',
+    tertiarySystemBackground: 'rgba(255, 255, 255, 1.0)',
+    systemGroupedBackground: 'rgba(235, 235, 240, 1.0)',
+    secondarySystemGroupedBackground: 'rgba(255, 255, 255, 1.0)',
+    tertiarySystemGroupedBackground: 'rgba(235, 235, 240, 1.0)',
+    label: 'rgba(0, 0, 0, 1.0)',
+    secondaryLabel: 'rgba(60, 60, 67, 0.8)',
+    tertiaryLabel: 'rgba(60, 60, 67, 0.6980392156862745)',
+    quaternaryLabel: 'rgba(60, 60, 67, 0.5490196078431373)',
+    placeholderText: 'rgba(60, 60, 67, 0.6980392156862745)',
+    separator: 'rgba(60, 60, 67, 0.37)',
+    opaqueSeparator: 'rgba(198, 198, 200, 1.0)',
+    link: 'rgba(0, 122, 255, 1.0)',
+    tintColor: 'rgba(0, 64, 221, 1.0)',
+  },
+};
+
+export default lightHighContrast;

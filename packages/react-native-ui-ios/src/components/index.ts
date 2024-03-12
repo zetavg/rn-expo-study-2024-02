@@ -1,3 +1,3 @@
-export { ListRow } from './ListRow';
-export { Text } from './Text';
-export { WithBackgroundColor } from './WithBackgroundColor';
+export * from './BackgroundColor';
+export * from './ListRow';
+export * from './Text';

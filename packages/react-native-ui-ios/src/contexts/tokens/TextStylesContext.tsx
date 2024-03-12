@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-import { textStyles, type TextStyleTokens } from '../tokens/text-styles';
+import { textStyles, type TextStyleTokens } from '../../tokens/text-styles';
 
 /**
  * A context for passing a set of iOS text styles down the component tree.

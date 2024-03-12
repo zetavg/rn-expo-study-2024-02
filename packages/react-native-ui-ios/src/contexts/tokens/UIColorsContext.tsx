@@ -1,11 +1,13 @@
 import { createContext, useContext } from 'react';
 
-import { light, type UIColors } from '../tokens/colors';
+import { colorSchemes, type UIColors } from '../../tokens';
 
 /**
  * A context for passing a set of iOS UI colors down the component tree.
  */
-export const UIColorsContext = createContext<UIColors>(light.uiColors);
+export const UIColorsContext = createContext<UIColors>(
+  colorSchemes.light.uiColors,
+);
 
 /**
  * Returns a set of iOS UI colors.

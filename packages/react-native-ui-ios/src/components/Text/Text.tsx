@@ -1,14 +1,13 @@
 import React from 'react';
 import { Text as RNText } from 'react-native';
 
-import { useTextStyles } from '../../contexts/TextStylesContext';
-import { useUIColors } from '../../contexts/UIColorsContext';
-import { TextStyles } from '../../tokens/text-styles/types';
+import { useTextStyles, useUIColors } from '../../contexts';
+import { TextStyles } from '../../tokens';
 
 type Props = React.ComponentProps<typeof RNText> & {
   textStyle?: keyof TextStyles;
   emphasized?: boolean;
-  color?: 'secondary' | 'tertiary' | 'quaternary' | 'placeholder';
+  color?: 'secondary' | 'tertiary' | 'quaternary' | 'link' | 'placeholder';
 };
 
 export function Text({
@@ -31,7 +30,9 @@ export function Text({
             ? uiColors[
                 color === 'placeholder'
                   ? ('placeholderText' as const)
-                  : (`${color}Label` as const)
+                  : color === 'link'
+                    ? ('link' as const)
+                    : (`${color}Label` as const)
               ]
             : uiColors.label,
         },

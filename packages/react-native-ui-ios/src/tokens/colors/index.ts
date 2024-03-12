@@ -1,3 +1,3 @@
-export { dark } from './dark';
-export { light } from './light';
+export { buildColorScheme, buildColorSchemes } from './buildColorSchemes';
+export * as colorSchemes from './schemes';
 export * from './types';

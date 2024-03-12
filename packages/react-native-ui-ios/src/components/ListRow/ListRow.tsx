@@ -7,8 +7,7 @@ import {
   View,
 } from 'react-native';
 
-import { useTextStyles } from '../../contexts/TextStylesContext';
-import { useUIColors } from '../../contexts/UIColorsContext';
+import { useTextStyles, useUIColors } from '../../contexts';
 import { textStyles } from '../../tokens/text-styles';
 
 import DrillInIcon from './DrillInIcon';

@@ -1,8 +1,8 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 
-import Text from '../../components/Text';
-import { useTextStyles } from '../../contexts/TextStylesContext';
+import { Text } from '../../components';
+import { useTextStyles } from '../../contexts';
 
 export function Typography() {
   const textStyles = useTextStyles();
@@ -114,6 +114,14 @@ export function Typography() {
       <Text color="tertiary">Tertiary</Text>
       <Text color="quaternary">Quaternary</Text>
       <Text color="placeholder">Placeholder</Text>
+      <Text
+        color="link"
+        onPress={() => {
+          Alert.alert('Link Pressed');
+        }}
+      >
+        Link
+      </Text>
     </View>
   );
 }

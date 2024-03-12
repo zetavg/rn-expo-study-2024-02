@@ -1,7 +1,7 @@
 import { MD3LightTheme as PaperMD3DefaultLightTheme } from 'react-native-paper';
 
 import {
-  colors as iosColors,
+  colorSchemes as iosColorSchemes,
   textStyles as iosTextStyles,
 } from '@rnstudy/react-native-ui-ios';
 
@@ -12,12 +12,12 @@ export const blue: Theme = {
   ios: {
     schemes: {
       light: {
-        colors: iosColors.light.colors,
-        uiColors: iosColors.light.uiColors,
+        colors: iosColorSchemes.light.colors,
+        uiColors: iosColorSchemes.light.uiColors,
       },
       dark: {
-        colors: iosColors.dark.colors,
-        uiColors: iosColors.dark.uiColors,
+        colors: iosColorSchemes.dark.colors,
+        uiColors: iosColorSchemes.dark.uiColors,
       },
     },
     textStyles: iosTextStyles,
@@ -34,17 +34,17 @@ export const red: Theme = {
   ios: {
     schemes: {
       light: {
-        colors: iosColors.light.colors,
+        colors: iosColorSchemes.light.colors,
         uiColors: {
-          ...iosColors.light.uiColors,
-          tintColor: iosColors.light.colors.red,
+          ...iosColorSchemes.light.uiColors,
+          tintColor: iosColorSchemes.light.colors.red,
         },
       },
       dark: {
-        colors: iosColors.dark.colors,
+        colors: iosColorSchemes.dark.colors,
         uiColors: {
-          ...iosColors.dark.uiColors,
-          tintColor: iosColors.dark.colors.red,
+          ...iosColorSchemes.dark.uiColors,
+          tintColor: iosColorSchemes.dark.colors.red,
         },
       },
     },

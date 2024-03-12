@@ -1,25 +1,24 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { WithBackgroundColor } from '../../components';
-import Text from '../../components/Text';
+import { BackgroundColor, Text } from '../../components';
 
 export function BackgroundColors() {
   return (
     <View>
-      <WithBackgroundColor>
+      <BackgroundColor root>
         {(backgroundColor) => (
           <View style={[styles.exampleContainer, { backgroundColor }]}>
-            <Text textStyle="headline">Default</Text>
+            <Text textStyle="headline">System</Text>
 
             <ExampleGroupComponent>
-              <Text textStyle="caption1">Group Level 1</Text>
+              <Text textStyle="caption1">Level 1</Text>
 
               <ExampleGroupComponent>
-                <Text textStyle="caption1">Group Level 2</Text>
+                <Text textStyle="caption1">Level 2</Text>
 
                 <ExampleGroupComponent>
-                  <Text textStyle="caption1">Group Level 3</Text>
+                  <Text textStyle="caption1">Level 3</Text>
 
                   <Text textStyle="callout" color="tertiary">
                     Normally, you should not nest groups above 2 levels deep.
@@ -29,21 +28,21 @@ export function BackgroundColors() {
             </ExampleGroupComponent>
           </View>
         )}
-      </WithBackgroundColor>
+      </BackgroundColor>
 
-      <WithBackgroundColor grouped>
+      <BackgroundColor grouped root>
         {(backgroundColor) => (
           <View style={[styles.exampleContainer, { backgroundColor }]}>
             <Text textStyle="headline">Grouped</Text>
 
             <ExampleGroupComponent>
-              <Text textStyle="caption1">Group Level 1</Text>
+              <Text textStyle="caption1">Level 1</Text>
 
               <ExampleGroupComponent>
-                <Text textStyle="caption1">Group Level 2</Text>
+                <Text textStyle="caption1">Level 2</Text>
 
                 <ExampleGroupComponent>
-                  <Text textStyle="caption1">Group Level 3</Text>
+                  <Text textStyle="caption1">Level 3</Text>
 
                   <Text textStyle="callout" color="tertiary">
                     Normally, you should not nest groups above 2 levels deep.
@@ -58,23 +57,23 @@ export function BackgroundColors() {
             </Text>
           </View>
         )}
-      </WithBackgroundColor>
+      </BackgroundColor>
     </View>
   );
 }
 
 /**
- * An example group component using `WithBackgroundColor`.
+ * An example group component using `BackgroundColor`.
  */
 function ExampleGroupComponent({ children }: { children?: React.ReactNode }) {
   return (
-    <WithBackgroundColor>
+    <BackgroundColor>
       {(backgroundColor) => (
         <View style={[styles.exampleGroup, { backgroundColor }]}>
           {children}
         </View>
       )}
-    </WithBackgroundColor>
+    </BackgroundColor>
   );
 }
 

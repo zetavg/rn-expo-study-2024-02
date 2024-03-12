@@ -6,7 +6,7 @@ import {
   PaperProvider,
 } from 'react-native-paper';
 
-import { ContextProvider as IosUIContextProvider } from '@rnstudy/react-native-ui-ios';
+import { TokensContextProvider as TokensContextProviderIOS } from '@rnstudy/react-native-ui-ios';
 
 import { Theme } from './themes/types';
 import ColorSchemeContext from './ColorSchemeContext';
@@ -54,13 +54,13 @@ export const ThemeProvider = ({
       <ColorSchemeContext.Provider value={colorScheme}>
         <MD3ThemeContext.Provider value={theme.md3}>
           <PaperProvider theme={paperTheme}>
-            <IosUIContextProvider
+            <TokensContextProviderIOS
               colors={theme.ios.schemes[colorScheme].colors}
               uiColors={theme.ios.schemes[colorScheme].uiColors}
               textStyles={theme.ios.textStyles}
             >
               {children}
-            </IosUIContextProvider>
+            </TokensContextProviderIOS>
           </PaperProvider>
         </MD3ThemeContext.Provider>
       </ColorSchemeContext.Provider>

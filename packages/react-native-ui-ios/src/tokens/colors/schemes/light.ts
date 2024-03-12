@@ -1,6 +1,6 @@
-import { ColorTokens } from './types';
+import { ColorScheme } from '../types';
 
-export const light: ColorTokens = {
+export const light: ColorScheme = {
   colors: {
     red: 'rgba(255, 59, 48, 1.0)',
     orange: 'rgba(255, 149, 0, 1.0)',
@@ -15,6 +15,7 @@ export const light: ColorTokens = {
     pink: 'rgba(255, 45, 85, 1.0)',
     brown: 'rgba(162, 132, 94, 1.0)',
     gray: 'rgba(142, 142, 147, 1.0)',
+    foreground: 'rgba(38, 38, 42, 1.0)',
   },
   uiColors: {
     systemGray: 'rgba(142, 142, 147, 1.0)',
