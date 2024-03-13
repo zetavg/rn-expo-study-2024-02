@@ -1,15 +1,15 @@
 import * as React from 'react';
 
 import Navigation from '@/navigation/Navigation';
-import { ThemeProvider } from '@rnstudy/react-native-ui';
+import { UIContextProvider } from '@rnstudy/react-native-ui';
 
 import useColorScheme from './hooks/useColorScheme';
 
 export default function App() {
   const colorScheme = useColorScheme();
   return (
-    <ThemeProvider colorScheme={colorScheme}>
+    <UIContextProvider colorScheme={colorScheme}>
       <Navigation />
-    </ThemeProvider>
+    </UIContextProvider>
   );
 }

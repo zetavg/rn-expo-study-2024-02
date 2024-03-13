@@ -7,6 +7,7 @@
       // To simulate using the compiled code as installing the packages from npm, comment out the following path mappings.
       "@rnstudy/react-native-ui": ["../../packages/react-native-ui/src"],
       "@rnstudy/react-native-ui-ios": ["../../packages/react-native-ui-ios/src"],
+      "@rnstudy/react-native-ui-md3": ["../../packages/react-native-ui-md3/src"],
       "@rnstudy/ios-colors": ["../../packages/ios-colors/src"]
     }
   },
