@@ -12,6 +12,9 @@ async function getMetroConfig(dirname) {
 
   await addLocalDependencyNodeModulesToNodeModulesPath(config, dirname);
 
+  // Since we are using yarn workspaces, we need to enable symlinks for resolving symlinked modules.
+  config.resolver.unstable_enableSymlinks = true;
+
   return config;
 }
 
@@ -29,8 +32,22 @@ async function addLocalDependencyNodeModulesToNodeModulesPath(config, dirname) {
     project.workspaces.map((w) => [w.manifest.raw.name, w.cwd]),
   );
 
-  const packageJsonPath = path.join(dirname, 'package.json');
+  addPackageLocalDependencyNodeModulesToNodeModulesPath(
+    config,
+    dirname,
+    localPackageMap,
+  );
+}
+
+function addPackageLocalDependencyNodeModulesToNodeModulesPath(
+  config,
+  packageDir,
+  localPackageMap,
+) {
+  const packageJsonPath = path.join(packageDir, 'package.json');
   const package = require(packageJsonPath);
+  if (!package.dependencies) return;
+
   const localDependencyNames = Object.entries(package.dependencies)
     .filter(([_name, version]) => version.startsWith('workspace:'))
     .map(([name, _version]) => name);
@@ -48,6 +65,15 @@ async function addLocalDependencyNodeModulesToNodeModulesPath(config, dirname) {
   config.resolver.nodeModulesPaths.push(
     ...localDependencyDirectories.map((d) => path.join(d, 'node_modules')),
   );
+
+  // Recursively add local dependency node_modules to nodeModulesPaths
+  for (const localDependencyDir of localDependencyDirectories) {
+    addPackageLocalDependencyNodeModulesToNodeModulesPath(
+      config,
+      localDependencyDir,
+      localPackageMap,
+    );
+  }
 }
 
 exports.getMetroConfig = getMetroConfig;
