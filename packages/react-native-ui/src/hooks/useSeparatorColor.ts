@@ -1,14 +1,14 @@
-import { useTheme as usePaperTheme } from 'react-native-paper';
-
 import { useUIColors as useIosUIColors } from '@rnstudy/react-native-ui-ios';
+import { useTheme as useMD3Theme } from '@rnstudy/react-native-ui-md3';
 
-import { useUIPlatform } from '../UIPlatformContext';
+import { useColorScheme, useUIPlatform } from '../contexts';
 
 export function useSeparatorColor({ opaque }: { opaque?: boolean } = {}) {
   const uiPlatform = useUIPlatform();
+  const colorScheme = useColorScheme();
 
   const iosUiColors = useIosUIColors();
-  const paperTheme = usePaperTheme();
+  const md3Theme = useMD3Theme();
 
   switch (uiPlatform) {
     case 'ios': {
@@ -18,8 +18,8 @@ export function useSeparatorColor({ opaque }: { opaque?: boolean } = {}) {
     case 'android':
     default: {
       return opaque
-        ? paperTheme.colors.outline
-        : paperTheme.colors.outlineVariant;
+        ? md3Theme.schemes[colorScheme].outline
+        : md3Theme.schemes[colorScheme].outlineVariant;
     }
   }
 }

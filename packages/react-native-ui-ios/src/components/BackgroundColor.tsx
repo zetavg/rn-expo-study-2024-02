@@ -33,7 +33,7 @@ export function BackgroundColor({
 
   const backgroundColor = useBackgroundColor({
     grouped: isGroupedBackground,
-    level: groupLevel,
+    level: groupLevel + 1,
   });
 
   const content = (

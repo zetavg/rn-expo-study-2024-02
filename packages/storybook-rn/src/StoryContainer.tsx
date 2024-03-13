@@ -15,10 +15,10 @@ import { PartialStoryFn } from '@storybook/types';
 
 import {
   AVAILABLE_UI_PLATFORMS,
+  BackgroundColor,
+  SeparatorColor,
   Text,
-  ThemeProvider,
-  WithBackgroundColor,
-  WithSeparatorColor,
+  UIContextProvider,
 } from '@rnstudy/react-native-ui';
 import { Parameters } from '@rnstudy/storybook-rn-types';
 
@@ -50,7 +50,7 @@ export function StoryContainer({
     : AVAILABLE_UI_PLATFORMS[0];
 
   return (
-    <ThemeProvider colorScheme={colorScheme} platform={uiPlatform}>
+    <UIContextProvider colorScheme={colorScheme} platform={uiPlatform}>
       <StoryContainerContent
         story={story}
         parameters={parameters}
@@ -61,9 +61,9 @@ export function StoryContainer({
         showBoundaryLines={showBoundaryLines}
       />
 
-      <WithBackgroundColor>
+      <BackgroundColor>
         {(backgroundColor) => (
-          <WithSeparatorColor opaque>
+          <SeparatorColor opaque>
             {(separatorColor) => (
               <>
                 <ScrollView
@@ -146,10 +146,10 @@ export function StoryContainer({
                 </ScrollView>
               </>
             )}
-          </WithSeparatorColor>
+          </SeparatorColor>
         )}
-      </WithBackgroundColor>
-    </ThemeProvider>
+      </BackgroundColor>
+    </UIContextProvider>
   );
 }
 
@@ -241,13 +241,13 @@ function StoryContainerContent({
 
   if (showBackground) {
     return (
-      <WithBackgroundColor grouped={useGroupedBackground}>
+      <BackgroundColor grouped={useGroupedBackground}>
         {(backgroundColor) => (
           <View style={[styles.rootContainer, { backgroundColor }]}>
             {content}
           </View>
         )}
-      </WithBackgroundColor>
+      </BackgroundColor>
     );
   }
 

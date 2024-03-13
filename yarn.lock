@@ -4070,14 +4070,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@rnstudy/react-native-ui@workspace:^, @rnstudy/react-native-ui@workspace:packages/react-native-ui":
+"@rnstudy/react-native-ui-md3@workspace:^, @rnstudy/react-native-ui-md3@workspace:packages/react-native-ui-md3":
   version: 0.0.0-use.local
-  resolution: "@rnstudy/react-native-ui@workspace:packages/react-native-ui"
+  resolution: "@rnstudy/react-native-ui-md3@workspace:packages/react-native-ui-md3"
   dependencies:
     "@rnstudy/eslint-config": "workspace:^"
-    "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
-    "@rnstudy/react-native-ui-ios": "workspace:^"
+    "@rnstudy/storybook-rn-types": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
     "@types/eslint": "npm:^8"
     "@types/jest": "npm:^29"
@@ -4086,6 +4085,30 @@ __metadata:
     jest: "npm:^29"
     react-native: "npm:0.72"
     react-native-paper: "npm:^5"
+    react-native-svg: "npm:^14"
+    typescript: "npm:^5"
+  peerDependencies:
+    react: ^18
+    react-native: ">=0.71"
+  languageName: unknown
+  linkType: soft
+
+"@rnstudy/react-native-ui@workspace:^, @rnstudy/react-native-ui@workspace:packages/react-native-ui":
+  version: 0.0.0-use.local
+  resolution: "@rnstudy/react-native-ui@workspace:packages/react-native-ui"
+  dependencies:
+    "@rnstudy/eslint-config": "workspace:^"
+    "@rnstudy/ios-colors": "workspace:^"
+    "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/react-native-ui-ios": "workspace:^"
+    "@rnstudy/react-native-ui-md3": "workspace:^"
+    "@rnstudy/tsconfig": "workspace:^"
+    "@types/eslint": "npm:^8"
+    "@types/jest": "npm:^29"
+    "@types/react": "npm:^18"
+    eslint: "npm:^8"
+    jest: "npm:^29"
+    react-native: "npm:0.72"
     react-native-safe-area-context: "npm:^4"
     react-native-vector-icons: "npm:^10"
     typescript: "npm:^5"

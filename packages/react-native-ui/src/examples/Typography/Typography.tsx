@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text as RNText, View } from 'react-native';
+import { Alert, Text as RNText, View } from 'react-native';
 
 import Text from '../../components/Text';
 
@@ -89,6 +89,9 @@ export function Typography() {
       <Text tertiary>Tertiary Color</Text>
       <Text quaternary>Quaternary Color</Text>
       <Text placeholder>Placeholder Color</Text>
+      <Text link onPress={() => Alert.alert('Link Pressed')}>
+        Link Color
+      </Text>
     </View>
   );
 }

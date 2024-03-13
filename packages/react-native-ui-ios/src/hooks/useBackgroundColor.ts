@@ -37,10 +37,9 @@ export function useBackgroundColor({
     }
 
     if (typeof level === 'number') {
-      const currentLevel = level + 1;
-      if (currentLevel <= 0) {
+      if (level <= 0) {
         return null;
-      } else if (currentLevel % 2 === 1) {
+      } else if (level % 2 === 1) {
         return 'secondary';
       } else {
         return 'tertiary';

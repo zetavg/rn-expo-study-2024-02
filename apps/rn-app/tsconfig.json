@@ -12,6 +12,7 @@
       "@rnstudy/react-native-ui": ["../../packages/react-native-ui/src"],
       "@rnstudy/react-native-navigation": ["../../packages/react-native-navigation/src"],
       "@rnstudy/react-native-ui-ios": ["../../packages/react-native-ui-ios/src"],
+      "@rnstudy/react-native-ui-md3": ["../../packages/react-native-ui-md3/src"],
       "@rnstudy/ios-colors": ["../../packages/ios-colors/src"],
       "@rnstudy/storybook-rn": ["../../packages/storybook-rn/src"],
       "@rnstudy/plus-two": ["../../packages/plus-two/src"],

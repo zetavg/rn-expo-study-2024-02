@@ -52,8 +52,8 @@ export function BackgroundColors() {
             </ExampleGroupComponent>
 
             <Text textStyle="footnote" color="secondary">
-              With the default iOS color theme for dark mode, this will be the
-              same as default.
+              With the default color theme for dark mode, this will be the same
+              as default.
             </Text>
           </View>
         )}

@@ -1,25 +1,25 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { WithBackgroundColor } from '../../components';
+import { BackgroundColor } from '../../components';
 import Text from '../../components/Text';
 
 export function BackgroundColors() {
   return (
     <View>
-      <WithBackgroundColor>
+      <BackgroundColor>
         {(backgroundColor) => (
           <View style={[styles.exampleContainer, { backgroundColor }]}>
             <Text headline>Default</Text>
 
             <ExampleGroupComponent>
-              <Text caption1>Group Level 1</Text>
+              <Text caption1>Level 1</Text>
 
               <ExampleGroupComponent>
-                <Text caption1>Group Level 2</Text>
+                <Text caption1>Level 2</Text>
 
                 <ExampleGroupComponent>
-                  <Text caption1>Group Level 3</Text>
+                  <Text caption1>Level 3</Text>
 
                   <Text callout tertiary>
                     Normally, you should not nest groups above 2 levels deep.
@@ -29,21 +29,21 @@ export function BackgroundColors() {
             </ExampleGroupComponent>
           </View>
         )}
-      </WithBackgroundColor>
+      </BackgroundColor>
 
-      <WithBackgroundColor grouped>
+      <BackgroundColor grouped>
         {(backgroundColor) => (
           <View style={[styles.exampleContainer, { backgroundColor }]}>
             <Text headline>Grouped</Text>
 
             <ExampleGroupComponent>
-              <Text caption1>Group Level 1</Text>
+              <Text caption1>Level 1</Text>
 
               <ExampleGroupComponent>
-                <Text caption1>Group Level 2</Text>
+                <Text caption1>Level 2</Text>
 
                 <ExampleGroupComponent>
-                  <Text caption1>Group Level 3</Text>
+                  <Text caption1>Level 3</Text>
 
                   <Text callout tertiary>
                     Normally, you should not nest groups above 2 levels deep.
@@ -53,28 +53,28 @@ export function BackgroundColors() {
             </ExampleGroupComponent>
 
             <Text footnote secondary>
-              With the default iOS color theme for dark mode, this will be the
-              same as default.
+              With the default color theme for dark mode, this will be the same
+              as default.
             </Text>
           </View>
         )}
-      </WithBackgroundColor>
+      </BackgroundColor>
     </View>
   );
 }
 
 /**
- * An example group component using `WithBackgroundColor`.
+ * An example component using `BackgroundColor`.
  */
 function ExampleGroupComponent({ children }: { children?: React.ReactNode }) {
   return (
-    <WithBackgroundColor>
+    <BackgroundColor>
       {(backgroundColor) => (
         <View style={[styles.exampleGroup, { backgroundColor }]}>
           {children}
         </View>
       )}
-    </WithBackgroundColor>
+    </BackgroundColor>
   );
 }
 

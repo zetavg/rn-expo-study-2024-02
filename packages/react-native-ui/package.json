@@ -25,7 +25,7 @@
   "dependencies": {
     "@rnstudy/ios-colors": "workspace:^",
     "@rnstudy/react-native-ui-ios": "workspace:^",
-    "react-native-paper": "^5"
+    "@rnstudy/react-native-ui-md3": "workspace:^"
   },
   "devDependencies": {
     "@rnstudy/eslint-config": "workspace:^",

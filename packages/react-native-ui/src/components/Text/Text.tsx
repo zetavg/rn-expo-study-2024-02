@@ -1,16 +1,10 @@
 import React from 'react';
 import { Text as RNText } from 'react-native';
-import {
-  Text as PaperText,
-  useTheme as usePaperTheme,
-} from 'react-native-paper';
 
 import { Text as TextIOS } from '@rnstudy/react-native-ui-ios';
+import { Text as TextMD3 } from '@rnstudy/react-native-ui-md3';
 
-import { useGroupLevelMD3 } from '../../contexts/GroupLevelContextMD3';
-import { useMD3Scheme } from '../../hooks';
-import { useMD3Theme } from '../../MD3ThemeContext';
-import { useUIPlatform } from '../../UIPlatformContext';
+import { useUIPlatform } from '../../contexts';
 
 type Variant =
   | 'largeTitle'
@@ -25,7 +19,7 @@ type Variant =
   | 'caption1'
   | 'caption2';
 
-type Color = 'secondary' | 'tertiary' | 'quaternary' | 'placeholder';
+type Color = 'secondary' | 'tertiary' | 'quaternary' | 'link' | 'placeholder';
 
 type Props = React.ComponentProps<typeof RNText> & {
   children: React.ReactNode;
@@ -57,14 +51,12 @@ export function Text({
   tertiary,
   quaternary,
   placeholder,
+  link,
+
+  style,
 
   ...props
-}: Props) {
-  const platform = useUIPlatform();
-  const md3Scheme = useMD3Scheme();
-  const md3Theme = useMD3Theme();
-  const md3GroupLevel = useGroupLevelMD3();
-
+}: Props): JSX.Element {
   if (!variant) {
     if (largeTitle) variant = 'largeTitle';
     else if (title1) variant = 'title1';
@@ -85,9 +77,12 @@ export function Text({
     else if (tertiary) color = 'tertiary';
     else if (quaternary) color = 'quaternary';
     else if (placeholder) color = 'placeholder';
+    else if (link) color = 'link';
   }
 
-  switch (platform) {
+  const uiPlatform = useUIPlatform();
+
+  switch (uiPlatform) {
     case 'ios': {
       return (
         <TextIOS
@@ -95,11 +90,12 @@ export function Text({
           textStyle={variant}
           emphasized={emphasized}
           color={color}
+          style={style}
         />
       );
     }
     case 'android': {
-      const materialVariant: React.ComponentProps<typeof PaperText>['variant'] =
+      const md3TextVariant: React.ComponentProps<typeof TextMD3>['variant'] =
         (() => {
           switch (variant) {
             case 'largeTitle':
@@ -134,8 +130,6 @@ export function Text({
           }
         })();
 
-      const textStyle = md3Theme.fonts[materialVariant];
-
       const fontWeightStyle = emphasized
         ? {
             fontWeight: (() => {
@@ -151,22 +145,26 @@ export function Text({
           }
         : null;
 
-      const colorStyle = (() => {
+      const md3TextColor = (() => {
         switch (color) {
           case 'secondary':
           case 'tertiary':
           case 'quaternary':
           case 'placeholder':
-            return { color: md3Scheme.onSurfaceVariant };
+            return 'onSurfaceVariant';
+          case 'link':
+            return 'primary';
           default:
-            return { color: md3Scheme.onSurface };
+            return 'onSurface';
         }
       })();
 
       return (
-        <RNText
+        <TextMD3
+          variant={md3TextVariant}
+          color={md3TextColor}
+          style={[fontWeightStyle, style]}
           {...props}
-          style={[textStyle, colorStyle, fontWeightStyle, props.style]}
         />
       );
     }

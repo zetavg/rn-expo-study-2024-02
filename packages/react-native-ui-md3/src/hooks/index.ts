@@ -1,0 +1,1 @@
+export { useBackgroundColor } from './useBackgroundColor';

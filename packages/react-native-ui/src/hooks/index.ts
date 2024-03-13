@@ -1,4 +1,3 @@
-export { useMD3Scheme } from './useMD3Scheme';
 export { useSeparatorColor } from './useSeparatorColor';
 export {
   useColors as useIOSColors,
