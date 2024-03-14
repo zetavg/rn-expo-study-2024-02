@@ -4,6 +4,7 @@ import type { Parameters as SBParameters } from '@storybook/types';
 
 export type Parameters = SBParameters & {
   containerStyle?: ViewStyle;
+  containerVerticalAlign?: 'top' | 'middle' | 'bottom';
   containerBackground?: 'none' | 'transparent' | 'grouped';
 };
 

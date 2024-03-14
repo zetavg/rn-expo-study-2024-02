@@ -24,13 +24,15 @@
   },
   "dependencies": {
     "@rnstudy/ios-colors": "workspace:^",
-    "@rnstudy/storybook-rn-types": "workspace:^"
+    "@rnstudy/storybook-rn-types": "workspace:^",
+    "color": "^4.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7",
     "@rnstudy/eslint-config": "workspace:^",
     "@rnstudy/jest-config": "workspace:^",
     "@rnstudy/tsconfig": "workspace:^",
+    "@types/color": "^3.0.6",
     "@types/eslint": "^8",
     "@types/jest": "^29",
     "@types/react": "^18",

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Text as RNText } from 'react-native';
 
 import { useTextStyles, useUIColors } from '../../contexts';
@@ -10,17 +10,15 @@ type Props = React.ComponentProps<typeof RNText> & {
   color?: 'secondary' | 'tertiary' | 'quaternary' | 'link' | 'placeholder';
 };
 
-export function Text({
-  style,
-  textStyle = 'body',
-  color,
-  emphasized,
-  ...props
-}: Props) {
+export const Text = forwardRef<RNText, Props>(function Text(
+  { style, textStyle = 'body', color, emphasized, ...props }: Props,
+  ref,
+) {
   const uiColors = useUIColors();
   const textStyles = useTextStyles();
   return (
     <RNText
+      ref={ref}
       {...props}
       style={[
         textStyles[textStyle],
@@ -40,6 +38,6 @@ export function Text({
       ]}
     />
   );
-}
+});
 
 export default Text;

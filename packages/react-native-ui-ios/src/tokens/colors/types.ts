@@ -29,8 +29,12 @@ export type Colors = {
   /** A context-dependent gray color suitable for use in UI elements. */
   gray: Color;
 
-  /** A context-dependent foreground color suitable for use in UI elements. */
-  foreground: Color;
+  /** A black color suitable for use in UI elements. */
+  black: Color;
+  /** A white color suitable for use in UI elements. */
+  white: Color;
+  /** A clear color suitable for use in UI elements. */
+  clear: Color;
 };
 
 export type UIColors = {
@@ -45,6 +49,9 @@ export type UIColors = {
 
   /** A color value based on the current tint color of the app or trait hierarchy. */
   tintColor: Color;
+
+  /** A color value for content on a tint-colored background. */
+  onTintColor: Color;
 
   // Standard content background colors
 
@@ -73,6 +80,17 @@ export type UIColors = {
   /** The color for text labels that contain quaternary content. */
   quaternaryLabel: Color;
 
+  // Fill colors
+
+  /** An overlay fill color for thin and small shapes. */
+  systemFill: Color;
+  /** An overlay fill color for medium-size shapes. */
+  secondarySystemFill: Color;
+  /** An overlay fill color for large shapes. */
+  tertiarySystemFill: Color;
+  /** An overlay fill color for large areas that contain complex content. */
+  quaternarySystemFill: Color;
+
   // Text
 
   /** The color for placeholder text in controls or text views. */
@@ -89,6 +107,14 @@ export type UIColors = {
 
   /** The specified color for links. */
   link: Color;
+
+  // Nonadaptable colors
+
+  /** The nonadaptable system color for text on a light background. */
+  darkText: Color;
+
+  /** The nonadaptable system color for text on a dark background. */
+  lightText: Color;
 };
 
 export type ColorScheme = {

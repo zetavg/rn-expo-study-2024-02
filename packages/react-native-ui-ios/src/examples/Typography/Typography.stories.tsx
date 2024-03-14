@@ -6,6 +6,7 @@ const meta: Meta<typeof Typography> = {
   title: 'iOS UI/Typography',
   component: Typography,
   parameters: {
+    containerVerticalAlign: 'top',
     containerStyle: {
       marginTop: 16,
       marginHorizontal: 20,

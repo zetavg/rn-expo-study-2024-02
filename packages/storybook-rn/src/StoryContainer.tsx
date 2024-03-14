@@ -170,7 +170,7 @@ function StoryContainerContent({
   showSpecOverlay: boolean;
   showBoundaryLines: boolean;
 }) {
-  const { containerStyle, specOverlay } = parameters;
+  const { containerStyle, containerVerticalAlign, specOverlay } = parameters;
 
   const [containerLayout, setContainerLayout] = useState<LayoutRectangle>();
   const handleContainerLayout = useCallback((event: LayoutChangeEvent) => {
@@ -182,7 +182,11 @@ function StoryContainerContent({
   const content = (
     <ScrollView
       style={styles.previewContent}
-      contentContainerStyle={styles.previewContentContainer}
+      contentContainerStyle={[
+        styles.previewContentContainer,
+        containerVerticalAlign === 'top' &&
+          styles.previewContentContainerWithVerticalAlignTop,
+      ]}
     >
       <View
         style={[styles.previewWrapper, containerStyle]}
@@ -274,8 +278,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   previewContentContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  previewContentContainerWithVerticalAlignTop: {
+    justifyContent: 'flex-start',
   },
   previewWrapper: {},
   previewControls: {
