@@ -109,7 +109,7 @@ export function Button({
       case 'gray':
         return uiColors.tertiarySystemFill;
       case 'tinted':
-        return Color(uiColors.tintColor).alpha(0.15).string();
+        return Color(uiColors.tintColor).alpha(0.2).string();
       case 'filled':
         return uiColors.tintColor;
     }
@@ -145,10 +145,14 @@ export function Button({
   const backgroundOverlayColor = useMemo(() => {
     switch (buttonStyle) {
       case 'tinted':
-      case 'gray':
         return Color(uiColors.tertiarySystemFill)
           .lightness(100)
           .alpha(0.4 * (Color(uiColors.systemBackground).lightness() / 100))
+          .string();
+      case 'gray':
+        return Color(uiColors.tertiarySystemFill)
+          .lightness(100)
+          .alpha(0.3 * (Color(uiColors.systemBackground).lightness() / 100))
           .string();
       default:
         return 'transparent';
@@ -163,7 +167,7 @@ export function Button({
       case 'plain':
         return (event: GestureResponderEvent) => {
           Animated.timing(contentOpacity, {
-            toValue: 0.4,
+            toValue: 0.75,
             duration: 5,
             useNativeDriver: true,
           }).start();
