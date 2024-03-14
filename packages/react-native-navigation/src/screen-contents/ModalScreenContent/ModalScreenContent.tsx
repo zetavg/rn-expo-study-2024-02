@@ -74,7 +74,9 @@ export function getModalScreenContentComponent(config: NavigationConfig) {
 
     return (
       <Stack.Navigator
-        id="modal-screen-content-navigator"
+        // FIXME
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        id={'modal-screen-content-navigator' as any}
         screenOptions={screenOptions}
       >
         <Stack.Screen name="ModalScreenContent" options={{ title }}>

@@ -68,7 +68,9 @@ export function createModalStackNavigator<
 
       return (
         <Stack.Navigator
-          id={id}
+          // FIXME
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          id={id as any}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           initialRouteName={MAIN_SCREEN_NAME as any}
           screenOptions={screenOptions}

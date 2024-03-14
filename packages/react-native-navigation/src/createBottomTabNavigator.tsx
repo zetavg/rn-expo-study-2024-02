@@ -77,7 +77,12 @@ export function createBottomTabNavigator<
       );
 
       return (
-        <BottomTab.Navigator id={id} screenOptions={screenOptions}>
+        <BottomTab.Navigator
+          // FIXME
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          id={id as any}
+          screenOptions={screenOptions}
+        >
           {useMemo(
             () =>
               Object.entries(screens).map(
