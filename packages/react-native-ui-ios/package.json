@@ -17,15 +17,18 @@
     "clean": "rm -rf dist && rm -rf package.tgz"
   },
   "peerDependencies": {
+    "expo": "*",
     "react": "^18",
     "react-native": ">=0.71",
+    "react-native-ios-utilities": "4.4.x",
     "react-native-reanimated": "^3",
     "react-native-svg": "^15",
     "sweet-sfsymbols": "^0.5.0"
   },
   "dependencies": {
     "@rnstudy/ios-colors": "workspace:^",
-    "color": "^4.2.3"
+    "color": "^4.2.3",
+    "react-native-ios-context-menu": "^2.5"
   },
   "devDependencies": {
     "@babel/core": "^7",

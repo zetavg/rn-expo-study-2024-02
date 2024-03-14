@@ -17,8 +17,10 @@
     "clean": "rm -rf dist && rm -rf package.tgz"
   },
   "peerDependencies": {
+    "expo": "*",
     "react": "^18",
     "react-native": ">=0.71",
+    "react-native-ios-utilities": "4.4.x",
     "react-native-reanimated": "^3",
     "react-native-safe-area-context": "^4.8",
     "react-native-svg": "^15",
