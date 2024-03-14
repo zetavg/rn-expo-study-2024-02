@@ -269,6 +269,28 @@ function mostStrictVersion(version1, version2) {
 }
 
 /**
+ * It's common to have peerDependencies add as devDependencies for package development. Here we enforce that all devDependencies satisfy the corresponding peerDependencies.
+ *
+ * @param {import('@yarnpkg/types').Yarn.Constraints.Context} context
+ */
+function enforceDevDependenciesSatisfiesPeerDependencies({ Yarn }) {
+  for (const workspace of Yarn.workspaces()) {
+    for (const [name, version] of Object.entries(
+      workspace.manifest.peerDependencies || {},
+    )) {
+      const devDependencyVersion = workspace.manifest.devDependencies?.[name];
+
+      if (
+        devDependencyVersion &&
+        !semver.subset(devDependencyVersion, version)
+      ) {
+        workspace.set(['devDependencies', name], version);
+      }
+    }
+  }
+}
+
+/**
  * Sets the version number for all workspaces.
  * This will only make effect if the PACKAGES_VERSION environment variable is set.
  *
@@ -298,5 +320,6 @@ module.exports = defineConfig({
     enforceNonPrivatePackagesHavePackPackageScript(ctx);
     enforceBabelRuntimeVersion(ctx);
     enforcePeerDependenciesOfDependenciesAreListed(ctx);
+    enforceDevDependenciesSatisfiesPeerDependencies(ctx);
   },
 });
