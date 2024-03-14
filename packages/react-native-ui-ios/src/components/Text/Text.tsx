@@ -2,12 +2,28 @@ import React, { forwardRef } from 'react';
 import { Text as RNText } from 'react-native';
 
 import { useTextStyles, useUIColors } from '../../contexts';
-import { TextStyles } from '../../tokens';
 
 type Props = React.ComponentProps<typeof RNText> & {
-  textStyle?: keyof TextStyles;
+  textStyle?:
+    | 'body'
+    | 'callout'
+    | 'caption1'
+    | 'caption2'
+    | 'footnote'
+    | 'headline'
+    | 'subheadline'
+    | 'largeTitle'
+    | 'title1'
+    | 'title2'
+    | 'title3';
   emphasized?: boolean;
-  color?: 'secondary' | 'tertiary' | 'quaternary' | 'link' | 'placeholder';
+  color?:
+    | 'default'
+    | 'secondary'
+    | 'tertiary'
+    | 'quaternary'
+    | 'link'
+    | 'placeholder';
 };
 
 export const Text = forwardRef<RNText, Props>(function Text(
@@ -24,15 +40,16 @@ export const Text = forwardRef<RNText, Props>(function Text(
         textStyles[textStyle],
         emphasized && textStyles[`${textStyle}_emphasized`],
         {
-          color: color
-            ? uiColors[
-                color === 'placeholder'
-                  ? ('placeholderText' as const)
-                  : color === 'link'
-                    ? ('link' as const)
-                    : (`${color}Label` as const)
-              ]
-            : uiColors.label,
+          color:
+            color && color !== 'default'
+              ? uiColors[
+                  color === 'placeholder'
+                    ? ('placeholderText' as const)
+                    : color === 'link'
+                      ? ('link' as const)
+                      : (`${color}Label` as const)
+                ]
+              : uiColors.label,
         },
         style,
       ]}
