@@ -16,7 +16,7 @@
   "devDependencies": {
     "@rnstudy/eslint-config": "workspace:^",
     "@types/eslint": "^8",
-    "eslint": "^8",
+    "eslint": "^8.10",
     "expo": ">=50"
   }
 }

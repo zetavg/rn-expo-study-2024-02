@@ -17,12 +17,12 @@
   },
   "peerDependencies": {
     "@rnstudy/react-native-ui": "workspace:^",
-    "@rnstudy/storybook-rn-types": "workspace:^",
     "@storybook/react-native": "8.0.0-alpha.2",
     "react": "^18",
     "react-native": ">=0.71"
   },
   "devDependencies": {
+    "@babel/core": "^7.24.0",
     "@rnstudy/eslint-config": "workspace:^",
     "@rnstudy/react-native-ui": "workspace:^",
     "@rnstudy/storybook-rn-types": "workspace:^",
@@ -30,11 +30,14 @@
     "@storybook/react-native": "8.0.0-alpha.2",
     "@types/eslint": "^8",
     "@types/react": "^18",
-    "eslint": "^8",
+    "eslint": "^8.10",
+    "expo": "*",
     "jest": "^29",
     "react-native": "0.72",
+    "react-native-reanimated": "*",
     "react-native-safe-area-context": "*",
     "react-native-svg": "^15",
+    "sweet-sfsymbols": "*",
     "typescript": "^5"
   }
 }

@@ -20,6 +20,7 @@
     "hoistingLimits": "workspaces"
   },
   "dependencies": {
+    "@babel/core": "^7.0.0-0",
     "@babel/runtime": "7.23.9",
     "@react-native-async-storage/async-storage": "^1",
     "@react-native-community/datetimepicker": "^7",
@@ -28,7 +29,6 @@
     "@rnstudy/react-hooks": "workspace:^",
     "@rnstudy/react-native-navigation": "workspace:^",
     "@rnstudy/react-native-ui": "workspace:^",
-    "@rnstudy/react-native-ui-ios": "workspace:^",
     "@rnstudy/storybook-rn": "workspace:^",
     "@storybook/addon-ondevice-actions": "8.0.0-alpha.2",
     "@storybook/addon-ondevice-controls": "8.0.0-alpha.2",
@@ -46,8 +46,8 @@
     "react-native-reanimated": "^3",
     "react-native-safe-area-context": "4.8.2",
     "react-native-screens": "3.29.0",
-    "react-native-sfsymbols": "^1.2.1",
-    "react-native-svg": "^14",
+    "react-native-svg": "^15",
+    "react-native-vector-icons": "^10",
     "sweet-sfsymbols": "^0.5.0"
   },
   "devDependencies": {
@@ -67,7 +67,7 @@
     "babel-plugin-minify-dead-code-elimination": "^0",
     "babel-plugin-react-docgen": "^4",
     "babel-plugin-transform-define": "^2",
-    "eslint": "^8",
+    "eslint": "^8.10",
     "jest": "^29",
     "jest-expo": "^50.0.2",
     "json5": "^2.2.3",
