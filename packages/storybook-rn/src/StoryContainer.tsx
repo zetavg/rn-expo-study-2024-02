@@ -236,8 +236,26 @@ function StoryContainerContent({
             ]}
           />
 
-          {/* Required for the bottom boundary line to be visiable on Android. */}
-          <View style={{ height: styles.horizontalBoundaryLine.height * 32 }} />
+          <View
+            style={[
+              styles.boundaryLinesLabelContainer,
+              {
+                top: (containerLayout?.y || 0) + (containerLayout?.height || 0),
+              },
+            ]}
+          >
+            <View style={styles.boundaryLinesLabelContent}>
+              <Text style={styles.boundaryLinesLabelContentText}>
+                {containerLayout?.width?.toLocaleString(undefined, {
+                  maximumFractionDigits: 4,
+                }) || 'unknown'}{' '}
+                ×{' '}
+                {containerLayout?.height?.toLocaleString(undefined, {
+                  maximumFractionDigits: 4,
+                }) || 'unknown'}
+              </Text>
+            </View>
+          </View>
         </>
       )}
     </ScrollView>
@@ -327,6 +345,26 @@ const styles = StyleSheet.create({
     width: 9999999,
     height: 1,
     backgroundColor: '#0C8CE9',
+  },
+  boundaryLinesLabelContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  boundaryLinesLabelContent: {
+    backgroundColor: '#0C8CE9',
+    borderRadius: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  boundaryLinesLabelContentText: {
+    color: 'white',
+    fontSize: 12,
+    lineHeight: 14,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   specOverlayContainer: {
     position: 'absolute',
