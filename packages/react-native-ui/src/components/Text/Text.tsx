@@ -22,7 +22,7 @@ type Variant =
 type Color = 'secondary' | 'tertiary' | 'quaternary' | 'link' | 'placeholder';
 
 type Props = React.ComponentProps<typeof RNText> & {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   variant?: Variant;
   color?: Color;
   emphasized?: boolean;

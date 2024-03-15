@@ -29,7 +29,7 @@ export const All: Meta<typeof Button> = {
   render: (args) => (
     <>
       {/* eslint-disable-next-line react-native/no-inline-styles */}
-      <View style={{ flexDirection: 'row', gap: 8 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
         <Button
           {...args}
           label="Button"
@@ -57,7 +57,7 @@ export const All: Meta<typeof Button> = {
       </View>
 
       {/* eslint-disable-next-line react-native/no-inline-styles */}
-      <View style={{ flexDirection: 'row', gap: 8 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
         <Button
           {...args}
           label="Button"
@@ -85,7 +85,7 @@ export const All: Meta<typeof Button> = {
       </View>
 
       {/* eslint-disable-next-line react-native/no-inline-styles */}
-      <View style={{ flexDirection: 'row', gap: 8 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
         <Button
           {...args}
           label="Button"
@@ -113,7 +113,7 @@ export const All: Meta<typeof Button> = {
       </View>
 
       {/* eslint-disable-next-line react-native/no-inline-styles */}
-      <View style={{ flexDirection: 'row', gap: 8 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
         <Button
           {...args}
           label="Button"
@@ -143,7 +143,7 @@ export const All: Meta<typeof Button> = {
       <Text />
 
       {/* eslint-disable-next-line react-native/no-inline-styles */}
-      <View style={{ flexDirection: 'row', gap: 8 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
         <Button {...args} label="Button" buttonStyle="plain" disabled />
         <Button {...args} label="Button" buttonStyle="gray" disabled />
         <Button {...args} label="Button" buttonStyle="tinted" disabled />
