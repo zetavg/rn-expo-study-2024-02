@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@rnstudy/ios-colors": "workspace:^",
+    "@rnstudy/react-utils": "workspace:^",
     "color": "^4.2.3",
     "react-native-ios-context-menu": "^2.5"
   },

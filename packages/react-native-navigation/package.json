@@ -30,7 +30,7 @@
     "@react-navigation/native-stack": "^7.0.0-alpha.11",
     "@react-navigation/stack": "^7.0.0-alpha.11",
     "@rnstudy/ios-colors": "workspace:^",
-    "@rnstudy/react-hooks": "workspace:^"
+    "@rnstudy/react-utils": "workspace:^"
   },
   "devDependencies": {
     "@rnstudy/eslint-config": "workspace:^",

@@ -3828,28 +3828,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@rnstudy/react-hooks@workspace:^, @rnstudy/react-hooks@workspace:packages/react-hooks":
-  version: 0.0.0-use.local
-  resolution: "@rnstudy/react-hooks@workspace:packages/react-hooks"
-  dependencies:
-    "@rnstudy/eslint-config": "workspace:^"
-    "@rnstudy/jest-config": "workspace:^"
-    "@rnstudy/tsconfig": "workspace:^"
-    "@testing-library/react": "npm:^14"
-    "@types/eslint": "npm:^8"
-    "@types/jest": "npm:^29"
-    eslint: "npm:^8.10"
-    jest: "npm:^29"
-    jest-environment-jsdom: "npm:^29"
-    react: "npm:^18"
-    react-dom: "npm:^18"
-    react-test-renderer: "npm:^18"
-    typescript: "npm:^5"
-  peerDependencies:
-    react: ">=18"
-  languageName: unknown
-  linkType: soft
-
 "@rnstudy/react-native-navigation@workspace:^, @rnstudy/react-native-navigation@workspace:packages/react-native-navigation":
   version: 0.0.0-use.local
   resolution: "@rnstudy/react-native-navigation@workspace:packages/react-native-navigation"
@@ -3861,7 +3839,7 @@ __metadata:
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
-    "@rnstudy/react-hooks": "workspace:^"
+    "@rnstudy/react-utils": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
     "@types/eslint": "npm:^8"
     "@types/jest": "npm:^29"
@@ -3893,6 +3871,7 @@ __metadata:
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/react-utils": "workspace:^"
     "@rnstudy/storybook-rn-types": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
     "@types/color": "npm:^3.0.6"
@@ -3978,6 +3957,28 @@ __metadata:
     react-native-svg: ^15
     react-native-vector-icons: ^10
     sweet-sfsymbols: ^0.5.0
+  languageName: unknown
+  linkType: soft
+
+"@rnstudy/react-utils@workspace:^, @rnstudy/react-utils@workspace:packages/react-utils":
+  version: 0.0.0-use.local
+  resolution: "@rnstudy/react-utils@workspace:packages/react-utils"
+  dependencies:
+    "@rnstudy/eslint-config": "workspace:^"
+    "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/tsconfig": "workspace:^"
+    "@testing-library/react": "npm:^14"
+    "@types/eslint": "npm:^8"
+    "@types/jest": "npm:^29"
+    eslint: "npm:^8.10"
+    jest: "npm:^29"
+    jest-environment-jsdom: "npm:^29"
+    react: "npm:^18"
+    react-dom: "npm:^18"
+    react-test-renderer: "npm:^18"
+    typescript: "npm:^5"
+  peerDependencies:
+    react: ">=18"
   languageName: unknown
   linkType: soft
 
@@ -4973,11 +4974,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^20":
-  version: 20.11.27
-  resolution: "@types/node@npm:20.11.27"
+  version: 20.11.28
+  resolution: "@types/node@npm:20.11.28"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/ec40bea80c60a12b39bd0da9b16333237a84c67ae83c8aa382b88381ae3948943bf6af969442e209270ad3e109f301a6b01ab243f80bd0e69673a877425f9418
+  checksum: 10c0/c599745243ed9ae4ca87460f18f88d02ab7424b545136aa504ed7a1d898e3a9bb133c927bcc7e861f79d7f6043ef917a173e780c8a001e129221e92f6d97b0ee
   languageName: node
   linkType: hard
 
@@ -6074,15 +6075,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"asynciterator.prototype@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "asynciterator.prototype@npm:1.0.0"
-  dependencies:
-    has-symbols: "npm:^1.0.3"
-  checksum: 10c0/fb76850e57d931ff59fd16b6cddb79b0d34fe45f400b2c3480d38892e72cd089787401687dbdb7cdb14ece402c275d3e02a648760d1489cd493527129c4c6204
-  languageName: node
-  linkType: hard
-
 "asynckit@npm:^0.4.0":
   version: 0.4.0
   resolution: "asynckit@npm:0.4.0"
@@ -6389,9 +6381,9 @@ __metadata:
   linkType: hard
 
 "binary-extensions@npm:^2.0.0":
-  version: 2.2.0
-  resolution: "binary-extensions@npm:2.2.0"
-  checksum: 10c0/d73d8b897238a2d3ffa5f59c0241870043aa7471335e89ea5e1ff48edb7c2d0bb471517a3e4c5c3f4c043615caa2717b5f80a5e61e07503d51dc85cb848e665d
+  version: 2.3.0
+  resolution: "binary-extensions@npm:2.3.0"
+  checksum: 10c0/75a59cafc10fb12a11d510e77110c6c7ae3f4ca22463d52487709ca7f18f69d886aa387557cc9864fbdb10153d0bdb4caacabf11541f55e89ed6e18d12ece2b5
   languageName: node
   linkType: hard
 
@@ -7790,9 +7782,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.668":
-  version: 1.4.705
-  resolution: "electron-to-chromium@npm:1.4.705"
-  checksum: 10c0/230c07f2cee16e838d6514f0ab78bef46579781bda34f5dce7006cfca1e0b50910b2eec9df5389a543b059564b6675e33616ae89d2053c6f9c742c2d8347ec85
+  version: 1.4.708
+  resolution: "electron-to-chromium@npm:1.4.708"
+  checksum: 10c0/0232dd6f96bfeb8c2ffe69ab7698e8566be731b467eb4778a74da3070274f4521590d7638248177b2f70e1e8c629b255df80991594127d56069c355850d821dd
   languageName: node
   linkType: hard
 
@@ -7914,7 +7906,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-abstract@npm:^1.22.1, es-abstract@npm:^1.22.3, es-abstract@npm:^1.22.4":
+"es-abstract@npm:^1.22.1, es-abstract@npm:^1.22.3, es-abstract@npm:^1.23.0":
   version: 1.23.0
   resolution: "es-abstract@npm:1.23.0"
   dependencies:
@@ -8008,29 +8000,28 @@ __metadata:
   linkType: hard
 
 "es-iterator-helpers@npm:^1.0.17":
-  version: 1.0.17
-  resolution: "es-iterator-helpers@npm:1.0.17"
+  version: 1.0.18
+  resolution: "es-iterator-helpers@npm:1.0.18"
   dependencies:
-    asynciterator.prototype: "npm:^1.0.0"
     call-bind: "npm:^1.0.7"
     define-properties: "npm:^1.2.1"
-    es-abstract: "npm:^1.22.4"
+    es-abstract: "npm:^1.23.0"
     es-errors: "npm:^1.3.0"
-    es-set-tostringtag: "npm:^2.0.2"
+    es-set-tostringtag: "npm:^2.0.3"
     function-bind: "npm:^1.1.2"
     get-intrinsic: "npm:^1.2.4"
     globalthis: "npm:^1.0.3"
     has-property-descriptors: "npm:^1.0.2"
-    has-proto: "npm:^1.0.1"
+    has-proto: "npm:^1.0.3"
     has-symbols: "npm:^1.0.3"
     internal-slot: "npm:^1.0.7"
     iterator.prototype: "npm:^1.1.2"
-    safe-array-concat: "npm:^1.1.0"
-  checksum: 10c0/d0f281257e7165f068fd4fc3beb63d07ae4f18fbef02a2bbe4a39272b764164c1ce3311ae7c5429ac30003aef290fcdf569050e4a9ba3560e044440f68e9a47c
+    safe-array-concat: "npm:^1.1.2"
+  checksum: 10c0/93be402e01fa3d8bf62fcadd2fb3055126ffcfe8846911b10b85918ef46775252696c84e6191ec8125bedb61e92242ad1a54a86118436ba19814720cb9ff4aed
   languageName: node
   linkType: hard
 
-"es-set-tostringtag@npm:^2.0.2, es-set-tostringtag@npm:^2.0.3":
+"es-set-tostringtag@npm:^2.0.3":
   version: 2.0.3
   resolution: "es-set-tostringtag@npm:2.0.3"
   dependencies:
@@ -8447,8 +8438,8 @@ __metadata:
   linkType: hard
 
 "eslint-plugin-react@npm:^7.30.1, eslint-plugin-react@npm:^7.32.2":
-  version: 7.34.0
-  resolution: "eslint-plugin-react@npm:7.34.0"
+  version: 7.34.1
+  resolution: "eslint-plugin-react@npm:7.34.1"
   dependencies:
     array-includes: "npm:^3.1.7"
     array.prototype.findlast: "npm:^1.2.4"
@@ -8470,7 +8461,7 @@ __metadata:
     string.prototype.matchall: "npm:^4.0.10"
   peerDependencies:
     eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
-  checksum: 10c0/9bf0b959373ace66e799adbbfb493a7ceae54751e8f90fcce1da1a2a67b277ee23ba845571eaa4d4f05d96dba4e4977bf938b350f18bad26201fa616ee6aa4b8
+  checksum: 10c0/7c61b1314d37a4ac2f2474f9571f801f1a1a5d81dcd4abbb5d07145406518722fb792367267757ee116bde254be9753242d6b93c9619110398b3fe1746e4848c
   languageName: node
   linkType: hard
 
@@ -9004,13 +8995,13 @@ __metadata:
   linkType: hard
 
 "fast-xml-parser@npm:^4.0.12, fast-xml-parser@npm:^4.2.4":
-  version: 4.3.5
-  resolution: "fast-xml-parser@npm:4.3.5"
+  version: 4.3.6
+  resolution: "fast-xml-parser@npm:4.3.6"
   dependencies:
     strnum: "npm:^1.0.5"
   bin:
     fxparser: src/cli/cli.js
-  checksum: 10c0/cff9a3fe03c708fa89e1f4c73b02da2816b1a8df0fd78500c21f97bfa25f56cd180308752a8b085a6e38a8050b3a75a7671d0b1ec811e732230b7c7728335c26
+  checksum: 10c0/9ebe2ac142c6978cae423c39c2a9b561edb76be584317d578768ed4a006a61fc0e83abf8c6fe31029139c4ad15ea1f2e7b6720ba9e6eda0e5266d7f2770fb079
   languageName: node
   linkType: hard
 
@@ -14015,13 +14006,13 @@ __metadata:
   linkType: hard
 
 "react-native-ios-utilities@npm:*, react-native-ios-utilities@npm:4.4.x":
-  version: 4.4.1
-  resolution: "react-native-ios-utilities@npm:4.4.1"
+  version: 4.4.2
+  resolution: "react-native-ios-utilities@npm:4.4.2"
   peerDependencies:
     expo: "*"
     react: "*"
     react-native: "*"
-  checksum: 10c0/135f04b0ffaf877a0d853a999b5abbf100a28b3fe06c9b31d53575e50fbeb0d4c453eb28cfd75e730db452ff2ee0cd7860b71a6fdae8796aaebcad13f10c915b
+  checksum: 10c0/9081e9c2d4386cfde44b0f001a86845546a0d4102330af23ea2ae52e8876a1831f1bcf6cb001cd0cf07376f5ee99c1778670cab643e2a1a713eabda39e7c72b4
   languageName: node
   linkType: hard
 
@@ -14063,8 +14054,8 @@ __metadata:
   linkType: hard
 
 "react-native-reanimated@npm:*, react-native-reanimated@npm:^3":
-  version: 3.8.0
-  resolution: "react-native-reanimated@npm:3.8.0"
+  version: 3.8.1
+  resolution: "react-native-reanimated@npm:3.8.1"
   dependencies:
     "@babel/plugin-transform-arrow-functions": "npm:^7.0.0-0"
     "@babel/plugin-transform-nullish-coalescing-operator": "npm:^7.0.0-0"
@@ -14078,7 +14069,7 @@ __metadata:
     "@babel/core": ^7.0.0-0
     react: "*"
     react-native: "*"
-  checksum: 10c0/26895c041ae5df2db3d4ddb54e2c741e962c434051473f2d3c7f21701ac7b35b668985136fd07ef09cfabe5b2f75d0f2b81878c1c22fd51f513c7c27fbc09b6f
+  checksum: 10c0/7bf044a808981e293cfb75953afc53173382cb1b3fe036f6e6d26a2ea530f795f4a25c886e6cdc724fbca88f3a6a106d56e71cb080a6a224754ae1d11c1f823c
   languageName: node
   linkType: hard
 
@@ -14734,9 +14725,9 @@ __metadata:
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
     "@rnstudy/metro-config": "workspace:^"
-    "@rnstudy/react-hooks": "workspace:^"
     "@rnstudy/react-native-navigation": "workspace:^"
     "@rnstudy/react-native-ui": "workspace:^"
+    "@rnstudy/react-utils": "workspace:^"
     "@rnstudy/storybook-rn": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
     "@storybook/addon-ondevice-actions": "npm:8.0.0-alpha.2"
@@ -14788,7 +14779,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"safe-array-concat@npm:^1.1.0":
+"safe-array-concat@npm:^1.1.0, safe-array-concat@npm:^1.1.2":
   version: 1.1.2
   resolution: "safe-array-concat@npm:1.1.2"
   dependencies:

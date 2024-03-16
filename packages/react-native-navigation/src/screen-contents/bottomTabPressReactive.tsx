@@ -12,7 +12,7 @@ import {
 } from 'react-native-gesture-handler';
 import { StackActions, useIsFocused } from '@react-navigation/native';
 
-import { useInterceptedRef } from '@rnstudy/react-hooks';
+import { useInterceptedRef } from '@rnstudy/react-utils';
 
 import { BottomTabNavigationContext } from './contexts';
 import { useNearestStackNavigation } from './hooks';

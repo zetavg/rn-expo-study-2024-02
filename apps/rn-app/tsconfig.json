@@ -8,7 +8,7 @@
       "@/*": ["./src/*"],
       // For the following workspace dependencies, use the uncompiled source code from to avoid the need to build them during development.
       // To simulate using the compiled code as installing the packages from npm, comment out the following path mappings.
-      "@rnstudy/react-hooks": ["../../packages/react-hooks/src"],
+      "@rnstudy/react-utils": ["../../packages/react-utils/src"],
       "@rnstudy/react-native-ui": ["../../packages/react-native-ui/src"],
       "@rnstudy/react-native-navigation": ["../../packages/react-native-navigation/src"],
       "@rnstudy/react-native-ui-ios": ["../../packages/react-native-ui-ios/src"],
