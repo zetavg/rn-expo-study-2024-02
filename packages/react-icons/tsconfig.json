@@ -1,7 +1,12 @@
 {
   "extends": "@rnstudy/tsconfig",
   "compilerOptions": {
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "paths": {
+      // For the following workspace dependencies, use the uncompiled source code to avoid the need to build them during development.
+      // To simulate using the compiled code as installing the packages from npm, comment out the following path mappings.
+      "@rnstudy/react-utils": ["../../packages/react-utils/src"]
+    }
   },
   "include": [
     "**/*.ts",

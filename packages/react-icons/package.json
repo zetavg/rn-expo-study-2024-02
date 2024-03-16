@@ -24,13 +24,19 @@
     "react-native-vector-icons": "^10",
     "sweet-sfsymbols": "^0.5.0"
   },
+  "dependencies": {
+    "@rnstudy/react-utils": "workspace:^",
+    "color": "^4"
+  },
   "devDependencies": {
     "@rnstudy/eslint-config": "workspace:^",
     "@rnstudy/jest-config": "workspace:^",
     "@rnstudy/tsconfig": "workspace:^",
+    "@types/color": "^3",
     "@types/eslint": "^8",
     "@types/jest": "^29",
     "@types/react": "^18",
+    "@types/react-native-vector-icons": "^6.4.18",
     "eslint": "^8.10",
     "expo": "*",
     "jest": "^29",

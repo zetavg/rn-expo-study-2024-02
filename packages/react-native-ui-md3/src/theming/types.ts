@@ -1,6 +1,21 @@
 import { MD3Typescale } from 'react-native-paper/lib/typescript/types';
 
-export type MD3Scheme = {
+export type MD3Colors = {
+  red: string;
+  orange: string;
+  yellow: string;
+  green: string;
+  teal: string;
+  cyan: string;
+  blue: string;
+  indigo: string;
+  purple: string;
+  pink: string;
+  brown: string;
+  gray: string;
+};
+
+export type MD3Scheme = MD3Colors & {
   primary: string;
   surfaceTint: string;
   onPrimary: string;

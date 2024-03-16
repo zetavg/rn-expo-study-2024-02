@@ -31,13 +31,15 @@
   "dependencies": {
     "@rnstudy/ios-colors": "workspace:^",
     "@rnstudy/react-native-ui-ios": "workspace:^",
-    "@rnstudy/react-native-ui-md3": "workspace:^"
+    "@rnstudy/react-native-ui-md3": "workspace:^",
+    "color": "^4"
   },
   "devDependencies": {
     "@rnstudy/eslint-config": "workspace:^",
     "@rnstudy/jest-config": "workspace:^",
     "@rnstudy/react-icons": "workspace:^",
     "@rnstudy/tsconfig": "workspace:^",
+    "@types/color": "^3",
     "@types/eslint": "^8",
     "@types/jest": "^29",
     "@types/react": "^18",

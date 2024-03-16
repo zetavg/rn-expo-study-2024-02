@@ -3,8 +3,9 @@ import { Button, Text } from 'react-native';
 
 import { useMainStackNavigation } from '@/navigation/hooks';
 import { StackScreenContent } from '@/navigation/screens';
-import { ListRow } from '@rnstudy/react-native-ui-ios';
+import { Icon } from '@rnstudy/react-icons';
 import type { StackScreenProps } from '@rnstudy/react-native-navigation';
+import { ListRow } from '@rnstudy/react-native-ui-ios';
 
 export default function Example1ListScreen({ route }: StackScreenProps) {
   const navigation = useMainStackNavigation();
@@ -20,6 +21,8 @@ export default function Example1ListScreen({ route }: StackScreenProps) {
       //   }}
     >
       <StackScreenContent.ScrollView>
+        <Icon name="heart" size={40} color="red" />
+        <Icon name="android" size={40} />
         <Text>This is Example1ListScreen</Text>
         <Text>Search bar text: {searchBarText}</Text>
         <Button

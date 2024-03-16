@@ -1,3 +1,4 @@
+import sharedColors from '../sharedColors';
 import { MD3Theme } from '../types';
 
 import md3BaselineTheme from './baseline';
@@ -6,6 +7,7 @@ export const md3GrayTheme: MD3Theme = {
   ...md3BaselineTheme,
   schemes: {
     light: {
+      ...sharedColors,
       primary: '#006874',
       surfaceTint: '#006874',
       onPrimary: '#FFFFFF',
@@ -57,6 +59,7 @@ export const md3GrayTheme: MD3Theme = {
       surfaceContainerHighest: '#DEE3E5',
     },
     lightMediumContrast: {
+      ...sharedColors,
       primary: '#004A53',
       surfaceTint: '#006874',
       onPrimary: '#FFFFFF',
@@ -108,6 +111,7 @@ export const md3GrayTheme: MD3Theme = {
       surfaceContainerHighest: '#DEE3E5',
     },
     lightHighContrast: {
+      ...sharedColors,
       primary: '#00272C',
       surfaceTint: '#006874',
       onPrimary: '#FFFFFF',
@@ -159,6 +163,7 @@ export const md3GrayTheme: MD3Theme = {
       surfaceContainerHighest: '#DEE3E5',
     },
     dark: {
+      ...sharedColors,
       primary: '#82D3E0',
       surfaceTint: '#82D3E0',
       onPrimary: '#00363D',
@@ -210,6 +215,7 @@ export const md3GrayTheme: MD3Theme = {
       surfaceContainerHighest: '#303637',
     },
     darkMediumContrast: {
+      ...sharedColors,
       primary: '#86D7E5',
       surfaceTint: '#82D3E0',
       onPrimary: '#001A1D',
@@ -261,6 +267,7 @@ export const md3GrayTheme: MD3Theme = {
       surfaceContainerHighest: '#303637',
     },
     darkHighContrast: {
+      ...sharedColors,
       primary: '#F1FDFF',
       surfaceTint: '#82D3E0',
       onPrimary: '#000000',

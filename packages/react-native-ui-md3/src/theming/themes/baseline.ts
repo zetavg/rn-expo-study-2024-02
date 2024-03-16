@@ -1,10 +1,12 @@
 import { MD3LightTheme as PaperMD3DefaultLightTheme } from 'react-native-paper';
 
+import sharedColors from '../sharedColors';
 import { MD3Theme } from '../types';
 
 export const md3BaselineTheme: MD3Theme = {
   schemes: {
     light: {
+      ...sharedColors,
       primary: '#65558F',
       surfaceTint: '#6750A4',
       onPrimary: '#FFFFFF',
@@ -56,6 +58,7 @@ export const md3BaselineTheme: MD3Theme = {
       surfaceContainerHighest: '#E6E0E9',
     },
     lightMediumContrast: {
+      ...sharedColors,
       primary: '#493971',
       surfaceTint: '#65558F',
       onPrimary: '#FFFFFF',
@@ -107,6 +110,7 @@ export const md3BaselineTheme: MD3Theme = {
       surfaceContainerHighest: '#E6E0E9',
     },
     lightHighContrast: {
+      ...sharedColors,
       primary: '#27174E',
       surfaceTint: '#65558F',
       onPrimary: '#FFFFFF',
@@ -158,6 +162,7 @@ export const md3BaselineTheme: MD3Theme = {
       surfaceContainerHighest: '#E6E0E9',
     },
     dark: {
+      ...sharedColors,
       primary: '#D0BCFE',
       surfaceTint: '#D0BCFF',
       onPrimary: '#381E72',
@@ -209,6 +214,7 @@ export const md3BaselineTheme: MD3Theme = {
       surfaceContainerHighest: '#36343B',
     },
     darkMediumContrast: {
+      ...sharedColors,
       primary: '#D3C1FF',
       surfaceTint: '#CFBDFE',
       onPrimary: '#1B0942',
@@ -260,6 +266,7 @@ export const md3BaselineTheme: MD3Theme = {
       surfaceContainerHighest: '#36343A',
     },
     darkHighContrast: {
+      ...sharedColors,
       primary: '#FFF9FF',
       surfaceTint: '#CFBDFE',
       onPrimary: '#000000',
