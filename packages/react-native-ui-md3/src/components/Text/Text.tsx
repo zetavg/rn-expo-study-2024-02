@@ -15,7 +15,7 @@ import TextPropsContext from './TextPropsContext';
 
 export type Props = Partial<React.ComponentProps<typeof PaperText>> & {
   color?: keyof MD3Scheme | 'variant';
-  children: ReactNodePropWithPropDefaultValuesContext<{
+  children?: ReactNodePropWithPropDefaultValuesContext<{
     iconProps: Partial<IconProps>;
   }>;
 };

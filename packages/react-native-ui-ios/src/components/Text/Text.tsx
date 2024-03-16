@@ -33,7 +33,7 @@ export type Props = React.ComponentProps<typeof RNText> & {
     | 'quaternary'
     | 'link'
     | 'placeholder';
-  children: ReactNodePropWithPropDefaultValuesContext<{
+  children?: ReactNodePropWithPropDefaultValuesContext<{
     iconProps: Partial<IconProps>;
   }>;
 };
