@@ -14,16 +14,26 @@ const meta: Meta<typeof Button> = {
     actions: { argTypesRegex: '^on.*' },
   },
   args: {
-    children: 'Button',
+    text: 'Button',
+  },
+  argTypes: {
+    icon: {
+      control: 'select',
+      options: [
+        undefined,
+        'camera',
+        'magnify',
+        'heart',
+        'arrow-left',
+        'arrow-right',
+      ],
+    },
   },
 };
 
 export default meta;
 
-export const Default: Meta<typeof Button> = {
-  args: {},
-  parameters: {},
-};
+export const Default: Meta<typeof Button> = {};
 
 export const All: Meta<typeof Button> = {
   render: (args) => (
@@ -74,7 +84,9 @@ export const All: Meta<typeof Button> = {
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
         <Button {...args} mode="text" disabled />
         <Button {...args} mode="outlined" disabled />
+        <Button {...args} mode="contained-tonal" disabled />
         <Button {...args} mode="contained" disabled />
+        <Button {...args} mode="elevated" disabled />
       </View>
     </>
   ),
@@ -82,5 +94,12 @@ export const All: Meta<typeof Button> = {
     containerStyle: {
       gap: 16,
     },
+  },
+};
+
+export const IconOnly: Meta<typeof Button> = {
+  args: {
+    text: undefined,
+    icon: 'camera',
   },
 };

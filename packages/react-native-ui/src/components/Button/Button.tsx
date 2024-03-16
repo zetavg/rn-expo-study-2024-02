@@ -6,7 +6,7 @@ import { Button as ButtonMD3 } from '@rnstudy/react-native-ui-md3';
 
 import { useUIPlatform } from '../../contexts';
 
-type ButtonStyle = 'plain' | 'bordered' | 'tinted' | 'prominent';
+type ButtonStyle = 'plain' | 'outlined' | 'bordered' | 'tinted' | 'prominent';
 
 type ButtonSize = 'small' | 'regular' | 'medium' | 'large';
 
@@ -20,6 +20,7 @@ type Props = {
    * Available styles:
    *
    * - `plain`: A plain button with no outline or fill.
+   * - `outlined`: A button with an outline. Will fallback to `bordered` on iOS.
    * - `bordered`: A button that has a bordered style.
    * - `tinted`: A button with a tinted background color. Will fallback to `bordered` on Android.
    * - `prominent`: A prominent button, often used for primary actions.
@@ -36,11 +37,17 @@ type Props = {
    * - `large`: A large button. Often used for the main action(s) on a screen.
    */
   size?: ButtonSize;
+  disabled?: boolean;
+  /** Shows a loading indicator on the button. */
+  loading?: boolean;
+  icon?: string;
   buttonBorderShape?: ButtonBorderShape;
   style?: StyleProp<ViewStyle>;
 } & {
   /** Shorthand for `buttonStyle="plain"`. */
   plain?: boolean;
+  /** Shorthand for `buttonStyle="outlined"`. */
+  outlined?: boolean;
   /** Shorthand for `buttonStyle="bordered"`. */
   bordered?: boolean;
   /** Shorthand for `buttonStyle="tinted"`. */
@@ -58,18 +65,21 @@ type Props = {
   large?: boolean;
 } & {
   // Re-exposing common PressableProps so that they can be picked-up by react-docgen.
-  disabled?: NonNullable<PressableProps['disabled']>;
   hitSlop?: Insets;
   onPress?: NonNullable<PressableProps['onPress']>;
   onPressIn?: NonNullable<PressableProps['onPressIn']>;
   onPressOut?: NonNullable<PressableProps['onPressOut']>;
   onLongPress?: NonNullable<PressableProps['onLongPress']>;
-} & Partial<{ [K in keyof PressableProps]: NonNullable<PressableProps[K]> }>;
+} & Omit<
+    Partial<{ [K in keyof PressableProps]: NonNullable<PressableProps[K]> }>,
+    'children'
+  >;
 
 export function Button({
   label,
   buttonStyle: buttonStyleFromProps,
   plain,
+  outlined,
   bordered,
   tinted,
   prominent,
@@ -79,6 +89,7 @@ export function Button({
   medium,
   large,
   buttonBorderShape,
+  // children,
   ...restProps
 }: Props) {
   const uiPlatform = useUIPlatform();
@@ -89,6 +100,7 @@ export function Button({
     }
 
     if (plain) return 'plain';
+    if (outlined) return 'outlined';
     if (bordered) return 'bordered';
     if (tinted) return 'tinted';
     if (prominent) return 'prominent';
@@ -111,6 +123,7 @@ export function Button({
           label={label}
           buttonStyle={(() => {
             switch (buttonStyle) {
+              case 'outlined':
               case 'bordered':
                 return 'gray';
               case 'tinted':
@@ -131,8 +144,11 @@ export function Button({
     case 'android': {
       return (
         <ButtonMD3
+          text={label}
           mode={(() => {
             switch (buttonStyle) {
+              case 'outlined':
+                return 'outlined';
               case 'bordered':
               case 'tinted':
                 return 'contained-tonal';
@@ -147,9 +163,7 @@ export function Button({
           compact={false}
           loading={false}
           {...restProps}
-        >
-          {label}
-        </ButtonMD3>
+        />
       );
     }
   }

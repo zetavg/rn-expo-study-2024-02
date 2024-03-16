@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Animated,
   GestureResponderEvent,
@@ -35,14 +36,15 @@ type Props = {
   controlSize?: ControlSize;
   buttonBorderShape?: ButtonBorderShape;
   style?: StyleProp<ViewStyle>;
+  loading?: boolean;
+  disabled?: boolean;
 } & {
   // Re-exposing common PressableProps so that they can be picked-up by react-docgen.
-  disabled?: PressableProps['disabled'];
   onPress?: PressableProps['onPress'];
   onPressIn?: PressableProps['onPressIn'];
   onPressOut?: PressableProps['onPressOut'];
   onLongPress?: PressableProps['onLongPress'];
-} & PressableProps;
+} & Omit<PressableProps, 'children'>;
 
 const DEFAULT_HIT_SLOPS: { [k in ControlSize]: Insets } = {
   small: {
@@ -66,8 +68,8 @@ export function Button({
   buttonStyle: buttonStyleFromProps = 'plain',
   controlSize: controlSizeFromProps,
   buttonBorderShape: buttonBorderShapeFromProps = 'automatic',
-  children,
   style,
+  loading,
   disabled,
   onPressIn,
   onPressOut,
@@ -275,7 +277,10 @@ export function Button({
       />
       <AnimatedText
         textStyle={textStyle}
-        style={{ color, opacity: contentOpacity }}
+        style={[
+          { color, opacity: contentOpacity },
+          loading && styles.content_loading,
+        ]}
       >
         {label}
       </AnimatedText>
@@ -285,6 +290,17 @@ export function Button({
           { backgroundColor: overlayColor, opacity: overlayOpacity },
         ]}
       />
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator
+            color={
+              buttonStyle === 'filled' && !disabled
+                ? uiColors.onTintColor
+                : uiColors.systemGray
+            }
+          />
+        </View>
+      )}
     </Pressable>
   );
 }
@@ -323,12 +339,24 @@ const styles = StyleSheet.create({
   roundedRectangle: {
     borderRadius: 12,
   },
+  content_loading: {
+    opacity: 0.25,
+  },
   colorOverlay: {
     position: 'absolute',
     top: 0,
     bottom: 0,
     left: 0,
     right: 0,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

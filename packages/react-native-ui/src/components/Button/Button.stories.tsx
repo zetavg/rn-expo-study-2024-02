@@ -21,11 +21,33 @@ const meta: Meta<typeof Button> = {
 export default meta;
 
 export const Default: Meta<typeof Button> = {
-  args: {},
   parameters: {},
+  argTypes: {
+    icon: {
+      control: 'select',
+      options: [
+        undefined,
+        'camera',
+        'magnify',
+        'heart',
+        'arrow-left',
+        'arrow-right',
+      ],
+    },
+  },
+  args: {},
 };
 
 export const All: Meta<typeof Button> = {
+  argTypes: {
+    buttonStyle: { control: false },
+    size: { control: false },
+  },
+  parameters: {
+    containerStyle: {
+      gap: 16,
+    },
+  },
   render: (args) => (
     <>
       {/* eslint-disable-next-line react-native/no-inline-styles */}
@@ -34,6 +56,14 @@ export const All: Meta<typeof Button> = {
         <Button {...args} plain regular />
         <Button {...args} plain medium />
         <Button {...args} plain large />
+      </View>
+
+      {/* eslint-disable-next-line react-native/no-inline-styles */}
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
+        <Button {...args} outlined small />
+        <Button {...args} outlined regular />
+        <Button {...args} outlined medium />
+        <Button {...args} outlined large />
       </View>
 
       {/* eslint-disable-next-line react-native/no-inline-styles */}
@@ -59,22 +89,61 @@ export const All: Meta<typeof Button> = {
         <Button {...args} prominent medium />
         <Button {...args} prominent large />
       </View>
-
-      <Text />
-
-      {/* eslint-disable-next-line react-native/no-inline-styles */}
-      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
-        <Button {...args} plain disabled />
-        <Button {...args} bordered disabled />
-        <Button {...args} tinted disabled />
-        <Button {...args} prominent disabled />
-      </View>
     </>
   ),
-  argTypes: {},
-  parameters: {
-    containerStyle: {
-      gap: 16,
-    },
+};
+
+export const AllDisabled: Meta<typeof Button> = {
+  ...All,
+  args: {
+    disabled: true,
+  },
+};
+
+export const AllLoading: Meta<typeof Button> = {
+  ...All,
+  args: {
+    loading: true,
+  },
+};
+
+export const AllWithIcon: Meta<typeof Button> = {
+  ...All,
+  args: {
+    icon: 'heart',
+  },
+};
+
+export const AllWithIconAndLoading: Meta<typeof Button> = {
+  ...All,
+  args: {
+    icon: 'heart',
+    loading: true,
+  },
+};
+
+export const AllWithIconAndLoadingAndDisabled: Meta<typeof Button> = {
+  ...All,
+  args: {
+    icon: 'heart',
+    loading: true,
+    disabled: true,
+  },
+};
+
+export const AllWithOnlyIcon: Meta<typeof Button> = {
+  ...All,
+  args: {
+    label: undefined,
+    icon: 'heart',
+  },
+};
+
+export const AllWithOnlyIconAndLoading: Meta<typeof Button> = {
+  ...All,
+  args: {
+    label: undefined,
+    icon: 'heart',
+    loading: true,
   },
 };
