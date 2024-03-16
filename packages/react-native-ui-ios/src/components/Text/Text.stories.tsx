@@ -6,7 +6,9 @@ const meta: Meta<typeof Text> = {
   title: 'iOS UI/Text',
   component: Text,
   parameters: {},
-  args: {},
+  args: {
+    children: 'Text',
+  },
 };
 
 export default meta;
