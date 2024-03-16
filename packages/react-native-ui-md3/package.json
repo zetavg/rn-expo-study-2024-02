@@ -17,6 +17,7 @@
     "clean": "rm -rf dist && rm -rf package.tgz"
   },
   "peerDependencies": {
+    "@rnstudy/react-icons": "workspace:^",
     "react": "^18",
     "react-native": ">=0.71",
     "react-native-safe-area-context": "^4",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@rnstudy/eslint-config": "workspace:^",
     "@rnstudy/jest-config": "workspace:^",
+    "@rnstudy/react-icons": "workspace:^",
     "@rnstudy/storybook-rn-types": "workspace:^",
     "@rnstudy/tsconfig": "workspace:^",
     "@types/eslint": "^8",

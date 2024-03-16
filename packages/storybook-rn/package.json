@@ -24,6 +24,7 @@
   "devDependencies": {
     "@babel/core": "^7.24.0",
     "@rnstudy/eslint-config": "workspace:^",
+    "@rnstudy/react-icons": "workspace:^",
     "@rnstudy/react-native-ui": "workspace:^",
     "@rnstudy/storybook-rn-types": "workspace:^",
     "@rnstudy/tsconfig": "workspace:^",

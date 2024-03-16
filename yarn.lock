@@ -3828,6 +3828,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@rnstudy/react-icons@workspace:^, @rnstudy/react-icons@workspace:packages/react-icons":
+  version: 0.0.0-use.local
+  resolution: "@rnstudy/react-icons@workspace:packages/react-icons"
+  dependencies:
+    "@rnstudy/eslint-config": "workspace:^"
+    "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/tsconfig": "workspace:^"
+    "@types/eslint": "npm:^8"
+    "@types/jest": "npm:^29"
+    "@types/react": "npm:^18"
+    eslint: "npm:^8.10"
+    expo: "npm:*"
+    jest: "npm:^29"
+    react-native: "npm:0.72"
+    react-native-vector-icons: "npm:^10"
+    sweet-sfsymbols: "npm:^0.5.0"
+    typescript: "npm:^5"
+  peerDependencies:
+    react: ^18
+  languageName: unknown
+  linkType: soft
+
 "@rnstudy/react-native-navigation@workspace:^, @rnstudy/react-native-navigation@workspace:packages/react-native-navigation":
   version: 0.0.0-use.local
   resolution: "@rnstudy/react-native-navigation@workspace:packages/react-native-navigation"
@@ -3871,6 +3893,7 @@ __metadata:
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/react-icons": "workspace:^"
     "@rnstudy/react-utils": "workspace:^"
     "@rnstudy/storybook-rn-types": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
@@ -3889,6 +3912,7 @@ __metadata:
     sweet-sfsymbols: "npm:^0.5.0"
     typescript: "npm:^5"
   peerDependencies:
+    "@rnstudy/react-icons": "workspace:^"
     expo: "*"
     react: ^18
     react-native: ">=0.71"
@@ -3905,6 +3929,7 @@ __metadata:
   dependencies:
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/react-icons": "workspace:^"
     "@rnstudy/storybook-rn-types": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
     "@types/eslint": "npm:^8"
@@ -3919,6 +3944,7 @@ __metadata:
     react-native-vector-icons: "npm:^10"
     typescript: "npm:^5"
   peerDependencies:
+    "@rnstudy/react-icons": "workspace:^"
     react: ^18
     react-native: ">=0.71"
     react-native-safe-area-context: ^4
@@ -3934,6 +3960,7 @@ __metadata:
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/react-icons": "workspace:^"
     "@rnstudy/react-native-ui-ios": "workspace:^"
     "@rnstudy/react-native-ui-md3": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
@@ -3948,6 +3975,7 @@ __metadata:
     react-native-vector-icons: "npm:^10"
     typescript: "npm:^5"
   peerDependencies:
+    "@rnstudy/react-icons": "workspace:^"
     expo: "*"
     react: ^18
     react-native: ">=0.71"
@@ -4027,6 +4055,7 @@ __metadata:
   dependencies:
     "@babel/core": "npm:^7.24.0"
     "@rnstudy/eslint-config": "workspace:^"
+    "@rnstudy/react-icons": "workspace:^"
     "@rnstudy/react-native-ui": "workspace:^"
     "@rnstudy/storybook-rn-types": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
@@ -14725,6 +14754,7 @@ __metadata:
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
     "@rnstudy/metro-config": "workspace:^"
+    "@rnstudy/react-icons": "workspace:^"
     "@rnstudy/react-native-navigation": "workspace:^"
     "@rnstudy/react-native-ui": "workspace:^"
     "@rnstudy/react-utils": "workspace:^"

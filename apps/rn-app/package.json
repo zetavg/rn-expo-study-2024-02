@@ -26,6 +26,7 @@
     "@react-native-community/datetimepicker": "^7",
     "@react-native-community/slider": "^4",
     "@rnstudy/ios-colors": "workspace:^",
+    "@rnstudy/react-icons": "workspace:^",
     "@rnstudy/react-native-navigation": "workspace:^",
     "@rnstudy/react-native-ui": "workspace:^",
     "@rnstudy/react-utils": "workspace:^",
