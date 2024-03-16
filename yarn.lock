@@ -3930,6 +3930,7 @@ __metadata:
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
     "@rnstudy/react-icons": "workspace:^"
+    "@rnstudy/react-utils": "workspace:^"
     "@rnstudy/storybook-rn-types": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
     "@types/eslint": "npm:^8"

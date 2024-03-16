@@ -6,6 +6,7 @@
       // For the following workspace dependencies, use the uncompiled source code from to avoid the need to build them during development.
       // To simulate using the compiled code as installing the packages from npm, comment out the following path mappings.
       "@rnstudy/react-icons": ["../../packages/react-icons/src"],
+      "@rnstudy/react-utils": ["../../packages/react-utils/src"],
       "@rnstudy/ios-colors": ["../../packages/ios-colors/src"]
     }
   },

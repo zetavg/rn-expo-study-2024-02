@@ -8,6 +8,7 @@
       "@rnstudy/react-native-ui-ios": ["../../packages/react-native-ui-ios/src"],
       "@rnstudy/react-native-ui-md3": ["../../packages/react-native-ui-md3/src"],
       "@rnstudy/react-icons": ["../../packages/react-icons/src"],
+      "@rnstudy/react-utils": ["../../packages/react-utils/src"],
       "@rnstudy/ios-colors": ["../../packages/ios-colors/src"]
     }
   },
