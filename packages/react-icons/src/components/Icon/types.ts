@@ -3,12 +3,22 @@ import { IconColor } from '../../types';
 
 export type IconName = keyof typeof IconDefinitions;
 
+export type IconImage = {
+  uri: string;
+  // width: number;
+  // height: number;
+};
+
 export type IconProps = {
   name: IconName;
+
   size?: number;
   color?: IconColor | string;
 
   bordered?: boolean;
+
+  /** If specified, will display this image instead of the icon. */
+  image?: IconImage;
 
   /** Specifies the background color of the icon. Will only take effect if the icon is `bordered`. */
   backgroundColor?: IconColor | string;

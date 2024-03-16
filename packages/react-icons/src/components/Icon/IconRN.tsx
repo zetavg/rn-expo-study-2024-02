@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Image, Platform, StyleSheet, View } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Color from 'color';
 import SweetSFSymbol from 'sweet-sfsymbols';
@@ -20,6 +20,7 @@ export function IconRN(props: IconProps): JSX.Element | null {
     size = 32,
     color = 'default',
     bordered,
+    image,
     // Style props
     m,
     mv,
@@ -68,10 +69,20 @@ export function IconRN(props: IconProps): JSX.Element | null {
     return colorValue;
   })();
 
-  let iconInset = bordered ? 8 : 0;
+  let iconInset = bordered ? size / 5 : 0;
 
   const nativeIconElement = (() => {
     if (!iconDefinition) return null;
+
+    if (image) {
+      return (
+        <Image
+          source={{ width: size - 2, height: size - 2, ...image }}
+          resizeMode="cover"
+          style={{ borderRadius: iconTheme.borderRadius }}
+        />
+      );
+    }
 
     if (iconPlatform === 'ios') {
       const sfSymbolDefn = iconDefinition.sfSymbolDefinitions;
@@ -86,7 +97,10 @@ export function IconRN(props: IconProps): JSX.Element | null {
             typeof defn.availability?.iOS === 'number' &&
             osVersion >= defn.availability.iOS
           ) {
-            iconInset += 4;
+            iconInset += size / 8;
+            if (defn.additionalPadding) {
+              iconInset += defn.additionalPadding;
+            }
             return (
               <SweetSFSymbol
                 name={defn.name}
@@ -193,7 +207,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
   },
 });
 

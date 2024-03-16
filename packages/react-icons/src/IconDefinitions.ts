@@ -25,7 +25,19 @@ export const IconDefinitions = makeIconDefinitions({
       },
     ],
   }),
-
+  cat: makeIconDefinition({
+    materialIconName: 'cat',
+    sfSymbolDefinitions: [
+      {
+        name: 'cat.fill',
+        availability: {
+          iOS: 17,
+          macOS: 14,
+        },
+        additionalPadding: 4,
+      },
+    ],
+  }),
   android: makeIconDefinition({
     materialIconName: 'android',
   }),
