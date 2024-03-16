@@ -3795,8 +3795,24 @@ __metadata:
     ts-node: "patch:ts-node@npm%3A11.0.0-beta.1#~/.yarn/patches/ts-node-npm-11.0.0-beta.1-cb10a2a461.patch"
     typescript: "npm:>=4.4 <6"
   peerDependencies:
+    "@babel/core": ">=7.0.0-beta.0 <8"
+    "@jest/types": ^29.0.0
+    "@swc/core": ">=1.3.85"
+    "@swc/wasm": ">=1.3.85"
     "@types/jest": ^29
+    babel-jest: ^29.0.0
     jest: ^29
+  peerDependenciesMeta:
+    "@babel/core":
+      optional: true
+    "@jest/types":
+      optional: true
+    "@swc/core":
+      optional: true
+    "@swc/wasm":
+      optional: true
+    babel-jest:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -3846,11 +3862,25 @@ __metadata:
     expo: "npm:*"
     jest: "npm:^29"
     react-native: "npm:0.72"
+    react-native-svg: "npm:^15"
     react-native-vector-icons: "npm:^10"
     sweet-sfsymbols: "npm:^0.5.0"
     typescript: "npm:^5"
   peerDependencies:
     react: ^18
+    react-native: ">=0.71"
+    react-native-svg: ^15
+    react-native-vector-icons: ^10
+    sweet-sfsymbols: ^0.5.0
+  peerDependenciesMeta:
+    react-native:
+      optional: true
+    react-native-svg:
+      optional: true
+    react-native-vector-icons:
+      optional: true
+    sweet-sfsymbols:
+      optional: true
   languageName: unknown
   linkType: soft
 

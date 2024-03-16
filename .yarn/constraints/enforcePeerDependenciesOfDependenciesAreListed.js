@@ -24,38 +24,39 @@ function enforcePeerDependenciesOfDependenciesAreListed({ Yarn }) {
         );
       }
 
+      const logPeerDependencyNameAndVersion = (
+        peerDependencyName,
+        peerDependencyVersion,
+        isRequired,
+      ) => {
+        const existing = peerDependenciesMap.get(peerDependencyName);
+        let version = peerDependencyVersion;
+
+        if (existing?.version) {
+          version =
+            version !== '*'
+              ? mostStrictVersion(existing.version, version)
+              : existing.version;
+        }
+
+        // No need to enforce optional peer dependencies if the version is "*".
+        if (!isRequired && version === '*') return;
+
+        peerDependenciesMap.set(peerDependencyName, {
+          required: existing?.required || isRequired,
+          version,
+          requestedBy: {
+            ...(existing?.requestedBy || {}),
+            [dependencyPackageName]: peerDependencyVersion,
+          },
+        });
+      };
+
       // For each dependency package, log its "peerDependencies" and "optionalPeerDependencies" into peerDependenciesMap.
       for (const [key, isRequired] of [
         ['peerDependencies', true],
         ['optionalPeerDependencies', false],
       ]) {
-        const logPeerDependencyNameAndVersion = (
-          peerDependencyName,
-          peerDependencyVersion,
-        ) => {
-          const existing = peerDependenciesMap.get(peerDependencyName);
-          let version = peerDependencyVersion;
-
-          if (existing?.version) {
-            version =
-              version !== '*'
-                ? mostStrictVersion(existing.version, version)
-                : existing.version;
-          }
-
-          // No need to enforce optional peer dependencies if the version is "*".
-          if (!isRequired && version === '*') return;
-
-          peerDependenciesMap.set(peerDependencyName, {
-            required: existing?.required || isRequired,
-            version,
-            requestedBy: {
-              ...(existing?.requestedBy || {}),
-              [dependencyPackageName]: peerDependencyVersion,
-            },
-          });
-        };
-
         for (const [
           peerDependencyName,
           peerDependencyVersion,
@@ -63,24 +64,27 @@ function enforcePeerDependenciesOfDependenciesAreListed({ Yarn }) {
           logPeerDependencyNameAndVersion(
             peerDependencyName,
             peerDependencyVersion,
+            isRequired,
           );
         }
+      }
 
-        // As of Yarn 4.1.1, it's possible that peerDependencies of workspaces are not listed under the "peerDependencies" when they are also in the "dependencies" (i.e. they are also a dev-dependency or dependency of the workspace).
-        // So if the dependency is a workspace, we also need to check its raw manifest (i.e. contents of it's package.json) for possible peer dependencies.
-        if (dependencyPackage.workspace) {
-          const rawPeerDependencies =
-            dependencyPackage.workspace.manifest[key] || {};
+      // As of Yarn 4.1.1, it's possible that peerDependencies of workspaces are not listed under the "peerDependencies" when they are also in the "dependencies" (i.e. they are also a dev-dependency or dependency of the workspace).
+      // So if the dependency is a workspace, we also need to check its raw manifest (i.e. contents of it's package.json) for possible peer dependencies.
+      if (dependencyPackage.workspace) {
+        const packageJson = dependencyPackage.workspace.manifest;
 
-          for (const [
+        for (const [
+          peerDependencyName,
+          peerDependencyVersion,
+        ] of Object.entries(packageJson.peerDependencies || {})) {
+          const isRequired =
+            !packageJson.peerDependenciesMeta?.[peerDependencyName]?.optional;
+          logPeerDependencyNameAndVersion(
             peerDependencyName,
             peerDependencyVersion,
-          ] of Object.entries(rawPeerDependencies)) {
-            logPeerDependencyNameAndVersion(
-              peerDependencyName,
-              peerDependencyVersion,
-            );
-          }
+            isRequired,
+          );
         }
       }
     }
@@ -119,31 +123,19 @@ function enforcePeerDependenciesOfDependenciesAreListed({ Yarn }) {
         continue;
       }
 
-      // Private packages do not need to list peerDependencies or optionalPeerDependencies, so we skip them.
+      // Private packages do not need to list peerDependencies, so we skip them.
       if (workspace.manifest.private) continue;
 
-      if (required) {
-        const listedVersion =
-          workspace.manifest.peerDependencies?.[peerDependencyName];
+      const listedVersion =
+        workspace.manifest.peerDependencies?.[peerDependencyName];
 
-        if (!listedVersion || !semver.subset(listedVersion, version)) {
-          workspace.set(['peerDependencies', peerDependencyName], version);
-        }
-      } else {
-        if (version === '*') continue;
+      if (!listedVersion || !semver.subset(listedVersion, version)) {
+        workspace.set(['peerDependencies', peerDependencyName], version);
 
-        const listedVersion =
-          workspace.manifest.peerDependencies?.[peerDependencyName] ||
-          workspace.manifest.optionalPeerDependencies?.[peerDependencyName];
-
-        if (
-          !listedVersion ||
-          version.startsWith('workspace:') ||
-          !semver.subset(listedVersion, version)
-        ) {
+        if (!required) {
           workspace.set(
-            ['optionalPeerDependencies', peerDependencyName],
-            version,
+            ['peerDependenciesMeta', peerDependencyName, 'optional'],
+            true,
           );
         }
       }
