@@ -84,6 +84,26 @@ export function IconRN(props: IconProps): JSX.Element | null {
       );
     }
 
+    if (iconDefinition.svg) {
+      const SVGComponent = (() => {
+        if (typeof iconDefinition.svg === 'function') {
+          return iconDefinition.svg;
+        }
+
+        return iconDefinition.svg[iconPlatform];
+      })();
+
+      if (SVGComponent) {
+        return (
+          <SVGComponent
+            width={size - iconInset}
+            height={size - iconInset}
+            color={iconColor}
+          />
+        );
+      }
+    }
+
     if (iconPlatform === 'ios') {
       const sfSymbolDefn = iconDefinition.sfSymbolDefinitions;
 

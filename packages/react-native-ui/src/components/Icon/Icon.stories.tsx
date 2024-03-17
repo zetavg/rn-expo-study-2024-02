@@ -34,6 +34,13 @@ export default meta;
 
 export const Default: Meta<typeof Icon> = {};
 
+export const SVGIcon: Meta<typeof Icon> = {
+  args: {
+    name: 'sample-svg-file-icon',
+    color: 'blue',
+  },
+};
+
 export const WithinText: Meta<typeof Icon> = {
   render: () => (
     <>

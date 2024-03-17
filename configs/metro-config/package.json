@@ -7,8 +7,12 @@
     "publish-packed-package": "npm publish package.tgz --access public",
     "clean": "rm -rf package.tgz"
   },
+  "peerDependencies": {
+    "react-native-svg": ">=15"
+  },
   "dependencies": {
-    "@yarnpkg/core": "^4"
+    "@yarnpkg/core": "^4",
+    "react-native-svg-transformer": "^1"
   },
   "devDependencies": {
     "@rnstudy/eslint-config": "workspace:^",

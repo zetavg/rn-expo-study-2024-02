@@ -12,6 +12,8 @@ async function getMetroConfig(dirname) {
 
   await addLocalDependencyNodeModulesToNodeModulesPath(config, dirname);
 
+  await configureReactNativeSvgTransformer(config, dirname);
+
   // Since we are using yarn workspaces, we need to enable symlinks for resolving symlinked modules.
   config.resolver.unstable_enableSymlinks = true;
 
@@ -74,6 +76,20 @@ function addPackageLocalDependencyNodeModulesToNodeModulesPath(
       localPackageMap,
     );
   }
+}
+
+async function configureReactNativeSvgTransformer(config) {
+  const { transformer, resolver } = config;
+
+  config.transformer = {
+    ...transformer,
+    babelTransformerPath: require.resolve('react-native-svg-transformer'),
+  };
+  config.resolver = {
+    ...resolver,
+    assetExts: resolver.assetExts.filter((ext) => ext !== 'svg'),
+    sourceExts: [...resolver.sourceExts, 'svg'],
+  };
 }
 
 exports.getMetroConfig = getMetroConfig;

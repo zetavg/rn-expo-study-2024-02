@@ -1,5 +1,11 @@
 import type { SystemName as SweetSFSymbolsSystemName } from 'sweet-sfsymbols/build/SweetSFSymbols.types';
 
+type SVGComponent = (props: {
+  width?: number;
+  height?: number;
+  color?: string | (symbol & { __TYPE__: 'Color' });
+}) => JSX.Element;
+
 type SFSymbolName = SweetSFSymbolsSystemName;
 
 export type SFSymbolDefinition = {
@@ -24,8 +30,29 @@ export type IconDefinition = {
    * - `react-native-vector-icons`: https://github.com/oblador/react-native-vector-icons/blob/v10.0.3/glyphmaps/MaterialCommunityIcons.json
    */
   materialIconName: string;
-  /** An array of SF Symbol definitions. Will attempt to use the first one that is available, and if none are available, will fallback to the material icon. */
+  /**
+   * An array of SF Symbol definitions. Will attempt to use the first one that is available, and if none are available, will fallback to the material icon.
+   *
+   * Once specified, this will be the highest priority on the iOS platform except `svg`.
+   */
   sfSymbolDefinitions?: SFSymbolDefinition[];
+  /**
+   * Use a SVG component as the icon. If specified, this will be the highest priority among all other icon sources.
+   *
+   * For platform-specific SVGs, you can specify an object with platform names as keys and SVG components as values. For example:
+   *
+   * ```js
+   * {
+   *   // ...
+   *   svg: {
+   *     ios: MySVGComponentForIOS,
+   *     android: MySVGComponentForAndroid,
+   *     // Will fallback other icon sources for other non-specified platforms.
+   *   }
+   * }
+   * ```
+   */
+  svg?: SVGComponent | { [platform: string]: SVGComponent };
 };
 
 export type IconColor =

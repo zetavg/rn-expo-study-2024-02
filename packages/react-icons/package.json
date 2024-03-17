@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit --pretty",
     "test": "jest --passWithNoTests",
-    "build": "tsc --project tsconfig.build.json --emitDeclarationOnly --outDir dist/types && tsc --project tsconfig.build.mjs.json && tsc --project tsconfig.build.cjs.json",
+    "build": "tsc --project tsconfig.build.json --emitDeclarationOnly --outDir dist/types && tsc --project tsconfig.build.mjs.json && tsc --project tsconfig.build.cjs.json && yarn copy-svg-files",
+    "copy-svg-files": "cp -r src/svg dist/cjs && cp -r src/svg dist/mjs",
     "pack-package": "yarn build && yarn pack",
     "publish-packed-package": "npm publish package.tgz --access public",
     "clean": "rm -rf dist && rm -rf package.tgz"

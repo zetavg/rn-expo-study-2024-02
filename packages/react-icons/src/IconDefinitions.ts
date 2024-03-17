@@ -1,6 +1,11 @@
+import SampleSvgFileIcon from './svg/sample-svg-file-icon.svg';
 import { makeIconDefinition, makeIconDefinitions } from './types';
 
 export const IconDefinitions = makeIconDefinitions({
+  'sample-svg-file-icon': makeIconDefinition({
+    materialIconName: 'file-remove-outline',
+    svg: SampleSvgFileIcon,
+  }),
   heart: makeIconDefinition({
     materialIconName: 'heart',
     sfSymbolDefinitions: [
