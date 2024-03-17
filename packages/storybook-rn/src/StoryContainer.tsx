@@ -187,13 +187,13 @@ function StoryContainerContent({
 
   const content = (
     <ScrollView
-      alwaysBounceVertical={false}
+      alwaysBounceVertical={showBoundaryLines || false}
       style={styles.previewContent}
       contentContainerStyle={contentContainerStyle}
     >
       <ScrollView
         horizontal
-        alwaysBounceHorizontal={false}
+        alwaysBounceHorizontal={showBoundaryLines || false}
         style={styles.previewContent}
         contentContainerStyle={contentContainerStyle}
       >
