@@ -81,6 +81,14 @@ export const WithinText: Meta<typeof Icon> = {
   ),
 };
 
+export const WithLabel: Meta<typeof Icon> = {
+  args: {
+    name: 'star',
+    label: 'Star',
+    color: 'blue',
+  },
+};
+
 export const WithImage: Meta<typeof Icon> = {
   ...meta,
   argTypes: {

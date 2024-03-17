@@ -30,6 +30,10 @@ export type IconDefinition = {
    * - `react-native-vector-icons`: https://github.com/oblador/react-native-vector-icons/blob/v10.0.3/glyphmaps/MaterialCommunityIcons.json
    */
   materialIconName: string;
+  materialIconConfig?: {
+    /** If specified, additional padding will be added to the symbol (percentage of icon displayed size, 0.1 means 10%). */
+    additionalPaddingRatio?: number;
+  };
   /**
    * An array of SF Symbol definitions. Will attempt to use the first one that is available, and if none are available, will fallback to the material icon.
    *

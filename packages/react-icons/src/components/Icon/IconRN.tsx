@@ -1,5 +1,12 @@
 import React, { useContext, useMemo } from 'react';
-import { Image, Platform, StyleSheet, View } from 'react-native';
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Color from 'color';
 import SweetSFSymbol from 'sweet-sfsymbols';
@@ -20,6 +27,7 @@ export function IconRN(props: IconProps): JSX.Element | null {
     size = 32,
     color = 'default',
     bordered,
+    label,
     image,
     // Style props
     m,
@@ -134,18 +142,22 @@ export function IconRN(props: IconProps): JSX.Element | null {
       }
     }
 
+    if (iconDefinition.materialIconConfig?.additionalPaddingRatio) {
+      iconInset +=
+        size * iconDefinition.materialIconConfig.additionalPaddingRatio;
+    }
+
     return (
       <MaterialIcon
         name={iconDefinition.materialIconName}
         size={size - iconInset}
         color={iconColor}
+        style={{ height: size - iconInset, width: size - iconInset }}
       />
     );
   })();
 
-  const iconContainerStyle = useMemo<
-    React.ComponentProps<typeof View>['style']
-  >(() => {
+  const iconContainerStyle = useMemo<ViewStyle>(() => {
     const style: React.ComponentProps<typeof View>['style'] = {};
 
     if (m !== undefined) {
@@ -203,7 +215,7 @@ export function IconRN(props: IconProps): JSX.Element | null {
     borderWidth,
   ]);
 
-  return (
+  const iconElement = (
     <View
       style={[
         styles.iconContainer,
@@ -218,6 +230,34 @@ export function IconRN(props: IconProps): JSX.Element | null {
       {nativeIconElement}
     </View>
   );
+
+  if (label) {
+    return (
+      <View
+        style={[
+          styles.iconAndLabelContainer,
+          { gap: size * (iconPlatform === 'ios' ? 1 / 8 : 1 / 12) },
+        ]}
+      >
+        {iconElement}
+        <Text
+          style={[
+            styles.labelText,
+            {
+              color: iconColor,
+              fontSize: size * (5 / 16),
+              lineHeight: size * (3 / 8),
+            },
+          ]}
+          allowFontScaling={false}
+        >
+          {label}
+        </Text>
+      </View>
+    );
+  }
+
+  return iconElement;
 }
 
 export type IconRNType = typeof IconRN;
@@ -227,6 +267,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  iconAndLabelContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  labelText: {
+    textAlign: 'center',
   },
 });
 

@@ -32,6 +32,9 @@ export const IconDefinitions = makeIconDefinitions({
   }),
   star: makeIconDefinition({
     materialIconName: 'star',
+    materialIconConfig: {
+      additionalPaddingRatio: -0.1,
+    },
     sfSymbolDefinitions: [
       {
         name: 'star.fill',
@@ -44,6 +47,9 @@ export const IconDefinitions = makeIconDefinitions({
   }),
   'star.outline': makeIconDefinition({
     materialIconName: 'star-outline',
+    materialIconConfig: {
+      additionalPaddingRatio: -0.1,
+    },
     sfSymbolDefinitions: [
       {
         name: 'star',
@@ -54,8 +60,35 @@ export const IconDefinitions = makeIconDefinitions({
       },
     ],
   }),
+  person: makeIconDefinition({
+    materialIconName: 'account',
+    sfSymbolDefinitions: [
+      {
+        name: 'person.fill',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
+  'person.circle': makeIconDefinition({
+    materialIconName: 'account-circle',
+    sfSymbolDefinitions: [
+      {
+        name: 'person.crop.circle.fill',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
   cat: makeIconDefinition({
     materialIconName: 'cat',
+    materialIconConfig: {
+      additionalPaddingRatio: -0.1,
+    },
     sfSymbolDefinitions: [
       {
         name: 'cat.fill',
@@ -77,6 +110,30 @@ export const IconDefinitions = makeIconDefinitions({
           macOS: 14,
         },
         additionalPaddingRatio: 0.1,
+      },
+    ],
+  }),
+  _edit: makeIconDefinition({
+    materialIconName: 'square-edit-outline',
+    sfSymbolDefinitions: [
+      {
+        name: 'square.and.pencil',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
+  _info: makeIconDefinition({
+    materialIconName: 'information',
+    sfSymbolDefinitions: [
+      {
+        name: 'info.circle',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
       },
     ],
   }),

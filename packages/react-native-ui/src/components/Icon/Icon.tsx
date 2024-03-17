@@ -22,6 +22,7 @@ type Props = {
     | 'brown'
     | 'gray';
   bordered?: boolean;
+  label?: string;
 } & RIconProps;
 
 export function Icon({ ...restProps }: Props) {

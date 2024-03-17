@@ -5,8 +5,6 @@ export type IconName = keyof typeof IconDefinitions;
 
 export type IconImage = {
   uri: string;
-  // width: number;
-  // height: number;
 };
 
 export type IconProps = {
@@ -16,6 +14,9 @@ export type IconProps = {
   color?: IconColor | string;
 
   bordered?: boolean;
+
+  /** Display a label below the icon. */
+  label?: string;
 
   /** If specified, will display this image instead of the icon. */
   image?: IconImage;
