@@ -84,6 +84,19 @@ export const IconDefinitions = makeIconDefinitions({
       },
     ],
   }),
+  camera: makeIconDefinition({
+    materialIconName: 'camera',
+    sfSymbolDefinitions: [
+      {
+        name: 'camera.fill',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+        additionalPaddingRatio: 0.05,
+      },
+    ],
+  }),
   cat: makeIconDefinition({
     materialIconName: 'cat',
     materialIconConfig: {
@@ -130,6 +143,21 @@ export const IconDefinitions = makeIconDefinitions({
     sfSymbolDefinitions: [
       {
         name: 'info.circle',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
+  _play: makeIconDefinition({
+    materialIconName: 'play',
+    materialIconConfig: {
+      additionalPaddingRatio: -0.2,
+    },
+    sfSymbolDefinitions: [
+      {
+        name: 'play.fill',
         availability: {
           iOS: 13,
           macOS: 11,

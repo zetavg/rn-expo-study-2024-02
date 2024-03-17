@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, TouchableOpacity, View, ViewStyle } from 'react-native';
 
+import { IconDefinitions } from '@rnstudy/react-icons';
 import type { Meta } from '@rnstudy/storybook-rn-types';
 
 import Text from '../Text';
@@ -13,21 +14,14 @@ const meta: Meta<typeof Button> = {
   parameters: {
     actions: { argTypesRegex: '^on.*' },
   },
-  args: {
-    text: 'Button',
-  },
   argTypes: {
     icon: {
       control: 'select',
-      options: [
-        undefined,
-        'camera',
-        'magnify',
-        'heart',
-        'arrow-left',
-        'arrow-right',
-      ],
+      options: [undefined, ...Object.keys(IconDefinitions)],
     },
+  },
+  args: {
+    text: 'Button',
   },
 };
 

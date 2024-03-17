@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { forwardRef, useContext, useMemo } from 'react';
 import {
   Image,
   Platform,
@@ -21,7 +21,11 @@ import { IconDefinition } from '../../types';
 import { IconPropsContext } from './IconPropsContext';
 import { IconProps } from './types';
 
-export function IconRN(props: IconProps): JSX.Element | null {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const IconRN = forwardRef<any, IconProps>(function IconRN(
+  props: IconProps,
+  ref,
+): JSX.Element | null {
   const {
     name,
     size = 32,
@@ -217,6 +221,7 @@ export function IconRN(props: IconProps): JSX.Element | null {
 
   const iconElement = (
     <View
+      ref={label ? undefined : ref}
       style={[
         styles.iconContainer,
         { width: size, height: size },
@@ -234,6 +239,7 @@ export function IconRN(props: IconProps): JSX.Element | null {
   if (label) {
     return (
       <View
+        ref={ref}
         style={[
           styles.iconAndLabelContainer,
           { gap: size * (iconPlatform === 'ios' ? 1 / 8 : 1 / 12) },
@@ -258,7 +264,7 @@ export function IconRN(props: IconProps): JSX.Element | null {
   }
 
   return iconElement;
-}
+});
 
 export type IconRNType = typeof IconRN;
 

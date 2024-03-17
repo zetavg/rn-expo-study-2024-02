@@ -6,7 +6,7 @@ import type { Meta } from '@rnstudy/storybook-rn-types';
 import ListRow from './ListRow';
 
 const containerStyle: ViewStyle = {
-  marginTop: 16,
+  // marginTop: 16,
   alignSelf: 'stretch',
 };
 

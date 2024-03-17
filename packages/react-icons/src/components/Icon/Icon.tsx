@@ -1,11 +1,15 @@
-import React, { useContext } from 'react';
+import React, { forwardRef, useContext } from 'react';
 
 import { IconPlatformContext } from '../../contexts';
 
 import type { IconRNType } from './IconRN';
 import { IconProps } from './types';
 
-export function Icon(props: IconProps): JSX.Element | null {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const Icon = forwardRef<any, IconProps>(function Icon(
+  props: IconProps,
+  ref,
+): JSX.Element | null {
   const iconPlatform = useContext(IconPlatformContext);
 
   if (!iconPlatform) {
@@ -21,10 +25,10 @@ export function Icon(props: IconProps): JSX.Element | null {
       return require('./IconRN').IconRN;
     })();
 
-    return <IconRN {...props} />;
+    return <IconRN ref={ref} {...props} />;
   }
 
   throw new Error(`Icon: Unsupported platform: ${iconPlatform}`);
-}
+});
 
 export default Icon;

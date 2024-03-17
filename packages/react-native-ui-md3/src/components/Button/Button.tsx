@@ -1,10 +1,8 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import {
-  ActivityIndicator,
-  Button as RNButton,
-  Icon,
-} from 'react-native-paper';
+import { ActivityIndicator, Button as RNButton } from 'react-native-paper';
+
+import { Icon, IconName } from '@rnstudy/react-icons';
 
 import { useTheme } from '../../contexts';
 
@@ -12,7 +10,7 @@ type Props = {
   mode: 'text' | 'outlined' | 'contained' | 'elevated' | 'contained-tonal';
   size?: 'small' | 'regular' | 'medium' | 'large';
   text?: string;
-  icon?: string;
+  icon?: IconName;
   loading?: boolean;
 } & {
   // Re-exposing common PressableProps so that they can be picked-up by react-docgen.
@@ -21,7 +19,7 @@ type Props = {
   onPressIn?: React.ComponentProps<typeof RNButton>['onPressIn'];
   onPressOut?: React.ComponentProps<typeof RNButton>['onPressOut'];
   onLongPress?: React.ComponentProps<typeof RNButton>['onLongPress'];
-} & Omit<Partial<React.ComponentProps<typeof RNButton>>, 'children'>;
+} & Omit<Partial<React.ComponentProps<typeof RNButton>>, 'icon' | 'children'>;
 
 export function Button({
   mode = 'text',
@@ -75,7 +73,7 @@ export function Button({
                   case 'small':
                     return theme.fonts.labelMedium.fontSize * (18 / 14);
                   case 'large':
-                    return theme.fonts.titleMedium.fontSize * (18 / 14);
+                    return theme.fonts.titleMedium.fontSize * (20 / 14);
                   case 'medium':
                     return theme.fonts.labelLarge.fontSize * (20 / 14);
                   default:
@@ -106,11 +104,22 @@ export function Button({
                     { width: iconSize, height: iconSize },
                   ]}
                 >
-                  {loading ? (
-                    <ActivityIndicator {...iconProps} size={iconSize} />
-                  ) : (
-                    <Icon {...iconProps} size={iconSize} source={icon} />
-                  )}
+                  {
+                    // eslint-disable-next-line react/no-unstable-nested-components
+                    (() => {
+                      if (loading) {
+                        return (
+                          <ActivityIndicator {...iconProps} size={iconSize} />
+                        );
+                      }
+
+                      if (icon) {
+                        return (
+                          <Icon {...iconProps} size={iconSize} name={icon} />
+                        );
+                      }
+                    })()
+                  }
                 </View>
               );
             }

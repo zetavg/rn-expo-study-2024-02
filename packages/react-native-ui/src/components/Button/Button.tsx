@@ -1,6 +1,7 @@
 import React from 'react';
 import { Insets, PressableProps, StyleProp, ViewStyle } from 'react-native';
 
+import { IconName } from '@rnstudy/react-icons';
 import { Button as ButtonIOS } from '@rnstudy/react-native-ui-ios';
 import { Button as ButtonMD3 } from '@rnstudy/react-native-ui-md3';
 
@@ -40,7 +41,7 @@ type Props = {
   disabled?: boolean;
   /** Shows a loading indicator on the button. */
   loading?: boolean;
-  icon?: string;
+  icon?: IconName;
   buttonBorderShape?: ButtonBorderShape;
   style?: StyleProp<ViewStyle>;
 } & {

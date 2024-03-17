@@ -16,13 +16,16 @@ import {
 } from 'react-native';
 import Color from 'color';
 
+import { Icon, IconName } from '@rnstudy/react-icons';
+
 // import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
-import { useUIColors } from '../../contexts';
+import { useTextStyles, useUIColors } from '../../contexts';
 import Text from '../Text';
 
 // const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
+const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
 type ButtonStyle = 'plain' | 'gray' | 'tinted' | 'filled';
 
@@ -37,6 +40,7 @@ type Props = {
   buttonBorderShape?: ButtonBorderShape;
   style?: StyleProp<ViewStyle>;
   loading?: boolean;
+  icon?: IconName;
   disabled?: boolean;
 } & {
   // Re-exposing common PressableProps so that they can be picked-up by react-docgen.
@@ -70,6 +74,7 @@ export function Button({
   buttonBorderShape: buttonBorderShapeFromProps = 'automatic',
   style,
   loading,
+  icon,
   disabled,
   onPressIn,
   onPressOut,
@@ -77,6 +82,7 @@ export function Button({
   ...props
 }: Props) {
   const uiColors = useUIColors();
+  const textStyles = useTextStyles();
 
   const buttonStyle = buttonStyleFromProps;
 
@@ -84,6 +90,8 @@ export function Button({
 
   const buttonBorderShape = (() => {
     if (buttonBorderShapeFromProps === 'automatic') {
+      if (!label) return 'capsule';
+
       switch (controlSize) {
         case 'small':
           return 'capsule';
@@ -99,6 +107,7 @@ export function Button({
   })();
 
   const textStyle = controlSize === 'large' ? 'body' : 'subheadline';
+  const fontSize = textStyles[textStyle].fontSize;
 
   const backgroundColor = (() => {
     if (disabled && buttonStyle !== 'plain') {
@@ -169,7 +178,7 @@ export function Button({
       case 'plain':
         return (event: GestureResponderEvent) => {
           Animated.timing(contentOpacity, {
-            toValue: 0.75,
+            toValue: 0.25,
             duration: 5,
             useNativeDriver: true,
           }).start();
@@ -193,7 +202,7 @@ export function Button({
         return (event: GestureResponderEvent) => {
           Animated.timing(contentOpacity, {
             toValue: 1,
-            duration: 50,
+            duration: 200,
             useNativeDriver: true,
           }).start();
           onPressOut?.(event);
@@ -275,15 +284,27 @@ export function Button({
           { backgroundColor: backgroundOverlayColor, opacity: overlayOpacity },
         ]}
       />
-      <AnimatedText
-        textStyle={textStyle}
-        style={[
-          { color, opacity: contentOpacity },
-          loading && styles.content_loading,
-        ]}
-      >
-        {label}
-      </AnimatedText>
+      {!!icon && (
+        <AnimatedIcon
+          name={icon}
+          size={(fontSize || 0) + 2}
+          color={color}
+          ml={label ? 0 : -6}
+          mr={label ? 2 : -6}
+          opacity={contentOpacity}
+        />
+      )}
+      {!!label && (
+        <AnimatedText
+          textStyle={textStyle}
+          style={[
+            { color, opacity: contentOpacity },
+            loading && styles.content_loading,
+          ]}
+        >
+          {label}
+        </AnimatedText>
+      )}
       <Animated.View
         style={[
           styles.colorOverlay,
@@ -309,29 +330,31 @@ const styles = StyleSheet.create({
   container: {
     alignSelf: 'center',
     overflow: 'hidden',
+    flexDirection: 'row',
+    gap: 4,
   },
   container_small: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    gap: 3,
+    // gap: 3,
   },
   container_regular: {
     paddingHorizontal: 14,
     paddingVertical: 7,
-    gap: 4,
+    // gap: 4,
   },
   container_medium: {
     paddingHorizontal: 16,
     paddingVertical: 10,
-    gap: 4,
+    // gap: 4,
   },
   container_large: {
     paddingHorizontal: 20,
     paddingVertical: 14,
-    gap: 4,
+    // gap: 4,
   },
   container_borderless_pressed: {
-    opacity: 0.5,
+    // opacity: 0.5,
   },
   capsule: {
     borderRadius: 9999,

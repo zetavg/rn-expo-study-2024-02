@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
+import { IconDefinitions } from '@rnstudy/react-icons';
 import type { Meta } from '@rnstudy/storybook-rn-types';
 
 import Text from '../Text';
@@ -10,11 +11,17 @@ import Button from './Button';
 const meta: Meta<typeof Button> = {
   title: 'UI/Components/Button',
   component: Button,
-  args: {
-    label: 'Button',
-  },
   parameters: {
     actions: { argTypesRegex: '^on.*' },
+  },
+  argTypes: {
+    icon: {
+      control: 'select',
+      options: [undefined, ...Object.keys(IconDefinitions)],
+    },
+  },
+  args: {
+    label: 'Button',
   },
 };
 

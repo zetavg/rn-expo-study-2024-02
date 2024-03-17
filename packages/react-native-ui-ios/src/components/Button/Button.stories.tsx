@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, TouchableOpacity, View, ViewStyle } from 'react-native';
 
+import { IconDefinitions } from '@rnstudy/react-icons';
 import type { Meta } from '@rnstudy/storybook-rn-types';
 
 import Text from '../Text';
@@ -10,11 +11,17 @@ import Button from './Button';
 const meta: Meta<typeof Button> = {
   title: 'iOS UI/Button',
   component: Button,
-  args: {
-    label: 'Button',
-  },
   parameters: {
     actions: { argTypesRegex: '^on.*' },
+  },
+  argTypes: {
+    icon: {
+      control: 'select',
+      options: [undefined, ...Object.keys(IconDefinitions)],
+    },
+  },
+  args: {
+    label: 'Button',
   },
 };
 
@@ -156,6 +163,42 @@ export const All: Meta<typeof Button> = {
     containerStyle: {
       gap: 16,
     },
+  },
+};
+
+export const WithIcon1: Meta<typeof Button> = {
+  args: {
+    label: 'Button',
+    buttonStyle: 'filled',
+    controlSize: 'large',
+    icon: '_play',
+  },
+  parameters: {
+    specOverlay: (
+      <Image
+        source={require('./specs/with-icon-1.png')}
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{ width: 111, height: 50 }}
+      />
+    ),
+  },
+};
+
+export const IconOnly1: Meta<typeof Button> = {
+  args: {
+    // label: '',
+    buttonStyle: 'filled',
+    controlSize: 'large',
+    icon: '_play',
+  },
+  parameters: {
+    specOverlay: (
+      <Image
+        source={require('./specs/icon-only-1.png')}
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{ width: 50, height: 50 }}
+      />
+    ),
   },
 };
 
