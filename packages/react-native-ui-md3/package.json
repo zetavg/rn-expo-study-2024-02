@@ -17,6 +17,7 @@
     "clean": "rm -rf dist && rm -rf package.tgz"
   },
   "peerDependencies": {
+    "@react-native-picker/picker": "^2",
     "@rnstudy/react-icons": "workspace:^",
     "react": "^18",
     "react-native": ">=0.71",
@@ -28,6 +29,7 @@
     "react-native-paper": "^5"
   },
   "devDependencies": {
+    "@react-native-picker/picker": "^2",
     "@rnstudy/eslint-config": "workspace:^",
     "@rnstudy/jest-config": "workspace:^",
     "@rnstudy/react-icons": "workspace:^",

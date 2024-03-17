@@ -3371,6 +3371,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-picker/picker@npm:^2":
+  version: 2.6.1
+  resolution: "@react-native-picker/picker@npm:2.6.1"
+  peerDependencies:
+    react: ">=16"
+    react-native: ">=0.57"
+  checksum: 10c0/c4a349e237bd33d36ae6880c67b1165685555c6fb7ce4e6704efa008448e46bcc7644a1bcec160e3438b68300f761666105735dfcb3858bd6bc2cf3b62afc162
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:0.73.1, @react-native/assets-registry@npm:~0.73.1":
   version: 0.73.1
   resolution: "@react-native/assets-registry@npm:0.73.1"
@@ -3965,6 +3975,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@rnstudy/react-native-ui-md3@workspace:packages/react-native-ui-md3"
   dependencies:
+    "@react-native-picker/picker": "npm:^2"
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
     "@rnstudy/react-icons": "workspace:^"
@@ -3983,6 +3994,7 @@ __metadata:
     react-native-vector-icons: "npm:^10"
     typescript: "npm:^5"
   peerDependencies:
+    "@react-native-picker/picker": ^2
     "@rnstudy/react-icons": "workspace:^"
     react: ^18
     react-native: ">=0.71"
@@ -4016,6 +4028,7 @@ __metadata:
     react-native-vector-icons: "npm:^10"
     typescript: "npm:^5"
   peerDependencies:
+    "@react-native-picker/picker": ^2
     "@rnstudy/react-icons": "workspace:^"
     expo: "*"
     react: ^18
@@ -4095,6 +4108,7 @@ __metadata:
   resolution: "@rnstudy/storybook-rn@workspace:packages/storybook-rn"
   dependencies:
     "@babel/core": "npm:^7.24.0"
+    "@react-native-picker/picker": "npm:^2"
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/react-icons": "workspace:^"
     "@rnstudy/react-native-ui": "workspace:^"
@@ -15067,6 +15081,7 @@ __metadata:
     "@react-native-async-storage/async-storage": "npm:^1"
     "@react-native-community/datetimepicker": "npm:^7"
     "@react-native-community/slider": "npm:^4"
+    "@react-native-picker/picker": "npm:^2"
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/expo-app-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"

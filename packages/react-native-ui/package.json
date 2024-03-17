@@ -17,6 +17,7 @@
     "clean": "rm -rf dist && rm -rf package.tgz"
   },
   "peerDependencies": {
+    "@react-native-picker/picker": "^2",
     "@rnstudy/react-icons": "workspace:^",
     "expo": "*",
     "react": "^18",
