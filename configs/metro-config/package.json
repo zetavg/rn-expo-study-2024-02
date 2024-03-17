@@ -8,6 +8,7 @@
     "clean": "rm -rf package.tgz"
   },
   "peerDependencies": {
+    "react-native": ">=0.59.0",
     "react-native-svg": ">=15"
   },
   "dependencies": {

@@ -3827,6 +3827,7 @@ __metadata:
     expo: "npm:>=50"
     react-native-svg-transformer: "npm:^1"
   peerDependencies:
+    react-native: ">=0.59.0"
     react-native-svg: ">=15"
   languageName: unknown
   linkType: soft
