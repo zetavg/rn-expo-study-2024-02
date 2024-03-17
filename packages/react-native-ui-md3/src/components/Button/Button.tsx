@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text as NativeText, View } from 'react-native';
 import { ActivityIndicator, Button as RNButton } from 'react-native-paper';
 
 import { Icon, IconName } from '@rnstudy/react-icons';
@@ -138,8 +138,16 @@ export function Button({
       ]}
     >
       {
-        text ||
-          ' ' /* If there is no text, use a white space to let the Text render on iOS, since we need the Text to be rendered to inflate the button to the correct height. */
+        text ? (
+          <>
+            {/* On some Android devices, the default `labelMedium` font style will got unexpectedly truncated (https://imgur.com/a/cnQtvCN). Adding white spaces with minimal font size before and after the text can fix the issue. */}
+            <NativeText style={styles.unexpectedEllipsisFixText}> </NativeText>
+            {text}
+            <NativeText style={styles.unexpectedEllipsisFixText}> </NativeText>
+          </>
+        ) : (
+          ' '
+        ) /* If there is no text, use a white space to let the Text render on iOS, since we need the Text to be rendered to inflate the button to the correct height. */
       }
     </RNButton>
   );
@@ -164,6 +172,10 @@ const styles = StyleSheet.create({
   label_noText: {
     marginHorizontal: 0,
     width: 0,
+  },
+
+  unexpectedEllipsisFixText: {
+    fontSize: 0.1,
   },
 
   iconContainer_small: { marginRight: 8, marginLeft: -6 },
