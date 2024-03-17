@@ -1,10 +1,11 @@
 import React from 'react';
-import { Button, Text } from 'react-native';
+import { Button } from 'react-native';
 
 import { useMainStackNavigation } from '@/navigation/hooks';
 import { StackScreenContent } from '@/navigation/screens';
 import { Icon } from '@rnstudy/react-icons';
 import type { StackScreenProps } from '@rnstudy/react-native-navigation';
+import { Text } from '@rnstudy/react-native-ui';
 import { ListRow } from '@rnstudy/react-native-ui-ios';
 
 export default function Example1ListScreen({ route }: StackScreenProps) {
@@ -22,7 +23,17 @@ export default function Example1ListScreen({ route }: StackScreenProps) {
     >
       <StackScreenContent.ScrollView>
         <Icon name="heart" size={40} color="red" />
+        <Icon name="heart" size={40} bordered />
         <Icon name="android" size={40} />
+        <Icon name="sample-svg-file-icon" bordered color="blue" size={40} />
+        <Text />
+        <Icon name="cat" size={40} bordered />
+        <Text />
+        <Icon name="dog" size={40} bordered />
+        <Text>I <Icon name="heart" /> cats.</Text>
+        <Text>I <Icon name="heart" /> dogs too.</Text>
+
+        <Text>My <Icon name="cat" /> is cute.</Text>
         <Text>This is Example1ListScreen</Text>
         <Text>Search bar text: {searchBarText}</Text>
         <Button

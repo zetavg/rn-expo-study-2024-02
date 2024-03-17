@@ -118,8 +118,8 @@ export function IconRN(props: IconProps): JSX.Element | null {
             osVersion >= defn.availability.iOS
           ) {
             iconInset += size / 8;
-            if (defn.additionalPadding) {
-              iconInset += defn.additionalPadding;
+            if (defn.additionalPaddingRatio) {
+              iconInset += size * defn.additionalPaddingRatio;
             }
             return (
               <SweetSFSymbol

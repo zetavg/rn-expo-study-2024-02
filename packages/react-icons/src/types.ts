@@ -15,8 +15,8 @@ export type SFSymbolDefinition = {
     iOS?: number;
     macOS?: number;
   };
-  /** If specified, additional padding will be added to the symbol. */
-  additionalPadding?: number;
+  /** If specified, additional padding will be added to the symbol (percentage of icon displayed size, 0.1 means 10%). */
+  additionalPaddingRatio?: number;
 };
 
 export type IconDefinition = {

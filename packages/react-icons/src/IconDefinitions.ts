@@ -30,6 +30,30 @@ export const IconDefinitions = makeIconDefinitions({
       },
     ],
   }),
+  star: makeIconDefinition({
+    materialIconName: 'star',
+    sfSymbolDefinitions: [
+      {
+        name: 'star.fill',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
+  'star.outline': makeIconDefinition({
+    materialIconName: 'star-outline',
+    sfSymbolDefinitions: [
+      {
+        name: 'star',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
   cat: makeIconDefinition({
     materialIconName: 'cat',
     sfSymbolDefinitions: [
@@ -39,7 +63,20 @@ export const IconDefinitions = makeIconDefinitions({
           iOS: 17,
           macOS: 14,
         },
-        additionalPadding: 4,
+        additionalPaddingRatio: 0.1,
+      },
+    ],
+  }),
+  dog: makeIconDefinition({
+    materialIconName: 'dog',
+    sfSymbolDefinitions: [
+      {
+        name: 'dog.fill',
+        availability: {
+          iOS: 17,
+          macOS: 14,
+        },
+        additionalPaddingRatio: 0.1,
       },
     ],
   }),
