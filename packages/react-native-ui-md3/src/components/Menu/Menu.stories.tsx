@@ -8,7 +8,7 @@ import { Button } from '../Button';
 import Menu from './Menu';
 
 const meta: Meta<typeof Menu> = {
-  title: 'iOS UI/Menu',
+  title: 'MD3 UI/Menu',
   component: Menu,
   parameters: {
     actions: { argTypesRegex: '^on.*' },
@@ -18,6 +18,7 @@ const meta: Meta<typeof Menu> = {
       { title: 'Item 1' },
       { title: 'Item 2', icon: 'star.outline' },
       { title: 'Checked Item', checked: true },
+      { title: 'Not Checked Item', checked: false },
       { title: 'Destructive Item', destructive: true },
       {
         title: 'Item with Subtitle',
@@ -50,13 +51,16 @@ const meta: Meta<typeof Menu> = {
         inline: true,
         items: [{ title: 'Inline Submenu without Title' }],
       },
+      {
+        title: 'Submenu With Checked Items',
+        items: [
+          { title: 'Checked Submenu Item 1', checked: true },
+          { title: 'Submenu Item 2', checked: false },
+        ],
+      },
     ],
-    children: (
-      <Button
-        label="Press to Show Menu"
-        buttonStyle="gray"
-        controlSize="medium"
-      />
+    children: (openMenu) => (
+      <Button text="Press to Show Menu" mode="contained" onPress={openMenu} />
     ),
   },
 };
