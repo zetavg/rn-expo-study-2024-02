@@ -8,11 +8,12 @@ import type {
 import {
   buildNativeMenuItems,
   buildNativePressMenuItemHandler,
-  MenuButton,
+  MenuAction,
+  MenuItems,
   SubMenu,
 } from '../../utils/ios-menu';
 
-export type { MenuButton, SubMenu };
+export type { MenuAction, MenuItems, SubMenu };
 
 const NativeContextMenuButton: (
   props: NativeContextMenuButtonProps,
@@ -30,18 +31,16 @@ const NativeContextMenuButton: (
   }
 })();
 
-type Props = {
-  items: readonly (MenuButton | SubMenu)[];
-  children: React.ReactNode;
+export type Props = {
+  /** A render prop that should render a button that will open the menu. */
+  children: (openMenu: () => void) => React.ReactNode;
+  /** An array of items to be displayed in the menu. */
+  items: Readonly<MenuItems>;
+  /** An optional title that will be displayed on top of the opened menu. */
   title?: string;
-
-  // onMenuWillShow: NativeContextMenuButtonProps['onMenuWillShow'];
-  // onMenuWillHide: NativeContextMenuButtonProps['onMenuWillHide'];
-  // onMenuWillCancel: NativeContextMenuButtonProps['onMenuWillCancel'];
-  // onMenuDidShow: NativeContextMenuButtonProps['onMenuDidShow'];
-  // onMenuDidHide: NativeContextMenuButtonProps['onMenuDidHide'];
-  // onMenuDidCancel: NativeContextMenuButtonProps['onMenuDidCancel'];
 };
+
+const noop = () => {};
 
 export function Menu({ title, items, children, ...restProps }: Props) {
   const menuConfig = useMemo<NativeMenuConfig>(
@@ -64,7 +63,10 @@ export function Menu({ title, items, children, ...restProps }: Props) {
         onPressMenuItem={handlePressMenuItem}
         {...restProps}
       >
-        {children}
+        {
+          // With the current implementation, pressing any content that is wrapped by the NativeContextMenuButton will open the menu, so the openMenu callback is not actually needed.
+          children(noop)
+        }
       </NativeContextMenuButton>
     </>
   );

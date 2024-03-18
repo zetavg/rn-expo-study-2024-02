@@ -7,11 +7,14 @@ import type {
 
 import { IconDefinitions, IconName } from '@rnstudy/react-icons';
 
-export type MenuButton = {
+export type MenuAction = {
+  /** The title of the item. */
   title: string;
+  /** An optional subtitle that will be displayed below the title. */
   subtitle?: string;
-  action?: (event: OnPressMenuItemEventObject) => void;
-  /** The name of the icon to display on the item. Note that this will only use the SF Symbol version of the icon, and will not fallback to Material Icon nor use the SVG icon. */
+  /** The handler to be called when the item is pressed. */
+  handler?: () => void;
+  /** The name of the icon to display on the item. **Note that this will only use the SF Symbol version of the icon, and will not fallback to Material Icon nor use the SVG icon.** */
   icon?: IconName;
   /** Displays a check mark on the item. */
   checked?: boolean;
@@ -20,17 +23,20 @@ export type MenuButton = {
 };
 
 export type SubMenu = {
+  /** The title of the submenu. */
   title?: string;
+  /** An optional subtitle that will be displayed below the title. Note that this may not be shown if `inline` is set to true. */
   subtitle?: string;
-  items: readonly (MenuButton | SubMenu)[];
+  /** Items to be displayed in the submenu. */
+  items: Readonly<MenuItems>;
   /** The submenu will be displayed inline when set to true. */
   inline?: boolean;
 };
 
-export type MenuItems = readonly (MenuButton | SubMenu)[];
+export type MenuItems = (MenuAction | SubMenu)[];
 
 export function buildNativeMenuItems(
-  items: readonly (MenuButton | SubMenu)[],
+  items: readonly (MenuAction | SubMenu)[],
   keyPrefix: string = '',
 ): NativeMenuElementConfig[] {
   return items.map((it, index) => {
@@ -46,7 +52,7 @@ export function buildNativeMenuItems(
         menuOptions: [...(subMenu.inline ? ['displayInline' as const] : [])],
       };
     } else {
-      const item = it as MenuButton;
+      const item = it as MenuAction;
 
       const menuItem: NonNullable<NativeMenuConfig['menuItems']>[number] = {
         type: 'action',
@@ -94,9 +100,9 @@ export function buildNativeMenuItems(
 }
 
 export function getItem(
-  items: readonly (MenuButton | SubMenu)[],
+  items: readonly (MenuAction | SubMenu)[],
   path: readonly number[],
-): MenuButton | SubMenu | undefined {
+): MenuAction | SubMenu | undefined {
   const [firstIndex] = path;
   if (typeof firstIndex !== 'number') {
     return undefined;
@@ -115,7 +121,7 @@ export function getItem(
 }
 
 export function buildNativePressMenuItemHandler(
-  items: readonly (MenuButton | SubMenu)[],
+  items: readonly (MenuAction | SubMenu)[],
 ) {
   return (event: OnPressMenuItemEventObject) => {
     const {
@@ -123,6 +129,6 @@ export function buildNativePressMenuItemHandler(
     } = event;
     const path = actionKey.split('.').map((index) => parseInt(index, 10));
     const item = getItem(items, path);
-    (item as Partial<MenuButton>)?.action?.(event);
+    (item as Partial<MenuAction>)?.handler?.();
   };
 }

@@ -6,13 +6,14 @@ import { Menu as MenuMD3 } from '@rnstudy/react-native-ui-md3';
 
 import { useUIPlatform } from '../../contexts';
 
-export type MenuButton = {
+export type MenuAction = {
+  /** The title of the item. */
   title: string;
-  /** [iOS Only] */
+  /** [TODO: Android not implemented, iOS only] An optional subtitle that will be displayed below the title. */
   subtitle?: string;
-  /** The action to perform when the user presses on the item. */
-  action?: () => void;
-  /** The name of the icon to display on the item. Note that this will not use the SVG icon, and on iOS, it will only use the SF Symbol version of the icon, and will not fallback to Material Icon. */
+  /** The handler to be called when the item is pressed. */
+  handler?: () => void;
+  /** The name of the icon to display on the item. **Note that on iOS, this will only use the SF Symbol version of the icon, and will not fallback to Material Icon nor use the SVG icon, and on Android, this will only use the Material Icon version of the icon, ignoring the SVG icon.** */
   icon?: IconName;
   /** Displays a check mark on the item. */
   checked?: boolean;
@@ -21,24 +22,26 @@ export type MenuButton = {
 };
 
 export type SubMenu = {
+  /** The title of the submenu. */
   title?: string;
-  /** [iOS Only] */
+  /** [TODO: Android not implemented, iOS only] An optional subtitle that will be displayed below the title. Note that this may not be shown if `inline` is set to true. */
   subtitle?: string;
-  items: readonly (MenuButton | SubMenu)[];
-  /** [iOS Only] The submenu will be displayed inline when set to true. On Android, submenus are always displayed inline. */
+  /** Items to be displayed in the submenu. */
+  items: Readonly<MenuItems>;
+  /** [TODO: Android not implemented, currently submenus will always be inline on Android] The submenu will be displayed inline when set to true. */
   inline?: boolean;
 };
 
-export type MenuItems = readonly (MenuButton | SubMenu)[];
+export type MenuItems = (MenuAction | SubMenu)[];
 
-type Props = {
-  /** [iOS Only] The title to display on the menu. */
-  title?: string;
-  items: readonly (MenuButton | SubMenu)[];
+export type Props = {
+  /** A render prop that should render a button that will open the menu. */
   children: (openMenu: () => void) => React.ReactNode;
+  /** An array of items to be displayed in the menu. */
+  items: Readonly<MenuItems>;
+  /** [TODO: Android not implemented, iOS only] An optional title that will be displayed on top of the opened menu. */
+  title?: string;
 };
-
-const noop = () => {};
 
 export function Menu({ title, items, children }: Props): JSX.Element {
   const uiPlatform = useUIPlatform();
@@ -47,7 +50,7 @@ export function Menu({ title, items, children }: Props): JSX.Element {
     case 'ios': {
       return (
         <MenuIOS title={title} items={items}>
-          {children(noop)}
+          {children}
         </MenuIOS>
       );
     }

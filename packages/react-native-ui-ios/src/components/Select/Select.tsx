@@ -12,7 +12,7 @@ import {
 import { Icon, IconName } from '@rnstudy/react-icons';
 
 import { useTextStyles, useUIColors } from '../../contexts';
-import Menu, { MenuButton, SubMenu } from '../Menu';
+import Menu, { MenuAction, SubMenu } from '../Menu';
 import { Text } from '../Text';
 
 import PopUpMenuIndicator from './PopUpMenuIndicator';
@@ -47,12 +47,12 @@ export function Select<T extends string>({
   const textStyle = useTextStyles();
 
   const menuItems = useMemo(() => {
-    const menuItems = Object.entries(options).map(([v, d]) => {
+    const menuActions = Object.entries(options).map(([v, d]) => {
       const { label, icon } = d as Option;
-      const menuItem: MenuButton = {
+      const menuItem: MenuAction = {
         title: label,
         icon,
-        action: () => {
+        handler: () => {
           onChangeValue(v as T);
         },
         checked: v === value,
@@ -61,7 +61,7 @@ export function Select<T extends string>({
       return menuItem;
     });
 
-    if (!additionalActions) return menuItems;
+    if (!additionalActions) return menuActions;
 
     const additionalActionsMenu: SubMenu = {
       items: additionalActions.map((action) => ({
@@ -71,7 +71,7 @@ export function Select<T extends string>({
       })),
       inline: true,
     };
-    return [...menuItems, additionalActionsMenu];
+    return [...menuActions, additionalActionsMenu];
   }, [value, options, onChangeValue, additionalActions]);
 
   const contentOpacity = useMemo(() => new Animated.Value(1), []);
@@ -113,52 +113,59 @@ export function Select<T extends string>({
 
   return (
     <Menu items={menuItems}>
-      <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut}>
-        <View
-          style={[
-            styles.container,
-            {
-              justifyContent: (() => {
-                switch (align) {
-                  case 'left':
-                    return 'flex-start';
-                  case 'center':
-                    return 'center';
-                  default:
-                  case 'right':
-                    return 'flex-end';
-                }
-              })(),
-            },
-            style,
-          ]}
+      {(openMenu) => (
+        <Pressable
+          onPress={openMenu}
+          onLongPress={openMenu}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
         >
-          <AnimatedText
-            textStyle="body"
-            color={value ? 'secondary' : 'placeholder'}
-            numberOfLines={1}
-            style={[styles.text, { opacity: contentOpacity }]}
+          <View
+            style={[
+              styles.container,
+              {
+                justifyContent: (() => {
+                  switch (align) {
+                    case 'left':
+                      return 'flex-start';
+                    case 'center':
+                      return 'center';
+                    default:
+                    case 'right':
+                      return 'flex-end';
+                  }
+                })(),
+              },
+              style,
+            ]}
           >
-            {(() => {
-              const iconName = value && options[value]?.icon;
+            <AnimatedText
+              textStyle="body"
+              color={value ? 'secondary' : 'placeholder'}
+              numberOfLines={1}
+              style={[styles.text, { opacity: contentOpacity }]}
+            >
+              {(() => {
+                const iconName = value && options[value]?.icon;
 
-              if (iconName) {
-                return (
-                  <>
-                    <Icon name={iconName} size={textStyle.body.fontSize} />{' '}
-                  </>
-                );
-              }
+                if (iconName) {
+                  return (
+                    <>
+                      <Icon name={iconName} size={textStyle.body.fontSize} />{' '}
+                    </>
+                  );
+                }
 
-              return null;
-            })()}
-            {value ? options[value].label : placeholder || 'Select...'}
-          </AnimatedText>
-          <Animated.View style={{ opacity: indicatorOpacity }}>
-            <PopUpMenuIndicator color={uiColors.secondaryLabel} />
-          </Animated.View>
-        </View>
-      </Pressable>
+                return null;
+              })()}
+              {value ? options[value].label : placeholder || 'Select...'}
+            </AnimatedText>
+            <Animated.View style={{ opacity: indicatorOpacity }}>
+              <PopUpMenuIndicator color={uiColors.secondaryLabel} />
+            </Animated.View>
+          </View>
+        </Pressable>
+      )}
     </Menu>
   );
 }

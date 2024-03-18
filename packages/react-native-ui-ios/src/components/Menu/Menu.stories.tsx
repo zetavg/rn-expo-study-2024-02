@@ -14,9 +14,10 @@ const meta: Meta<typeof Menu> = {
     actions: { argTypesRegex: '^on.*' },
   },
   args: {
+    title: 'Menu Title',
     items: [
-      { title: 'Item 1' },
-      { title: 'Item 2', icon: 'star.outline' },
+      { title: 'Item' },
+      { title: 'Item with Icon', icon: 'star.outline' },
       { title: 'Checked Item', checked: true },
       { title: 'Destructive Item', destructive: true },
       {
@@ -50,12 +51,22 @@ const meta: Meta<typeof Menu> = {
         inline: true,
         items: [{ title: 'Inline Submenu without Title' }],
       },
+      {
+        title: 'Submenu With Checked Items',
+        items: [
+          { title: 'Checked Submenu Item 1', checked: true },
+          { title: 'Submenu Item 2', checked: false },
+          { title: 'Submenu Item 3', checked: false },
+        ],
+      },
     ],
-    children: (
+    children: (openMenu) => (
       <Button
         label="Press to Show Menu"
         buttonStyle="gray"
         controlSize="medium"
+        onPress={openMenu}
+        onLongPress={openMenu}
       />
     ),
   },
@@ -70,13 +81,13 @@ export const WithActionHandler: Meta<typeof Menu> = {
     items: [
       {
         title: 'Item 1',
-        action: () => {
+        handler: () => {
           Alert.alert('Item 1 Pressed');
         },
       },
       {
         title: 'Item 2',
-        action: () => {
+        handler: () => {
           Alert.alert('Item 2 Pressed');
         },
       },
@@ -85,13 +96,13 @@ export const WithActionHandler: Meta<typeof Menu> = {
         items: [
           {
             title: 'Submenu Item 1-1',
-            action: () => {
+            handler: () => {
               Alert.alert('Submenu Item 1-1 Pressed');
             },
           },
           {
             title: 'Submenu Item 1-2',
-            action: () => {
+            handler: () => {
               Alert.alert('Submenu Item 1-2 Pressed');
             },
           },
@@ -102,13 +113,13 @@ export const WithActionHandler: Meta<typeof Menu> = {
         items: [
           {
             title: 'Submenu Item 2-1',
-            action: () => {
+            handler: () => {
               Alert.alert('Submenu Item 2-1 Pressed');
             },
           },
           {
             title: 'Submenu Item 2-2',
-            action: () => {
+            handler: () => {
               Alert.alert('Submenu Item 2-2 Pressed');
             },
           },

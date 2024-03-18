@@ -1,5 +1,5 @@
 import React from 'react';
-import { GestureResponderEvent, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Divider, Menu as RNMenu } from 'react-native-paper';
 
 import { IconDefinitions, IconName } from '@rnstudy/react-icons';
@@ -7,12 +7,14 @@ import { IconDefinitions, IconName } from '@rnstudy/react-icons';
 import Text from '../components/Text';
 import { useColorScheme, useTheme } from '../contexts';
 
-export type MenuButton = {
+export type MenuAction = {
+  /** The title of the item. */
   title: string;
-  /** Note: This is currently not displayed. */
+  /** [TODO: not implemented] An optional subtitle that will be displayed below the title. */
   subtitle?: string;
-  action?: (event: GestureResponderEvent) => void;
-  /** The name of the icon to display on the item. */
+  /** The handler to be called when the item is pressed. */
+  handler?: () => void;
+  /** The name of the icon to display on the item. **Note that this will only use the Material Icon version of the icon, ignoring the SVG icon.** */
   icon?: IconName;
   /** Displays a check mark on the item. */
   checked?: boolean;
@@ -21,18 +23,20 @@ export type MenuButton = {
 };
 
 export type SubMenu = {
+  /** The title of the submenu. */
   title?: string;
-  /** Note: This is currently not displayed. */
+  /** [TODO: not implemented] An optional subtitle that will be displayed below the title. Note that this may not be shown if `inline` is set to true. */
   subtitle?: string;
-  items: readonly (MenuButton | SubMenu)[];
-  /** The submenu will be displayed inline when set to true (Currently this is always treated as true since nested submenus are not implemented). */
+  /** Items to be displayed in the submenu. */
+  items: Readonly<MenuItems>;
+  /** [TODO: not implemented, currently submenus will always be inline] The submenu will be displayed inline when set to true. */
   inline?: boolean;
 };
 
-export type MenuItems = readonly (MenuButton | SubMenu)[];
+export type MenuItems = (MenuAction | SubMenu)[];
 
 export function buildMenuItems(
-  items: readonly (MenuButton | SubMenu)[],
+  items: readonly (MenuAction | SubMenu)[],
   {
     theme,
     colorScheme,
@@ -71,15 +75,15 @@ export function buildMenuItems(
       ];
     }
 
-    const menuButton = item as MenuButton;
+    const menuButton = item as MenuAction;
     const materialIcon =
       menuButton.icon && IconDefinitions[menuButton.icon]?.materialIconName;
     return [
       <RNMenu.Item
         key={`${keyPrefix}${index}`}
-        onPress={(event) => {
+        onPress={() => {
           closeMenu();
-          menuButton.action?.(event);
+          menuButton.handler?.();
         }}
         title={menuButton.subtitle ? menuButton.title : menuButton.title}
         leadingIcon={menuButton.checked ? 'check' : materialIcon}
