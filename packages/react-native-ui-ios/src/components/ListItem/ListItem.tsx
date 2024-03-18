@@ -70,6 +70,8 @@ type Props = {
 
   /** Show a grabber on the right side of the list item. */
   showGrabber?: boolean;
+
+  listPosition?: 'first' | 'middle' | 'last' | 'only';
 };
 
 export function ListItem({
@@ -86,6 +88,7 @@ export function ListItem({
   navigationLink,
   showGrabber,
   listStyle = 'insetGrouped',
+  listPosition = 'only',
 }: Props) {
   const uiColors = useUIColors();
   const textStyles = useTextStyles();
@@ -97,9 +100,11 @@ export function ListItem({
       style={[
         styles.container,
         containerStyles[listStyle],
+        containerStyles[`${listStyle}_${listPosition}`],
         {
           backgroundColor,
-          // minHeight: 44 * Math.max(1, Math.min(uiScale, 1.2)),
+          borderColor: uiColors.opaqueSeparator,
+          minHeight: Math.floor(44 * Math.max(1, Math.min(uiScale, 1.2))),
         },
       ]}
     >
@@ -124,7 +129,13 @@ export function ListItem({
           </View>
         );
       })()}
-      <View style={styles.titleAndTrailingAccessoriesContainer}>
+      <View
+        style={[
+          styles.titleAndTrailingAccessoriesContainer,
+          titleAndTrailingAccessoriesContainerStyles[listPosition],
+          { borderColor: uiColors.opaqueSeparator },
+        ]}
+      >
         <View
           style={[
             styles.titleContainer,
@@ -180,8 +191,8 @@ export function ListItem({
           })()}
         </View>
 
-        <View style={styles.trailingContentsContainer}>
-          {(() => {
+        {(() => {
+          const trailingContents = (() => {
             if (accessories) {
               return withPropDefaultValuesContext(accessories, {
                 textProps: {
@@ -200,8 +211,18 @@ export function ListItem({
             }
 
             return null;
-          })()}
-        </View>
+          })();
+
+          if (trailingContents) {
+            return (
+              <View style={styles.trailingContentsContainer}>
+                {trailingContents}
+              </View>
+            );
+          }
+
+          return null;
+        })()}
 
         <View style={styles.drillInIconAndGrabberContainer}>
           {navigationLink && (
@@ -340,11 +361,54 @@ const styles = StyleSheet.create({
 
 const containerStyles = StyleSheet.create({
   plain: {},
+  plain_first: {},
+  plain_middle: {},
+  plain_last: {},
+  plain_only: {},
+
   grouped: {},
+  grouped_first: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  grouped_middle: {},
+  grouped_last: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  grouped_only: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+
   insetGrouped: {
     marginHorizontal: 16,
     borderRadius: 10,
   },
+  insetGrouped_first: {
+    borderBottomStartRadius: 0,
+    borderBottomEndRadius: 0,
+  },
+  insetGrouped_middle: {
+    borderRadius: 0,
+  },
+  insetGrouped_last: {
+    borderTopStartRadius: 0,
+    borderTopEndRadius: 0,
+  },
+  insetGrouped_only: {},
+});
+
+const titleAndTrailingAccessoriesContainerStyles = StyleSheet.create({
+  first: {
+    // borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  middle: {
+    // borderBottomWidth: StyleSheet.hairlineWidth,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  last: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  only: {},
 });
 
 export default ListItem;

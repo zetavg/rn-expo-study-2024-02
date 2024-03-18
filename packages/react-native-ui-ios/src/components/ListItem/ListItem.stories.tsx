@@ -219,6 +219,35 @@ export const WithLongTitleAndLongDetail: Meta<typeof ListItem> = {
   },
 };
 
+export const ListPosition: Meta<typeof ListItem> = {
+  args: {
+    subtitle: undefined,
+    navigationLink: true,
+    onPress: () => {},
+  },
+  render: (args) => (
+    // eslint-disable-next-line react-native/no-inline-styles
+    <View style={{ gap: 40 }}>
+      <View>
+        <ListItem {...args} title="First" listPosition="first" />
+        <ListItem {...args} title="Middle" listPosition="middle" />
+        <ListItem {...args} title="Last" listPosition="last" />
+      </View>
+      <View>
+        <ListItem {...args} title="Only" listPosition="only" />
+      </View>
+    </View>
+  ),
+};
+
+export const ListPositionWithIcon: Meta<typeof ListItem> = {
+  ...ListPosition,
+  args: {
+    ...ListPosition.args,
+    icon: <Icon name="star" color="gray" />,
+  },
+};
+
 function UncontrolledSwitch({
   value: defaultValue,
   ...restProps
