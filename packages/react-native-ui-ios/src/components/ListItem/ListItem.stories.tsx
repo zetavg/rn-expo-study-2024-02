@@ -1,6 +1,7 @@
 import React from 'react';
-import { Image, Switch, Text, View, ViewStyle } from 'react-native';
+import { Alert, Image, Switch, Text, View, ViewStyle } from 'react-native';
 
+import { Icon } from '@rnstudy/react-icons';
 import type { Meta } from '@rnstudy/storybook-rn-types';
 
 import Select, { SelectOption } from '../Select';
@@ -35,6 +36,27 @@ export const Default: Meta<typeof ListItem> = {
   args: {},
 };
 
+export const Pressable: Meta<typeof ListItem> = {
+  args: {
+    title: 'Title',
+    navigationLink: true,
+    onPress: () => {
+      Alert.alert('Pressed');
+    },
+  },
+};
+
+export const PressableButtonStyle: Meta<typeof ListItem> = {
+  args: {
+    title: 'Press Me',
+    button: true,
+    navigationLink: false,
+    onPress: () => {
+      Alert.alert('Pressed');
+    },
+  },
+};
+
 export const WithSubtitle: Meta<typeof ListItem> = {
   args: {
     title: 'Title',
@@ -64,6 +86,34 @@ export const WithTrailingDetailTextAndNavigationLink: Meta<typeof ListItem> = {
   args: {
     title: 'Title',
     detail: 'Detail',
+    navigationLink: true,
+  },
+};
+
+export const WithIcon: Meta<typeof ListItem> = {
+  args: {
+    title: 'Title',
+    subtitle: undefined,
+    icon: <Icon name="star" color="gray" />,
+    navigationLink: true,
+  },
+};
+
+export const WithIconAndSubtitle: Meta<typeof ListItem> = {
+  args: {
+    title: 'Title',
+    subtitle: 'Subtitle',
+    icon: <Icon name="star" color="gray" />,
+    navigationLink: true,
+  },
+};
+
+export const WithIconAndSubtitleCompact: Meta<typeof ListItem> = {
+  args: {
+    title: 'Title',
+    subtitle: 'Subtitle',
+    icon: <Icon name="star" color="gray" />,
+    compact: true,
     navigationLink: true,
   },
 };

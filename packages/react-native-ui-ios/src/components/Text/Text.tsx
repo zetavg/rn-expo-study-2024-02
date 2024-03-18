@@ -32,7 +32,8 @@ export type Props = React.ComponentProps<typeof RNText> & {
     | 'tertiary'
     | 'quaternary'
     | 'link'
-    | 'placeholder';
+    | 'placeholder'
+    | 'tint';
   children?: ReactNodePropWithPropDefaultValuesContext<{
     iconProps: Partial<IconProps>;
   }>;
@@ -58,7 +59,9 @@ export const Text = forwardRef<RNText, Props>(function Text(props: Props, ref) {
             ? ('placeholderText' as const)
             : colorProp === 'link'
               ? ('link' as const)
-              : (`${colorProp}Label` as const)
+              : colorProp === 'tint'
+                ? ('tintColor' as const)
+                : (`${colorProp}Label` as const)
         ]
       : uiColors.label;
 

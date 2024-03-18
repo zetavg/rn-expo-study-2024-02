@@ -1,12 +1,14 @@
 import React, { useContext, useMemo } from 'react';
 import {
   PixelRatio,
+  Pressable,
   StyleSheet,
   Text as RNText,
   useWindowDimensions,
   View,
 } from 'react-native';
 
+import { Icon, IconPropsContext } from '@rnstudy/react-icons';
 import {
   type ReactNodePropWithPropDefaultValuesContext,
   withPropDefaultValuesContext,
@@ -15,6 +17,7 @@ import {
 import { useTextStyles, useUIColors } from '../../contexts';
 import { textStyles } from '../../tokens/text-styles';
 import BackgroundColor from '../BackgroundColor';
+import Select, { SelectPropsContext } from '../Select';
 import Text, { TextPropsContext } from '../Text';
 
 import DrillInIcon from './DrillInIcon';
@@ -43,13 +46,23 @@ type Props = {
   /** Display the subtitle on top of the title. */
   subtitleOnTop?: boolean;
 
+  icon?: ReactNodePropWithPropDefaultValuesContext<{
+    iconProps: Partial<React.ComponentProps<typeof Icon>>;
+  }>;
+
   /** The text to display on the right side of the list item. Will be ignored if `accessories` is provided. */
   detail?: string;
 
   /** The accessories to display on the right side of the list item, such as icon, switch, select or other components. */
   accessories?: ReactNodePropWithPropDefaultValuesContext<{
     textProps: Partial<React.ComponentProps<typeof Text>>;
+    selectProps: Partial<React.ComponentProps<typeof Select>>;
   }>;
+
+  onPress?: () => void;
+  onLongPress?: () => void;
+
+  button?: boolean;
 
   /** Displays a navigation arrow on the right side of the list item if set to true. */
   navigationLink?: boolean;
@@ -63,8 +76,12 @@ export function ListItem({
   subtitle,
   compact,
   subtitleOnTop,
+  icon,
   detail,
   accessories,
+  onPress,
+  onLongPress,
+  button,
   navigationLink,
   showGrabber,
   listStyle = 'insetGrouped',
@@ -74,118 +91,160 @@ export function ListItem({
   const windowDimensions = useWindowDimensions();
   const uiScale = Math.max(windowDimensions.fontScale, 1);
 
-  return (
-    <BackgroundColor>
-      {(backgroundColor) => (
+  const content = (backgroundColor: string) => (
+    <View
+      style={[
+        styles.container,
+        containerStyles[listStyle],
+        {
+          backgroundColor,
+          // minHeight: 44 * Math.max(1, Math.min(uiScale, 1.2)),
+        },
+      ]}
+    >
+      {(() => {
+        if (!icon) return null;
+
+        return (
+          <View style={styles.iconContainer}>
+            {withPropDefaultValuesContext(icon, {
+              iconProps: {
+                value: {
+                  bordered: true,
+                  size: subtitle && !compact ? 44 : 30,
+                },
+                context: IconPropsContext,
+              },
+            })}
+          </View>
+        );
+      })()}
+      <View style={styles.titleAndTrailingAccessoriesContainer}>
         <View
           style={[
-            styles.container,
-            containerStyles[listStyle],
-            {
-              backgroundColor,
-              // minHeight: 44 * Math.max(1, Math.min(uiScale, 1.2)),
-            },
+            styles.titleContainer,
+            compact && styles.titleContainer_compact,
           ]}
         >
-          <View style={styles.titleAndTrailingAccessoriesContainer}>
+          {(() => {
+            return (
+              subtitleOnTop ? ['subtitle', 'title'] : ['title', 'subtitle']
+            ).map((n) => {
+              switch (n) {
+                case 'title': {
+                  const titleTextProps = button
+                    ? BUTTON_TITLE_TEXT_PROPS
+                    : TITLE_TEXT_PROPS;
+
+                  return (
+                    <Text key="title" {...titleTextProps}>
+                      {typeof title === 'string'
+                        ? title
+                        : withPropDefaultValuesContext(title, {
+                            textProps: {
+                              value: titleTextProps,
+                              context: TextPropsContext,
+                            },
+                          })}
+                    </Text>
+                  );
+                }
+
+                case 'subtitle': {
+                  if (!subtitle) return null;
+
+                  const subtitleTextProps = compact
+                    ? SMALL_SUBTITLE_TEXT_PROPS
+                    : SUBTITLE_TEXT_PROPS;
+
+                  return (
+                    <Text key="subtitle" {...subtitleTextProps}>
+                      {typeof subtitle === 'string'
+                        ? subtitle
+                        : withPropDefaultValuesContext(subtitle, {
+                            textProps: {
+                              value: subtitleTextProps,
+                              context: TextPropsContext,
+                            },
+                          })}
+                    </Text>
+                  );
+                }
+              }
+            });
+          })()}
+        </View>
+
+        <View style={styles.trailingContentsContainer}>
+          {(() => {
+            if (accessories) {
+              return withPropDefaultValuesContext(accessories, {
+                textProps: {
+                  value: TRAILING_DETAIL_TEXT_PROPS,
+                  context: TextPropsContext,
+                },
+                selectProps: {
+                  value: TRAILING_ACCESSORIES_SELECT_PROPS,
+                  context: SelectPropsContext,
+                },
+              });
+            }
+
+            if (detail) {
+              return <Text {...TRAILING_DETAIL_TEXT_PROPS}>{detail}</Text>;
+            }
+
+            return null;
+          })()}
+        </View>
+
+        <View style={styles.drillInIconAndGrabberContainer}>
+          {navigationLink && (
+            <DrillInIcon
+              style={styles.drillInIcon}
+              fill={uiColors.tertiaryLabel}
+            />
+          )}
+          {showGrabber && (
             <View
               style={[
-                styles.titleContainer,
-                compact && styles.titleContainer_compact,
+                styles.grabberContainer,
+                { borderLeftColor: uiColors.opaqueSeparator },
               ]}
             >
-              {(() => {
-                return (
-                  subtitleOnTop ? ['subtitle', 'title'] : ['title', 'subtitle']
-                ).map((n) => {
-                  switch (n) {
-                    case 'title': {
-                      return (
-                        <Text key="title" {...TITLE_TEXT_PROPS}>
-                          {typeof title !== 'function'
-                            ? title
-                            : withPropDefaultValuesContext(title, {
-                                textProps: {
-                                  value: TITLE_TEXT_PROPS,
-                                  context: TextPropsContext,
-                                },
-                              })}
-                        </Text>
-                      );
-                    }
-
-                    case 'subtitle': {
-                      if (!subtitle) return null;
-
-                      const subtitleTextProps = compact
-                        ? SMALL_SUBTITLE_TEXT_PROPS
-                        : SUBTITLE_TEXT_PROPS;
-
-                      return (
-                        <Text key="subtitle" {...subtitleTextProps}>
-                          {typeof subtitle !== 'function'
-                            ? subtitle
-                            : withPropDefaultValuesContext(subtitle, {
-                                textProps: {
-                                  value: subtitleTextProps,
-                                  context: TextPropsContext,
-                                },
-                              })}
-                        </Text>
-                      );
-                    }
-                  }
-                });
-              })()}
+              <GrabberIcon fill={uiColors.tertiaryLabel} />
             </View>
-
-            <View style={styles.trailingContentsContainer}>
-              {(() => {
-                if (accessories) {
-                  return withPropDefaultValuesContext(accessories, {
-                    textProps: {
-                      value: TRAILING_DETAIL_TEXT_PROPS,
-                      context: TextPropsContext,
-                    },
-                  });
-                }
-
-                if (detail) {
-                  return <Text {...TRAILING_DETAIL_TEXT_PROPS}>{detail}</Text>;
-                }
-
-                return null;
-              })()}
-            </View>
-
-            <View style={styles.drillInIconAndGrabberContainer}>
-              {navigationLink && (
-                <DrillInIcon
-                  style={styles.drillInIcon}
-                  fill={uiColors.tertiaryLabel}
-                />
-              )}
-              {showGrabber && (
-                <View
-                  style={[
-                    styles.grabberContainer,
-                    { borderLeftColor: uiColors.opaqueSeparator },
-                  ]}
-                >
-                  <GrabberIcon fill={uiColors.tertiaryLabel} />
-                </View>
-              )}
-            </View>
-          </View>
+          )}
         </View>
-      )}
-    </BackgroundColor>
+      </View>
+    </View>
   );
+
+  if (onPress || onLongPress) {
+    return (
+      <Pressable onPress={onPress} onLongPress={onLongPress}>
+        {({ pressed }) => (
+          <BackgroundColor>
+            {(backgroundColor) =>
+              content(pressed ? uiColors.systemGray5 : backgroundColor)
+            }
+          </BackgroundColor>
+        )}
+      </Pressable>
+    );
+  }
+
+  return <BackgroundColor>{content}</BackgroundColor>;
 }
 
 const TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
   textStyle: 'body',
   color: 'default',
+};
+
+const BUTTON_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
+  textStyle: 'body',
+  color: 'tint',
 };
 
 const SUBTITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
@@ -204,6 +263,18 @@ const TRAILING_DETAIL_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
   numberOfLines: 1,
 };
 
+const TRAILING_ACCESSORIES_SELECT_PROPS = {
+  style: {
+    flexShrink: 1,
+    marginStart: -12,
+  },
+  innerContainerStyle: {
+    paddingStart: 12,
+    paddingVertical: 8,
+  },
+  align: 'end' as const,
+};
+
 const styles = StyleSheet.create({
   container: {
     minHeight: 44,
@@ -212,6 +283,10 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     gap: 4,
     overflow: 'hidden',
+  },
+  iconContainer: {
+    paddingEnd: 8,
+    justifyContent: 'center',
   },
   titleAndTrailingAccessoriesContainer: {
     flexGrow: 1,

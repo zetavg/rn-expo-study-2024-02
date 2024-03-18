@@ -5,4 +5,5 @@ export type {
   Props as SelectProps,
 } from './Select';
 export { Select } from './Select';
+export { SelectPropsContext } from './SelectPropsContext';
 export default Select;
