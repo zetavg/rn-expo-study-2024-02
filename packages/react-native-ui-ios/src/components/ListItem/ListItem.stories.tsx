@@ -183,7 +183,7 @@ function UncontrolledSelect({
       {...restProps}
       options={options}
       value={value}
-      onChangeValue={setValue}
+      onValueChange={setValue}
     />
   );
 }

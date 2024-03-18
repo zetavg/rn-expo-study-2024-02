@@ -41,7 +41,7 @@ function ExampleInteractiveComponent<T extends string>({
   const [value, setValue] = useState<T | undefined>(props.value);
   return (
     <>
-      <Select {...props} value={value} onChangeValue={setValue} />
+      <Select {...props} value={value} onValueChange={setValue} />
       {showInfo && (
         // eslint-disable-next-line react-native/no-inline-styles
         <View style={{ marginTop: 12, gap: 4 }}>
@@ -62,14 +62,14 @@ export const WithAdditionalActions: Meta<typeof Select> = {
     additionalActions: [
       {
         label: 'More Languages...',
-        action: () => {
+        handler: () => {
           Alert.alert('"More Languages..." Pressed');
         },
       },
       {
         label: 'Edit Languages',
         icon: '_edit',
-        action: () => {
+        handler: () => {
           Alert.alert('"Edit Languages" Pressed');
         },
       },
@@ -90,8 +90,8 @@ export const Alignment: Meta<typeof Select> = {
         borderRadius: 4,
       }}
     >
-      <Text variant="subheadline">Align: left</Text>
-      <ExampleInteractiveComponent {...args} align="left" />
+      <Text variant="subheadline">Align: start</Text>
+      <ExampleInteractiveComponent {...args} align="start" />
 
       <Text />
 
@@ -100,8 +100,8 @@ export const Alignment: Meta<typeof Select> = {
 
       <Text />
 
-      <Text variant="subheadline">Align: right</Text>
-      <ExampleInteractiveComponent {...args} align="right" />
+      <Text variant="subheadline">Align: end</Text>
+      <ExampleInteractiveComponent {...args} align="end" />
     </View>
   ),
 };

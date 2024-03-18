@@ -20,24 +20,31 @@ import PopUpMenuIndicator from './PopUpMenuIndicator';
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
 export type Option = { label: string; icon?: IconName };
-export type Action = { label: string; icon?: IconName; action: () => void };
+export type Action = { label: string; icon?: IconName; handler: () => void };
 
 export type Props<T extends string> = {
+  /** Options to be displayed in the select. */
   options: Readonly<{
     [key in T]: Option;
   }>;
+  /** The value of the select. */
   value: T | undefined;
-  onChangeValue: (value: T) => void;
+  /** The handler to be called when the value is changed. */
+  onValueChange: (value: T) => void;
+  /** Placeholder text to be displayed when no value is selected. */
   placeholder?: string;
+  /** Additional actions to be displayed at the bottom of the select menu. */
   additionalActions?: readonly Action[];
-  align?: 'left' | 'right' | 'center';
+  /** The alignment of the select. */
+  align?: 'start' | 'end' | 'center';
+
   style?: ViewStyle;
 };
 
 export function Select<T extends string>({
   options,
   value,
-  onChangeValue,
+  onValueChange,
   placeholder,
   additionalActions,
   align,
@@ -53,7 +60,7 @@ export function Select<T extends string>({
         title: label,
         icon,
         handler: () => {
-          onChangeValue(v as T);
+          onValueChange(v as T);
         },
         checked: v === value,
       };
@@ -67,12 +74,12 @@ export function Select<T extends string>({
       items: additionalActions.map((action) => ({
         title: action.label,
         icon: action.icon,
-        action: action.action,
+        action: action.handler,
       })),
       inline: true,
     };
     return [...menuActions, additionalActionsMenu];
-  }, [value, options, onChangeValue, additionalActions]);
+  }, [value, options, onValueChange, additionalActions]);
 
   const contentOpacity = useMemo(() => new Animated.Value(1), []);
   const indicatorOpacity = useMemo(() => new Animated.Value(1), []);
@@ -126,14 +133,15 @@ export function Select<T extends string>({
               {
                 justifyContent: (() => {
                   switch (align) {
-                    case 'left':
+                    case 'start':
                       return 'flex-start';
+                    case 'end':
+                      return 'flex-end';
                     case 'center':
                       return 'center';
-                    default:
-                    case 'right':
-                      return 'flex-end';
                   }
+
+                  return 'center';
                 })(),
               },
               style,

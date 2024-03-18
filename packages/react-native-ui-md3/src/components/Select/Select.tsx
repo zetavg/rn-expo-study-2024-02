@@ -12,24 +12,31 @@ import { useColorScheme, useTheme } from '../../contexts';
 import { Text } from '../Text';
 
 export type Option = { label: string };
-export type Action = { label: string; action: () => void };
+export type Action = { label: string; handler: () => void };
 
 export type Props<T extends string> = {
+  /** Options to be displayed in the select. */
   options: Readonly<{
     [key in T]: Option;
   }>;
+  /** The value of the select. */
   value: T | undefined;
-  onChangeValue: (value: T) => void;
+  /** The handler to be called when the value is changed. */
+  onValueChange: (value: T) => void;
+  /** Placeholder text to be displayed when no value is selected. */
   placeholder?: string;
+  /** Additional actions to be displayed at the bottom of the select menu. */
   additionalActions?: readonly Action[];
-  align?: 'left' | 'right' | 'center';
+  /** The alignment of the select. */
+  align?: 'start' | 'end' | 'center';
+
   style?: ViewStyle;
 };
 
 export function Select<T extends string>({
   options,
   value,
-  onChangeValue,
+  onValueChange,
   placeholder,
   additionalActions,
   align,
@@ -51,7 +58,23 @@ export function Select<T extends string>({
       <Text
         numberOfLines={1}
         color={value ? 'onSurface' : 'outline'}
-        style={[styles.text, { textAlign: align }]}
+        style={[
+          styles.text,
+          {
+            textAlign: (() => {
+              switch (align) {
+                case 'start':
+                  return 'left';
+                case 'end':
+                  return 'right';
+                case 'center':
+                  return 'center';
+              }
+
+              return 'left';
+            })(),
+          },
+        ]}
       >
         {value ? options[value].label : placeholder || 'Select...'}
       </Text>
@@ -62,12 +85,12 @@ export function Select<T extends string>({
 
           if (v.startsWith('__additional_action__')) {
             const i = parseInt(v.split('.')[1] || '0', 10);
-            const action = additionalActions?.[i]?.action;
+            const action = additionalActions?.[i]?.handler;
             if (action) action();
             return;
           }
 
-          onChangeValue(v);
+          onValueChange(v);
         }}
         style={[styles.picker]}
         mode="dropdown"
@@ -91,7 +114,7 @@ export function Select<T extends string>({
             />
           ))}
         {!value && (
-          // A hack to allow value to be undefined. This is not meant to be selected.
+          // [TODO] A hack to allow the value to be undefined. This is not meant to be selected.
           <Picker.Item key="__undefined__" value="__undefined__" label="" />
         )}
       </Picker>
