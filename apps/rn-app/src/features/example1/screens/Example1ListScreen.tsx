@@ -6,7 +6,6 @@ import { StackScreenContent } from '@/navigation/screens';
 import { Icon } from '@rnstudy/react-icons';
 import type { StackScreenProps } from '@rnstudy/react-native-navigation';
 import { Text } from '@rnstudy/react-native-ui';
-import { ListRow } from '@rnstudy/react-native-ui-ios';
 
 export default function Example1ListScreen({ route }: StackScreenProps) {
   const navigation = useMainStackNavigation();
@@ -41,7 +40,6 @@ export default function Example1ListScreen({ route }: StackScreenProps) {
           onPress={() => navigation.push('Example1Details', { name: 'hi' })}
         />
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        <Text>{JSON.stringify((ListRow as any).__docgenInfo, null, 2)}</Text>
         <Text>This is Example1ListScreen</Text>
         <Text>This is Example1ListScreen</Text>
         <Text>This is Example1ListScreen</Text>

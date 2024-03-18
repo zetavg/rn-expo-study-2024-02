@@ -12,6 +12,8 @@ import {
   SubMenu,
 } from '../../utils/ios-menu';
 
+export type { MenuButton, SubMenu };
+
 const NativeContextMenuButton: (
   props: NativeContextMenuButtonProps,
 ) => JSX.Element = (() => {
