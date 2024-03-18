@@ -26,7 +26,7 @@ export type Props<T extends string> = {
   style?: ViewStyle;
 };
 
-export function Dropdown<T extends string>({
+export function Select<T extends string>({
   options,
   value,
   onChangeValue,
@@ -41,7 +41,7 @@ export function Dropdown<T extends string>({
   if (Platform.OS !== 'android') {
     return (
       <RNText style={[styles.unsupportedErrorText, style]}>
-        [MD3 Dropdown] Unsupported platform: {Platform.OS}
+        [MD3 Select] Unsupported platform: {Platform.OS}
       </RNText>
     );
   }
@@ -126,4 +126,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Dropdown;
+export default Select;

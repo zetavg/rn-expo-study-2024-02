@@ -6,11 +6,11 @@ import type { Meta } from '@rnstudy/storybook-rn-types';
 import { Button } from '../Button';
 import Text from '../Text';
 
-import Dropdown from './Dropdown';
+import Select from './Select';
 
-const meta: Meta<typeof Dropdown> = {
-  title: 'iOS UI/Dropdown',
-  component: Dropdown,
+const meta: Meta<typeof Select> = {
+  title: 'iOS UI/Select',
+  component: Select,
   parameters: {
     actions: { argTypesRegex: '^on.*' },
   },
@@ -36,9 +36,9 @@ const meta: Meta<typeof Dropdown> = {
 
 export default meta;
 
-export const Default: Meta<typeof Dropdown> = {};
+export const Default: Meta<typeof Select> = {};
 
-export const Example: Meta<typeof Dropdown> = {
+export const Example: Meta<typeof Select> = {
   render: () => <ExampleComponent />,
 };
 
@@ -62,7 +62,7 @@ function ExampleComponent() {
   const [value, setValue] = useState<keyof typeof options>();
   return (
     <>
-      <Dropdown
+      <Select
         value={value}
         onChangeValue={setValue}
         options={options}
@@ -77,7 +77,7 @@ function ExampleComponent() {
   );
 }
 
-export const LongLabel: Meta<typeof Dropdown> = {
+export const LongLabel: Meta<typeof Select> = {
   args: {
     options: {
       long: {

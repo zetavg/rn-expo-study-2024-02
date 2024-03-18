@@ -3,7 +3,7 @@ import { Image, Switch, Text, View, ViewStyle } from 'react-native';
 
 import type { Meta } from '@rnstudy/storybook-rn-types';
 
-import Dropdown, { DropdownOption } from '../Dropdown';
+import Select, { SelectOption } from '../Select';
 
 import ListItem from './ListItem';
 
@@ -76,11 +76,11 @@ export const WithSwitch: Meta<typeof ListItem> = {
   },
 };
 
-export const WithDropdown: Meta<typeof ListItem> = {
+export const WithSelect: Meta<typeof ListItem> = {
   args: {
     title: 'Title',
     navigationLink: false,
-    accessories: <UncontrolledDropdown />,
+    accessories: <UncontrolledSelect />,
   },
 };
 
@@ -172,14 +172,14 @@ function UncontrolledSwitch({
   );
 }
 
-function UncontrolledDropdown({
+function UncontrolledSelect({
   value: defaultValue,
   options = SAMPLE_DROPDOWN_OPTIONS,
   ...restProps
-}: Partial<React.ComponentProps<typeof Dropdown>>) {
+}: Partial<React.ComponentProps<typeof Select>>) {
   const [value, setValue] = React.useState(defaultValue);
   return (
-    <Dropdown
+    <Select
       {...restProps}
       options={options}
       value={value}
@@ -188,7 +188,7 @@ function UncontrolledDropdown({
   );
 }
 
-const SAMPLE_DROPDOWN_OPTIONS: Record<string, DropdownOption> = {
+const SAMPLE_DROPDOWN_OPTIONS: Record<string, SelectOption> = {
   js: { label: 'JavaScript' },
   ts: { label: 'TypeScript', icon: 'star.outline' },
   swift: { label: 'Swift' },

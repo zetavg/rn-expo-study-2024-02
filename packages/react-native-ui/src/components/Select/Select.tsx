@@ -2,8 +2,8 @@ import React from 'react';
 import { ViewStyle } from 'react-native';
 
 import { IconName } from '@rnstudy/react-icons';
-import { Dropdown as DropdownIOS } from '@rnstudy/react-native-ui-ios';
-import { Dropdown as DropdownMD3 } from '@rnstudy/react-native-ui-md3';
+import { Select as SelectIOS } from '@rnstudy/react-native-ui-ios';
+import { Select as SelectMD3 } from '@rnstudy/react-native-ui-md3';
 
 import { useUIPlatform } from '../../contexts';
 
@@ -22,19 +22,19 @@ export type Props<T extends string> = {
   style?: ViewStyle;
 };
 
-export function Dropdown<T extends string>(props: Props<T>) {
+export function Select<T extends string>(props: Props<T>) {
   const uiPlatform = useUIPlatform();
 
   switch (uiPlatform) {
     case 'ios': {
-      return <DropdownIOS {...props} />;
+      return <SelectIOS {...props} />;
     }
     case 'android': {
-      return <DropdownMD3 {...props} />;
+      return <SelectMD3 {...props} />;
     }
   }
 
   return null;
 }
 
-export default Dropdown;
+export default Select;

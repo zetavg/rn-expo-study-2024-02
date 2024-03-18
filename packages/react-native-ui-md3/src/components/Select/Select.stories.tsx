@@ -6,11 +6,11 @@ import type { Meta } from '@rnstudy/storybook-rn-types';
 import { Button } from '../Button';
 import Text from '../Text';
 
-import Dropdown from './Dropdown';
+import Select from './Select';
 
-const meta: Meta<typeof Dropdown> = {
-  title: 'MD3 UI/Dropdown',
-  component: Dropdown,
+const meta: Meta<typeof Select> = {
+  title: 'MD3 UI/Select',
+  component: Select,
   parameters: {
     actions: { argTypesRegex: '^on.*' },
   },
@@ -36,9 +36,9 @@ const meta: Meta<typeof Dropdown> = {
 
 export default meta;
 
-export const Default: Meta<typeof Dropdown> = {};
+export const Default: Meta<typeof Select> = {};
 
-export const Example: Meta<typeof Dropdown> = {
+export const Example: Meta<typeof Select> = {
   render: () => <ExampleComponent />,
 };
 
@@ -62,7 +62,7 @@ function ExampleComponent() {
   const [value, setValue] = useState<keyof typeof options>();
   return (
     <>
-      <Dropdown value={value} onChangeValue={setValue} options={options} />
+      <Select value={value} onChangeValue={setValue} options={options} />
       {/* eslint-disable-next-line react-native/no-inline-styles */}
       <View style={{ marginTop: 12, gap: 4 }}>
         <Text>Selected value: {value || 'undefined'}</Text>
@@ -76,7 +76,7 @@ function ExampleComponent() {
   );
 }
 
-export const LongLabel: Meta<typeof Dropdown> = {
+export const LongLabel: Meta<typeof Select> = {
   args: {
     options: {
       long: {

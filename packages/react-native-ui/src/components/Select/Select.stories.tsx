@@ -6,11 +6,11 @@ import type { Meta } from '@rnstudy/storybook-rn-types';
 import { Button } from '../Button';
 import Text from '../Text';
 
-import Dropdown, { Props } from './Dropdown';
+import Select, { Props } from './Select';
 
-const meta: Meta<typeof Dropdown> = {
-  title: 'UI/Components/Dropdown',
-  component: Dropdown,
+const meta: Meta<typeof Select> = {
+  title: 'UI/Components/Select',
+  component: Select,
   parameters: {
     actions: { argTypesRegex: '^on.*' },
   },
@@ -26,9 +26,9 @@ const meta: Meta<typeof Dropdown> = {
 
 export default meta;
 
-export const Default: Meta<typeof Dropdown> = {};
+export const Default: Meta<typeof Select> = {};
 
-export const CustomPlaceholder: Meta<typeof Dropdown> = {
+export const CustomPlaceholder: Meta<typeof Select> = {
   args: {
     placeholder: 'Choose your favorite language',
   },
@@ -41,7 +41,7 @@ function ExampleInteractiveComponent<T extends string>({
   const [value, setValue] = useState<T | undefined>(props.value);
   return (
     <>
-      <Dropdown {...props} value={value} onChangeValue={setValue} />
+      <Select {...props} value={value} onChangeValue={setValue} />
       {showInfo && (
         // eslint-disable-next-line react-native/no-inline-styles
         <View style={{ marginTop: 12, gap: 4 }}>
@@ -53,11 +53,11 @@ function ExampleInteractiveComponent<T extends string>({
   );
 }
 
-export const InteractiveExample: Meta<typeof Dropdown> = {
+export const InteractiveExample: Meta<typeof Select> = {
   render: (args) => <ExampleInteractiveComponent showInfo {...args} />,
 };
 
-export const WithAdditionalActions: Meta<typeof Dropdown> = {
+export const WithAdditionalActions: Meta<typeof Select> = {
   args: {
     additionalActions: [
       {
@@ -78,7 +78,7 @@ export const WithAdditionalActions: Meta<typeof Dropdown> = {
   render: (args) => <ExampleInteractiveComponent {...args} />,
 };
 
-export const Alignment: Meta<typeof Dropdown> = {
+export const Alignment: Meta<typeof Select> = {
   render: (args) => (
     <View
       // eslint-disable-next-line react-native/no-inline-styles
@@ -106,7 +106,7 @@ export const Alignment: Meta<typeof Dropdown> = {
   ),
 };
 
-export const LongLabel: Meta<typeof Dropdown> = {
+export const LongLabel: Meta<typeof Select> = {
   args: {
     options: {
       long: {
@@ -125,7 +125,7 @@ export const LongLabel: Meta<typeof Dropdown> = {
   render: (args) => <ExampleInteractiveComponent {...args} />,
 };
 
-export const LongListOfOptions: Meta<typeof Dropdown> = {
+export const LongListOfOptions: Meta<typeof Select> = {
   args: {
     options: {
       ...Object.fromEntries(
