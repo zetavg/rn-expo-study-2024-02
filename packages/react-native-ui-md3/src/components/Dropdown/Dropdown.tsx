@@ -11,12 +11,18 @@ import { Picker } from '@react-native-picker/picker';
 import { useColorScheme, useTheme } from '../../contexts';
 import { Text } from '../Text';
 
-type Props<T extends string> = {
-  options: {
-    [key in T]: { label: string };
-  };
+export type Option = { label: string };
+export type Action = { label: string; action: () => void };
+
+export type Props<T extends string> = {
+  options: Readonly<{
+    [key in T]: Option;
+  }>;
   value: T | undefined;
   onChangeValue: (value: T) => void;
+  placeholder?: string;
+  additionalActions?: readonly Action[];
+  align?: 'left' | 'right' | 'center';
   style?: ViewStyle;
 };
 
@@ -24,6 +30,9 @@ export function Dropdown<T extends string>({
   options,
   value,
   onChangeValue,
+  placeholder,
+  additionalActions,
+  align,
   style,
 }: Props<T>) {
   const theme = useTheme();
@@ -39,13 +48,26 @@ export function Dropdown<T extends string>({
 
   return (
     <View style={[styles.container, style]}>
-      <Text numberOfLines={1} color={value ? 'onSurface' : 'outline'}>
-        {value ? options[value].label : 'Select...'}
+      <Text
+        numberOfLines={1}
+        color={value ? 'onSurface' : 'outline'}
+        style={[styles.text, { textAlign: align }]}
+      >
+        {value ? options[value].label : placeholder || 'Select...'}
       </Text>
       <Picker
         selectedValue={value || ('__undefined__' as const)}
         onValueChange={(v) => {
-          if (v !== '__undefined__') onChangeValue(v);
+          if (v === '__undefined__') return;
+
+          if (v.startsWith('__additional_action__')) {
+            const i = parseInt(v.split('.')[1] || '0', 10);
+            const action = additionalActions?.[i]?.action;
+            if (action) action();
+            return;
+          }
+
+          onChangeValue(v);
         }}
         style={[styles.picker]}
         mode="dropdown"
@@ -58,6 +80,16 @@ export function Dropdown<T extends string>({
             label={(d as { label: string }).label}
           />
         ))}
+        {additionalActions &&
+          additionalActions.map((action, i) => (
+            <Picker.Item
+              key={`__additional_action__.${i}`}
+              value={`__additional_action__.${i}`}
+              label={action.label}
+              style={theme.fonts.labelMedium}
+              color={theme.schemes[colorScheme].outline}
+            />
+          ))}
         {!value && (
           // A hack to allow value to be undefined. This is not meant to be selected.
           <Picker.Item key="__undefined__" value="__undefined__" label="" />
@@ -76,6 +108,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingLeft: 16,
     paddingRight: 40,
+  },
+  text: {
+    flex: 1,
   },
   picker: {
     color: 'transparent',
