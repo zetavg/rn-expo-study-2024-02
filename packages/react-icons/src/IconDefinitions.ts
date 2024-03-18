@@ -127,6 +127,18 @@ export const IconDefinitions = makeIconDefinitions({
     ],
   }),
   _edit: makeIconDefinition({
+    materialIconName: 'pencil',
+    sfSymbolDefinitions: [
+      {
+        name: 'pencil',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
+  '_edit.square': makeIconDefinition({
     materialIconName: 'square-edit-outline',
     sfSymbolDefinitions: [
       {
@@ -143,6 +155,18 @@ export const IconDefinitions = makeIconDefinitions({
     sfSymbolDefinitions: [
       {
         name: 'info.circle',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
+  _more: makeIconDefinition({
+    materialIconName: 'dots-horizontal-circle-outline',
+    sfSymbolDefinitions: [
+      {
+        name: 'ellipsis.circle',
         availability: {
           iOS: 13,
           macOS: 11,
