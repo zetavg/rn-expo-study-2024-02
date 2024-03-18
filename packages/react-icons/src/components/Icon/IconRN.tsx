@@ -215,6 +215,7 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
     backgroundColor,
     borderColor,
     borderWidth,
+    iconTheme.colors,
   ]);
 
   const iconElement = (
@@ -224,7 +225,9 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
         styles.iconContainer,
         { width: size, height: size },
         bordered && {
-          backgroundColor: iconTheme.grayBackgroundColor,
+          backgroundColor: image
+            ? iconTheme.imageGrayBackgroundColor
+            : iconTheme.grayBackgroundColor,
           borderRadius: iconTheme.borderRadius,
         },
         iconContainerStyle,

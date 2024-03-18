@@ -39,6 +39,8 @@ export const UIContextProvider = ({
             tertiary: theme.ios.schemes[colorScheme].uiColors.tertiaryLabel,
           },
           grayBackgroundColor:
+            theme.ios.schemes[colorScheme].uiColors.tertiarySystemFill,
+          imageGrayBackgroundColor:
             theme.ios.schemes[colorScheme].uiColors.secondarySystemFill,
           borderRadius: 7,
         };
@@ -51,6 +53,11 @@ export const UIContextProvider = ({
             tertiary: theme.md3.schemes[colorScheme].outline,
           },
           grayBackgroundColor: Color(theme.md3.schemes[colorScheme].surfaceDim)
+            .alpha(0.5)
+            .string(),
+          imageGrayBackgroundColor: Color(
+            theme.md3.schemes[colorScheme].surfaceDim,
+          )
             .alpha(0.5)
             .string(),
           borderRadius: 8,

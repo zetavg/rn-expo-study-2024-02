@@ -79,6 +79,7 @@ export type IconColor =
 export type IconTheme = {
   colors: { [key in IconColor]: string };
   grayBackgroundColor: string;
+  imageGrayBackgroundColor: string;
   borderRadius: number;
 };
 
