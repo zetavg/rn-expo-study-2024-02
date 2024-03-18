@@ -178,7 +178,7 @@ export function Button({
       case 'plain':
         return (event: GestureResponderEvent) => {
           Animated.timing(contentOpacity, {
-            toValue: 0.25,
+            toValue: 0.4,
             duration: 5,
             useNativeDriver: true,
           }).start();
