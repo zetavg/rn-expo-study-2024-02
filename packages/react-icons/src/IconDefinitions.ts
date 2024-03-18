@@ -97,6 +97,19 @@ export const IconDefinitions = makeIconDefinitions({
       },
     ],
   }),
+  airplane: makeIconDefinition({
+    materialIconName: 'airplane',
+    sfSymbolDefinitions: [
+      {
+        name: 'airplane',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+        additionalPaddingRatio: 0.05,
+      },
+    ],
+  }),
   cat: makeIconDefinition({
     materialIconName: 'cat',
     materialIconConfig: {

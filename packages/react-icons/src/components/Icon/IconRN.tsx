@@ -20,6 +20,7 @@ import { IconDefinition } from '../../types';
 
 import { IconPropsContext } from './IconPropsContext';
 import { IconProps } from './types';
+import { getColorValue } from './utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const IconRN = forwardRef<any, IconProps>(function IconRN(
@@ -65,13 +66,7 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
   const iconDefinition = IconDefinitions[name] as IconDefinition;
 
   const iconColor = (() => {
-    const colorValue = (() => {
-      if (color in iconTheme.colors) {
-        return iconTheme.colors[color as keyof typeof iconTheme.colors];
-      }
-
-      return color;
-    })();
+    const colorValue = getColorValue(color, iconTheme.colors);
 
     if (iconPlatform === 'ios' && !colorValue.startsWith('#')) {
       // SweetSFSymbol used on iOS only support color with hex value.
@@ -193,7 +188,10 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
 
     if (bordered) {
       if (backgroundColor !== undefined) {
-        style.backgroundColor = backgroundColor;
+        style.backgroundColor = getColorValue(
+          backgroundColor,
+          iconTheme.colors,
+        );
       }
       if (borderColor !== undefined) {
         style.borderColor = borderColor;

@@ -108,6 +108,18 @@ export const WithIconAndSubtitle: Meta<typeof ListItem> = {
   },
 };
 
+export const WithIconWithBackgroundColor: Meta<typeof ListItem> = {
+  args: {
+    title: 'Title',
+    subtitle: undefined,
+    icon: ({ backgroundColor }) => (
+      <Icon name="airplane" color={backgroundColor} backgroundColor="orange" />
+    ),
+    navigationLink: true,
+    onPress: () => {},
+  },
+};
+
 export const WithIconAndSubtitleCompact: Meta<typeof ListItem> = {
   args: {
     title: 'Title',

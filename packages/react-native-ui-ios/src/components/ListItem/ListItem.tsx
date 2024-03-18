@@ -48,6 +48,7 @@ type Props = {
 
   icon?: ReactNodePropWithPropDefaultValuesContext<{
     iconProps: Partial<React.ComponentProps<typeof Icon>>;
+    backgroundColor: string;
   }>;
 
   /** The text to display on the right side of the list item. Will be ignored if `accessories` is provided. */
@@ -114,6 +115,10 @@ export function ListItem({
                   size: subtitle && !compact ? 44 : 30,
                 },
                 context: IconPropsContext,
+              },
+              backgroundColor: {
+                value: backgroundColor,
+                context: null,
               },
             })}
           </View>

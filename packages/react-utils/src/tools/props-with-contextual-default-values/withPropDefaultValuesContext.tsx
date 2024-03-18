@@ -18,7 +18,7 @@ import { ReactNodePropWithPropDefaultValuesContext } from './types';
 export function withPropDefaultValuesContext<C extends object>(
   node: ReactNodePropWithPropDefaultValuesContext<C>,
   contextData: {
-    [K in keyof C]: { context: React.Context<C[K]>; value: C[K] };
+    [K in keyof C]: { context: React.Context<C[K]> | null; value: C[K] };
   },
 ): React.ReactNode {
   const contextValues: C = Object.fromEntries(
@@ -36,7 +36,9 @@ export function withPropDefaultValuesContext<C extends object>(
     const value = contextValues[key as keyof typeof contextData];
     const { context: Ctx } =
       v as (typeof contextData)[keyof typeof contextData];
-    currentNode = <Ctx.Provider value={value}>{currentNode}</Ctx.Provider>;
+    if (Ctx) {
+      currentNode = <Ctx.Provider value={value}>{currentNode}</Ctx.Provider>;
+    }
   }
 
   return currentNode;
