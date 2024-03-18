@@ -1,6 +1,6 @@
 export * from './BackgroundColor';
 export * from './Button';
 export * from './Dropdown';
-export * from './ListRow';
+export * from './ListItem';
 export * from './Menu';
 export * from './Text';

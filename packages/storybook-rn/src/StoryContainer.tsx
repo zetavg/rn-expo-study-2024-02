@@ -328,7 +328,9 @@ const styles = StyleSheet.create({
   previewContentContainer_withVerticalAlignTop: {
     justifyContent: 'flex-start',
   },
-  previewWrapper: {},
+  previewWrapper: {
+    alignSelf: 'center',
+  },
   previewWrapper_withBoundaryLines: {
     marginVertical: 40,
   },
