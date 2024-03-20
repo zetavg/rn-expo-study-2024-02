@@ -132,7 +132,9 @@ export function ListItem({
       <View
         style={[
           styles.titleAndTrailingAccessoriesContainer,
-          titleAndTrailingAccessoriesContainerStyles[listPosition],
+          (listStyle === 'plain'
+            ? titleAndTrailingAccessoriesContainerStyles_plain
+            : titleAndTrailingAccessoriesContainerStyles)[listPosition],
           { borderColor: uiColors.opaqueSeparator },
         ]}
       >
@@ -248,11 +250,21 @@ export function ListItem({
 
   if (onPress || onLongPress) {
     return (
-      <Pressable onPress={onPress} onLongPress={onLongPress}>
+      <Pressable
+        unstable_pressDelay={75}
+        onPress={onPress}
+        onLongPress={onLongPress}
+      >
         {({ pressed }) => (
           <BackgroundColor>
             {(backgroundColor) =>
-              content(pressed ? uiColors.systemGray5 : backgroundColor)
+              content(
+                pressed
+                  ? uiColors.systemGray5
+                  : listStyle === 'plain'
+                    ? uiColors.systemBackground
+                    : backgroundColor,
+              )
             }
           </BackgroundColor>
         )}
@@ -409,6 +421,23 @@ const titleAndTrailingAccessoriesContainerStyles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
   },
   only: {},
+});
+
+const titleAndTrailingAccessoriesContainerStyles_plain = StyleSheet.create({
+  first: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  middle: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  last: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  only: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
 });
 
 export default ListItem;

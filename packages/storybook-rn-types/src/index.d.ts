@@ -3,6 +3,7 @@ import type { Meta as SBMeta } from '@storybook/react';
 import type { Parameters as SBParameters } from '@storybook/types';
 
 export type Parameters = SBParameters & {
+  storyContainer?: 'default' | 'basic' | 'none';
   containerStyle?: ViewStyle;
   containerVerticalAlign?: 'top' | 'middle' | 'bottom';
   containerBackground?: 'none' | 'transparent' | 'grouped';

@@ -3952,6 +3952,7 @@ __metadata:
     color: "npm:^4"
     eslint: "npm:^8.10"
     expo: "npm:*"
+    expo-blur: "npm:^12"
     jest: "npm:^29"
     react-native: "npm:0.72"
     react-native-ios-context-menu: "npm:^2.5"
@@ -3962,6 +3963,7 @@ __metadata:
   peerDependencies:
     "@rnstudy/react-icons": "workspace:^"
     expo: "*"
+    expo-blur: ^12
     react: ^18
     react-native: ">=0.71"
     react-native-ios-utilities: 4.4.x
@@ -4031,6 +4033,7 @@ __metadata:
     "@react-native-picker/picker": ^2
     "@rnstudy/react-icons": "workspace:^"
     expo: "*"
+    expo-blur: ^12
     react: ^18
     react-native: ">=0.71"
     react-native-ios-utilities: 4.4.x
@@ -4119,6 +4122,7 @@ __metadata:
     "@types/react": "npm:^18"
     eslint: "npm:^8.10"
     expo: "npm:*"
+    expo-blur: "npm:*"
     jest: "npm:^29"
     react-native: "npm:0.72"
     react-native-ios-utilities: "npm:*"
@@ -9036,7 +9040,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-blur@npm:~12.9.2":
+"expo-blur@npm:*, expo-blur@npm:^12, expo-blur@npm:~12.9.2":
   version: 12.9.2
   resolution: "expo-blur@npm:12.9.2"
   peerDependencies:

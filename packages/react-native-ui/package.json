@@ -20,6 +20,7 @@
     "@react-native-picker/picker": "^2",
     "@rnstudy/react-icons": "workspace:^",
     "expo": "*",
+    "expo-blur": "^12",
     "react": "^18",
     "react-native": ">=0.71",
     "react-native-ios-utilities": "4.4.x",

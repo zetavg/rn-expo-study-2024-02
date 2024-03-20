@@ -1,12 +1,26 @@
 import React from 'react';
-import { Alert, Image, Switch, Text, View, ViewStyle } from 'react-native';
+import {
+  Alert,
+  FlatList,
+  Image,
+  SectionList,
+  Switch,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 import { Icon } from '@rnstudy/react-icons';
+import { calculateListPosition } from '@rnstudy/react-utils/src';
 import type { Meta } from '@rnstudy/storybook-rn-types';
 
 import Select, { SelectOption } from '../Select';
+import Text from '../Text';
 
+import ListFooter from './ListFooter';
+import ListHeader from './ListHeader';
 import ListItem from './ListItem';
+import ListPadding from './ListPadding';
+import { getListPadding } from './utils';
 
 const containerStyle: ViewStyle = {
   // marginTop: 16,
@@ -238,6 +252,185 @@ export const ListPosition: Meta<typeof ListItem> = {
       </View>
     </View>
   ),
+};
+
+export const InFlatList: Meta<typeof ListItem> = {
+  parameters: {
+    storyContainer: 'basic',
+  },
+  argTypes: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...({ itemCount: { control: 'number' } } as any),
+  },
+  args: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...({ itemCount: 4 } as any),
+    subtitle: undefined,
+    navigationLink: true,
+    onPress: () => {},
+  },
+  render: (args) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data = Array.from({ length: (args as any).itemCount }, (_, i) => ({
+      key: i,
+    }));
+    return (
+      <FlatList
+        contentContainerStyle={{
+          paddingTop: getListPadding({
+            listStyle: args.listStyle,
+            position: 'top',
+            withHeader: false,
+            first: true,
+          }),
+          paddingBottom: getListPadding({
+            listStyle: args.listStyle,
+            position: 'bottom',
+            withFooter: false,
+          }),
+        }}
+        data={data}
+        renderItem={({ item, index }) => (
+          <ListItem
+            {...args}
+            listPosition={calculateListPosition(index, data.length)}
+            title={item.key}
+          />
+        )}
+      />
+    );
+  },
+};
+
+export const InSectionList: Meta<typeof ListItem> = {
+  parameters: {
+    storyContainer: 'basic',
+  },
+  argTypes: {
+    ...({
+      __headerTitle: { control: 'boolean' },
+      __footerText: { control: 'boolean' },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any),
+  },
+  args: {
+    ...({
+      __headerTitle: true,
+      __footerText: false,
+      __data: [
+        {
+          first: true,
+          title: 'Main dishes',
+          data: ['Pizza', 'Burger', 'Risotto'],
+        },
+        {
+          title: 'Sides',
+          data: ['French Fries', 'Onion Rings', 'Fried Shrimps'],
+        },
+        {
+          title: 'Drinks',
+          data: ['Water', 'Coke', 'Beer'],
+        },
+        {
+          title: 'Desserts',
+          data: ['Cheese Cake', 'Ice Cream'],
+        },
+        {
+          title: 'Other',
+          data: ['Other'],
+        },
+      ],
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any),
+    subtitle: undefined,
+    navigationLink: true,
+    onPress: () => {},
+  },
+  render: (args) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const argsAny: any = args;
+    const data = argsAny.__data;
+    return (
+      <SectionList
+        sections={data}
+        keyExtractor={(item, index) => item + index}
+        renderItem={({ item, section, index }) => (
+          <ListItem
+            {...args}
+            listPosition={calculateListPosition(index, section.data.length)}
+            title={item}
+          />
+        )}
+        stickySectionHeadersEnabled={args.listStyle === 'plain'}
+        renderSectionHeader={({ section: { title, first } }) => (
+          <>
+            <ListPadding
+              listStyle={args.listStyle}
+              position="top"
+              first={!!first}
+              withHeader={argsAny.__headerTitle}
+            />
+            <ListHeader
+              listStyle={args.listStyle}
+              title={argsAny.__headerTitle ? title : undefined}
+            />
+          </>
+        )}
+        renderSectionFooter={({ section: { title } }) => (
+          <>
+            <ListFooter
+              listStyle={args.listStyle}
+              text={
+                argsAny.__footerText ? (
+                  title === 'Sides' ? (
+                    <>
+                      This is the footer text. It is a bit longer to see how it
+                      looks with more content. You can have{' '}
+                      <Text emphasized>other text</Text> included. Check{' '}
+                      <Text
+                        color="link"
+                        onPress={() => {
+                          Alert.alert('Pressed');
+                        }}
+                      >
+                        here
+                      </Text>{' '}
+                      for more details.
+                    </>
+                  ) : (
+                    'This is the footer text.'
+                  )
+                ) : undefined
+              }
+            />
+            <ListPadding
+              listStyle={args.listStyle}
+              position="bottom"
+              withFooter={argsAny.__footerText}
+            />
+          </>
+        )}
+      />
+    );
+  },
+};
+
+export const InSectionListLargeData: Meta<typeof ListItem> = {
+  ...InSectionList,
+  args: {
+    ...InSectionList.args,
+    ...({
+      __data: Array.from({ length: 100 }, (_, i) => ({
+        first: i === 0,
+        title: `Section ${i}`,
+        data: Array.from(
+          { length: Math.floor(5 * ((i + 4) / 4)) },
+          (__, j) => `Item ${i}-${j}`,
+        ),
+      })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any),
+  },
 };
 
 export const ListPositionWithIcon: Meta<typeof ListItem> = {

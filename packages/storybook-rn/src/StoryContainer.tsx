@@ -29,7 +29,7 @@ export function StoryContainer({
   story: PartialStoryFn<ReactRenderer>;
   parameters: Parameters;
 }) {
-  const { containerBackground, specOverlay } = parameters;
+  const { storyContainer, containerBackground, specOverlay } = parameters;
 
   const [useAlternativePlatform, setUseAlternativePlatform] = useState(false);
   const [darkMode, setDarkMode] = useState(useColorScheme() === 'dark');
@@ -48,6 +48,11 @@ export function StoryContainer({
   const uiPlatform = useAlternativePlatform
     ? AVAILABLE_UI_PLATFORMS[1]
     : AVAILABLE_UI_PLATFORMS[0];
+
+  if (storyContainer === 'none') {
+    const Story = story;
+    return <Story />;
+  }
 
   return (
     <UIContextProvider colorScheme={colorScheme} platform={uiPlatform}>
@@ -170,7 +175,12 @@ function StoryContainerContent({
   showSpecOverlay: boolean;
   showBoundaryLines: boolean;
 }) {
-  const { containerStyle, containerVerticalAlign, specOverlay } = parameters;
+  const {
+    storyContainer,
+    containerStyle,
+    containerVerticalAlign,
+    specOverlay,
+  } = parameters;
 
   const [containerLayout, setContainerLayout] = useState<LayoutRectangle>();
   const handleContainerLayout = useCallback((event: LayoutChangeEvent) => {
@@ -185,102 +195,107 @@ function StoryContainerContent({
       styles.previewContentContainer_withVerticalAlignTop,
   ];
 
-  const content = (
-    <ScrollView
-      alwaysBounceVertical={showBoundaryLines || false}
-      style={styles.previewContent}
-      contentContainerStyle={contentContainerStyle}
-    >
+  const content =
+    storyContainer === 'basic' ? (
+      <Story />
+    ) : (
       <ScrollView
-        horizontal
-        alwaysBounceHorizontal={showBoundaryLines || false}
+        alwaysBounceVertical={showBoundaryLines || false}
         style={styles.previewContent}
         contentContainerStyle={contentContainerStyle}
       >
-        <View
-          style={[
-            styles.previewWrapper,
-            showBoundaryLines && styles.previewWrapper_withBoundaryLines,
-            showBoundaryLines &&
-              containerVerticalAlign === 'top' &&
-              styles.previewWrapper_withBoundaryLines_verticalAlignTop,
-            containerStyle,
-          ]}
-          onLayout={handleContainerLayout}
+        <ScrollView
+          horizontal
+          alwaysBounceHorizontal={showBoundaryLines || false}
+          style={styles.previewContent}
+          contentContainerStyle={contentContainerStyle}
         >
-          <Story />
-          {!!specOverlay && showSpecOverlay && (
-            <View style={styles.specOverlayContainer}>{specOverlay}</View>
-          )}
-        </View>
+          <View
+            style={[
+              styles.previewWrapper,
+              showBoundaryLines && styles.previewWrapper_withBoundaryLines,
+              showBoundaryLines &&
+                containerVerticalAlign === 'top' &&
+                styles.previewWrapper_withBoundaryLines_verticalAlignTop,
+              containerStyle,
+            ]}
+            onLayout={handleContainerLayout}
+          >
+            <Story />
+            {!!specOverlay && showSpecOverlay && (
+              <View style={styles.specOverlayContainer}>{specOverlay}</View>
+            )}
+          </View>
 
-        {showBoundaryLines && (
-          <>
-            <View
-              style={[
-                styles.horizontalBoundaryLine,
-                {
-                  top:
-                    (containerLayout?.y || 0) -
-                    styles.horizontalBoundaryLine.height,
-                },
-              ]}
-            />
-            <View
-              style={[
-                styles.horizontalBoundaryLine,
-                {
-                  top:
-                    (containerLayout?.y || 0) + (containerLayout?.height || 0),
-                },
-              ]}
-            />
-            <View
-              style={[
-                styles.verticalBoundaryLine,
-                {
-                  left:
-                    (containerLayout?.x || 0) -
-                    styles.verticalBoundaryLine.width,
-                },
-              ]}
-            />
-            <View
-              style={[
-                styles.verticalBoundaryLine,
-                {
-                  left:
-                    (containerLayout?.x || 0) + (containerLayout?.width || 0),
-                },
-              ]}
-            />
+          {showBoundaryLines && (
+            <>
+              <View
+                style={[
+                  styles.horizontalBoundaryLine,
+                  {
+                    top:
+                      (containerLayout?.y || 0) -
+                      styles.horizontalBoundaryLine.height,
+                  },
+                ]}
+              />
+              <View
+                style={[
+                  styles.horizontalBoundaryLine,
+                  {
+                    top:
+                      (containerLayout?.y || 0) +
+                      (containerLayout?.height || 0),
+                  },
+                ]}
+              />
+              <View
+                style={[
+                  styles.verticalBoundaryLine,
+                  {
+                    left:
+                      (containerLayout?.x || 0) -
+                      styles.verticalBoundaryLine.width,
+                  },
+                ]}
+              />
+              <View
+                style={[
+                  styles.verticalBoundaryLine,
+                  {
+                    left:
+                      (containerLayout?.x || 0) + (containerLayout?.width || 0),
+                  },
+                ]}
+              />
 
-            <View
-              style={[
-                styles.boundaryLinesLabelContainer,
-                {
-                  top:
-                    (containerLayout?.y || 0) + (containerLayout?.height || 0),
-                },
-              ]}
-            >
-              <View style={styles.boundaryLinesLabelContent}>
-                <Text style={styles.boundaryLinesLabelContentText}>
-                  {containerLayout?.width?.toLocaleString(undefined, {
-                    maximumFractionDigits: 4,
-                  }) || 'unknown'}{' '}
-                  ×{' '}
-                  {containerLayout?.height?.toLocaleString(undefined, {
-                    maximumFractionDigits: 4,
-                  }) || 'unknown'}
-                </Text>
+              <View
+                style={[
+                  styles.boundaryLinesLabelContainer,
+                  {
+                    top:
+                      (containerLayout?.y || 0) +
+                      (containerLayout?.height || 0),
+                  },
+                ]}
+              >
+                <View style={styles.boundaryLinesLabelContent}>
+                  <Text style={styles.boundaryLinesLabelContentText}>
+                    {containerLayout?.width?.toLocaleString(undefined, {
+                      maximumFractionDigits: 4,
+                    }) || 'unknown'}{' '}
+                    ×{' '}
+                    {containerLayout?.height?.toLocaleString(undefined, {
+                      maximumFractionDigits: 4,
+                    }) || 'unknown'}
+                  </Text>
+                </View>
               </View>
-            </View>
-          </>
-        )}
+            </>
+          )}
+        </ScrollView>
       </ScrollView>
-    </ScrollView>
-  );
+    );
 
   if (showBackground) {
     return (
