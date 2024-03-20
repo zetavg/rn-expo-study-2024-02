@@ -4353,7 +4353,6 @@ __metadata:
     eslint: "npm:^8.10"
     expo: "npm:*"
     expo-blur: "npm:*"
-    expo-haptics: "npm:*"
     jest: "npm:^29"
     react-native: "npm:0.72"
     react-native-gesture-handler: "npm:*"
@@ -9376,7 +9375,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-haptics@npm:*, expo-haptics@npm:^12":
+"expo-haptics@npm:^12":
   version: 12.8.1
   resolution: "expo-haptics@npm:12.8.1"
   peerDependencies:
