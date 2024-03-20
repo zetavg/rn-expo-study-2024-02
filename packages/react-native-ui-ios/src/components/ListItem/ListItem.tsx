@@ -7,6 +7,8 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
+import Color from 'color';
+import { BlurView } from 'expo-blur';
 
 import { Icon, IconPropsContext } from '@rnstudy/react-icons';
 import {
@@ -70,8 +72,12 @@ type Props = {
 
   /** Show a grabber on the right side of the list item. */
   showGrabber?: boolean;
+  grabberProps?: React.ComponentProps<typeof Pressable>;
+  onGrabberDrag?: () => void;
 
   listPosition?: 'first' | 'middle' | 'last' | 'only';
+
+  dragActive?: boolean;
 };
 
 export function ListItem({
@@ -87,13 +93,20 @@ export function ListItem({
   button,
   navigationLink,
   showGrabber,
+  onGrabberDrag,
+  grabberProps,
   listStyle = 'insetGrouped',
   listPosition = 'only',
+  dragActive,
 }: Props) {
   const uiColors = useUIColors();
   const textStyles = useTextStyles();
   const windowDimensions = useWindowDimensions();
   const uiScale = Math.max(windowDimensions.fontScale, 1);
+
+  const grabberDragTimerRef = React.useRef<null | ReturnType<
+    typeof setTimeout
+  >>(null);
 
   const content = (backgroundColor: string) => (
     <View
@@ -102,12 +115,21 @@ export function ListItem({
         containerStyles[listStyle],
         containerStyles[`${listStyle}_${listPosition}`],
         {
-          backgroundColor,
+          backgroundColor: dragActive
+            ? Color(backgroundColor).alpha(0.5).hexa()
+            : backgroundColor,
           borderColor: uiColors.opaqueSeparator,
           minHeight: Math.floor(44 * Math.max(1, Math.min(uiScale, 1.2))),
         },
+        dragActive && styles.container_dragActive,
       ]}
     >
+      {dragActive && (
+        <BlurView
+          tint={Color(backgroundColor).lightness() > 50 ? 'light' : 'dark'}
+          style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }}
+        />
+      )}
       {(() => {
         if (!icon) return null;
 
@@ -135,6 +157,7 @@ export function ListItem({
           (listStyle === 'plain'
             ? titleAndTrailingAccessoriesContainerStyles_plain
             : titleAndTrailingAccessoriesContainerStyles)[listPosition],
+          dragActive && titleAndTrailingAccessoriesContainerStyles.dragActive,
           { borderColor: uiColors.opaqueSeparator },
         ]}
       >
@@ -234,21 +257,72 @@ export function ListItem({
             />
           )}
           {showGrabber && (
-            <View
+            <Pressable
+              {...grabberProps}
+              // delayLongPress={10}
+              // onLongPress={(event) => {
+              //   // if (onGrabberDrag) {
+              //   //   onGrabberDrag();
+              //   // }
+              //   grabberProps?.onLongPress?.(event);
+              // }}
+              // onPressIn={(event) => {
+              //   if (onGrabberDrag) {
+              //     onGrabberDrag();
+              //   }
+              //   grabberProps?.onPressIn?.(event);
+              // }}
+              // onPressOut={(event) => {
+              //   if (onGrabberDrag) {
+              //     onGrabberDrag();
+              //   }
+              //   grabberProps?.onPressOut?.(event);
+              // }}
+              // pressRetentionOffset={{
+              //   top: 9999,
+              //   left: 9999,
+              //   right: 9999,
+              //   bottom: 9999,
+              // }}
+              onPressIn={(event) => {
+                console.log('in');
+                if (!grabberDragTimerRef.current) {
+                  grabberDragTimerRef.current = setTimeout(() => {
+                    console.log('start');
+                    if (onGrabberDrag) {
+                      onGrabberDrag();
+                    }
+
+                    grabberDragTimerRef.current = null;
+                  }, 10);
+                }
+                grabberProps?.onPressIn?.(event);
+              }}
+              onPressOut={(event) => {
+                console.log('out');
+                // onGrabberDrag();
+                if (grabberDragTimerRef.current) {
+                  clearTimeout(grabberDragTimerRef.current);
+                  grabberDragTimerRef.current = null;
+                }
+
+                grabberProps?.onPressOut?.(event);
+              }}
               style={[
                 styles.grabberContainer,
+                dragActive && styles.grabberContainer_dragActive,
                 { borderLeftColor: uiColors.opaqueSeparator },
               ]}
             >
               <GrabberIcon fill={uiColors.tertiaryLabel} />
-            </View>
+            </Pressable>
           )}
         </View>
       </View>
     </View>
   );
 
-  if (onPress || onLongPress) {
+  if ((onPress || onLongPress) && !dragActive) {
     return (
       <Pressable
         unstable_pressDelay={75}
@@ -320,7 +394,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingLeft: 16,
     gap: 4,
-    overflow: 'hidden',
+    // overflow: 'hidden',
+  },
+  container_dragActive: {
+    shadowColor: 'black',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 12,
   },
   iconContainer: {
     paddingEnd: 8,
@@ -368,6 +448,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderLeftWidth: StyleSheet.hairlineWidth,
+  },
+  grabberContainer_dragActive: {
+    // Hack with blur view
+    marginRight: -4,
   },
 });
 
@@ -421,6 +505,7 @@ const titleAndTrailingAccessoriesContainerStyles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
   },
   only: {},
+  dragActive: { borderTopWidth: 0, borderBottomWidth: 0 },
 });
 
 const titleAndTrailingAccessoriesContainerStyles_plain = StyleSheet.create({

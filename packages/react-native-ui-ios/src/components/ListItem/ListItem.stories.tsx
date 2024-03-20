@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   FlatList,
@@ -8,8 +8,14 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import DraggableFlatList, {
+  NestableDraggableFlatList,
+  NestableScrollContainer,
+} from 'react-native-draggable-flatlist';
+import * as Haptics from 'expo-haptics';
 
 import { Icon } from '@rnstudy/react-icons';
+import { FlatList as AppFlatList } from '@rnstudy/react-native-lists';
 import { calculateListPosition } from '@rnstudy/react-utils/src';
 import type { Meta } from '@rnstudy/storybook-rn-types';
 
@@ -298,6 +304,244 @@ export const InFlatList: Meta<typeof ListItem> = {
           />
         )}
       />
+    );
+  },
+};
+
+export const InAppDraggableFlatList: Meta<typeof ListItem> = {
+  parameters: {
+    storyContainer: 'basic',
+  },
+  argTypes: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...({ itemCount: { control: 'number' } } as any),
+  },
+  args: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...({ itemCount: 30 } as any),
+    subtitle: undefined,
+    navigationLink: true,
+    onPress: () => {},
+    showGrabber: true,
+  },
+  render: (args) => {
+    return <DemoAppFlatListComponent {...args} />;
+  },
+};
+
+function DemoAppFlatListComponent(
+  args: Partial<React.ComponentProps<typeof ListItem>>,
+) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = Array.from({ length: (args as any).itemCount }, (_, i) => ({
+    key: i,
+  }));
+  return (
+    <AppFlatList
+      contentContainerStyle={{
+        paddingTop: getListPadding({
+          listStyle: args.listStyle,
+          position: 'top',
+          withHeader: false,
+          first: true,
+        }),
+        paddingBottom: getListPadding({
+          listStyle: args.listStyle,
+          position: 'bottom',
+          withFooter: false,
+        }),
+      }}
+      data={data}
+      keyExtractor={(item, _index) => `${item.key}`}
+      onDragBegin={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        // Haptics.selectionAsync();
+      }}
+      onPlaceholderIndexChange={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }}
+      onDragEnd={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        // Haptics.selectionAsync();
+      }}
+      renderItem={({ item, getIndex, drag, isActive }) => (
+        <ListItem
+          {...args}
+          dragActive={isActive}
+          listPosition={calculateListPosition(getIndex() || 0, data.length)}
+          title={`${item.key} (index ${getIndex()})`}
+          onGrabberDrag={drag}
+        />
+      )}
+    />
+  );
+}
+
+export const InDraggableFlatList: Meta<typeof ListItem> = {
+  parameters: {
+    storyContainer: 'basic',
+  },
+  argTypes: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...({ itemCount: { control: 'number' } } as any),
+  },
+  args: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...({ itemCount: 4 } as any),
+    subtitle: undefined,
+    navigationLink: true,
+    onPress: () => {},
+    showGrabber: true,
+  },
+  render: (args) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data = Array.from({ length: (args as any).itemCount }, (_, i) => ({
+      key: i,
+    }));
+    return (
+      <DraggableFlatList
+        style={{ height: '100%' }}
+        animationConfig={{ restDisplacementThreshold: 100 }}
+        contentContainerStyle={{
+          paddingTop: getListPadding({
+            listStyle: args.listStyle,
+            position: 'top',
+            withHeader: false,
+            first: true,
+          }),
+          paddingBottom: getListPadding({
+            listStyle: args.listStyle,
+            position: 'bottom',
+            withFooter: false,
+          }),
+        }}
+        data={data}
+        keyExtractor={(item, _index) => `${item.key}`}
+        onDragBegin={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          // Haptics.selectionAsync();
+        }}
+        onPlaceholderIndexChange={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }}
+        onDragEnd={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          // Haptics.selectionAsync();
+        }}
+        renderItem={({ item, getIndex, drag, isActive }) => (
+          <ListItem
+            {...args}
+            dragActive={isActive}
+            listPosition={calculateListPosition(getIndex() || 0, data.length)}
+            title={`${item.key} (index ${getIndex()})`}
+            onGrabberDrag={drag}
+          />
+        )}
+      />
+    );
+  },
+};
+
+export const InDraggableSectionedFlatList: Meta<typeof ListItem> = {
+  parameters: {
+    storyContainer: 'basic',
+  },
+  argTypes: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...({ itemCount: { control: 'number' } } as any),
+  },
+  args: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...({ itemCount: 4 } as any),
+    subtitle: undefined,
+    navigationLink: true,
+    onPress: () => {},
+    showGrabber: true,
+  },
+  render: (args) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data = Array.from({ length: (args as any).itemCount }, (_, i) => ({
+      key: i,
+    }));
+    // const [dragPlaceholderIndex, setDragPlaceholderIndex] = useState(null);
+    return (
+      <NestableScrollContainer>
+        <ListPadding
+          position="top"
+          listStyle={args.listStyle}
+          withHeader={true}
+          first
+        />
+        <ListHeader listStyle={args.listStyle} title="List 1" />
+        <NestableDraggableFlatList
+          data={data}
+          keyExtractor={(item, _index) => `${item.key}`}
+          onDragBegin={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            // Haptics.selectionAsync();
+          }}
+          onPlaceholderIndexChange={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
+          onDragEnd={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            // Haptics.selectionAsync();
+          }}
+          renderItem={({ item, getIndex, drag, isActive }) => (
+            <ListItem
+              {...args}
+              dragActive={isActive}
+              listPosition={calculateListPosition(getIndex() || 0, data.length)}
+              title={`${item.key} (index ${getIndex()})`}
+              onGrabberDrag={drag}
+            />
+          )}
+        />
+        <ListPadding
+          position="bottom"
+          listStyle={args.listStyle}
+          withFooter={false}
+        />
+
+        <ListPadding
+          position="top"
+          listStyle={args.listStyle}
+          withHeader={true}
+          first={false}
+        />
+        <ListHeader listStyle={args.listStyle} title="List 2" />
+        <NestableDraggableFlatList
+          style={{ overflow: 'visible' }}
+          // containerStyle={{ overflow: 'visible' }}
+          data={data}
+          keyExtractor={(item, _index) => `${item.key}`}
+          onDragBegin={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            // Haptics.selectionAsync();
+          }}
+          onPlaceholderIndexChange={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
+          onDragEnd={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            // Haptics.selectionAsync();
+          }}
+          renderItem={({ item, getIndex, drag, isActive }) => (
+            <ListItem
+              {...args}
+              dragActive={isActive}
+              listPosition={calculateListPosition(getIndex() || 0, data.length)}
+              title={`${item.key} (index ${getIndex()})`}
+              onGrabberDrag={drag}
+            />
+          )}
+        />
+        <ListPadding
+          position="bottom"
+          listStyle={args.listStyle}
+          withFooter={false}
+        />
+      </NestableScrollContainer>
     );
   },
 };

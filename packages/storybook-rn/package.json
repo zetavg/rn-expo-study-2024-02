@@ -37,6 +37,8 @@
     "expo-blur": "*",
     "jest": "^29",
     "react-native": "0.72",
+    "react-native-gesture-handler": "*",
+    "react-native-haptic-feedback": "*",
     "react-native-ios-utilities": "*",
     "react-native-reanimated": "*",
     "react-native-safe-area-context": "*",

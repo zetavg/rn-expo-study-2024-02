@@ -10,6 +10,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ReactRenderer } from '@storybook/react';
 import { PartialStoryFn } from '@storybook/types';
 
@@ -55,106 +56,108 @@ export function StoryContainer({
   }
 
   return (
-    <UIContextProvider colorScheme={colorScheme} platform={uiPlatform}>
-      <StoryContainerContent
-        story={story}
-        parameters={parameters}
-        darkMode={darkMode}
-        showBackground={showBackground}
-        useGroupedBackground={useGroupedBackground}
-        showSpecOverlay={showSpecOverlay}
-        showBoundaryLines={showBoundaryLines}
-      />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <UIContextProvider colorScheme={colorScheme} platform={uiPlatform}>
+        <StoryContainerContent
+          story={story}
+          parameters={parameters}
+          darkMode={darkMode}
+          showBackground={showBackground}
+          useGroupedBackground={useGroupedBackground}
+          showSpecOverlay={showSpecOverlay}
+          showBoundaryLines={showBoundaryLines}
+        />
 
-      <BackgroundColor>
-        {(backgroundColor) => (
-          <SeparatorColor opaque>
-            {(separatorColor) => (
-              <>
-                <ScrollView
-                  horizontal
-                  style={[
-                    styles.previewControls,
-                    { borderColor: separatorColor },
-                    { backgroundColor },
-                  ]}
-                  contentContainerStyle={styles.previewControlsContent}
-                >
-                  {AVAILABLE_UI_PLATFORMS.length > 1 && (
+        <BackgroundColor>
+          {(backgroundColor) => (
+            <SeparatorColor opaque>
+              {(separatorColor) => (
+                <>
+                  <ScrollView
+                    horizontal
+                    style={[
+                      styles.previewControls,
+                      { borderColor: separatorColor },
+                      { backgroundColor },
+                    ]}
+                    contentContainerStyle={styles.previewControlsContent}
+                  >
+                    {AVAILABLE_UI_PLATFORMS.length > 1 && (
+                      <View style={styles.previewControlGroup}>
+                        <Text style={[styles.previewControlLabelText]}>
+                          Altr. P.
+                        </Text>
+                        <Switch
+                          style={styles.previewControlSwitch}
+                          value={useAlternativePlatform}
+                          onValueChange={setUseAlternativePlatform}
+                        />
+                      </View>
+                    )}
+                    {!!specOverlay && (
+                      <View style={styles.previewControlGroup}>
+                        <Text style={[styles.previewControlLabelText]}>
+                          Spec Overlay
+                        </Text>
+                        <Switch
+                          style={styles.previewControlSwitch}
+                          value={showSpecOverlay}
+                          onValueChange={setShowSpecOverlay}
+                        />
+                      </View>
+                    )}
+
                     <View style={styles.previewControlGroup}>
                       <Text style={[styles.previewControlLabelText]}>
-                        Altr. P.
+                        Dark Mode
                       </Text>
                       <Switch
                         style={styles.previewControlSwitch}
-                        value={useAlternativePlatform}
-                        onValueChange={setUseAlternativePlatform}
+                        value={darkMode}
+                        onValueChange={setDarkMode}
                       />
                     </View>
-                  )}
-                  {!!specOverlay && (
+
+                    <View style={styles.previewControlGroup}>
+                      <Text style={[styles.previewControlLabelText]}>BG</Text>
+                      <Switch
+                        style={styles.previewControlSwitch}
+                        value={showBackground}
+                        onValueChange={setShowBackground}
+                      />
+                    </View>
+
+                    {showBackground && (
+                      <View style={styles.previewControlGroup}>
+                        <Text style={[styles.previewControlLabelText]}>
+                          BG Grouped
+                        </Text>
+                        <Switch
+                          style={styles.previewControlSwitch}
+                          value={useGroupedBackground}
+                          onValueChange={setUseGroupedBackground}
+                        />
+                      </View>
+                    )}
+
                     <View style={styles.previewControlGroup}>
                       <Text style={[styles.previewControlLabelText]}>
-                        Spec Overlay
+                        Boundary L.
                       </Text>
                       <Switch
                         style={styles.previewControlSwitch}
-                        value={showSpecOverlay}
-                        onValueChange={setShowSpecOverlay}
+                        value={showBoundaryLines}
+                        onValueChange={setShowBoundaryLines}
                       />
                     </View>
-                  )}
-
-                  <View style={styles.previewControlGroup}>
-                    <Text style={[styles.previewControlLabelText]}>
-                      Dark Mode
-                    </Text>
-                    <Switch
-                      style={styles.previewControlSwitch}
-                      value={darkMode}
-                      onValueChange={setDarkMode}
-                    />
-                  </View>
-
-                  <View style={styles.previewControlGroup}>
-                    <Text style={[styles.previewControlLabelText]}>BG</Text>
-                    <Switch
-                      style={styles.previewControlSwitch}
-                      value={showBackground}
-                      onValueChange={setShowBackground}
-                    />
-                  </View>
-
-                  {showBackground && (
-                    <View style={styles.previewControlGroup}>
-                      <Text style={[styles.previewControlLabelText]}>
-                        BG Grouped
-                      </Text>
-                      <Switch
-                        style={styles.previewControlSwitch}
-                        value={useGroupedBackground}
-                        onValueChange={setUseGroupedBackground}
-                      />
-                    </View>
-                  )}
-
-                  <View style={styles.previewControlGroup}>
-                    <Text style={[styles.previewControlLabelText]}>
-                      Boundary L.
-                    </Text>
-                    <Switch
-                      style={styles.previewControlSwitch}
-                      value={showBoundaryLines}
-                      onValueChange={setShowBoundaryLines}
-                    />
-                  </View>
-                </ScrollView>
-              </>
-            )}
-          </SeparatorColor>
-        )}
-      </BackgroundColor>
-    </UIContextProvider>
+                  </ScrollView>
+                </>
+              )}
+            </SeparatorColor>
+          )}
+        </BackgroundColor>
+      </UIContextProvider>
+    </GestureHandlerRootView>
   );
 }
 
