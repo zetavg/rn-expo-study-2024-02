@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import {
   PixelRatio,
   Pressable,
@@ -77,6 +77,7 @@ type Props = {
 
   listPosition?: 'first' | 'middle' | 'last' | 'only';
 
+  fixedHeight?: boolean;
   dragActive?: boolean;
 };
 
@@ -97,6 +98,7 @@ export function ListItem({
   grabberProps,
   listStyle = 'insetGrouped',
   listPosition = 'only',
+  fixedHeight,
   dragActive,
 }: Props) {
   const uiColors = useUIColors();
@@ -114,21 +116,46 @@ export function ListItem({
         styles.container,
         containerStyles[listStyle],
         containerStyles[`${listStyle}_${listPosition}`],
+        containerBorderRadiusStyles[listStyle],
+        containerBorderRadiusStyles[`${listStyle}_${listPosition}`],
         {
           backgroundColor: dragActive
-            ? Color(backgroundColor).alpha(0.5).hexa()
+            ? Color(backgroundColor).lightness() > 50
+              ? Color(backgroundColor).alpha(0.5).hexa()
+              : Color(backgroundColor).lighten(1).alpha(0.5).hexa()
             : backgroundColor,
           borderColor: uiColors.opaqueSeparator,
-          minHeight: Math.floor(44 * Math.max(1, Math.min(uiScale, 1.2))),
         },
-        dragActive && styles.container_dragActive,
+        fixedHeight
+          ? {
+              height: getItemHeight({ subtitle, compact, uiScale }),
+            }
+          : {
+              minHeight: getItemHeight({ subtitle, compact, uiScale }),
+            },
+        dragActive &&
+          styles[
+            `container_dragActive_${Color(backgroundColor).lightness() > 50 ? 'light' : 'dark'}`
+          ],
       ]}
     >
       {dragActive && (
-        <BlurView
-          tint={Color(backgroundColor).lightness() > 50 ? 'light' : 'dark'}
-          style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }}
-        />
+        <View
+          style={[
+            containerBorderRadiusStyles[listStyle],
+            containerBorderRadiusStyles[`${listStyle}_${listPosition}`],
+            styles.backgroundBlurView,
+          ]}
+        >
+          <BlurView
+            tint={Color(backgroundColor).lightness() > 50 ? 'light' : 'dark'}
+            style={[
+              containerBorderRadiusStyles[listStyle],
+              containerBorderRadiusStyles[`${listStyle}_${listPosition}`],
+              styles.backgroundBlurView,
+            ]}
+          />
+        </View>
       )}
       {(() => {
         if (!icon) return null;
@@ -173,9 +200,16 @@ export function ListItem({
             ).map((n) => {
               switch (n) {
                 case 'title': {
-                  const titleTextProps = button
+                  let titleTextProps = button
                     ? BUTTON_TITLE_TEXT_PROPS
                     : TITLE_TEXT_PROPS;
+
+                  if (fixedHeight) {
+                    titleTextProps = {
+                      ...titleTextProps,
+                      numberOfLines: 1,
+                    };
+                  }
 
                   return (
                     <Text key="title" {...titleTextProps}>
@@ -194,9 +228,16 @@ export function ListItem({
                 case 'subtitle': {
                   if (!subtitle) return null;
 
-                  const subtitleTextProps = compact
+                  let subtitleTextProps = compact
                     ? SMALL_SUBTITLE_TEXT_PROPS
                     : SUBTITLE_TEXT_PROPS;
+
+                  if (fixedHeight) {
+                    subtitleTextProps = {
+                      ...subtitleTextProps,
+                      numberOfLines: 1,
+                    };
+                  }
 
                   return (
                     <Text key="subtitle" {...subtitleTextProps}>
@@ -259,13 +300,11 @@ export function ListItem({
           {showGrabber && (
             <Pressable
               {...grabberProps}
-              // delayLongPress={10}
-              // onLongPress={(event) => {
-              //   // if (onGrabberDrag) {
-              //   //   onGrabberDrag();
-              //   // }
-              //   grabberProps?.onLongPress?.(event);
-              // }}
+              delayLongPress={80}
+              onLongPress={(event) => {
+                onGrabberDrag?.();
+                grabberProps?.onLongPress?.(event);
+              }}
               // onPressIn={(event) => {
               //   if (onGrabberDrag) {
               //     onGrabberDrag();
@@ -284,30 +323,30 @@ export function ListItem({
               //   right: 9999,
               //   bottom: 9999,
               // }}
-              onPressIn={(event) => {
-                console.log('in');
-                if (!grabberDragTimerRef.current) {
-                  grabberDragTimerRef.current = setTimeout(() => {
-                    console.log('start');
-                    if (onGrabberDrag) {
-                      onGrabberDrag();
-                    }
+              // onPressIn={(event) => {
+              //   console.log('in');
+              //   if (!grabberDragTimerRef.current) {
+              //     grabberDragTimerRef.current = setTimeout(() => {
+              //       console.log('start');
+              //       if (onGrabberDrag) {
+              //         onGrabberDrag();
+              //       }
 
-                    grabberDragTimerRef.current = null;
-                  }, 10);
-                }
-                grabberProps?.onPressIn?.(event);
-              }}
-              onPressOut={(event) => {
-                console.log('out');
-                // onGrabberDrag();
-                if (grabberDragTimerRef.current) {
-                  clearTimeout(grabberDragTimerRef.current);
-                  grabberDragTimerRef.current = null;
-                }
+              //       grabberDragTimerRef.current = null;
+              //     }, 10);
+              //   }
+              //   grabberProps?.onPressIn?.(event);
+              // }}
+              // onPressOut={(event) => {
+              //   console.log('out');
+              //   // onGrabberDrag();
+              //   if (grabberDragTimerRef.current) {
+              //     clearTimeout(grabberDragTimerRef.current);
+              //     grabberDragTimerRef.current = null;
+              //   }
 
-                grabberProps?.onPressOut?.(event);
-              }}
+              //   grabberProps?.onPressOut?.(event);
+              // }}
               style={[
                 styles.grabberContainer,
                 dragActive && styles.grabberContainer_dragActive,
@@ -322,11 +361,25 @@ export function ListItem({
     </View>
   );
 
+  const onPressTimerRef = React.useRef<null | ReturnType<typeof setTimeout>>(
+    null,
+  );
+  const handlePress = useCallback(() => {
+    if (!onPress) return;
+    if (onPressTimerRef.current) return;
+
+    // Let the UI update to the pressed state before calling the onPress handler, in case if the onPress handler took a long time to execute and hangs the UI, confusing the user if the press was handled or not.
+    onPressTimerRef.current = setTimeout(() => {
+      onPress();
+      onPressTimerRef.current = null;
+    }, 1);
+  }, [onPress]);
+
   if ((onPress || onLongPress) && !dragActive) {
     return (
       <Pressable
         unstable_pressDelay={75}
-        onPress={onPress}
+        onPress={handlePress}
         onLongPress={onLongPress}
       >
         {({ pressed }) => (
@@ -347,6 +400,27 @@ export function ListItem({
   }
 
   return <BackgroundColor>{content}</BackgroundColor>;
+}
+
+export function getItemHeight({
+  subtitle,
+  compact,
+  uiScale,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  subtitle?: React.ReactNode | ((...args: any) => void) | boolean;
+  compact?: boolean;
+  uiScale: number;
+}): number {
+  const baseHeight = (() => {
+    if (!subtitle || compact) {
+      return 44;
+    } else {
+      return 58;
+    }
+  })();
+
+  return Math.floor(baseHeight * Math.max(1, Math.min(uiScale, 1.2)));
 }
 
 const TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
@@ -396,11 +470,17 @@ const styles = StyleSheet.create({
     gap: 4,
     // overflow: 'hidden',
   },
-  container_dragActive: {
+  container_dragActive_light: {
     shadowColor: 'black',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 12,
+    shadowRadius: 18,
+  },
+  container_dragActive_dark: {
+    shadowColor: 'black',
+    shadowOpacity: 0.8,
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 18,
   },
   iconContainer: {
     paddingEnd: 8,
@@ -423,7 +503,7 @@ const styles = StyleSheet.create({
   },
   titleContainer_compact: {
     paddingVertical: 4,
-    gap: -2,
+    gap: -4,
   },
   trailingContentsContainer: {
     flexGrow: 1,
@@ -453,6 +533,14 @@ const styles = StyleSheet.create({
     // Hack with blur view
     marginRight: -4,
   },
+  backgroundBlurView: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    overflow: 'hidden',
+  },
 });
 
 const containerStyles = StyleSheet.create({
@@ -477,6 +565,27 @@ const containerStyles = StyleSheet.create({
 
   insetGrouped: {
     marginHorizontal: 16,
+  },
+  insetGrouped_first: {},
+  insetGrouped_middle: {},
+  insetGrouped_last: {},
+  insetGrouped_only: {},
+});
+
+const containerBorderRadiusStyles = StyleSheet.create({
+  plain: {},
+  plain_first: {},
+  plain_middle: {},
+  plain_last: {},
+  plain_only: {},
+
+  grouped: {},
+  grouped_first: {},
+  grouped_middle: {},
+  grouped_last: {},
+  grouped_only: {},
+
+  insetGrouped: {
     borderRadius: 10,
   },
   insetGrouped_first: {

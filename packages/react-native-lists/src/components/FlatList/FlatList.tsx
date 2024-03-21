@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import CellRendererComponent from 'react-native-draggable-flatlist/src/components/CellRendererComponent';
 import PlaceholderItem from 'react-native-draggable-flatlist/src/components/PlaceholderItem';
-import RowItem from 'react-native-draggable-flatlist/src/components/RowItem';
 import ScrollOffsetListener from 'react-native-draggable-flatlist/src/components/ScrollOffsetListener';
 import { DEFAULT_PROPS } from 'react-native-draggable-flatlist/src/constants';
 import AnimatedValueProvider, {
@@ -34,6 +33,7 @@ import {
   Gesture,
   GestureDetector,
 } from 'react-native-gesture-handler';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import Animated, {
   runOnJS,
   useAnimatedReaction,
@@ -41,6 +41,9 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+
+import RowItem from './RowItem';
+import { RenderItem, SetItemTmpListPositionFunction } from './types';
 
 type RNGHFlatListProps<T> = Animated.AnimateProps<
   FlatListProps<T> & {
@@ -59,7 +62,7 @@ const AnimatedFlatList = Animated.createAnimatedComponent(
   RNGHFlatList,
 ) as unknown as <T>(props: RNGHFlatListProps<T>) => React.ReactElement;
 
-function DraggableFlatListInner<T>(props: DraggableFlatListProps<T>) {
+function DraggableFlatListInner<T>(props: Props<T>) {
   const {
     cellDataRef,
     containerRef,
@@ -145,10 +148,10 @@ function DraggableFlatListInner<T>(props: DraggableFlatListProps<T>) {
     });
   }, [props.data, keyExtractor, keyToIndexRef]);
 
-  const drag = useStableCallback((activeKey: string) => {
+  const drag = useStableCallback((activeKey_: string) => {
     if (disabled.value) return;
-    const index = keyToIndexRef.current.get(activeKey);
-    const cellData = cellDataRef.current.get(activeKey);
+    const index = keyToIndexRef.current.get(activeKey_);
+    const cellData = cellDataRef.current.get(activeKey_);
     if (cellData) {
       activeCellOffset.value = cellData.measurements.offset;
       activeCellSize.value = cellData.measurements.size;
@@ -158,7 +161,8 @@ function DraggableFlatListInner<T>(props: DraggableFlatListProps<T>) {
     if (index !== undefined) {
       spacerIndexAnim.value = index;
       activeIndexAnim.value = index;
-      setActiveKey(activeKey);
+      setActiveKey(activeKey_);
+      ReactNativeHapticFeedback.trigger('impactLight');
       onDragBegin?.(index);
     }
   });
@@ -195,6 +199,17 @@ function DraggableFlatListInner<T>(props: DraggableFlatListProps<T>) {
     [activeKey, props.extraData],
   );
 
+  const setActiveItemTmpListPositionFunctionRef =
+    useRef<null | SetItemTmpListPositionFunction>(null);
+  const setFirstItemTmpListPositionFunctionRef =
+    useRef<null | SetItemTmpListPositionFunction>(null);
+  const setSecondItemTmpListPositionFunctionRef =
+    useRef<null | SetItemTmpListPositionFunction>(null);
+  const setPenultimateItemTmpListPositionFunctionRef =
+    useRef<null | SetItemTmpListPositionFunction>(null);
+  const setLastItemTmpListPositionFunctionRef =
+    useRef<null | SetItemTmpListPositionFunction>(null);
+
   const renderItem: ListRenderItem<T> = useCallback(
     ({ item, index }) => {
       const key = keyExtractor(item, index);
@@ -206,13 +221,37 @@ function DraggableFlatListInner<T>(props: DraggableFlatListProps<T>) {
         <RowItem
           item={item}
           itemKey={key}
+          originalIndex={index}
+          dataLength={props.data.length}
           renderItem={props.renderItem}
           drag={drag}
           extraData={props.extraData}
+          setActiveItemTmpListPositionFunctionRef={
+            setActiveItemTmpListPositionFunctionRef
+          }
+          setFirstItemTmpListPositionFunctionRef={
+            setFirstItemTmpListPositionFunctionRef
+          }
+          setSecondItemTmpListPositionFunctionRef={
+            setSecondItemTmpListPositionFunctionRef
+          }
+          setPenultimateItemTmpListPositionFunctionRef={
+            setPenultimateItemTmpListPositionFunctionRef
+          }
+          setLastItemTmpListPositionFunctionRef={
+            setLastItemTmpListPositionFunctionRef
+          }
         />
       );
     },
-    [keyToIndexRef, props.renderItem, props.extraData, drag, keyExtractor],
+    [
+      keyToIndexRef,
+      props.renderItem,
+      props.extraData,
+      drag,
+      keyExtractor,
+      props.data.length,
+    ],
   );
 
   const onRelease = useStableCallback((index: number) => {
@@ -221,6 +260,8 @@ function DraggableFlatListInner<T>(props: DraggableFlatListProps<T>) {
 
   const onDragEnd = useStableCallback(
     ({ from, to }: { from: number; to: number }) => {
+      ReactNativeHapticFeedback.trigger('impactLight');
+
       const { onDragEnd: onDragEndProp, data } = props;
 
       const newData = [...data];
@@ -235,6 +276,54 @@ function DraggableFlatListInner<T>(props: DraggableFlatListProps<T>) {
   );
 
   const onPlaceholderIndexChange = useStableCallback((index: number) => {
+    ReactNativeHapticFeedback.trigger('impactLight');
+
+    const from = activeIndexAnim.value;
+    const to = spacerIndexAnim.value;
+
+    const lastItemIndex = props.data.length - 1;
+
+    // Set active item's temporary list position
+    if (to <= 0) {
+      setActiveItemTmpListPositionFunctionRef.current?.('first');
+    } else if (to >= lastItemIndex) {
+      setActiveItemTmpListPositionFunctionRef.current?.('last');
+    } else {
+      setActiveItemTmpListPositionFunctionRef.current?.('middle');
+    }
+
+    // If the first item is being moved, set the second item's temporary list position
+    if (from === 0) {
+      if (to !== 0) {
+        setSecondItemTmpListPositionFunctionRef.current?.('first');
+      } else {
+        setSecondItemTmpListPositionFunctionRef.current?.(null);
+      }
+    }
+
+    // If the last item is being moved, set the penultimate item's temporary list position
+    if (from === lastItemIndex) {
+      if (to !== lastItemIndex) {
+        setPenultimateItemTmpListPositionFunctionRef.current?.('last');
+      } else {
+        setPenultimateItemTmpListPositionFunctionRef.current?.(null);
+      }
+    }
+
+    // If the item is moved on top of the first item, set the first item's temporary list position
+    if (from !== 0 && to === 0) {
+      setFirstItemTmpListPositionFunctionRef.current?.('middle');
+    } else if (from !== 0 && to !== 0) {
+      setFirstItemTmpListPositionFunctionRef.current?.(null);
+    }
+
+    // If the item is moved below the last item, set the last item's temporary list position
+    if (from !== lastItemIndex && to === lastItemIndex) {
+      setLastItemTmpListPositionFunctionRef.current?.('middle');
+    } else if (from !== lastItemIndex && to !== lastItemIndex) {
+      setLastItemTmpListPositionFunctionRef.current?.(null);
+    }
+
     props.onPlaceholderIndexChange?.(index);
   });
 
@@ -416,7 +505,8 @@ function DraggableFlatListInner<T>(props: DraggableFlatListProps<T>) {
 }
 
 function DraggableFlatList<T>(
-  props: DraggableFlatListProps<T>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props: any,
   ref?: React.ForwardedRef<RNGHFlatList<T>> | null,
 ) {
   return (
@@ -432,10 +522,17 @@ function DraggableFlatList<T>(
 
 const MemoizedInner = typedMemo(DraggableFlatListInner);
 
+type Modify<T, R> = Omit<T, keyof R> & R;
+
+type Props<T> = Modify<
+  DraggableFlatListProps<T>,
+  { renderItem: RenderItem<T> }
+>;
+
 // Generic forwarded ref type assertion taken from:
 // https://fettblog.eu/typescript-react-generic-forward-refs/#option-1%3A-type-assertion
 export const FlatList = React.forwardRef(DraggableFlatList) as <T>(
-  props: DraggableFlatListProps<T> & {
+  props: Props<T> & {
     ref?: React.ForwardedRef<RNGHFlatList<T>>;
   },
 ) => ReturnType<typeof DraggableFlatList>;

@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   FlatList,
   Image,
+  LayoutAnimation,
   SectionList,
   Switch,
+  useWindowDimensions,
   View,
   ViewStyle,
 } from 'react-native';
@@ -15,7 +17,10 @@ import DraggableFlatList, {
 import * as Haptics from 'expo-haptics';
 
 import { Icon } from '@rnstudy/react-icons';
-import { FlatList as AppFlatList } from '@rnstudy/react-native-lists';
+import {
+  FlatList as AppFlatList,
+  RenderItem,
+} from '@rnstudy/react-native-lists';
 import { calculateListPosition } from '@rnstudy/react-utils/src';
 import type { Meta } from '@rnstudy/storybook-rn-types';
 
@@ -24,7 +29,7 @@ import Text from '../Text';
 
 import ListFooter from './ListFooter';
 import ListHeader from './ListHeader';
-import ListItem from './ListItem';
+import ListItem, { getItemHeight } from './ListItem';
 import ListPadding from './ListPadding';
 import { getListPadding } from './utils';
 
@@ -322,7 +327,6 @@ export const InAppDraggableFlatList: Meta<typeof ListItem> = {
     subtitle: undefined,
     navigationLink: true,
     onPress: () => {},
-    showGrabber: true,
   },
   render: (args) => {
     return <DemoAppFlatListComponent {...args} />;
@@ -333,9 +337,55 @@ function DemoAppFlatListComponent(
   args: Partial<React.ComponentProps<typeof ListItem>>,
 ) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const data = Array.from({ length: (args as any).itemCount }, (_, i) => ({
-    key: i,
-  }));
+  const itemCount: number = (args as any).itemCount;
+
+  const [data, setData] = useState<{ key: number }[]>([]);
+
+  useEffect(() => {
+    setData(Array.from({ length: itemCount }, (_, i) => ({ key: i })));
+  }, [itemCount]);
+
+  const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+    LayoutAnimation.configureNext({
+      ...LayoutAnimation.Presets.easeInEaseOut,
+      duration: 100,
+    });
+  }, [editing]);
+
+  const renderItem = useCallback<RenderItem<(typeof data)[number]>>(
+    ({ item, getIndex, drag, isActive, listPosition }) => (
+      <ListItem
+        {...args}
+        showGrabber={editing}
+        dragActive={isActive}
+        onPress={() => setEditing((v) => !v)}
+        listPosition={listPosition}
+        title={`${item.key} (index ${getIndex()})`}
+        fixedHeight
+        onGrabberDrag={drag}
+      />
+    ),
+    [args, editing],
+  );
+
+  const windowDimensions = useWindowDimensions();
+  const uiScale = Math.max(windowDimensions.fontScale, 1);
+
+  const getItemLayout = useCallback(
+    (_: unknown, index: number) => {
+      const height = getItemHeight({
+        subtitle: args.subtitle,
+        compact: args.compact,
+        uiScale,
+      });
+
+      return { length: height, offset: height * index, index };
+    },
+    [args.compact, args.subtitle, uiScale],
+  );
+
   return (
     <AppFlatList
       contentContainerStyle={{
@@ -354,25 +404,19 @@ function DemoAppFlatListComponent(
       data={data}
       keyExtractor={(item, _index) => `${item.key}`}
       onDragBegin={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         // Haptics.selectionAsync();
       }}
       onPlaceholderIndexChange={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }}
-      onDragEnd={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        // Haptics.selectionAsync();
+      onDragEnd={({ data: reorderedData }) => {
+        // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setData(reorderedData);
       }}
-      renderItem={({ item, getIndex, drag, isActive }) => (
-        <ListItem
-          {...args}
-          dragActive={isActive}
-          listPosition={calculateListPosition(getIndex() || 0, data.length)}
-          title={`${item.key} (index ${getIndex()})`}
-          onGrabberDrag={drag}
-        />
-      )}
+      removeClippedSubviews={true}
+      renderItem={renderItem}
+      getItemLayout={getItemLayout}
     />
   );
 }
