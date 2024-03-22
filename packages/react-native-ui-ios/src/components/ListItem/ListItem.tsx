@@ -1,5 +1,13 @@
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
+  Animated,
   PixelRatio,
   Pressable,
   StyleSheet,
@@ -24,6 +32,9 @@ import Text, { TextPropsContext } from '../Text';
 
 import DrillInIcon from './DrillInIcon';
 import GrabberIcon from './GrabberIcon';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+const LAYOUT_ANIMATION_DURATION = 200;
 
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
@@ -72,8 +83,8 @@ type Props = {
 
   /** Show a grabber on the right side of the list item. */
   showGrabber?: boolean;
-  grabberProps?: React.ComponentProps<typeof Pressable>;
-  onGrabberDrag?: () => void;
+  grabberProps?: React.ComponentProps<typeof AnimatedPressable>;
+  onGrabberActive?: () => void;
 
   listPosition?: 'first' | 'middle' | 'last' | 'only';
 
@@ -94,7 +105,7 @@ export function ListItem({
   button,
   navigationLink,
   showGrabber,
-  onGrabberDrag,
+  onGrabberActive,
   grabberProps,
   listStyle = 'insetGrouped',
   listPosition = 'only',
@@ -105,6 +116,34 @@ export function ListItem({
   const textStyles = useTextStyles();
   const windowDimensions = useWindowDimensions();
   const uiScale = Math.max(windowDimensions.fontScale, 1);
+
+  const grabberTranslateXAnim = useRef(
+    new Animated.Value(showGrabber ? 0 : styles.grabberContainer.width),
+  ).current;
+  const prevShowGrabber = useRef(showGrabber);
+  const [animRenderGrabber, setAnimRenderGrabber] = useState(showGrabber);
+  useEffect(() => {
+    if (showGrabber === prevShowGrabber.current) return;
+
+    Animated.timing(grabberTranslateXAnim, {
+      toValue: showGrabber ? 0 : styles.grabberContainer.width,
+      duration: LAYOUT_ANIMATION_DURATION,
+      useNativeDriver: true,
+    }).start();
+
+    const setAnimRenderGrabberTimer = setTimeout(
+      () => {
+        setAnimRenderGrabber(showGrabber);
+      },
+      showGrabber ? 0 : LAYOUT_ANIMATION_DURATION,
+    );
+
+    prevShowGrabber.current = showGrabber;
+
+    return () => {
+      clearTimeout(setAnimRenderGrabberTimer);
+    };
+  }, [grabberTranslateXAnim, showGrabber]);
 
   const grabberDragTimerRef = React.useRef<null | ReturnType<
     typeof setTimeout
@@ -148,7 +187,9 @@ export function ListItem({
           ]}
         >
           <BlurView
-            tint={Color(backgroundColor).lightness() > 50 ? 'light' : 'dark'}
+            tint={
+              Color(backgroundColor).lightness() > 50 ? 'extraLight' : 'dark'
+            }
             style={[
               containerBorderRadiusStyles[listStyle],
               containerBorderRadiusStyles[`${listStyle}_${listPosition}`],
@@ -157,6 +198,7 @@ export function ListItem({
           />
         </View>
       )}
+
       {(() => {
         if (!icon) return null;
 
@@ -178,6 +220,7 @@ export function ListItem({
           </View>
         );
       })()}
+
       <View
         style={[
           styles.titleAndTrailingAccessoriesContainer,
@@ -185,7 +228,10 @@ export function ListItem({
             ? titleAndTrailingAccessoriesContainerStyles_plain
             : titleAndTrailingAccessoriesContainerStyles)[listPosition],
           dragActive && titleAndTrailingAccessoriesContainerStyles.dragActive,
-          { borderColor: uiColors.opaqueSeparator },
+          {
+            minHeight: getItemHeight({ subtitle, compact, uiScale }),
+            borderColor: uiColors.opaqueSeparator,
+          },
         ]}
       >
         <View
@@ -297,64 +343,27 @@ export function ListItem({
               fill={uiColors.tertiaryLabel}
             />
           )}
-          {showGrabber && (
-            <Pressable
+          {(showGrabber || animRenderGrabber) && (
+            <AnimatedPressable
               {...grabberProps}
               delayLongPress={80}
               onLongPress={(event) => {
-                onGrabberDrag?.();
+                onGrabberActive?.();
                 grabberProps?.onLongPress?.(event);
               }}
-              // onPressIn={(event) => {
-              //   if (onGrabberDrag) {
-              //     onGrabberDrag();
-              //   }
-              //   grabberProps?.onPressIn?.(event);
-              // }}
-              // onPressOut={(event) => {
-              //   if (onGrabberDrag) {
-              //     onGrabberDrag();
-              //   }
-              //   grabberProps?.onPressOut?.(event);
-              // }}
-              // pressRetentionOffset={{
-              //   top: 9999,
-              //   left: 9999,
-              //   right: 9999,
-              //   bottom: 9999,
-              // }}
-              // onPressIn={(event) => {
-              //   console.log('in');
-              //   if (!grabberDragTimerRef.current) {
-              //     grabberDragTimerRef.current = setTimeout(() => {
-              //       console.log('start');
-              //       if (onGrabberDrag) {
-              //         onGrabberDrag();
-              //       }
-
-              //       grabberDragTimerRef.current = null;
-              //     }, 10);
-              //   }
-              //   grabberProps?.onPressIn?.(event);
-              // }}
-              // onPressOut={(event) => {
-              //   console.log('out');
-              //   // onGrabberDrag();
-              //   if (grabberDragTimerRef.current) {
-              //     clearTimeout(grabberDragTimerRef.current);
-              //     grabberDragTimerRef.current = null;
-              //   }
-
-              //   grabberProps?.onPressOut?.(event);
-              // }}
               style={[
                 styles.grabberContainer,
+                !!(navigationLink || accessories) &&
+                  styles.grabberContainer_withAccessories,
                 dragActive && styles.grabberContainer_dragActive,
-                { borderLeftColor: uiColors.opaqueSeparator },
+                {
+                  borderLeftColor: uiColors.opaqueSeparator,
+                  transform: [{ translateX: grabberTranslateXAnim }],
+                },
               ]}
             >
               <GrabberIcon fill={uiColors.tertiaryLabel} />
-            </Pressable>
+            </AnimatedPressable>
           )}
         </View>
       </View>
@@ -468,19 +477,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingLeft: 16,
     gap: 4,
-    // overflow: 'hidden',
+    overflow: 'hidden',
   },
   container_dragActive_light: {
     shadowColor: 'black',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 18,
+    overflow: 'visible', // Let shadow be visible outside of the container
   },
   container_dragActive_dark: {
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 18,
+    overflow: 'visible', // Let shadow be visible outside of the container
   },
   iconContainer: {
     paddingEnd: 8,
@@ -527,10 +538,13 @@ const styles = StyleSheet.create({
     width: 50,
     justifyContent: 'center',
     alignItems: 'center',
+    transformOrigin: 'right',
+  },
+  grabberContainer_withAccessories: {
     borderLeftWidth: StyleSheet.hairlineWidth,
   },
   grabberContainer_dragActive: {
-    // Hack with blur view
+    // Hack: the BlurView adds a mysterious padding on the right side of the grabber, so we need to compensate for it.
     marginRight: -4,
   },
   backgroundBlurView: {

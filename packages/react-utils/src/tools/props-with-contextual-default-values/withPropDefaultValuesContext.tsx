@@ -18,18 +18,31 @@ import { ReactNodePropWithPropDefaultValuesContext } from './types';
 export function withPropDefaultValuesContext<C extends object>(
   node: ReactNodePropWithPropDefaultValuesContext<C>,
   contextData: {
-    [K in keyof C]: { context: React.Context<C[K]> | null; value: C[K] };
+    [K in keyof C]: {
+      context:
+        | React.Context<C[K]>
+        | React.Context<C[K] | ((p: Partial<C[K]>) => C[K])>
+        | null;
+      value: C[K] | ((p: Partial<C[K]>) => C[K]);
+    };
   },
 ): React.ReactNode {
-  const contextValues: C = Object.fromEntries(
+  const contextValues = Object.fromEntries(
     Object.entries(contextData).map(([key, v]) => {
       const value = (v as (typeof contextData)[keyof typeof contextData]).value;
       return [key, value];
     }),
+  ) as { [K in keyof C]: C[K] | ((p: Partial<C[K]>) => C[K]) };
+
+  const props = Object.fromEntries(
+    Object.entries(contextValues).map(([key, value]) => [
+      key,
+      typeof value === 'function' ? value({}) : value,
+    ]),
   ) as C;
 
   // If the node is a function, call it with the context values to get the node.
-  let currentNode = typeof node === 'function' ? node(contextValues) : node;
+  let currentNode = typeof node === 'function' ? node(props) : node;
 
   // Wrap the node with context providers.
   for (const [key, v] of Object.entries(contextData)) {

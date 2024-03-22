@@ -24,7 +24,6 @@ import PropsProvider from 'react-native-draggable-flatlist/src/context/propsCont
 import RefProvider, {
   useRefs,
 } from 'react-native-draggable-flatlist/src/context/refContext';
-import { useAutoScroll } from 'react-native-draggable-flatlist/src/hooks/useAutoScroll';
 import { useStableCallback } from 'react-native-draggable-flatlist/src/hooks/useStableCallback';
 import { DraggableFlatListProps } from 'react-native-draggable-flatlist/src/types';
 import { typedMemo } from 'react-native-draggable-flatlist/src/utils';
@@ -44,6 +43,7 @@ import Animated, {
 
 import RowItem from './RowItem';
 import { RenderItem, SetItemTmpListPositionFunction } from './types';
+import { useAutoScroll } from './useAutoScroll';
 
 type RNGHFlatListProps<T> = Animated.AnimateProps<
   FlatListProps<T> & {

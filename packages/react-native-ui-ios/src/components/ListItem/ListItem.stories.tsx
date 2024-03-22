@@ -24,6 +24,7 @@ import {
 import { calculateListPosition } from '@rnstudy/react-utils/src';
 import type { Meta } from '@rnstudy/storybook-rn-types';
 
+import { Button } from '../Button';
 import Select, { SelectOption } from '../Select';
 import Text from '../Text';
 
@@ -347,12 +348,12 @@ function DemoAppFlatListComponent(
 
   const [editing, setEditing] = useState(false);
 
-  useEffect(() => {
-    LayoutAnimation.configureNext({
-      ...LayoutAnimation.Presets.easeInEaseOut,
-      duration: 100,
-    });
-  }, [editing]);
+  // useEffect(() => {
+  //   LayoutAnimation.configureNext({
+  //     ...LayoutAnimation.Presets.easeInEaseOut,
+  //     duration: 100,
+  //   });
+  // }, [editing]);
 
   const renderItem = useCallback<RenderItem<(typeof data)[number]>>(
     ({ item, getIndex, drag, isActive, listPosition }) => (
@@ -364,7 +365,7 @@ function DemoAppFlatListComponent(
         listPosition={listPosition}
         title={`${item.key} (index ${getIndex()})`}
         fixedHeight
-        onGrabberDrag={drag}
+        onGrabberActive={drag}
       />
     ),
     [args, editing],
@@ -401,6 +402,15 @@ function DemoAppFlatListComponent(
           withFooter: false,
         }),
       }}
+      ListHeaderComponent={
+        <ListHeader
+          title="Items"
+          titleStyle="prominent"
+          accessories={
+            <Button label="Edit" onPress={() => setEditing((v) => !v)} />
+          }
+        />
+      }
       data={data}
       keyExtractor={(item, _index) => `${item.key}`}
       onDragBegin={() => {
@@ -478,7 +488,7 @@ export const InDraggableFlatList: Meta<typeof ListItem> = {
             dragActive={isActive}
             listPosition={calculateListPosition(getIndex() || 0, data.length)}
             title={`${item.key} (index ${getIndex()})`}
-            onGrabberDrag={drag}
+            onGrabberActive={drag}
           />
         )}
       />
@@ -537,7 +547,7 @@ export const InDraggableSectionedFlatList: Meta<typeof ListItem> = {
               dragActive={isActive}
               listPosition={calculateListPosition(getIndex() || 0, data.length)}
               title={`${item.key} (index ${getIndex()})`}
-              onGrabberDrag={drag}
+              onGrabberActive={drag}
             />
           )}
         />
@@ -576,7 +586,7 @@ export const InDraggableSectionedFlatList: Meta<typeof ListItem> = {
               dragActive={isActive}
               listPosition={calculateListPosition(getIndex() || 0, data.length)}
               title={`${item.key} (index ${getIndex()})`}
-              onGrabberDrag={drag}
+              onGrabberActive={drag}
             />
           )}
         />

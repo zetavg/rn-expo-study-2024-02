@@ -17,10 +17,13 @@ import {
 import Color from 'color';
 
 import { Icon, IconName } from '@rnstudy/react-icons';
+import { usePropsWithContextualDefaultValues } from '@rnstudy/react-utils';
 
 // import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
 import { useTextStyles, useUIColors } from '../../contexts';
 import Text from '../Text';
+
+import ButtonPropsContext from './ButtonPropsContext';
 
 // const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -33,7 +36,7 @@ type ControlSize = 'small' | 'regular' | 'medium' | 'large';
 
 type ButtonBorderShape = 'automatic' | 'capsule' | 'roundedRectangle';
 
-type Props = {
+export type Props = {
   label?: string;
   buttonStyle?: ButtonStyle;
   controlSize?: ControlSize;
@@ -67,20 +70,22 @@ const DEFAULT_HIT_SLOPS: { [k in ControlSize]: Insets } = {
   large: {},
 };
 
-export function Button({
-  label,
-  buttonStyle: buttonStyleFromProps = 'plain',
-  controlSize: controlSizeFromProps,
-  buttonBorderShape: buttonBorderShapeFromProps = 'automatic',
-  style,
-  loading,
-  icon,
-  disabled,
-  onPressIn,
-  onPressOut,
-  hitSlop: hitSlopFromProps,
-  ...props
-}: Props) {
+export function Button(props: Props) {
+  const {
+    label,
+    buttonStyle: buttonStyleFromProps = 'plain',
+    controlSize: controlSizeFromProps,
+    buttonBorderShape: buttonBorderShapeFromProps = 'automatic',
+    style,
+    loading,
+    icon,
+    disabled,
+    onPressIn,
+    onPressOut,
+    hitSlop: hitSlopFromProps,
+    ...restProps
+  } = usePropsWithContextualDefaultValues(props, ButtonPropsContext);
+
   const uiColors = useUIColors();
   const textStyles = useTextStyles();
 
@@ -257,7 +262,7 @@ export function Button({
 
   return (
     <Pressable
-      {...props}
+      {...restProps}
       disabled={disabled}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
