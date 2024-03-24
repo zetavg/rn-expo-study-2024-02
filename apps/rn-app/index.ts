@@ -5,6 +5,7 @@ import App from '@/App';
 import 'react-native-gesture-handler';
 
 if (
+  true ||
   process.env
     .STORYBOOK_MODE /* This will be replaced with babel-plugin-transform-define. See `babel.config.js` for details. */
 ) {
