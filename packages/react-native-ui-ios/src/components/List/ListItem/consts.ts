@@ -1,0 +1,3 @@
+export const LAYOUT_ANIMATION_DURATION = 200;
+
+export const GRABBER_CONTAINER_WIDTH = 50;

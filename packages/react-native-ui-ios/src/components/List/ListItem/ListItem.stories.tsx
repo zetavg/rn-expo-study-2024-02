@@ -24,15 +24,16 @@ import {
 import { calculateListPosition } from '@rnstudy/react-utils/src';
 import type { Meta } from '@rnstudy/storybook-rn-types';
 
-import { Button } from '../Button';
-import Select, { SelectOption } from '../Select';
-import Text from '../Text';
+import { Button } from '../../Button';
+import Select, { SelectOption } from '../../Select';
+import Text from '../../Text';
+import ListFooter from '../ListFooter';
+import ListHeader from '../ListHeader';
+import ListPadding from '../ListPadding';
+import { getListPadding } from '../utils';
 
-import ListFooter from './ListFooter';
-import ListHeader from './ListHeader';
-import ListItem, { getItemHeight } from './ListItem';
-import ListPadding from './ListPadding';
-import { getListPadding } from './utils';
+import ListItem from './ListItem';
+import { getListItemHeight } from './utils';
 
 const containerStyle: ViewStyle = {
   // marginTop: 16,
@@ -180,7 +181,7 @@ export const WithLongTitle: Meta<typeof ListItem> = {
   parameters: {
     containerBackground: 'grouped',
     containerStyle: {
-      maxWidth: 300,
+      width: 300,
       alignSelf: 'center',
     },
   },
@@ -194,7 +195,21 @@ export const WithLongTitleAndNavigationLink: Meta<typeof ListItem> = {
   parameters: {
     containerBackground: 'grouped',
     containerStyle: {
-      maxWidth: 300,
+      width: 300,
+      alignSelf: 'center',
+    },
+  },
+};
+
+export const WithLongSubtitleAndNavigationLink: Meta<typeof ListItem> = {
+  args: {
+    subtitle: 'This is a long title that will expand to multiple lines',
+    navigationLink: true,
+  },
+  parameters: {
+    containerBackground: 'grouped',
+    containerStyle: {
+      width: 300,
       alignSelf: 'center',
     },
   },
@@ -209,7 +224,7 @@ export const WithLongTitleAndDetailNavigationLink: Meta<typeof ListItem> = {
   parameters: {
     containerBackground: 'grouped',
     containerStyle: {
-      maxWidth: 300,
+      width: 300,
       alignSelf: 'center',
     },
   },
@@ -224,7 +239,7 @@ export const WithLongDetail: Meta<typeof ListItem> = {
   parameters: {
     containerBackground: 'grouped',
     containerStyle: {
-      maxWidth: 300,
+      width: 300,
       alignSelf: 'center',
     },
   },
@@ -239,7 +254,7 @@ export const WithLongTitleAndLongDetail: Meta<typeof ListItem> = {
   parameters: {
     containerBackground: 'grouped',
     containerStyle: {
-      maxWidth: 300,
+      width: 300,
       alignSelf: 'center',
     },
   },
@@ -252,8 +267,21 @@ export const WithEditButton: Meta<typeof ListItem> = {
   },
 };
 
+export const WithCustomChildren: Meta<typeof ListItem> = {
+  args: {
+    title: undefined,
+    navigationLink: false,
+    children: (
+      <View style={{ borderColor: '#555', borderWidth: 1, borderRadius: 8 }}>
+        <Text>This is the custom children content.</Text>
+      </View>
+    ),
+  },
+};
+
 export const ListPosition: Meta<typeof ListItem> = {
   args: {
+    title: undefined,
     subtitle: undefined,
     navigationLink: true,
     onPress: () => {},
@@ -271,6 +299,19 @@ export const ListPosition: Meta<typeof ListItem> = {
       </View>
     </View>
   ),
+};
+
+export const ListPositionWithCustomChildren: Meta<typeof ListItem> = {
+  args: {
+    title: undefined,
+    navigationLink: false,
+    children: (
+      <View style={{ borderColor: '#555', borderWidth: 1, borderRadius: 8 }}>
+        <Text>This is the custom children content.</Text>
+      </View>
+    ),
+  },
+  render: ListPosition.render,
 };
 
 export const InFlatList: Meta<typeof ListItem> = {
@@ -332,8 +373,10 @@ export const InAppDraggableFlatList: Meta<typeof ListItem> = {
   args: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...({ itemCount: 30 } as any),
-    subtitle: undefined,
-    navigationLink: true,
+    subtitle:
+      'This is the subtitle, this is the subtitle, this is the subtitle, this is the subtitle, this is the subtitle',
+    compact: true,
+    navigationLink: false,
     onPress: () => {},
   },
   render: (args) => {
@@ -347,13 +390,19 @@ function DemoAppFlatListComponent(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const itemCount: number = (args as any).itemCount;
 
-  const [data, setData] = useState<{ key: number }[]>([]);
+  const [data, setData] = useState<({ key: number } & { editing?: boolean })[]>(
+    [],
+  );
 
   useEffect(() => {
     setData(Array.from({ length: itemCount }, (_, i) => ({ key: i })));
   }, [itemCount]);
 
   const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+    setData((prevData) => prevData.map((d) => ({ ...d, editing })));
+  }, [editing]);
 
   // useEffect(() => {
   //   LayoutAnimation.configureNext({
@@ -366,15 +415,18 @@ function DemoAppFlatListComponent(
     ({ item, getIndex, drag, isActive, listPosition }) => (
       <ListItem
         {...args}
-        showGrabber={editing}
+        // showGrabber={editing}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        showGrabber={item.editing}
         dragActive={isActive}
-        // onPress={() => setEditing((v) => !v)}
-        onPress={undefined}
+        onPress={() => setEditing((v) => !v)}
+        // onPress={editing ? undefined : () => {}}
+        // onPress={undefined}
         listPosition={listPosition}
         title={`${item.key} (index ${getIndex()})`}
         fixedHeight
         onGrabberActive={drag}
-        editButton={editing ? 'remove' : undefined}
+        // editButton={editing ? 'remove' : undefined}
         onEditButtonPress={() => {
           Alert.alert(`Remove ${item.key}?`, undefined, [
             {
@@ -401,23 +453,22 @@ function DemoAppFlatListComponent(
         }}
       />
     ),
-    [args, editing],
+    [args],
   );
 
   const windowDimensions = useWindowDimensions();
-  const uiScale = Math.max(windowDimensions.fontScale, 1);
 
   const getItemLayout = useCallback(
     (_: unknown, index: number) => {
-      const height = getItemHeight({
+      const height = getListItemHeight({
         subtitle: args.subtitle,
         compact: args.compact,
-        uiScale,
+        fontScale: windowDimensions.fontScale,
       });
 
       return { length: height, offset: height * index, index };
     },
-    [args.compact, args.subtitle, uiScale],
+    [args.compact, args.subtitle, windowDimensions.fontScale],
   );
 
   return (

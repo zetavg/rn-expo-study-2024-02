@@ -477,6 +477,7 @@ function DraggableFlatListInner<T>(props: Props<T>) {
           )}
           <AnimatedFlatList
             {...props}
+            windowSize={props.windowSize ?? 5} // Use a smaller default windowSize (default is 21)
             style={[styles.flatList, props.style]}
             data={props.data}
             onViewableItemsChanged={onViewableItemsChanged}

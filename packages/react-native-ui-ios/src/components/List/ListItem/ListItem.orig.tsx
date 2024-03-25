@@ -32,19 +32,19 @@ import {
   withPropDefaultValuesContext,
 } from '@rnstudy/react-utils';
 
-import { useColors, useTextStyles, useUIColors } from '../../contexts';
-import { Colors } from '../../tokens/colors/types';
-import { textStyles } from '../../tokens/text-styles';
-import BackgroundColor from '../BackgroundColor';
-import Select, { SelectPropsContext } from '../Select';
-import Text, { TextPropsContext } from '../Text';
+import { useColors, useTextStyles, useUIColors } from '../../../contexts';
+import { Colors } from '../../../tokens/colors/types';
+import { textStyles } from '../../../tokens/text-styles';
+import BackgroundColor from '../../BackgroundColor';
+import Select, { SelectPropsContext } from '../../Select';
+import Text, { TextPropsContext } from '../../Text';
 
-import AddButton from './AddButton';
-import DrillInIcon from './DrillInIcon';
-import GrabberIcon from './GrabberIcon';
-import RemoveButton from './RemoveButton';
-import SelectedButton from './SelectedButton';
-import UnselectedButton from './UnselectedButton';
+import AddButton from './icons/AddButton';
+import DrillInIcon from './icons/DrillInIcon';
+import GrabberIcon from './icons/GrabberIcon';
+import RemoveButton from './icons/RemoveButton';
+import SelectedButton from './icons/SelectedButton';
+import UnselectedButton from './icons/UnselectedButton';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const LAYOUT_ANIMATION_DURATION = 200;
