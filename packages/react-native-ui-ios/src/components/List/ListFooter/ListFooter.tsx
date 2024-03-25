@@ -6,11 +6,11 @@ import {
   withPropDefaultValuesContext,
 } from '@rnstudy/react-utils';
 
-import Text, { TextPropsContext } from '../Text';
+import Text, { TextPropsContext } from '../../Text';
 
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
-type Props = {
+export type Props = {
   listStyle?: ListStyle;
   text?:
     | string

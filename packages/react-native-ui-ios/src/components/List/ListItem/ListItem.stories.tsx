@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   FlatList,
@@ -18,21 +18,25 @@ import * as Haptics from 'expo-haptics';
 
 import { Icon } from '@rnstudy/react-icons';
 import {
+  DragEndParams,
   FlatList as AppFlatList,
   RenderItem,
 } from '@rnstudy/react-native-lists';
 import { calculateListPosition } from '@rnstudy/react-utils/src';
 import type { Meta } from '@rnstudy/storybook-rn-types';
 
-import { Button } from '../Button';
-import Select, { SelectOption } from '../Select';
-import Text from '../Text';
+import { Button } from '../../Button';
+import Select, { SelectOption } from '../../Select';
+import Text from '../../Text';
+import ListFooter from '../ListFooter';
+import ListHeader from '../ListHeader';
+import ListPadding from '../ListPadding';
+import { getListPadding } from '../utils';
 
-import ListFooter from './ListFooter';
-import ListHeader from './ListHeader';
-import ListItem, { getItemHeight } from './ListItem';
-import ListPadding from './ListPadding';
-import { getListPadding } from './utils';
+import ListItem from './ListItem';
+import ListItemPropsContext from './ListItemPropsContext';
+import { getListItemHeight } from './utils';
+import { ListItemProps } from '.';
 
 const containerStyle: ViewStyle = {
   // marginTop: 16,
@@ -180,7 +184,7 @@ export const WithLongTitle: Meta<typeof ListItem> = {
   parameters: {
     containerBackground: 'grouped',
     containerStyle: {
-      maxWidth: 300,
+      width: 300,
       alignSelf: 'center',
     },
   },
@@ -194,7 +198,21 @@ export const WithLongTitleAndNavigationLink: Meta<typeof ListItem> = {
   parameters: {
     containerBackground: 'grouped',
     containerStyle: {
-      maxWidth: 300,
+      width: 300,
+      alignSelf: 'center',
+    },
+  },
+};
+
+export const WithLongSubtitleAndNavigationLink: Meta<typeof ListItem> = {
+  args: {
+    subtitle: 'This is a long title that will expand to multiple lines',
+    navigationLink: true,
+  },
+  parameters: {
+    containerBackground: 'grouped',
+    containerStyle: {
+      width: 300,
       alignSelf: 'center',
     },
   },
@@ -209,7 +227,7 @@ export const WithLongTitleAndDetailNavigationLink: Meta<typeof ListItem> = {
   parameters: {
     containerBackground: 'grouped',
     containerStyle: {
-      maxWidth: 300,
+      width: 300,
       alignSelf: 'center',
     },
   },
@@ -224,7 +242,7 @@ export const WithLongDetail: Meta<typeof ListItem> = {
   parameters: {
     containerBackground: 'grouped',
     containerStyle: {
-      maxWidth: 300,
+      width: 300,
       alignSelf: 'center',
     },
   },
@@ -239,7 +257,7 @@ export const WithLongTitleAndLongDetail: Meta<typeof ListItem> = {
   parameters: {
     containerBackground: 'grouped',
     containerStyle: {
-      maxWidth: 300,
+      width: 300,
       alignSelf: 'center',
     },
   },
@@ -252,8 +270,21 @@ export const WithEditButton: Meta<typeof ListItem> = {
   },
 };
 
+export const WithCustomChildren: Meta<typeof ListItem> = {
+  args: {
+    title: undefined,
+    navigationLink: false,
+    children: (
+      <View style={{ borderColor: '#555', borderWidth: 1, borderRadius: 8 }}>
+        <Text>This is the custom children content.</Text>
+      </View>
+    ),
+  },
+};
+
 export const ListPosition: Meta<typeof ListItem> = {
   args: {
+    title: undefined,
     subtitle: undefined,
     navigationLink: true,
     onPress: () => {},
@@ -271,6 +302,19 @@ export const ListPosition: Meta<typeof ListItem> = {
       </View>
     </View>
   ),
+};
+
+export const ListPositionWithCustomChildren: Meta<typeof ListItem> = {
+  args: {
+    title: undefined,
+    navigationLink: false,
+    children: (
+      <View style={{ borderColor: '#555', borderWidth: 1, borderRadius: 8 }}>
+        <Text>This is the custom children content.</Text>
+      </View>
+    ),
+  },
+  render: ListPosition.render,
 };
 
 export const InFlatList: Meta<typeof ListItem> = {
@@ -332,8 +376,10 @@ export const InAppDraggableFlatList: Meta<typeof ListItem> = {
   args: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...({ itemCount: 30 } as any),
-    subtitle: undefined,
-    navigationLink: true,
+    subtitle:
+      'This is the subtitle, this is the subtitle, this is the subtitle, this is the subtitle, this is the subtitle',
+    compact: true,
+    navigationLink: false,
     onPress: () => {},
   },
   render: (args) => {
@@ -356,25 +402,38 @@ function DemoAppFlatListComponent(
   const [editing, setEditing] = useState(false);
 
   // useEffect(() => {
+  //   setData((prevData) => prevData.map((d) => ({ ...d, editing })));
+  // }, [editing]);
+
+  // useEffect(() => {
   //   LayoutAnimation.configureNext({
   //     ...LayoutAnimation.Presets.easeInEaseOut,
   //     duration: 100,
   //   });
   // }, [editing]);
 
+  const keyExtractor = useCallback(
+    (item: (typeof data)[number], _index: number) => {
+      return `${item.key}`;
+    },
+    [],
+  );
+
   const renderItem = useCallback<RenderItem<(typeof data)[number]>>(
     ({ item, getIndex, drag, isActive, listPosition }) => (
       <ListItem
         {...args}
-        showGrabber={editing}
+        // showGrabber={editing}
+
         dragActive={isActive}
-        // onPress={() => setEditing((v) => !v)}
-        onPress={undefined}
+        onPress={() => setEditing((v) => !v)}
+        // onPress={editing ? undefined : () => {}}
+        // onPress={undefined}
         listPosition={listPosition}
         title={`${item.key} (index ${getIndex()})`}
         fixedHeight
-        onGrabberActive={drag}
-        editButton={editing ? 'remove' : undefined}
+        onGrabberHold={drag}
+        // editButton={editing ? 'remove' : undefined}
         onEditButtonPress={() => {
           Alert.alert(`Remove ${item.key}?`, undefined, [
             {
@@ -401,69 +460,91 @@ function DemoAppFlatListComponent(
         }}
       />
     ),
-    [args, editing],
+    [args],
   );
 
   const windowDimensions = useWindowDimensions();
-  const uiScale = Math.max(windowDimensions.fontScale, 1);
 
   const getItemLayout = useCallback(
     (_: unknown, index: number) => {
-      const height = getItemHeight({
+      const height = getListItemHeight({
         subtitle: args.subtitle,
         compact: args.compact,
-        uiScale,
+        fontScale: windowDimensions.fontScale,
       });
 
       return { length: height, offset: height * index, index };
     },
-    [args.compact, args.subtitle, uiScale],
+    [args.compact, args.subtitle, windowDimensions.fontScale],
+  );
+
+  const handleDragEnd = useCallback(
+    ({ data: reorderedData }: DragEndParams<(typeof data)[number]>) => {
+      setData(reorderedData);
+    },
+    [],
+  );
+
+  const contentContainerStyle = useMemo<
+    React.ComponentProps<typeof AppFlatList>['containerStyle']
+  >(
+    () => ({
+      paddingTop: getListPadding({
+        listStyle: args.listStyle,
+        position: 'top',
+        withHeader: false,
+        first: true,
+      }),
+      paddingBottom: getListPadding({
+        listStyle: args.listStyle,
+        position: 'bottom',
+        withFooter: false,
+      }),
+    }),
+    [args.listStyle],
   );
 
   return (
-    <AppFlatList
-      contentContainerStyle={{
-        paddingTop: getListPadding({
-          listStyle: args.listStyle,
-          position: 'top',
-          withHeader: false,
-          first: true,
+    <ListItemPropsContext.Provider
+      value={useMemo(
+        () => ({
+          showGrabber: editing,
+          disableOnPress: editing,
+          hideTrailingContents: editing,
+          editButton: editing ? 'remove' : undefined,
         }),
-        paddingBottom: getListPadding({
-          listStyle: args.listStyle,
-          position: 'bottom',
-          withFooter: false,
-        }),
-      }}
-      ListHeaderComponent={
-        <ListHeader
-          title="Items"
-          titleStyle="prominent"
-          accessories={
-            <Button
-              label={editing ? 'Done' : 'Edit'}
-              onPress={() => setEditing((v) => !v)}
-            />
-          }
-        />
-      }
-      data={data}
-      keyExtractor={(item, _index) => `${item.key}`}
-      onDragBegin={() => {
-        // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        // Haptics.selectionAsync();
-      }}
-      onPlaceholderIndexChange={() => {
-        // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }}
-      onDragEnd={({ data: reorderedData }) => {
-        // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        setData(reorderedData);
-      }}
-      removeClippedSubviews={true}
-      renderItem={renderItem}
-      getItemLayout={getItemLayout}
-    />
+        [editing],
+      )}
+    >
+      <AppFlatList
+        contentContainerStyle={contentContainerStyle}
+        ListHeaderComponent={
+          <ListHeader
+            title="Items"
+            titleStyle="prominent"
+            accessories={
+              <Button
+                label={editing ? 'Done' : 'Edit'}
+                onPress={() => setEditing((v) => !v)}
+              />
+            }
+          />
+        }
+        data={data}
+        keyExtractor={keyExtractor}
+        // onDragBegin={() => {
+        //   // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        //   // Haptics.selectionAsync();
+        // }}
+        // onPlaceholderIndexChange={() => {
+        //   // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        // }}
+        onDragEnd={handleDragEnd}
+        removeClippedSubviews={true}
+        renderItem={renderItem}
+        getItemLayout={getItemLayout}
+      />
+    </ListItemPropsContext.Provider>
   );
 }
 
@@ -524,7 +605,7 @@ export const InDraggableFlatList: Meta<typeof ListItem> = {
             dragActive={isActive}
             listPosition={calculateListPosition(getIndex() || 0, data.length)}
             title={`${item.key} (index ${getIndex()})`}
-            onGrabberActive={drag}
+            onGrabberHold={drag}
           />
         )}
       />
@@ -583,7 +664,7 @@ export const InDraggableSectionedFlatList: Meta<typeof ListItem> = {
               dragActive={isActive}
               listPosition={calculateListPosition(getIndex() || 0, data.length)}
               title={`${item.key} (index ${getIndex()})`}
-              onGrabberActive={drag}
+              onGrabberHold={drag}
             />
           )}
         />
@@ -622,7 +703,7 @@ export const InDraggableSectionedFlatList: Meta<typeof ListItem> = {
               dragActive={isActive}
               listPosition={calculateListPosition(getIndex() || 0, data.length)}
               title={`${item.key} (index ${getIndex()})`}
-              onGrabberActive={drag}
+              onGrabberHold={drag}
             />
           )}
         />

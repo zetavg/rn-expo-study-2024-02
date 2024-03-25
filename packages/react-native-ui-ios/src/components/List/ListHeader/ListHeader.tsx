@@ -7,13 +7,13 @@ import {
   withPropDefaultValuesContext,
 } from '@rnstudy/react-utils';
 
-import { Button } from '../Button';
-import ButtonPropsContext from '../Button/ButtonPropsContext';
-import Text, { TextPropsContext } from '../Text';
+import { Button } from '../../Button';
+import ButtonPropsContext from '../../Button/ButtonPropsContext';
+import Text, { TextPropsContext } from '../../Text';
 
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
-type Props = {
+export type Props = {
   listStyle?: ListStyle;
   title?:
     | string

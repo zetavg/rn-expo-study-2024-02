@@ -1,7 +1,7 @@
 import React from 'react';
 import Svg, { Path } from 'react-native-svg';
 
-export function DrillInIcon({
+export const DrillInIcon = React.memo(function DrillInIcon({
   fill,
   style,
 }: {
@@ -16,6 +16,7 @@ export function DrillInIcon({
       />
     </Svg>
   );
-}
+});
+DrillInIcon.displayName = 'DrillInIcon';
 
 export default DrillInIcon;
