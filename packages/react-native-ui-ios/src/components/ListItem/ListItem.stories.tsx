@@ -245,6 +245,13 @@ export const WithLongTitleAndLongDetail: Meta<typeof ListItem> = {
   },
 };
 
+export const WithEditButton: Meta<typeof ListItem> = {
+  args: {
+    editButton: 'remove',
+    navigationLink: false,
+  },
+};
+
 export const ListPosition: Meta<typeof ListItem> = {
   args: {
     subtitle: undefined,
@@ -361,11 +368,37 @@ function DemoAppFlatListComponent(
         {...args}
         showGrabber={editing}
         dragActive={isActive}
-        onPress={() => setEditing((v) => !v)}
+        // onPress={() => setEditing((v) => !v)}
+        onPress={undefined}
         listPosition={listPosition}
         title={`${item.key} (index ${getIndex()})`}
         fixedHeight
         onGrabberActive={drag}
+        editButton={editing ? 'remove' : undefined}
+        onEditButtonPress={() => {
+          Alert.alert(`Remove ${item.key}?`, undefined, [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+              isPreferred: false,
+              onPress: () => {},
+            },
+            {
+              text: 'Remove',
+              style: 'destructive',
+              isPreferred: true,
+              onPress: () => {
+                LayoutAnimation.configureNext({
+                  ...LayoutAnimation.Presets.easeInEaseOut,
+                  duration: 100,
+                });
+                setData((prevData) =>
+                  prevData.filter((prevItem) => prevItem.key !== item.key),
+                );
+              },
+            },
+          ]);
+        }}
       />
     ),
     [args, editing],
@@ -407,7 +440,10 @@ function DemoAppFlatListComponent(
           title="Items"
           titleStyle="prominent"
           accessories={
-            <Button label="Edit" onPress={() => setEditing((v) => !v)} />
+            <Button
+              label={editing ? 'Done' : 'Edit'}
+              onPress={() => setEditing((v) => !v)}
+            />
           }
         />
       }
