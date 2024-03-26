@@ -1,0 +1,5 @@
+export const LAYOUT_ANIMATION_DURATION = 200;
+
+export const EDIT_BUTTON_CONTAINER_WIDTH = 36;
+export const CONTENT_CONTAINER_GAP = 4;
+export const GRABBER_CONTAINER_WIDTH = 50;

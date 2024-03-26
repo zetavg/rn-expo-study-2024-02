@@ -1,2 +1,2 @@
 export { FlatList } from './FlatList';
-export type { RenderItem } from './types';
+export type { DragEndParams, RenderItem, RenderItemParams } from './types';

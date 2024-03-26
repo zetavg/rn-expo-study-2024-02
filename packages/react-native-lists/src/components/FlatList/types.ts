@@ -11,3 +11,8 @@ export type RenderItem<T> = (params: RenderItemParams<T>) => React.ReactNode;
 export type SetItemTmpListPositionFunction = (
   p: 'first' | 'last' | 'middle' | null,
 ) => void;
+
+export type {
+  DragEndParams,
+  DraggableFlatListProps,
+} from 'react-native-draggable-flatlist/src/types';

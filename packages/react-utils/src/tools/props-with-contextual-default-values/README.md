@@ -59,6 +59,7 @@ First, you need to define a context for providing the contextual default props o
 
 ```tsx
 export const TextPropsContext = createContext<Partial<Props>>({});
+TextPropsContext.displayName = 'TextPropsContext';
 ```
 
 Then, modify your `Text` component to use the `useContextualDefaultProps` hook:
