@@ -1,8 +1,5 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  ImageBackground,
-  LayoutChangeEvent,
-  LayoutRectangle,
   Platform,
   ScrollView,
   StyleSheet,
@@ -10,7 +7,6 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ReactRenderer } from '@storybook/react';
 import { PartialStoryFn } from '@storybook/types';
 
@@ -19,9 +15,10 @@ import {
   BackgroundColor,
   SeparatorColor,
   Text,
-  UIContextProvider,
 } from '@rnstudy/react-native-ui';
 import { Parameters } from '@rnstudy/storybook-rn-types';
+
+import StoryContentContainer from './StoryContentContainer';
 
 export function StoryContainer({
   story,
@@ -56,274 +53,107 @@ export function StoryContainer({
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <UIContextProvider colorScheme={colorScheme} platform={uiPlatform}>
-        <StoryContainerContent
-          story={story}
-          parameters={parameters}
-          darkMode={darkMode}
-          showBackground={showBackground}
-          useGroupedBackground={useGroupedBackground}
-          showSpecOverlay={showSpecOverlay}
-          showBoundaryLines={showBoundaryLines}
-        />
+    <View style={styles.rootContainer}>
+      <StoryContentContainer
+        story={story}
+        parameters={parameters}
+        uiPlatform={uiPlatform || AVAILABLE_UI_PLATFORMS[0]}
+        colorScheme={colorScheme}
+        showBackground={showBackground}
+        useGroupedBackground={useGroupedBackground}
+        showSpecOverlay={showSpecOverlay}
+        showBoundaryLines={showBoundaryLines}
+      />
 
-        <BackgroundColor>
-          {(backgroundColor) => (
-            <SeparatorColor opaque>
-              {(separatorColor) => (
-                <>
-                  <ScrollView
-                    horizontal
-                    style={[
-                      styles.previewControls,
-                      { borderColor: separatorColor },
-                      { backgroundColor },
-                    ]}
-                    contentContainerStyle={styles.previewControlsContent}
-                  >
-                    {AVAILABLE_UI_PLATFORMS.length > 1 && (
-                      <View style={styles.previewControlGroup}>
-                        <Text style={[styles.previewControlLabelText]}>
-                          Altr. P.
-                        </Text>
-                        <Switch
-                          style={styles.previewControlSwitch}
-                          value={useAlternativePlatform}
-                          onValueChange={setUseAlternativePlatform}
-                        />
-                      </View>
-                    )}
-                    {!!specOverlay && (
-                      <View style={styles.previewControlGroup}>
-                        <Text style={[styles.previewControlLabelText]}>
-                          Spec Overlay
-                        </Text>
-                        <Switch
-                          style={styles.previewControlSwitch}
-                          value={showSpecOverlay}
-                          onValueChange={setShowSpecOverlay}
-                        />
-                      </View>
-                    )}
-
-                    <View style={styles.previewControlGroup}>
-                      <Text style={[styles.previewControlLabelText]}>
-                        Dark Mode
-                      </Text>
-                      <Switch
-                        style={styles.previewControlSwitch}
-                        value={darkMode}
-                        onValueChange={setDarkMode}
-                      />
-                    </View>
-
-                    <View style={styles.previewControlGroup}>
-                      <Text style={[styles.previewControlLabelText]}>BG</Text>
-                      <Switch
-                        style={styles.previewControlSwitch}
-                        value={showBackground}
-                        onValueChange={setShowBackground}
-                      />
-                    </View>
-
-                    {showBackground && (
-                      <View style={styles.previewControlGroup}>
-                        <Text style={[styles.previewControlLabelText]}>
-                          BG Grouped
-                        </Text>
-                        <Switch
-                          style={styles.previewControlSwitch}
-                          value={useGroupedBackground}
-                          onValueChange={setUseGroupedBackground}
-                        />
-                      </View>
-                    )}
-
-                    <View style={styles.previewControlGroup}>
-                      <Text style={[styles.previewControlLabelText]}>
-                        Boundary L.
-                      </Text>
-                      <Switch
-                        style={styles.previewControlSwitch}
-                        value={showBoundaryLines}
-                        onValueChange={setShowBoundaryLines}
-                      />
-                    </View>
-                  </ScrollView>
-                </>
-              )}
-            </SeparatorColor>
-          )}
-        </BackgroundColor>
-      </UIContextProvider>
-    </GestureHandlerRootView>
-  );
-}
-
-function StoryContainerContent({
-  story,
-  parameters,
-  darkMode,
-  showBackground,
-  useGroupedBackground,
-  showSpecOverlay,
-  showBoundaryLines,
-}: {
-  story: PartialStoryFn<ReactRenderer>;
-  parameters: Parameters;
-  darkMode: boolean;
-  showBackground: boolean;
-  useGroupedBackground: boolean;
-  showSpecOverlay: boolean;
-  showBoundaryLines: boolean;
-}) {
-  const {
-    storyContainer,
-    containerStyle,
-    containerVerticalAlign,
-    specOverlay,
-  } = parameters;
-
-  const [containerLayout, setContainerLayout] = useState<LayoutRectangle>();
-  const handleContainerLayout = useCallback((event: LayoutChangeEvent) => {
-    setContainerLayout(event.nativeEvent.layout);
-  }, []);
-
-  const Story = story;
-
-  const contentContainerStyle = [
-    styles.previewContentContainer,
-    containerVerticalAlign === 'top' &&
-      styles.previewContentContainer_withVerticalAlignTop,
-  ];
-
-  const content =
-    storyContainer === 'basic' ? (
-      <Story />
-    ) : (
-      <ScrollView
-        alwaysBounceVertical={showBoundaryLines || false}
-        style={styles.previewContent}
-        contentContainerStyle={contentContainerStyle}
-      >
-        <ScrollView
-          horizontal
-          alwaysBounceHorizontal={showBoundaryLines || false}
-          style={styles.previewContent}
-          contentContainerStyle={contentContainerStyle}
-        >
-          <View
-            style={[
-              styles.previewWrapper,
-              showBoundaryLines && styles.previewWrapper_withBoundaryLines,
-              showBoundaryLines &&
-                containerVerticalAlign === 'top' &&
-                styles.previewWrapper_withBoundaryLines_verticalAlignTop,
-              containerStyle,
-            ]}
-            onLayout={handleContainerLayout}
-          >
-            <Story />
-            {!!specOverlay && showSpecOverlay && (
-              <View style={styles.specOverlayContainer}>{specOverlay}</View>
-            )}
-          </View>
-
-          {showBoundaryLines && (
-            <>
-              <View
-                style={[
-                  styles.horizontalBoundaryLine,
-                  {
-                    top:
-                      (containerLayout?.y || 0) -
-                      styles.horizontalBoundaryLine.height,
-                  },
-                ]}
-              />
-              <View
-                style={[
-                  styles.horizontalBoundaryLine,
-                  {
-                    top:
-                      (containerLayout?.y || 0) +
-                      (containerLayout?.height || 0),
-                  },
-                ]}
-              />
-              <View
-                style={[
-                  styles.verticalBoundaryLine,
-                  {
-                    left:
-                      (containerLayout?.x || 0) -
-                      styles.verticalBoundaryLine.width,
-                  },
-                ]}
-              />
-              <View
-                style={[
-                  styles.verticalBoundaryLine,
-                  {
-                    left:
-                      (containerLayout?.x || 0) + (containerLayout?.width || 0),
-                  },
-                ]}
-              />
-
-              <View
-                style={[
-                  styles.boundaryLinesLabelContainer,
-                  {
-                    top:
-                      (containerLayout?.y || 0) +
-                      (containerLayout?.height || 0),
-                  },
-                ]}
-              >
-                <View style={styles.boundaryLinesLabelContent}>
-                  <Text style={styles.boundaryLinesLabelContentText}>
-                    {containerLayout?.width?.toLocaleString(undefined, {
-                      maximumFractionDigits: 4,
-                    }) || 'unknown'}{' '}
-                    ×{' '}
-                    {containerLayout?.height?.toLocaleString(undefined, {
-                      maximumFractionDigits: 4,
-                    }) || 'unknown'}
-                  </Text>
-                </View>
-              </View>
-            </>
-          )}
-        </ScrollView>
-      </ScrollView>
-    );
-
-  if (showBackground) {
-    return (
-      <BackgroundColor grouped={useGroupedBackground}>
+      <BackgroundColor>
         {(backgroundColor) => (
-          <View style={[styles.rootContainer, { backgroundColor }]}>
-            {content}
-          </View>
+          <SeparatorColor opaque>
+            {(separatorColor) => (
+              <>
+                <ScrollView
+                  horizontal
+                  style={[
+                    styles.previewControls,
+                    { borderColor: separatorColor },
+                    { backgroundColor },
+                  ]}
+                  contentContainerStyle={styles.previewControlsContent}
+                >
+                  {AVAILABLE_UI_PLATFORMS.length > 1 && (
+                    <View style={styles.previewControlGroup}>
+                      <Text style={[styles.previewControlLabelText]}>
+                        Altr. P.
+                      </Text>
+                      <Switch
+                        style={styles.previewControlSwitch}
+                        value={useAlternativePlatform}
+                        onValueChange={setUseAlternativePlatform}
+                      />
+                    </View>
+                  )}
+                  {!!specOverlay && (
+                    <View style={styles.previewControlGroup}>
+                      <Text style={[styles.previewControlLabelText]}>
+                        Spec Overlay
+                      </Text>
+                      <Switch
+                        style={styles.previewControlSwitch}
+                        value={showSpecOverlay}
+                        onValueChange={setShowSpecOverlay}
+                      />
+                    </View>
+                  )}
+
+                  <View style={styles.previewControlGroup}>
+                    <Text style={[styles.previewControlLabelText]}>
+                      Dark Mode
+                    </Text>
+                    <Switch
+                      style={styles.previewControlSwitch}
+                      value={darkMode}
+                      onValueChange={setDarkMode}
+                    />
+                  </View>
+
+                  <View style={styles.previewControlGroup}>
+                    <Text style={[styles.previewControlLabelText]}>BG</Text>
+                    <Switch
+                      style={styles.previewControlSwitch}
+                      value={showBackground}
+                      onValueChange={setShowBackground}
+                    />
+                  </View>
+
+                  {showBackground && (
+                    <View style={styles.previewControlGroup}>
+                      <Text style={[styles.previewControlLabelText]}>
+                        BG Grouped
+                      </Text>
+                      <Switch
+                        style={styles.previewControlSwitch}
+                        value={useGroupedBackground}
+                        onValueChange={setUseGroupedBackground}
+                      />
+                    </View>
+                  )}
+
+                  <View style={styles.previewControlGroup}>
+                    <Text style={[styles.previewControlLabelText]}>
+                      Boundary L.
+                    </Text>
+                    <Switch
+                      style={styles.previewControlSwitch}
+                      value={showBoundaryLines}
+                      onValueChange={setShowBoundaryLines}
+                    />
+                  </View>
+                </ScrollView>
+              </>
+            )}
+          </SeparatorColor>
         )}
       </BackgroundColor>
-    );
-  }
-
-  return (
-    <ImageBackground
-      source={
-        darkMode
-          ? require('./images/transparent-dark.png')
-          : require('./images/transparent-light.png')
-      }
-      imageStyle={styles.transparentBackgroundImage}
-      style={[styles.rootContainer]}
-    >
-      {content}
-    </ImageBackground>
+    </View>
   );
 }
 
@@ -331,29 +161,6 @@ const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
     overflow: 'hidden',
-  },
-  previewContent: {
-    flex: 1,
-    overflow: Platform.OS === 'ios' ? 'visible' : 'scroll',
-  },
-  previewContentContainer: {
-    flexGrow: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'visible',
-  },
-  previewContentContainer_withVerticalAlignTop: {
-    justifyContent: 'flex-start',
-  },
-  previewWrapper: {
-    alignSelf: 'center',
-  },
-  previewWrapper_withBoundaryLines: {
-    marginVertical: 40,
-  },
-  previewWrapper_withBoundaryLines_verticalAlignTop: {
-    marginTop: 0,
   },
   previewControls: {
     borderTopWidth: StyleSheet.hairlineWidth,
@@ -380,50 +187,6 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: { transform: [{ scale: 0.8 }] },
     }),
-  },
-  transparentBackgroundImage: {
-    resizeMode: 'repeat',
-  },
-  verticalBoundaryLine: {
-    position: 'absolute',
-    top: -9999,
-    width: 1,
-    height: 9999999,
-    backgroundColor: '#0C8CE9',
-  },
-  horizontalBoundaryLine: {
-    position: 'absolute',
-    width: 9999999,
-    height: 1,
-    backgroundColor: '#0C8CE9',
-  },
-  boundaryLinesLabelContainer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  boundaryLinesLabelContent: {
-    backgroundColor: '#0C8CE9',
-    borderRadius: 8,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  boundaryLinesLabelContentText: {
-    color: 'white',
-    fontSize: 12,
-    lineHeight: 14,
-    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-  },
-  specOverlayContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    opacity: 0.5,
   },
 });
 

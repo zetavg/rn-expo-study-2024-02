@@ -11,6 +11,7 @@ import {
   StyleSheet,
   TouchableHighlight,
   TouchableOpacity,
+  useWindowDimensions,
   View,
   ViewStyle,
 } from 'react-native';
@@ -34,7 +35,11 @@ type ButtonStyle = 'plain' | 'gray' | 'tinted' | 'filled';
 
 type ControlSize = 'small' | 'regular' | 'medium' | 'large';
 
-type ButtonBorderShape = 'automatic' | 'capsule' | 'roundedRectangle';
+type ButtonBorderShape =
+  | 'automatic'
+  | 'capsule'
+  | 'roundedRectangle'
+  | 'rectangle';
 
 export type Props = {
   label?: string;
@@ -88,6 +93,7 @@ export function Button(props: Props) {
 
   const uiColors = useUIColors();
   const textStyles = useTextStyles();
+  const windowDimensions = useWindowDimensions();
 
   const buttonStyle = buttonStyleFromProps;
 
@@ -112,7 +118,8 @@ export function Button(props: Props) {
   })();
 
   const textStyle = controlSize === 'large' ? 'body' : 'subheadline';
-  const fontSize = textStyles[textStyle].fontSize;
+  const fontSize =
+    (textStyles[textStyle].fontSize || 0) * windowDimensions.fontScale;
 
   const backgroundColor = (() => {
     if (disabled && buttonStyle !== 'plain') {
@@ -276,7 +283,9 @@ export function Button(props: Props) {
         },
         buttonBorderShape === 'capsule'
           ? styles.capsule
-          : styles.roundedRectangle,
+          : buttonBorderShape === 'rectangle'
+            ? styles.rectangle
+            : styles.roundedRectangle,
         buttonStyle === 'plain' &&
           state.pressed &&
           styles.container_borderless_pressed,
@@ -294,8 +303,9 @@ export function Button(props: Props) {
           name={icon}
           size={(fontSize || 0) + 2}
           color={color}
-          ml={label ? 0 : -6}
-          mr={label ? 2 : -6}
+          ml={label ? -3 : -((fontSize || 0) * 0.28)}
+          mr={label ? 2 : -((fontSize || 0) * 0.28)}
+          mv={label ? 0 : (fontSize || 0) * 0.1}
           opacity={contentOpacity}
         />
       )}
@@ -363,6 +373,9 @@ const styles = StyleSheet.create({
   },
   capsule: {
     borderRadius: 9999,
+  },
+  rectangle: {
+    borderRadius: 8,
   },
   roundedRectangle: {
     borderRadius: 12,

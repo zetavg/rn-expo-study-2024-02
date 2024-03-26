@@ -1,15 +1,20 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import Color from 'color';
 import { BlurView } from 'expo-blur';
 
 import {
   type ReactNodePropWithPropDefaultValuesContext,
+  usePropsWithContextualDefaultValues,
   withPropDefaultValuesContext,
 } from '@rnstudy/react-utils';
 
+import { useUIColors } from '../../../contexts';
 import { Button } from '../../Button';
 import ButtonPropsContext from '../../Button/ButtonPropsContext';
 import Text, { TextPropsContext } from '../../Text';
+
+import ListHeaderPropsContext from './ListHeaderPropsContext';
 
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
@@ -37,13 +42,17 @@ export type Props = {
   first?: boolean;
 };
 
-export function ListHeader({
-  listStyle = 'insetGrouped',
-  title,
-  titleStyle = 'default',
-  description,
-  accessories,
-}: Props) {
+export function ListHeader(props: Props) {
+  const {
+    listStyle = 'insetGrouped',
+    title,
+    titleStyle = 'default',
+    description,
+    accessories,
+  } = usePropsWithContextualDefaultValues(props, ListHeaderPropsContext);
+
+  const uiColors = useUIColors();
+
   const titleTextProps =
     listStyle === 'plain'
       ? PLAIN_TITLE_TEXT_PROPS
@@ -59,7 +68,13 @@ export function ListHeader({
         styles.container,
         containerStyles[listStyle],
         containerStyles[titleStyle],
+        containerStyles[
+          `${listStyle}_${titleStyle}` as keyof typeof containerStyles
+        ],
       ]}
+      tint={
+        Color(uiColors.systemBackground).lightness() > 50 ? 'light' : 'dark'
+      }
     >
       {!!title && (
         <View style={[styles.titleContainer]}>
@@ -89,7 +104,12 @@ export function ListHeader({
       )}
 
       {!!accessories && (
-        <View style={styles.accessoriesContainer}>
+        <View
+          style={[
+            styles.accessoriesContainer,
+            styles[`accessoriesContainer_${titleStyle}` as keyof typeof styles],
+          ]}
+        >
           {withPropDefaultValuesContext(accessories, {
             textProps: {
               value: {},
@@ -150,7 +170,7 @@ const PROMINENT_ACCESSORIES_BUTTON_PROPS: Partial<
 > = {
   buttonStyle: 'gray',
   controlSize: 'small',
-  buttonBorderShape: 'roundedRectangle',
+  buttonBorderShape: 'rectangle',
   style: {
     marginBottom: 2,
   },
@@ -160,7 +180,7 @@ const PROMINENT_ACCESSORIES_PLAIN_BUTTON_PROPS: Partial<
   React.ComponentProps<typeof Button>
 > = {
   controlSize: 'small',
-  buttonBorderShape: 'roundedRectangle',
+  buttonBorderShape: 'rectangle',
   style: {
     marginBottom: -2,
   },
@@ -182,6 +202,10 @@ const styles = StyleSheet.create({
     paddingEnd: 12,
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
+  },
+  accessoriesContainer_prominent: {
+    paddingEnd: 16,
   },
 });
 
@@ -197,6 +221,10 @@ const containerStyles = StyleSheet.create({
   grouped: {},
   insetGrouped: {
     paddingHorizontal: 16,
+  },
+
+  insetGrouped_prominent: {
+    paddingHorizontal: 4,
   },
 });
 
