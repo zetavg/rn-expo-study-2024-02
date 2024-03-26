@@ -3,10 +3,13 @@ import { StyleSheet, View } from 'react-native';
 
 import {
   type ReactNodePropWithPropDefaultValuesContext,
+  usePropsWithContextualDefaultValues,
   withPropDefaultValuesContext,
 } from '@rnstudy/react-utils';
 
 import Text, { TextPropsContext } from '../../Text';
+
+import ListFooterPropsContext from './ListFooterPropsContext';
 
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
@@ -19,7 +22,9 @@ export type Props = {
       }>;
 };
 
-export function ListFooter({ listStyle = 'insetGrouped', text }: Props) {
+export function ListFooter(props: Props) {
+  const { listStyle = 'insetGrouped', text } =
+    usePropsWithContextualDefaultValues(props, ListFooterPropsContext);
   const textProps = TEXT_PROPS;
 
   return (

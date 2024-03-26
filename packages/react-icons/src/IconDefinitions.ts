@@ -163,6 +163,31 @@ export const IconDefinitions = makeIconDefinitions({
       },
     ],
   }),
+  _plus: makeIconDefinition({
+    materialIconName: 'plus',
+    sfSymbolDefinitions: [
+      {
+        name: 'plus',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
+  _list_edit: makeIconDefinition({
+    materialIconName: 'playlist-edit',
+    sfSymbolDefinitions: [
+      {
+        name: 'list.bullet.indent',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+        additionalPaddingRatio: 0.1,
+      },
+    ],
+  }),
   _info: makeIconDefinition({
     materialIconName: 'information',
     sfSymbolDefinitions: [

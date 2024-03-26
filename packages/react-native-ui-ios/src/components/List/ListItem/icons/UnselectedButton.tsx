@@ -1,5 +1,5 @@
 import React from 'react';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Circle } from 'react-native-svg';
 
 export function UnselectedButton({
   fill,
@@ -10,12 +10,7 @@ export function UnselectedButton({
 }) {
   return (
     <Svg width="24" height="22" viewBox="0 0 24 22" fill="none" style={style}>
-      <Path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M12 22C18.0751 22 23 17.0751 23 11C23 4.92487 18.0751 0 12 0C5.92487 0 1 4.92487 1 11C1 17.0751 5.92487 22 12 22ZM12 20.5C17.2467 20.5 21.5 16.2467 21.5 11C21.5 5.75329 17.2467 1.5 12 1.5C6.75329 1.5 2.5 5.75329 2.5 11C2.5 16.2467 6.75329 20.5 12 20.5Z"
-        fill={fill}
-      />
+      <Circle cx="12" cy="11" r="10.25" stroke={fill} stroke-width="1.5" />
     </Svg>
   );
 }
