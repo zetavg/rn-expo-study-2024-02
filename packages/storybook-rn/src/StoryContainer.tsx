@@ -16,7 +16,7 @@ import {
   SeparatorColor,
   Text,
 } from '@rnstudy/react-native-ui';
-import { Parameters } from '@rnstudy/storybook-rn-types';
+import { StoryParameters } from '@rnstudy/storybook-rn-types';
 
 import StoryContentContainer from './StoryContentContainer';
 
@@ -25,7 +25,7 @@ export function StoryContainer({
   parameters,
 }: {
   story: PartialStoryFn<ReactRenderer>;
-  parameters: Parameters;
+  parameters: StoryParameters;
 }) {
   const { storyContainer, containerBackground, specOverlay } = parameters;
 

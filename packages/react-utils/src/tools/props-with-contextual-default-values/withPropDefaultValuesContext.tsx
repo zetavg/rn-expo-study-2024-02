@@ -50,7 +50,10 @@ export function withPropDefaultValuesContext<C extends object>(
     const { context: Ctx } =
       v as (typeof contextData)[keyof typeof contextData];
     if (Ctx) {
-      currentNode = <Ctx.Provider value={value}>{currentNode}</Ctx.Provider>;
+      currentNode = (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        <Ctx.Provider value={value as any}>{currentNode}</Ctx.Provider>
+      );
     }
   }
 

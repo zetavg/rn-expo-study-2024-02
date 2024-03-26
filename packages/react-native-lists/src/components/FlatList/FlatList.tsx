@@ -12,7 +12,6 @@ import {
   ListRenderItem,
   StyleSheet,
 } from 'react-native';
-import CellRendererComponent from 'react-native-draggable-flatlist/src/components/CellRendererComponent';
 import PlaceholderItem from 'react-native-draggable-flatlist/src/components/PlaceholderItem';
 import ScrollOffsetListener from 'react-native-draggable-flatlist/src/components/ScrollOffsetListener';
 import { DEFAULT_PROPS } from 'react-native-draggable-flatlist/src/constants';
@@ -41,6 +40,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
+import CellRendererComponent from './CellRendererComponent';
 import RowItem from './RowItem';
 import { RenderItem, SetItemTmpListPositionFunction } from './types';
 import { useAutoScroll } from './useAutoScroll';
