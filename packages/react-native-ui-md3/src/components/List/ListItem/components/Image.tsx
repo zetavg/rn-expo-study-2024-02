@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleSheet, useWindowDimensions, View, ViewStyle } from 'react-native';
 
 import { IconPropsContext } from '@rnstudy/react-icons';
 import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 
-import { useColors } from '../../../../contexts';
+import { useColors, useTheme } from '../../../../contexts';
 import {
   COMPACT_CONTAINER_PADDING_VERTICAL,
   CONTAINER_PADDING_VERTICAL,
@@ -18,6 +18,8 @@ export type Props = {
   compact?: ListItemProps['compact'];
   children?: ListItemProps['children'];
   alignIconWithTitle?: ListItemProps['alignIconWithTitle'];
+  iconShouldAlignWithTitle: boolean;
+  titleY: number | null;
   backgroundColor: string;
   style?: ViewStyle;
 };
@@ -30,19 +32,24 @@ export const Image = React.memo(
     compact,
     children,
     alignIconWithTitle,
+    iconShouldAlignWithTitle,
+    titleY,
     backgroundColor,
     style,
   }: Props): JSX.Element => {
+    const windowDimensions = useWindowDimensions();
+    const theme = useTheme();
     const colors = useColors();
 
-    const iconAlignStart = !singleLine || !!(children && alignIconWithTitle);
+    const iconSize =
+      theme.fonts.bodyLarge.lineHeight * windowDimensions.fontScale;
 
     return (
       <View
         style={[
           styles.iconContainer,
           compact && styles.iconContainer_compact,
-          iconAlignStart &&
+          iconShouldAlignWithTitle &&
             !subtitle &&
             styles.iconContainer_iconAlignStartWithoutSubtitle,
           style,
@@ -51,9 +58,14 @@ export const Image = React.memo(
         {withPropDefaultValuesContext(icon, {
           iconProps: {
             value: {
-              align: iconAlignStart ? 'start' : 'center',
+              align: iconShouldAlignWithTitle ? 'start' : 'center',
+              mt: iconShouldAlignWithTitle
+                ? typeof titleY === 'number'
+                  ? titleY
+                  : CONTAINER_PADDING_VERTICAL
+                : undefined,
               color: colors.onSurfaceVariant,
-              size: 24,
+              size: iconSize,
             },
             context: IconPropsContext,
           },
@@ -75,13 +87,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: CONTAINER_PADDING_VERTICAL,
+    // paddingVertical: CONTAINER_PADDING_VERTICAL,
   },
   iconContainer_compact: {
-    paddingVertical: COMPACT_CONTAINER_PADDING_VERTICAL,
+    // paddingVertical: COMPACT_CONTAINER_PADDING_VERTICAL,
   },
   iconContainer_iconAlignStartWithoutSubtitle: {
-    paddingVertical: COMPACT_CONTAINER_PADDING_VERTICAL + 4,
+    // paddingVertical: COMPACT_CONTAINER_PADDING_VERTICAL + 4,
   },
 });
 

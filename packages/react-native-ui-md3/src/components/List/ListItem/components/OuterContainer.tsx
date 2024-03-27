@@ -1,7 +1,7 @@
 import React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
-import { useColorScheme } from '../../../../contexts';
+import { useColors, useColorScheme } from '../../../../contexts';
 import { useBackgroundColor } from '../hooks';
 import type { Props as ListItemProps } from '../ListItem';
 
@@ -24,6 +24,7 @@ export const OuterContainer = ({
   backgroundColor,
 }: Props): JSX.Element => {
   const colorScheme = useColorScheme();
+  const colors = useColors();
 
   return (
     <View
@@ -41,6 +42,7 @@ export const OuterContainer = ({
             listStyle,
             dragActive,
           }),
+          borderColor: colors.outlineVariant,
         },
       ]}
     >
@@ -75,8 +77,12 @@ const containerStyles = StyleSheet.create({
     marginHorizontal: 16,
   },
   insetGrouped_first: {},
-  insetGrouped_middle: {},
-  insetGrouped_last: {},
+  insetGrouped_middle: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  insetGrouped_last: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
   insetGrouped_only: {},
 });
 
@@ -112,6 +118,7 @@ const containerBorderRadiusStyles = StyleSheet.create({
 
 const dragActiveStyles = StyleSheet.create({
   default: {
+    borderTopWidth: 0,
     ...Platform.select({
       android: {
         elevation: 10,

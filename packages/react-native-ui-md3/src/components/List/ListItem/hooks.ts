@@ -22,8 +22,8 @@ export function useBackgroundColor({
 
     return dragActive
       ? Color(backgroundColorBase).lightness() > 50
-        ? Color(backgroundColorBase).lighten(0.01).hexa()
-        : Color(backgroundColorBase).lighten(0.01).hexa()
+        ? backgroundColorBase
+        : Color(backgroundColorBase).lighten(0.5).hexa()
       : backgroundColorBase;
   }, [backgroundColor, colors.surface, dragActive, listStyle]);
 

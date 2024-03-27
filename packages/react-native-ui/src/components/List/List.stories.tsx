@@ -86,10 +86,11 @@ const meta: Meta<typeof List> = {
     '__props:children:ListItem.subtitle': { control: 'text' },
     '__props:children:ListItem.icon': {
       control: 'select',
-      options: ['undefined', 'star', 'airplane', 'heart'],
+      options: ['undefined', 'person', 'star', 'airplane', 'heart'],
       mapping: {
         undefined,
-        star: <Icon name="star" color="gray" />,
+        person: <Icon name="_listitem_person" />,
+        star: <Icon name="star" />,
         airplane: ({ backgroundColor }: { backgroundColor: string }) => (
           <Icon
             name="airplane"
@@ -102,6 +103,7 @@ const meta: Meta<typeof List> = {
     },
     '__props:children:ListItem.compact': { control: 'boolean' },
     '__props:children:ListItem.subtitleOnTop': { control: 'boolean' },
+    '__props:children:ListItem.singleLine': { control: 'boolean' },
     '__props:children:ListItem.detail': { control: 'text' },
     '__props:children:ListItem.accessories': {
       control: 'select',

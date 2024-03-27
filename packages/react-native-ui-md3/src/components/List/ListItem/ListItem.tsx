@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { Icon } from '@rnstudy/react-icons';
@@ -145,6 +145,35 @@ export function ListItem(rawProps: Props) {
 
   // const childrenHeight = props.children ? childrenHeightState : null;
 
+  const iconShouldAlignWithTitle =
+    !props.singleLine || !!(props.children && props.alignIconWithTitle);
+
+  const [titleContainerY, setTitleContainerY] = useState<number | null>(null);
+  const handleTitleContainerLayout = useMemo(() => {
+    if (!iconShouldAlignWithTitle) return undefined;
+
+    const handler: React.ComponentProps<typeof View>['onLayout'] = (e) => {
+      console.log(`handle ${JSON.stringify(e.nativeEvent.layout)}`);
+      setTitleContainerY(e.nativeEvent.layout.y);
+    };
+
+    return handler;
+  }, [iconShouldAlignWithTitle]);
+
+  const [titleParentContainerY, setTitleParentContainerY] = useState<
+    number | null
+  >(null);
+  const handleTitleParentContainerLayout = useMemo(() => {
+    if (!iconShouldAlignWithTitle) return undefined;
+
+    const handler: React.ComponentProps<typeof View>['onLayout'] = (e) => {
+      console.log(`handle ${JSON.stringify(e.nativeEvent.layout)}`);
+      setTitleParentContainerY(e.nativeEvent.layout.y);
+    };
+
+    return handler;
+  }, [iconShouldAlignWithTitle]);
+
   return (
     <ListItemAnimationContextProvider {...props}>
       <BackgroundColor>
@@ -162,6 +191,13 @@ export function ListItem(rawProps: Props) {
                 <Image
                   {...props}
                   backgroundColor={backgroundColor}
+                  iconShouldAlignWithTitle={iconShouldAlignWithTitle}
+                  titleY={
+                    typeof titleContainerY === 'number' &&
+                    typeof titleParentContainerY === 'number'
+                      ? titleContainerY + titleParentContainerY
+                      : null
+                  }
                   // style={
                   //   props.alignIconWithTitle
                   //     ? typeof childrenHeight === 'number'
@@ -179,8 +215,13 @@ export function ListItem(rawProps: Props) {
                   props.accessories ||
                   props.detail
                 ) && (
-                  <TitleAndTrailingContentsContainer>
-                    <TitleAndSubtitle {...tasPropsSelector(props)} />
+                  <TitleAndTrailingContentsContainer
+                    onLayout={handleTitleParentContainerLayout}
+                  >
+                    <TitleAndSubtitle
+                      {...tasPropsSelector(props)}
+                      onLayout={handleTitleContainerLayout}
+                    />
 
                     {!props.hideTrailingContents && (
                       <TrailingContents

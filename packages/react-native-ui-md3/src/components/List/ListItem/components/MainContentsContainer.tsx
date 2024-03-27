@@ -21,7 +21,7 @@ export const MainContentsContainer = ({
   listPosition,
   compact,
 }: Props): JSX.Element => {
-  const colors = useColors();
+  // const colors = useColors();
   const { isGrabberShown } = useListItemAnimationContext();
 
   return (
@@ -33,7 +33,8 @@ export const MainContentsContainer = ({
         mainContentContainerStyles[
           `${listStyle}_${listPosition}` as keyof typeof mainContentContainerStyles
         ],
-        { borderColor: colors.outlineVariant },
+        // Border is now set in OuterContainer
+        // { borderColor: colors.outlineVariant },
       ]}
     >
       {children}
@@ -62,10 +63,12 @@ const styles = StyleSheet.create({
 const mainContentContainerStyles = StyleSheet.create({
   insetGrouped_first: {},
   insetGrouped_middle: {
-    borderTopWidth: StyleSheet.hairlineWidth,
+    // Border is now set in OuterContainer
+    // borderTopWidth: StyleSheet.hairlineWidth,
   },
   insetGrouped_last: {
-    borderTopWidth: StyleSheet.hairlineWidth,
+    // Border is now set in OuterContainer
+    // borderTopWidth: StyleSheet.hairlineWidth,
   },
   insetGrouped_only: {},
 });
