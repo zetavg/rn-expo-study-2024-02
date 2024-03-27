@@ -4173,10 +4173,8 @@ __metadata:
     eslint: "npm:^8.10"
     expo: "npm:*"
     expo-blur: "npm:^12"
-    expo-haptics: "npm:^12"
     jest: "npm:^29"
     react-native: "npm:0.72"
-    react-native-draggable-flatlist: "npm:^4"
     react-native-gesture-handler: "npm:^2"
     react-native-haptic-feedback: "npm:^2"
     react-native-ios-context-menu: "npm:^2.5"
@@ -4188,7 +4186,6 @@ __metadata:
     "@rnstudy/react-icons": "workspace:^"
     expo: "*"
     expo-blur: ^12
-    expo-haptics: ^12
     react: ^18
     react-native: ">=0.71"
     react-native-gesture-handler: ^2
@@ -4261,7 +4258,6 @@ __metadata:
     "@rnstudy/react-icons": "workspace:^"
     expo: "*"
     expo-blur: ^12
-    expo-haptics: ^12
     react: ^18
     react-native: ">=0.71"
     react-native-gesture-handler: ^2
@@ -9372,15 +9368,6 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: 10c0/130a5bc34865a1f8340e3fde4d9d8c5d7969331fdcac4e7487abcfbcf15476c771ecde6545b6f23f2278f29f13b5cc9b830c261581f7117e432979e9a2f4a71b
-  languageName: node
-  linkType: hard
-
-"expo-haptics@npm:^12":
-  version: 12.8.1
-  resolution: "expo-haptics@npm:12.8.1"
-  peerDependencies:
-    expo: "*"
-  checksum: 10c0/6b8bc9de07bcd34283d5deb5c1d031d99bbe89e7bc3a24b7984d9ce513745f7222fe1520b94785633448cceedc9f56d6c3bc94ae8fbf2ddefe57cf3ae83fc990
   languageName: node
   linkType: hard
 
@@ -15371,6 +15358,7 @@ __metadata:
     "@rnstudy/jest-config": "workspace:^"
     "@rnstudy/metro-config": "workspace:^"
     "@rnstudy/react-icons": "workspace:^"
+    "@rnstudy/react-native-lists": "workspace:^"
     "@rnstudy/react-native-navigation": "workspace:^"
     "@rnstudy/react-native-ui": "workspace:^"
     "@rnstudy/react-utils": "workspace:^"
@@ -15394,7 +15382,6 @@ __metadata:
     expo-build-properties: "npm:~0.11.1"
     expo-constants: "npm:~15.4.5"
     expo-dev-client: "npm:~3.3.8"
-    expo-haptics: "npm:^12"
     expo-status-bar: "npm:~1.11.1"
     expo-system-ui: "npm:~2.9.3"
     jest: "npm:^29"

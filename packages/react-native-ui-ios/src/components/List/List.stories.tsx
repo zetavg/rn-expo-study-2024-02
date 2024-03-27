@@ -19,16 +19,20 @@ import { Meta } from '@rnstudy/storybook-rn-types';
 import { Button } from '../Button';
 import Select from '../Select';
 
-import List from './List';
-import ListFooter, { ListFooterProps } from './ListFooter';
-import ListHeader, { ListHeaderProps } from './ListHeader';
-import ListItem, {
+import {
   getListItemHeight,
+  getListPadding,
+  List,
+  ListFooter,
+  ListFooterProps,
+  ListHeader,
+  ListHeaderProps,
+  ListItem,
   ListItemProps,
   ListItemPropsContext,
-} from './ListItem';
-import { getListPadding } from './utils';
-import { ListPadding, ListProps } from '.';
+  ListPadding,
+  ListProps,
+} from './.';
 
 const meta: Meta<typeof List> = {
   title: 'iOS UI/List',
