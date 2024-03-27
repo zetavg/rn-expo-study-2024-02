@@ -7,12 +7,17 @@ import { useProps } from 'react-native-draggable-flatlist/src/context/propsConte
 import { useRefs } from 'react-native-draggable-flatlist/src/context/refContext';
 import {
   runOnJS,
+  SharedValue,
   useAnimatedReaction,
   useDerivedValue,
   useSharedValue,
 } from 'react-native-reanimated';
 
-export function useAutoScroll() {
+export function useAutoScroll({
+  activeAtTimestampAnim,
+}: {
+  activeAtTimestampAnim: SharedValue<number>;
+}) {
   const { flatlistRef } = useRefs();
 
   const { autoscrollThreshold = 40, autoscrollSpeed = 400 } = useProps();
@@ -96,6 +101,10 @@ export function useAutoScroll() {
 
   useDerivedValue(() => {
     if (!shouldAutoScroll.value) return;
+
+    const cellIsActiveForMoreThanSomeTime =
+      Date.now() - activeAtTimestampAnim.value > 500;
+    if (!cellIsActiveForMoreThanSomeTime) return;
 
     const distFromEdge = isAtTopEdge.value
       ? distToTopEdge.value

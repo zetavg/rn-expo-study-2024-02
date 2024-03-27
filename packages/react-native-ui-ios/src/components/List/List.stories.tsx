@@ -350,11 +350,11 @@ function WithFlatListEditableDemoComponent({
   );
 
   const renderItem = useCallback<RenderItem<(typeof data)[number]>>(
-    ({ item, listPosition, drag, isActive }) => (
+    ({ item, listPosition, drag, isDragActive }) => (
       <ListItem
         listPosition={listPosition}
         title={item.title}
-        dragActive={isActive}
+        dragActive={isDragActive}
         onGrabberHold={drag}
         onEditButtonPress={() => {
           Alert.alert(`Remove ${item.key}?`, undefined, [

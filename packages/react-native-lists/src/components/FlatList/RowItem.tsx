@@ -102,7 +102,7 @@ type InnerProps<T> = {
 };
 
 function Inner<T>({ renderItem, extraData: _, ...rest }: InnerProps<T>) {
-  return renderItem({ ...rest }) as JSX.Element;
+  return renderItem({ ...rest, isDragActive: rest.isActive }) as JSX.Element;
 }
 
 const MemoizedInner = typedMemo(Inner);
