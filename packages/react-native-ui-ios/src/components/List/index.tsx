@@ -1,3 +1,4 @@
+export { List, type Props as ListProps } from './List';
 export * from './ListFooter';
 export * from './ListHeader';
 export * from './ListItem';
