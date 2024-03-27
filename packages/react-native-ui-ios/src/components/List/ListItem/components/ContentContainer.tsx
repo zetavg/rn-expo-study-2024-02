@@ -18,12 +18,12 @@ export type Props = {
   minHeight: number;
   height?: number;
 
-  onPress: ListItemProps['onPress'];
-  onLongPress: ListItemProps['onLongPress'];
+  onPress?: ListItemProps['onPress'];
+  onLongPress?: ListItemProps['onLongPress'];
 
-  disableOnPress: ListItemProps['disableOnPress'];
+  disableOnPress?: ListItemProps['disableOnPress'];
 
-  dragActive: ListItemProps['dragActive'];
+  dragActive?: ListItemProps['dragActive'];
 
   backgroundColor: string;
 };

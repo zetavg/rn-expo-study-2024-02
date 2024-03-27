@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 
 import { IconPropsContext } from '@rnstudy/react-icons';
 import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
@@ -7,30 +7,37 @@ import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 import type { Props as ListItemProps } from '../ListItem';
 
 export type Props = {
-  icon: ListItemProps['icon'];
-  subtitle: ListItemProps['subtitle'];
-  compact: ListItemProps['compact'];
+  icon?: ListItemProps['icon'];
+  subtitle?: ListItemProps['subtitle'];
+  compact?: ListItemProps['compact'];
   backgroundColor: string;
+  style?: ViewStyle;
 };
 
-export const Image: React.FC<Props> = React.memo(
-  ({ icon, subtitle, compact, backgroundColor }) => (
-    <View style={[styles.iconContainer]}>
-      {withPropDefaultValuesContext(icon, {
-        iconProps: {
-          value: {
-            bordered: true,
-            size: subtitle && !compact ? 44 : 30,
-          },
-          context: IconPropsContext,
+export const Image = ({
+  icon,
+  subtitle,
+  compact,
+  backgroundColor,
+  style,
+}: Props): JSX.Element => (
+  <View style={[styles.iconContainer, style]}>
+    {withPropDefaultValuesContext(icon, {
+      iconProps: {
+        value: {
+          color: 'gray',
+          bordered: true,
+          size: subtitle && !compact ? 44 : 30,
+          mv: 5,
         },
-        backgroundColor: {
-          value: backgroundColor,
-          context: null,
-        },
-      })}
-    </View>
-  ),
+        context: IconPropsContext,
+      },
+      backgroundColor: {
+        value: backgroundColor,
+        context: null,
+      },
+    })}
+  </View>
 );
 
 Image.displayName = 'ListItem_Image';

@@ -5,3 +5,4 @@ export {
   useIsGroupedBackground,
 } from './IsGroupedBackgroundContext';
 export { ThemeContext, useTheme } from './ThemeContext';
+export { useColors } from './useColors';

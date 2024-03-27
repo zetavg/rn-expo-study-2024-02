@@ -6,8 +6,8 @@ import { Icon, IconName } from '@rnstudy/react-icons';
 
 import { useTheme } from '../../contexts';
 
-type Props = {
-  mode: 'text' | 'outlined' | 'contained' | 'elevated' | 'contained-tonal';
+export type Props = {
+  mode?: 'text' | 'outlined' | 'contained' | 'elevated' | 'contained-tonal';
   size?: 'small' | 'regular' | 'medium' | 'large';
   text?: string;
   icon?: IconName;

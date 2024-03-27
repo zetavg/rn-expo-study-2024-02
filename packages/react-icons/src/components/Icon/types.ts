@@ -45,6 +45,9 @@ export type IconProps = {
   /** Margin right. */
   mr?: number;
 
+  /** Align. */
+  align?: 'center' | 'start' | 'end';
+
   /** Opacity. */
   opacity?: number;
 };

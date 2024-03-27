@@ -6,6 +6,8 @@ import { Text as TextMD3 } from '@rnstudy/react-native-ui-md3';
 
 import { useUIPlatform } from '../../contexts';
 
+import { textPropsToIOSProps, textPropsToMD3Props } from './props-mapping';
+
 type Variant =
   | 'largeTitle'
   | 'title1'
@@ -19,9 +21,16 @@ type Variant =
   | 'caption1'
   | 'caption2';
 
-type Color = 'secondary' | 'tertiary' | 'quaternary' | 'link' | 'placeholder';
+type Color =
+  | 'default'
+  | 'secondary'
+  | 'tertiary'
+  | 'quaternary'
+  | 'link'
+  | 'placeholder'
+  | 'tint';
 
-type Props = React.ComponentProps<typeof RNText> & {
+export type Props = React.ComponentProps<typeof RNText> & {
   children?: React.ReactNode;
   variant?: Variant;
   color?: Color;
@@ -29,8 +38,6 @@ type Props = React.ComponentProps<typeof RNText> & {
 } & { [V in Variant]?: boolean } & { [V in Color]?: boolean };
 
 export function Text({
-  emphasized,
-
   variant,
 
   largeTitle,
@@ -53,9 +60,7 @@ export function Text({
   placeholder,
   link,
 
-  style,
-
-  ...props
+  ...restProps
 }: Props): JSX.Element {
   if (!variant) {
     if (largeTitle) variant = 'largeTitle';
@@ -86,85 +91,22 @@ export function Text({
     case 'ios': {
       return (
         <TextIOS
-          {...props}
-          textStyle={variant}
-          emphasized={emphasized}
-          color={color}
-          style={style}
+          {...textPropsToIOSProps({
+            ...restProps,
+            variant,
+            color,
+          })}
         />
       );
     }
     case 'android': {
-      const md3TextVariant: React.ComponentProps<typeof TextMD3>['variant'] =
-        (() => {
-          switch (variant) {
-            case 'largeTitle':
-              return 'headlineLarge' as const;
-
-            case 'headline':
-              return 'titleMedium' as const;
-            case 'subheadline':
-              return 'bodyMedium' as const;
-
-            case 'title1':
-              return 'headlineMedium' as const;
-            case 'title2':
-              return 'titleLarge' as const;
-            case 'title3':
-              return 'titleMedium' as const;
-
-            case 'callout':
-              return 'bodyMedium' as const;
-
-            case 'footnote':
-              return 'bodySmall' as const;
-
-            case 'caption1':
-              return 'labelMedium' as const;
-            case 'caption2':
-              return 'labelSmall' as const;
-
-            case 'body':
-            default:
-              return 'bodyLarge' as const;
-          }
-        })();
-
-      const fontWeightStyle = emphasized
-        ? {
-            fontWeight: (() => {
-              switch (variant) {
-                case 'headline':
-                  return '600' as const;
-                case 'subheadline':
-                  return '600' as const;
-                default:
-                  return '700' as const;
-              }
-            })(),
-          }
-        : null;
-
-      const md3TextColor = (() => {
-        switch (color) {
-          case 'secondary':
-          case 'tertiary':
-          case 'quaternary':
-          case 'placeholder':
-            return 'onSurfaceVariant';
-          case 'link':
-            return 'primary';
-          default:
-            return 'onSurface';
-        }
-      })();
-
       return (
         <TextMD3
-          variant={md3TextVariant}
-          color={md3TextColor}
-          style={[fontWeightStyle, style]}
-          {...props}
+          {...textPropsToMD3Props({
+            ...restProps,
+            variant,
+            color,
+          })}
         />
       );
     }

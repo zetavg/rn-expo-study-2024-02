@@ -1,8 +1,9 @@
 import React from 'react';
-import { useWindowDimensions } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { Icon } from '@rnstudy/react-icons';
 import {
+  assignDefaults,
   type ReactNodePropWithPropDefaultValuesContext,
   usePropsWithContextualDefaultValues,
 } from '@rnstudy/react-utils';
@@ -13,12 +14,18 @@ import Text from '../../Text';
 
 import ContentContainer from './components/ContentContainer';
 import DrillInIcon from './components/DrillInIcon';
-import EditButton from './components/EditButton';
-import Grabber from './components/Grabber';
+import EditButton, {
+  propsSelector as editButtonPropsSelector,
+} from './components/EditButton';
+import Grabber, {
+  propsSelector as grabberPropsSelector,
+} from './components/Grabber';
 import Image from './components/Image';
 import MainContentsContainer from './components/MainContentsContainer';
 import OuterContainer from './components/OuterContainer';
-import TitleAndSubtitle from './components/TitleAndSubtitle';
+import TitleAndSubtitle, {
+  propsSelector as tasPropsSelector,
+} from './components/TitleAndSubtitle';
 import TitleAndTrailingContentsContainer from './components/TitleAndTrailingContentsContainer';
 import TrailingContents from './components/TrailingContents';
 import { ListItemAnimationContextProvider } from './ListItemAnimationContext';
@@ -27,12 +34,14 @@ import { getListItemHeight } from './utils';
 
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
+type PositionInList = 'first' | 'middle' | 'last' | 'only';
+
 export type Props = {
   /** The style of the list. */
   listStyle?: ListStyle;
 
   /** The position of the list item in the list. */
-  listPosition?: 'first' | 'middle' | 'last' | 'only';
+  listPosition?: PositionInList;
 
   /** Show a edit button in front of the list item. */
   editButton?: 'unselected' | 'selected' | 'add' | 'remove';
@@ -43,6 +52,8 @@ export type Props = {
     iconProps: Partial<React.ComponentProps<typeof Icon>>;
     backgroundColor: string;
   }>;
+  /** Align the icon with the title. Will only take effect when `children` is provided. */
+  alignIconWithTitle?: boolean;
 
   /** The text to display as the title. */
   title:
@@ -56,6 +67,9 @@ export type Props = {
     | ReactNodePropWithPropDefaultValuesContext<{
         textProps: Partial<React.ComponentProps<typeof Text>>;
       }>;
+
+  /** Display the title and subtitle as a single line. */
+  singleLine?: boolean;
 
   /** The text to display on the right side of the list item. Will be ignored if `accessories` is provided. */
   detail?: string;
@@ -105,12 +119,16 @@ export type Props = {
   children?: React.ReactNode;
 };
 
-export function ListItem(props: Props) {
-  const {
-    listStyle = 'insetGrouped',
-    listPosition = 'only',
-    ...p
-  } = usePropsWithContextualDefaultValues(props, ListItemPropsContext);
+const DEFAULT_PROPS = {
+  listStyle: 'insetGrouped' as ListStyle,
+  listPosition: 'only' as PositionInList,
+};
+
+export function ListItem(rawProps: Props) {
+  const props = assignDefaults(
+    usePropsWithContextualDefaultValues(rawProps, ListItemPropsContext),
+    DEFAULT_PROPS,
+  );
 
   const windowDimensions = useWindowDimensions();
 
@@ -120,81 +138,77 @@ export function ListItem(props: Props) {
     fontScale: windowDimensions.fontScale,
   });
 
+  const [childrenHeightState, setChildrenHeightState] = React.useState<
+    number | null
+  >(null);
+
+  const childrenHeight = props.children ? childrenHeightState : null;
+
   return (
-    <ListItemAnimationContextProvider
-      editButton={p.editButton}
-      showGrabber={p.showGrabber}
-      hideTrailingContents={p.hideTrailingContents}
-    >
+    <ListItemAnimationContextProvider {...props}>
       <BackgroundColor>
         {(backgroundColor) => (
-          <OuterContainer
-            listStyle={listStyle}
-            listPosition={listPosition}
-            dragActive={p.dragActive}
-            backgroundColor={backgroundColor}
-          >
+          <OuterContainer {...props} backgroundColor={backgroundColor}>
             <ContentContainer
-              listStyle={listStyle}
-              onPress={p.onPress}
-              onLongPress={p.onLongPress}
+              {...props}
               minHeight={minHeight}
-              height={p.fixedHeight ? p.height || minHeight : undefined}
-              disableOnPress={p.disableOnPress}
-              dragActive={p.dragActive}
+              height={props.fixedHeight ? props.height || minHeight : undefined}
               backgroundColor={backgroundColor}
             >
-              <EditButton
-                editButton={p.editButton}
-                onEditButtonPress={p.onEditButtonPress}
-              />
-              {!!p.icon && (
+              <EditButton {...editButtonPropsSelector(props)} />
+
+              {!!props.icon && (
                 <Image
-                  icon={p.icon}
-                  subtitle={p.subtitle}
-                  compact={p.compact}
+                  {...props}
                   backgroundColor={backgroundColor}
+                  style={
+                    props.alignIconWithTitle
+                      ? typeof childrenHeight === 'number'
+                        ? { marginBottom: childrenHeight }
+                        : styles.alignSelfFlexStart
+                      : undefined
+                  }
                 />
               )}
-              <MainContentsContainer
-                listStyle={listStyle}
-                listPosition={listPosition}
-                dragActive={p.dragActive}
-              >
-                {!!(p.title || p.subtitle || p.accessories || p.detail) && (
+
+              <MainContentsContainer {...props}>
+                {!!(
+                  props.title ||
+                  props.subtitle ||
+                  props.accessories ||
+                  props.detail
+                ) && (
                   <TitleAndTrailingContentsContainer>
-                    <TitleAndSubtitle
-                      title={p.title}
-                      subtitle={p.subtitle}
-                      compact={p.compact}
-                      subtitleOnTop={p.subtitleOnTop}
-                      button={p.button}
-                      fixedHeight={p.fixedHeight}
-                    />
-                    {!p.hideTrailingContents && (
+                    <TitleAndSubtitle {...tasPropsSelector(props)} />
+
+                    {!props.hideTrailingContents && (
                       <TrailingContents
-                        accessories={p.accessories}
-                        detail={p.detail}
+                        accessories={props.accessories}
+                        detail={props.detail}
                       />
                     )}
-                    {p.navigationLink && (
-                      <DrillInIcon hide={p.hideTrailingContents} />
+
+                    {props.navigationLink && (
+                      <DrillInIcon hide={props.hideTrailingContents} />
                     )}
                   </TitleAndTrailingContentsContainer>
                 )}
 
-                {p.children}
+                {!!props.children && (
+                  <View
+                    style={styles.childrenContainer}
+                    onLayout={(e) => {
+                      setChildrenHeightState(e.nativeEvent.layout.height);
+                    }}
+                  >
+                    {props.children}
+                  </View>
+                )}
               </MainContentsContainer>
 
               <Grabber
                 key="grabber"
-                listStyle={listStyle}
-                showGrabber={p.showGrabber}
-                onGrabberHold={p.onGrabberHold}
-                dragActive={p.dragActive}
-                navigationLink={p.navigationLink}
-                hideTrailingContents={p.hideTrailingContents}
-                hasAccessories={!!p.accessories}
+                {...grabberPropsSelector(props)}
                 backgroundColor={backgroundColor}
               />
             </ContentContainer>
@@ -204,5 +218,15 @@ export function ListItem(props: Props) {
     </ListItemAnimationContextProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  childrenContainer: {
+    flex: 1,
+    paddingBottom: 12,
+  },
+  alignSelfFlexStart: {
+    alignSelf: 'flex-start',
+  },
+});
 
 export default ListItem;

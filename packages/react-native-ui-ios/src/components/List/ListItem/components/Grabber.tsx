@@ -24,6 +24,20 @@ export type Props = {
   backgroundColor: string;
 };
 
+export function propsSelector(
+  p: ListItemProps,
+): Omit<Props, 'backgroundColor'> {
+  return {
+    listStyle: p.listStyle,
+    showGrabber: p.showGrabber,
+    onGrabberHold: p.onGrabberHold,
+    dragActive: p.dragActive,
+    navigationLink: p.navigationLink,
+    hideTrailingContents: p.hideTrailingContents,
+    hasAccessories: !!p.accessories,
+  };
+}
+
 export const Grabber = React.memo(
   ({
     listStyle,

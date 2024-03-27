@@ -42,6 +42,7 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
     mb,
     ml,
     mr,
+    align,
     opacity,
     backgroundColor,
     borderColor,
@@ -182,6 +183,10 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
       style.marginRight = mr;
     }
 
+    if (align !== undefined) {
+      style.alignSelf = align === 'center' ? align : `flex-${align}`;
+    }
+
     if (opacity !== undefined) {
       style.opacity = opacity;
     }
@@ -210,6 +215,7 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
     mr,
     mt,
     mv,
+    align,
     opacity,
     bordered,
     backgroundColor,
