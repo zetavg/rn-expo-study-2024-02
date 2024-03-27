@@ -11,6 +11,7 @@ import {
   DragEndParams,
   FlatList,
   RenderItem,
+  SectionList,
 } from '@rnstudy/react-native-lists';
 import { collectPropsFromArgs } from '@rnstudy/react-utils/src';
 import { Meta } from '@rnstudy/storybook-rn-types';
@@ -27,7 +28,7 @@ import ListItem, {
   ListItemPropsContext,
 } from './ListItem';
 import { getListPadding } from './utils';
-import { ListProps } from '.';
+import { ListPadding, ListProps } from '.';
 
 const meta: Meta<typeof List> = {
   title: 'iOS UI/List',
@@ -203,11 +204,11 @@ export const WithFlatList: Meta<typeof List> = {
   },
   argTypes: {
     ...Default.argTypes,
-    __itemCount: { control: { type: 'number' } },
+    __itemsCount: { control: { type: 'number' } },
   },
   args: {
     ...Default.args,
-    __itemCount: 30,
+    __itemsCount: 30,
   },
   render: (args) => {
     const useListHeader = !!args['__props:header:ListHeader'];
@@ -227,7 +228,7 @@ export const WithFlatList: Meta<typeof List> = {
       '__props:children:ListItem.',
     );
 
-    const data = Array.from({ length: args.__itemCount }, (_, i) => ({
+    const data = Array.from({ length: args.__itemsCount }, (_, i) => ({
       key: `${i}`,
       title: `Item ${i}`,
     }));
@@ -283,10 +284,10 @@ export const WithFlatListEditable: Meta<typeof List> = {
           : { control: false },
       ]),
     ),
-    __itemCount: { control: { type: 'number' } },
+    __itemsCount: { control: { type: 'number' } },
   },
   args: {
-    __itemCount: 100,
+    __itemsCount: 100,
     '__props:children:ListItem.subtitle':
       'This is the subtitle. This is the subtitle. This is the subtitle.',
     '__props:children:ListItem.compact': true,
@@ -307,10 +308,100 @@ export const WithFlatListEditable: Meta<typeof List> = {
     return (
       <WithFlatListEditableDemoComponent
         listProps={args}
-        itemCount={args.__itemCount}
+        itemCount={args.__itemsCount}
         useListFooter={useListFooter}
         listFooterProps={listFooterProps}
         listItemProps={listItemProps}
+      />
+    );
+  },
+};
+
+export const WithSectionList: Meta<typeof List> = {
+  parameters: {
+    storyContainer: 'basic',
+  },
+  argTypes: {
+    ...Default.argTypes,
+    __sectionsCount: { control: { type: 'number' } },
+    __itemsCount: { control: { type: 'number' } },
+  },
+  args: {
+    ...Default.args,
+    '__props:header:ListHeader': true,
+    '__props:header:ListHeader.title': '',
+    __sectionsCount: 5,
+    __itemsCount: 5,
+  },
+  render: (args) => {
+    const useListHeader = !!args['__props:header:ListHeader'];
+    const listHeaderProps = collectPropsFromArgs<ListHeaderProps>(
+      args,
+      '__props:header:ListHeader.',
+    );
+
+    const useListFooter = !!args['__props:footer:ListFooter'];
+    const listFooterProps = collectPropsFromArgs<ListFooterProps>(
+      args,
+      '__props:footer:ListFooter.',
+    );
+
+    const listItemProps = collectPropsFromArgs<ListItemProps>(
+      args,
+      '__props:children:ListItem.',
+    );
+
+    const data = Array.from({ length: args.__sectionsCount }, (_, i) => ({
+      key: `${i}`,
+      title: `Section ${i}`,
+      data: Array.from({ length: args.__itemsCount }, (__, j) => ({
+        key: `${i}-${j}`,
+        name: `Item ${j}`,
+      })),
+    }));
+
+    return (
+      <SectionList
+        sections={data}
+        keyExtractor={(item, _index) => item.key}
+        renderItem={({ item, listPosition }) => (
+          <ListItem
+            listStyle={args.listStyle}
+            title={item.name}
+            {...listItemProps}
+            listPosition={listPosition}
+          />
+        )}
+        stickySectionHeadersEnabled={args.listStyle === 'plain'}
+        renderSectionHeader={({ section, first }) => (
+          <>
+            <ListPadding
+              listStyle={args.listStyle}
+              position="top"
+              first={first}
+              withHeader={useListHeader}
+            />
+            {useListHeader && (
+              <ListHeader
+                listStyle={args.listStyle}
+                title={section.title}
+                {...listHeaderProps}
+              />
+            )}
+          </>
+        )}
+        renderSectionFooter={({ section: _ }) => (
+          <>
+            {useListFooter && (
+              <ListFooter listStyle={args.listStyle} {...listFooterProps} />
+            )}
+            <ListPadding
+              listStyle={args.listStyle}
+              position="bottom"
+              withFooter={useListFooter}
+            />
+          </>
+        )}
       />
     );
   },
@@ -350,11 +441,11 @@ function WithFlatListEditableDemoComponent({
   );
 
   const renderItem = useCallback<RenderItem<(typeof data)[number]>>(
-    ({ item, listPosition, drag, isActive }) => (
+    ({ item, listPosition, drag, isDragActive }) => (
       <ListItem
         listPosition={listPosition}
         title={item.title}
-        dragActive={isActive}
+        dragActive={isDragActive}
         onGrabberHold={drag}
         onEditButtonPress={() => {
           Alert.alert(`Remove ${item.key}?`, undefined, [

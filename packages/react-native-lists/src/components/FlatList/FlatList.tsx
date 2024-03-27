@@ -90,6 +90,9 @@ function DraggableFlatListInner<T>(props: Props<T>) {
     disabled,
   } = useAnimatedValues();
 
+  /** Used to log the timestamp of the time that the drag was activated. */
+  const activeAtTimestampAnim = useSharedValue(0);
+
   const reset = useStableCallback(() => {
     activeIndexAnim.value = -1;
     spacerIndexAnim.value = -1;
@@ -161,6 +164,7 @@ function DraggableFlatListInner<T>(props: Props<T>) {
     if (index !== undefined) {
       spacerIndexAnim.value = index;
       activeIndexAnim.value = index;
+      activeAtTimestampAnim.value = Date.now();
       setActiveKey(activeKey_);
       ReactNativeHapticFeedback.trigger('impactLight');
       onDragBegin?.(index);
@@ -442,7 +446,7 @@ function DraggableFlatListInner<T>(props: Props<T>) {
     [horizontalAnim],
   );
 
-  useAutoScroll();
+  useAutoScroll({ activeAtTimestampAnim });
 
   const onViewableItemsChanged = useStableCallback<
     OnViewableItemsChangedCallback<T>

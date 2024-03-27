@@ -4,6 +4,8 @@ import { useRefs } from 'react-native-draggable-flatlist/src/context/refContext'
 import { useStableCallback } from 'react-native-draggable-flatlist/src/hooks/useStableCallback';
 import { typedMemo } from 'react-native-draggable-flatlist/src/utils';
 
+import { calculateListPosition } from '../../utils';
+
 import { RenderItem, SetItemTmpListPositionFunction } from './types';
 
 type Props<T> = {
@@ -102,26 +104,7 @@ type InnerProps<T> = {
 };
 
 function Inner<T>({ renderItem, extraData: _, ...rest }: InnerProps<T>) {
-  return renderItem({ ...rest }) as JSX.Element;
+  return renderItem({ ...rest, isDragActive: rest.isActive }) as JSX.Element;
 }
 
 const MemoizedInner = typedMemo(Inner);
-
-export function calculateListPosition(
-  index: number,
-  dataLength: number,
-): 'first' | 'middle' | 'last' | 'only' {
-  if (dataLength === 1) {
-    return 'only';
-  }
-
-  if (index === 0) {
-    return 'first';
-  }
-
-  if (index === dataLength - 1) {
-    return 'last';
-  }
-
-  return 'middle';
-}
