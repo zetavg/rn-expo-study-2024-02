@@ -228,7 +228,10 @@ export const IconDefinitions = makeIconDefinitions({
     ],
   }),
   _listitem_person: makeIconDefinition({
-    materialIconName: 'account-outline',
+    materialIconName: {
+      default: 'account-outline',
+      ios: 'account',
+    },
     sfSymbolDefinitions: [
       {
         name: 'person.fill',

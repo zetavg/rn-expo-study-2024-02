@@ -63,11 +63,20 @@ export const Image = React.memo(
       >
         {withPropDefaultValuesContext(icon, {
           iconProps: {
-            value: {
-              align: iconShouldAlignWithTitle ? 'start' : 'center',
-              mt: iconShouldAlignWithTitle ? titleYAnim : undefined,
-              color: colors.onSurfaceVariant,
-              size: iconSize,
+            value: (props) => {
+              const iconShouldReallyAlignWithTitle =
+                iconShouldAlignWithTitle && !props.backgroundColor;
+              return {
+                align: iconShouldReallyAlignWithTitle
+                  ? ('start' as const)
+                  : ('center' as const),
+                mt: iconShouldReallyAlignWithTitle ? titleYAnim : undefined,
+                color: colors.onSurfaceVariant,
+                size: !props.backgroundColor
+                  ? iconSize
+                  : iconSize + (subtitle && !compact ? 12 : 8),
+                bordered: !!props.backgroundColor,
+              };
             },
             context: IconPropsContext,
           },

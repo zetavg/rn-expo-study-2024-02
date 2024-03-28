@@ -120,7 +120,7 @@ const meta: Meta<typeof List> = {
               kotlin: { label: 'Kotlin' },
             }}
             value={undefined}
-            onValueChange={() => { }}
+            onValueChange={() => {}}
           />
         ),
       },
@@ -216,7 +216,7 @@ export const WithFlatList: Meta<typeof List> = {
   },
   args: {
     ...Default.args,
-    __itemsCount: 30,
+    __itemsCount: 16,
   },
   render: (args) => {
     const useListHeader = !!args['__props:header:ListHeader'];
@@ -243,7 +243,7 @@ export const WithFlatList: Meta<typeof List> = {
 
     return (
       <FlatList
-        ListHeaderComponent={
+        ListHeaderComponent={() => (
           <>
             <ListPadding
               listStyle={args.listStyle}
@@ -255,8 +255,8 @@ export const WithFlatList: Meta<typeof List> = {
               <ListHeader listStyle={args.listStyle} {...listHeaderProps} />
             )}
           </>
-        }
-        ListFooterComponent={
+        )}
+        ListFooterComponent={() => (
           <>
             {useListFooter && (
               <ListFooter listStyle={args.listStyle} {...listFooterProps} />
@@ -267,7 +267,7 @@ export const WithFlatList: Meta<typeof List> = {
               withFooter={useListFooter}
             />
           </>
-        }
+        )}
         data={data}
         keyExtractor={(d) => d.key}
         renderItem={({ item, listPosition }) => (
@@ -292,8 +292,8 @@ export const WithFlatListEditable: Meta<typeof List> = {
       Object.entries(meta.argTypes || {}).map(([key, value]) => [
         key,
         !key.startsWith('__props:header') &&
-          !key.startsWith('__props:children:ListItem.showGrabber') &&
-          !key.startsWith('__props:children:ListItem.editButton')
+        !key.startsWith('__props:children:ListItem.showGrabber') &&
+        !key.startsWith('__props:children:ListItem.editButton')
           ? value
           : { control: false },
       ]),
@@ -470,7 +470,7 @@ function WithFlatListEditableDemoComponent({
               text: 'Cancel',
               style: 'cancel',
               isPreferred: false,
-              onPress: () => { },
+              onPress: () => {},
             },
             {
               text: 'Remove',

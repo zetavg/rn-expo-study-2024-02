@@ -44,13 +44,13 @@ export type Props<T extends string> = {
   innerContainerStyle?: ViewStyle;
 };
 
-export function Select<T extends string>(props: Props<T>) {
-  const { options, value, onValueChange } = props;
+export function Select<T extends string>(rawProps: Props<T>) {
+  const { options, value, onValueChange } = rawProps;
   const { placeholder, additionalActions, align, style, innerContainerStyle } =
-    usePropsWithContextualDefaultValues(props, SelectPropsContext);
+    usePropsWithContextualDefaultValues(rawProps, SelectPropsContext);
 
   const uiColors = useUIColors();
-  const textStyle = useTextStyles();
+  const textStyles = useTextStyles();
 
   const menuItems = useMemo(() => {
     const menuActions = Object.entries(options).map(([v, d]) => {
@@ -159,7 +159,7 @@ export function Select<T extends string>(props: Props<T>) {
                   if (iconName) {
                     return (
                       <>
-                        <Icon name={iconName} size={textStyle.body.fontSize} />{' '}
+                        <Icon name={iconName} size={textStyles.body.fontSize} />{' '}
                       </>
                     );
                   }
@@ -182,7 +182,6 @@ export function Select<T extends string>(props: Props<T>) {
 const styles = StyleSheet.create({
   wrapper: {},
   container: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 9,

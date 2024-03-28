@@ -148,9 +148,15 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
         size * iconDefinition.materialIconConfig.additionalPaddingRatio;
     }
 
+    const materialIconName =
+      typeof iconDefinition.materialIconName === 'string'
+        ? iconDefinition.materialIconName
+        : iconDefinition.materialIconName[iconPlatform] ||
+          iconDefinition.materialIconName.default;
+
     return (
       <MaterialIcon
-        name={iconDefinition.materialIconName}
+        name={materialIconName}
         size={size - iconInset}
         color={iconColor}
         style={{ height: size - iconInset, width: size - iconInset }}

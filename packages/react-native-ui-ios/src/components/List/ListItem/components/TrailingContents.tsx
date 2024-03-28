@@ -79,7 +79,8 @@ const TRAILING_ACCESSORIES_SELECT_PROPS = {
 const styles = StyleSheet.create({
   trailingContentsContainer: {
     flexGrow: 1,
-    flexShrink: 2,
+    flexShrink: 0,
+    maxWidth: '60%',
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',

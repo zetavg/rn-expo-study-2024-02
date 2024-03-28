@@ -19,6 +19,10 @@ export type SFSymbolDefinition = {
   additionalPaddingRatio?: number;
 };
 
+export type MaterialIconNameDefinition =
+  | string
+  | ({ default: string } & { [platformKey: string]: string });
+
 export type IconDefinition = {
   /**
    * The name of the Material Icon to use.
@@ -29,7 +33,7 @@ export type IconDefinition = {
    *
    * - `react-native-vector-icons`: https://github.com/oblador/react-native-vector-icons/blob/v10.0.3/glyphmaps/MaterialCommunityIcons.json
    */
-  materialIconName: string;
+  materialIconName: MaterialIconNameDefinition;
   materialIconConfig?: {
     /** If specified, additional padding will be added to the symbol (percentage of icon displayed size, 0.1 means 10%). */
     additionalPaddingRatio?: number;

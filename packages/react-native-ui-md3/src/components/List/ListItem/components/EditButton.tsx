@@ -1,13 +1,16 @@
 import React from 'react';
 import { Animated, Pressable, StyleSheet } from 'react-native';
+import { Checkbox } from 'react-native-paper';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Color from 'color';
 
+import { useColors } from '../../../../contexts';
 // import { useColors, useUIColors } from '../../../../contexts';
 import { EDIT_BUTTON_CONTAINER_WIDTH } from '../consts';
-import AddButton from '../icons/AddButton';
-import RemoveButton from '../icons/RemoveButton';
-import SelectedButton from '../icons/SelectedButton';
-import UnselectedButton from '../icons/UnselectedButton';
+// import AddButton from '../icons/AddButton';
+// import RemoveButton from '../icons/RemoveButton';
+// import SelectedButton from '../icons/SelectedButton';
+// import UnselectedButton from '../icons/UnselectedButton';
 import type { Props as ListItemProps } from '../ListItem';
 import { useListItemAnimationContext } from '../ListItemAnimationContext';
 
@@ -27,8 +30,7 @@ export function propsSelector(p: ListItemProps): Props {
 
 export const EditButton = React.memo(
   ({ editButton, onEditButtonPress }: Props): JSX.Element | null => {
-    // const colors = useColors();
-    // const uiColors = useUIColors();
+    const colors = useColors();
 
     const { editButtonOpacityAnim, renderEditButtonForAnim } =
       useListItemAnimationContext();
@@ -52,37 +54,28 @@ export const EditButton = React.memo(
         {({ pressed }) => {
           switch (editButtonToRender) {
             case 'unselected':
-              return (
-                <UnselectedButton
-                // fill={uiColors.systemGray3}
-                />
-              );
             case 'selected':
               return (
-                <SelectedButton
-                // fill={
-                //   pressed
-                //     ? Color(colors.blue).darken(0.4).hexa()
-                //     : colors.blue
-                // }
+                <Checkbox.Android
+                  status={
+                    editButtonToRender === 'selected' ? 'checked' : 'unchecked'
+                  }
                 />
               );
             case 'add':
               return (
-                <AddButton
-                // fill={
-                //   pressed
-                //     ? Color(colors.green).darken(0.4).hexa()
-                //     : colors.green
-                // }
+                <MaterialIcon
+                  name="plus-circle"
+                  size={24}
+                  color={colors.green}
                 />
               );
             case 'remove':
               return (
-                <RemoveButton
-                // fill={
-                //   pressed ? Color(colors.red).darken(0.4).hexa() : colors.red
-                // }
+                <MaterialIcon
+                  name="minus-circle"
+                  size={24}
+                  color={colors.red}
                 />
               );
             default:
@@ -99,8 +92,8 @@ EditButton.displayName = 'ListItem_EditButton';
 const styles = StyleSheet.create({
   editButtonContainer: {
     width: EDIT_BUTTON_CONTAINER_WIDTH,
-    paddingRight: 12,
     justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

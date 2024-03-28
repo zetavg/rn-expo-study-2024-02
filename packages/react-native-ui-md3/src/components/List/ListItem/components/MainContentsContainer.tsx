@@ -52,14 +52,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingVertical: CONTAINER_PADDING_VERTICAL,
-    paddingEnd: 24,
+    paddingRight: 24,
     gap: 5,
   },
   container_compact: {
     paddingVertical: COMPACT_CONTAINER_PADDING_VERTICAL,
   },
   container_grabberShown: {
-    paddingRight: 8 + GRABBER_CONTAINER_WIDTH,
+    paddingRight: 20 + GRABBER_CONTAINER_WIDTH,
   },
 });
 

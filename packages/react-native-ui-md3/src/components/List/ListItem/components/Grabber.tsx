@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Animated, Pressable, StyleSheet } from 'react-native';
+import { List } from 'react-native-paper';
 
-// import { useUIColors } from '../../../../contexts';
+import { useColors } from '../../../../contexts';
 import { GRABBER_CONTAINER_WIDTH, LAYOUT_ANIMATION_DURATION } from '../consts';
 import { useBackgroundColor } from '../hooks';
-import GrabberIcon from '../icons/GrabberIcon';
 import type { Props as ListItemProps } from '../ListItem';
 import {
   editButtonHiddenTranslateXValue,
@@ -18,7 +18,6 @@ export type Props = {
   showGrabber: ListItemProps['showGrabber'];
   onGrabberHold: ListItemProps['onGrabberHold'];
   dragActive: ListItemProps['dragActive'];
-  navigationLink: ListItemProps['navigationLink'];
   hideTrailingContents: ListItemProps['hideTrailingContents'];
   hasAccessories: boolean;
   backgroundColor: string;
@@ -32,7 +31,6 @@ export function propsSelector(
     showGrabber: p.showGrabber,
     onGrabberHold: p.onGrabberHold,
     dragActive: p.dragActive,
-    navigationLink: p.navigationLink,
     hideTrailingContents: p.hideTrailingContents,
     hasAccessories: !!p.accessories,
   };
@@ -44,12 +42,14 @@ export const Grabber = React.memo(
     showGrabber,
     onGrabberHold,
     dragActive,
-    navigationLink,
     hideTrailingContents,
     hasAccessories,
     backgroundColor,
   }: Props): JSX.Element | null => {
-    // const uiColors = useUIColors();
+    const navigationLink = false;
+
+    const colors = useColors();
+
     const bgc = useBackgroundColor({ backgroundColor, dragActive, listStyle });
 
     const [delayedHideTrailingContents, setDelayedHideTrailingContents] =
@@ -83,7 +83,7 @@ export const Grabber = React.memo(
             !(hideTrailingContents || delayedHideTrailingContents) &&
             styles.grabberContainer_withAccessories,
           {
-            // borderLeftColor: uiColors.opaqueSeparator,
+            borderLeftColor: colors.outlineVariant,
           },
           isEditButtonAnimationPlaying
             ? {
@@ -105,9 +105,7 @@ export const Grabber = React.memo(
           !dragActive && { backgroundColor: bgc },
         ]}
       >
-        <GrabberIcon
-        // fill={uiColors.tertiaryLabel}
-        />
+        <List.Icon icon="equal" color={colors.onSurfaceVariant} />
       </AnimatedPressable>
     );
   },

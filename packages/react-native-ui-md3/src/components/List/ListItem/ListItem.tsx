@@ -19,7 +19,6 @@ import Select from '../../Select';
 import Text from '../../Text';
 
 import ContentContainer from './components/ContentContainer';
-import DrillInIcon from './components/DrillInIcon';
 import EditButton, {
   propsSelector as editButtonPropsSelector,
 } from './components/EditButton';
@@ -33,7 +32,10 @@ import TitleAndSubtitle, {
   propsSelector as tasPropsSelector,
 } from './components/TitleAndSubtitle';
 import TitleAndTrailingContentsContainer from './components/TitleAndTrailingContentsContainer';
-import TrailingContents from './components/TrailingContents';
+import TrailingContents, {
+  propsSelector as tcPropsSelector,
+} from './components/TrailingContents';
+import { CONTAINER_PADDING_VERTICAL } from './consts';
 import { ListItemAnimationContextProvider } from './ListItemAnimationContext';
 import ListItemPropsContext from './ListItemPropsContext';
 import { getListItemHeight } from './utils';
@@ -95,8 +97,6 @@ export type Props = {
   subtitleOnTop?: boolean;
   /** Display the list item as a button. */
   button?: boolean;
-  /** Displays a navigation arrow on the right side of the list item if set to true. */
-  navigationLink?: boolean;
 
   /** Hides the trailing contents in the item. This is useful for hiding the trailing contents from items while the list is in edit mode (when `showGrabber` or `editButton` is set to `true`). */
   hideTrailingContents?: boolean;
@@ -149,7 +149,9 @@ export function ListItem(rawProps: Props) {
     !props.singleLine || !!(props.children && props.alignIconWithTitle);
 
   const titleContainerYAnim = useRef(new Animated.Value(0)).current;
-  const titleParentContainerYAnim = useRef(new Animated.Value(0)).current;
+  const titleParentContainerYAnim = useRef(
+    new Animated.Value(CONTAINER_PADDING_VERTICAL),
+  ).current;
   const titleYAnim = useRef(
     Animated.add(titleContainerYAnim, titleParentContainerYAnim),
   ).current;
@@ -205,14 +207,7 @@ export function ListItem(rawProps: Props) {
                     />
 
                     {!props.hideTrailingContents && (
-                      <TrailingContents
-                        accessories={props.accessories}
-                        detail={props.detail}
-                      />
-                    )}
-
-                    {props.navigationLink && (
-                      <DrillInIcon hide={props.hideTrailingContents} />
+                      <TrailingContents {...tcPropsSelector(props)} />
                     )}
                   </TitleAndTrailingContentsContainer>
                 )}

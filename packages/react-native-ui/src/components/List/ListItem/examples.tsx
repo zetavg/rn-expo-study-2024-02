@@ -1,6 +1,32 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
+
+import { Icon } from '@rnstudy/react-icons';
+
+import { ExampleUncontrolledSelect } from '../../Select/examples';
+import { ExampleUncontrolledSwitch } from '../../Switch/examples';
+
+export const EMPTY_FUNCTION = () => {};
+export const FUNCTION_WITH_PRESSED_ALERT = () => {
+  Alert.alert('Pressed');
+};
+
+export const EXAMPLE_ICONS = {
+  undefined,
+  '<Icon name="_listitem_person" />': <Icon name="_listitem_person" />,
+  '({ backgroundColor }: { backgroundColor: string }) => <Icon name="airplane" color={backgroundColor} backgroundColor="orange" />':
+    ({ backgroundColor }: { backgroundColor: string }) => (
+      <Icon name="airplane" color={backgroundColor} backgroundColor="orange" />
+    ),
+  '<Icon name="heart" color="red" />': <Icon name="heart" color="red" />,
+};
+
+export const EXAMPLE_ACCESSORIES = {
+  undefined,
+  Switch: <ExampleUncontrolledSwitch />,
+  Select: <ExampleUncontrolledSelect />,
+};
 
 export const EXAMPLE_CHILDREN = (
   <View

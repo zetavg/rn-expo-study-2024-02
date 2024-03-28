@@ -60,10 +60,9 @@ export function ListHeader(props: Props) {
         ? PROMINENT_TITLE_TEXT_PROPS
         : TITLE_TEXT_PROPS;
 
-  const ContainerViewComponent = listStyle === 'plain' ? BlurView : View;
 
   return (
-    <ContainerViewComponent
+    <View
       style={[
         styles.container,
         containerStyles[listStyle],
@@ -128,7 +127,7 @@ export function ListHeader(props: Props) {
           })}
         </View>
       )}
-    </ContainerViewComponent>
+    </View>
   );
 }
 
@@ -143,8 +142,7 @@ const TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
 };
 
 const PROMINENT_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
-  // textStyle: 'title3',
-  // emphasized: true,
+  variant: 'titleLarge',
 };
 
 const PLAIN_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {

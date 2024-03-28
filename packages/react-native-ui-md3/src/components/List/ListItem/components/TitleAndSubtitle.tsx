@@ -122,7 +122,7 @@ const TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
 
 const BUTTON_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
   variant: 'bodyLarge',
-  color: 'onSurface',
+  color: 'primary',
 };
 
 const SUBTITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
