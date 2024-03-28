@@ -1,8 +1,11 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { useColors } from '../../../../contexts';
-import { COMPACT_CONTAINER_PADDING_VERTICAL, CONTAINER_PADDING_VERTICAL, CONTENT_CONTAINER_GAP, GRABBER_CONTAINER_WIDTH } from '../consts';
+import {
+  COMPACT_CONTAINER_PADDING_VERTICAL,
+  CONTAINER_PADDING_VERTICAL,
+  GRABBER_CONTAINER_WIDTH,
+} from '../consts';
 import type { Props as ListItemProps } from '../ListItem';
 import { useListItemAnimationContext } from '../ListItemAnimationContext';
 
@@ -50,7 +53,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: CONTAINER_PADDING_VERTICAL,
     paddingEnd: 24,
-    gap: 8,
+    gap: 5,
   },
   container_compact: {
     paddingVertical: COMPACT_CONTAINER_PADDING_VERTICAL,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { Animated, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { IconPropsContext } from '@rnstudy/react-icons';
 import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
@@ -11,7 +11,7 @@ export type Props = {
   subtitle?: ListItemProps['subtitle'];
   compact?: ListItemProps['compact'];
   backgroundColor: string;
-  style?: ViewStyle;
+  style?: React.ComponentProps<(typeof Animated)['View']>['style'];
 };
 
 export const Image = ({
@@ -21,7 +21,7 @@ export const Image = ({
   backgroundColor,
   style,
 }: Props): JSX.Element => (
-  <View style={[styles.iconContainer, style]}>
+  <Animated.View style={[styles.iconContainer, style]}>
     {withPropDefaultValuesContext(icon, {
       iconProps: {
         value: {
@@ -37,7 +37,7 @@ export const Image = ({
         context: null,
       },
     })}
-  </View>
+  </Animated.View>
 );
 
 Image.displayName = 'ListItem_Image';

@@ -1,5 +1,6 @@
 import React, { forwardRef, useContext, useMemo } from 'react';
 import {
+  Animated,
   Image,
   Platform,
   StyleSheet,
@@ -225,7 +226,7 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
   ]);
 
   const iconElement = (
-    <View
+    <Animated.View
       ref={label ? undefined : ref}
       style={[
         styles.iconContainer,
@@ -236,20 +237,21 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
             : iconTheme.grayBackgroundColor,
           borderRadius: iconTheme.borderRadius,
         },
-        iconContainerStyle,
+        !label && iconContainerStyle,
       ]}
     >
       {nativeIconElement}
-    </View>
+    </Animated.View>
   );
 
   if (label) {
     return (
-      <View
+      <Animated.View
         ref={ref}
         style={[
           styles.iconAndLabelContainer,
           { gap: size * (iconPlatform === 'ios' ? 1 / 8 : 1 / 12) },
+          iconContainerStyle,
         ]}
       >
         {iconElement}
@@ -266,7 +268,7 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
         >
           {label}
         </Text>
-      </View>
+      </Animated.View>
     );
   }
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import React, { useRef } from 'react';
+import { Animated, StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { Icon } from '@rnstudy/react-icons';
 import {
@@ -138,11 +138,7 @@ export function ListItem(rawProps: Props) {
     fontScale: windowDimensions.fontScale,
   });
 
-  const [childrenHeightState, setChildrenHeightState] = React.useState<
-    number | null
-  >(null);
-
-  const childrenHeight = props.children ? childrenHeightState : null;
+  const childrenHeightAnim = useRef(new Animated.Value(0)).current;
 
   return (
     <ListItemAnimationContextProvider {...props}>
@@ -162,10 +158,8 @@ export function ListItem(rawProps: Props) {
                   {...props}
                   backgroundColor={backgroundColor}
                   style={
-                    props.alignIconWithTitle
-                      ? typeof childrenHeight === 'number'
-                        ? { marginBottom: childrenHeight }
-                        : styles.alignSelfFlexStart
+                    props.alignIconWithTitle && props.children
+                      ? { marginBottom: childrenHeightAnim }
                       : undefined
                   }
                 />
@@ -198,7 +192,7 @@ export function ListItem(rawProps: Props) {
                   <View
                     style={styles.childrenContainer}
                     onLayout={(e) => {
-                      setChildrenHeightState(e.nativeEvent.layout.height);
+                      childrenHeightAnim.setValue(e.nativeEvent.layout.height);
                     }}
                   >
                     {props.children}
@@ -223,9 +217,6 @@ const styles = StyleSheet.create({
   childrenContainer: {
     flex: 1,
     paddingBottom: 12,
-  },
-  alignSelfFlexStart: {
-    alignSelf: 'flex-start',
   },
 });
 

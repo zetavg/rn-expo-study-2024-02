@@ -1,5 +1,11 @@
-import React, { useMemo, useState } from 'react';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import React, { useCallback, useRef } from 'react';
+import {
+  Animated,
+  LayoutChangeEvent,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 
 import { Icon } from '@rnstudy/react-icons';
 import {
@@ -139,40 +145,27 @@ export function ListItem(rawProps: Props) {
     fontScale: windowDimensions.fontScale,
   });
 
-  // const [childrenHeightState, setChildrenHeightState] = React.useState<
-  //   number | null
-  // >(null);
-
-  // const childrenHeight = props.children ? childrenHeightState : null;
-
   const iconShouldAlignWithTitle =
     !props.singleLine || !!(props.children && props.alignIconWithTitle);
 
-  const [titleContainerY, setTitleContainerY] = useState<number | null>(null);
-  const handleTitleContainerLayout = useMemo(() => {
-    if (!iconShouldAlignWithTitle) return undefined;
+  const titleContainerYAnim = useRef(new Animated.Value(0)).current;
+  const titleParentContainerYAnim = useRef(new Animated.Value(0)).current;
+  const titleYAnim = useRef(
+    Animated.add(titleContainerYAnim, titleParentContainerYAnim),
+  ).current;
 
-    const handler: React.ComponentProps<typeof View>['onLayout'] = (e) => {
-      console.log(`handle ${JSON.stringify(e.nativeEvent.layout)}`);
-      setTitleContainerY(e.nativeEvent.layout.y);
-    };
-
-    return handler;
-  }, [iconShouldAlignWithTitle]);
-
-  const [titleParentContainerY, setTitleParentContainerY] = useState<
-    number | null
-  >(null);
-  const handleTitleParentContainerLayout = useMemo(() => {
-    if (!iconShouldAlignWithTitle) return undefined;
-
-    const handler: React.ComponentProps<typeof View>['onLayout'] = (e) => {
-      console.log(`handle ${JSON.stringify(e.nativeEvent.layout)}`);
-      setTitleParentContainerY(e.nativeEvent.layout.y);
-    };
-
-    return handler;
-  }, [iconShouldAlignWithTitle]);
+  const handleTitleContainerLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      titleContainerYAnim.setValue(event.nativeEvent.layout.y);
+    },
+    [titleContainerYAnim],
+  );
+  const handleTitleParentContainerLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      titleParentContainerYAnim.setValue(event.nativeEvent.layout.y);
+    },
+    [titleParentContainerYAnim],
+  );
 
   return (
     <ListItemAnimationContextProvider {...props}>
@@ -192,19 +185,7 @@ export function ListItem(rawProps: Props) {
                   {...props}
                   backgroundColor={backgroundColor}
                   iconShouldAlignWithTitle={iconShouldAlignWithTitle}
-                  titleY={
-                    typeof titleContainerY === 'number' &&
-                    typeof titleParentContainerY === 'number'
-                      ? titleContainerY + titleParentContainerY
-                      : null
-                  }
-                  // style={
-                  //   props.alignIconWithTitle
-                  //     ? typeof childrenHeight === 'number'
-                  //       ? { marginBottom: childrenHeight }
-                  //       : styles.alignSelfFlexStart
-                  //     : undefined
-                  // }
+                  titleYAnim={titleYAnim}
                 />
               )}
 
@@ -237,14 +218,7 @@ export function ListItem(rawProps: Props) {
                 )}
 
                 {!!props.children && (
-                  <View
-                    style={styles.childrenContainer}
-                    // onLayout={(e) => {
-                    //   setChildrenHeightState(e.nativeEvent.layout.height);
-                    // }}
-                  >
-                    {props.children}
-                  </View>
+                  <View style={styles.childrenContainer}>{props.children}</View>
                 )}
               </MainContentsContainer>
 

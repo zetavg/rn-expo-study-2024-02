@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     flexShrink: 1,
+    alignSelf: 'center', // Necessary for `onLayout` to measure the correct Y position of the title, since this will ensure the container is not stretched to the full height of the parent which may adds extra space between the container and the title text.
     minWidth: '25%',
     flexDirection: 'column',
     justifyContent: 'center',

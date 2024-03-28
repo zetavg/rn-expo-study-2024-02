@@ -1,5 +1,11 @@
 import React from 'react';
-import { StyleSheet, useWindowDimensions, View, ViewStyle } from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 import { IconPropsContext } from '@rnstudy/react-icons';
 import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
@@ -19,7 +25,7 @@ export type Props = {
   children?: ListItemProps['children'];
   alignIconWithTitle?: ListItemProps['alignIconWithTitle'];
   iconShouldAlignWithTitle: boolean;
-  titleY: number | null;
+  titleYAnim: Animated.AnimatedNode;
   backgroundColor: string;
   style?: ViewStyle;
 };
@@ -33,7 +39,7 @@ export const Image = React.memo(
     children,
     alignIconWithTitle,
     iconShouldAlignWithTitle,
-    titleY,
+    titleYAnim,
     backgroundColor,
     style,
   }: Props): JSX.Element => {
@@ -59,11 +65,7 @@ export const Image = React.memo(
           iconProps: {
             value: {
               align: iconShouldAlignWithTitle ? 'start' : 'center',
-              mt: iconShouldAlignWithTitle
-                ? typeof titleY === 'number'
-                  ? titleY
-                  : CONTAINER_PADDING_VERTICAL
-                : undefined,
+              mt: iconShouldAlignWithTitle ? titleYAnim : undefined,
               color: colors.onSurfaceVariant,
               size: iconSize,
             },

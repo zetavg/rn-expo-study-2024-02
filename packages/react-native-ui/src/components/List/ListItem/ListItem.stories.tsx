@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@rnstudy/storybook-rn-types';
 
 import Text from '../../Text';
 
-import { EXAMPLE_CHILDREN } from './examples';
+import { EXAMPLE_CHILDREN, EXAMPLE_CHILDREN_TALL } from './examples';
 import ListItem from './ListItem';
 
 const meta: Meta<typeof ListItem> = {
@@ -50,10 +50,11 @@ const meta: Meta<typeof ListItem> = {
     },
     children: {
       control: 'select',
-      options: ['undefined', 'Example Children'],
+      options: ['undefined', 'Example Children', 'Example Children (Tall)'],
       mapping: {
         undefined,
         'Example Children': EXAMPLE_CHILDREN,
+        'Example Children (Tall)': EXAMPLE_CHILDREN_TALL,
       },
     },
   },
@@ -128,7 +129,7 @@ export const WithChildrenAndIcon: Story = {
   args: {
     title: 'Title',
     icon: <Icon name="_listitem_person" />,
-    children: EXAMPLE_CHILDREN,
+    children: EXAMPLE_CHILDREN_TALL,
   },
 };
 
@@ -137,7 +138,7 @@ export const WithChildrenAndTitleAlignedIcon: Story = {
     title: 'Title',
     icon: <Icon name="_listitem_person" />,
     alignIconWithTitle: true,
-    children: EXAMPLE_CHILDREN,
+    children: EXAMPLE_CHILDREN_TALL,
   },
 };
 
@@ -147,7 +148,7 @@ export const WithChildrenAndSubtitleAndTitleAlignedIcon: Story = {
     subtitle: 'This is the subtitle.',
     icon: <Icon name="_listitem_person" />,
     alignIconWithTitle: true,
-    children: EXAMPLE_CHILDREN,
+    children: EXAMPLE_CHILDREN_TALL,
   },
 };
 

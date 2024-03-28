@@ -6,6 +6,18 @@ export const EXAMPLE_CHILDREN = (
   <View
     style={{
       backgroundColor: '#88888888',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
+    <Text style={{ color: 'black', fontSize: 14 }}>This is the children.</Text>
+  </View>
+);
+
+export const EXAMPLE_CHILDREN_TALL = (
+  <View
+    style={{
+      backgroundColor: '#88888888',
       height: 100,
       justifyContent: 'center',
       alignItems: 'center',
