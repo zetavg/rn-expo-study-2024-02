@@ -4211,6 +4211,7 @@ __metadata:
     "@types/eslint": "npm:^8"
     "@types/jest": "npm:^29"
     "@types/react": "npm:^18"
+    color: "npm:^4"
     eslint: "npm:^8.10"
     jest: "npm:^29"
     react-native: "npm:0.72"

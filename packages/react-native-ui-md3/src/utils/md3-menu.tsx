@@ -86,7 +86,13 @@ export function buildMenuItems(
           menuButton.handler?.();
         }}
         title={menuButton.subtitle ? menuButton.title : menuButton.title}
-        leadingIcon={menuButton.checked ? 'check' : materialIcon}
+        leadingIcon={
+          menuButton.checked
+            ? 'check'
+            : materialIcon && typeof materialIcon === 'object'
+              ? materialIcon.android || materialIcon.default
+              : materialIcon
+        }
         // trailingIcon={materialIcon}
         contentStyle={[
           styles.menuItemContent,

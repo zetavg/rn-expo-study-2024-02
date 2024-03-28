@@ -132,8 +132,9 @@ export function Button({
               case 'prominent':
                 return 'filled';
               case 'plain':
-              default:
                 return 'plain';
+              default:
+                return undefined;
             }
           })()}
           controlSize={size}
@@ -156,8 +157,9 @@ export function Button({
               case 'prominent':
                 return 'contained';
               case 'plain':
-              default:
                 return 'text';
+              default:
+                return undefined;
             }
           })()}
           size={size}

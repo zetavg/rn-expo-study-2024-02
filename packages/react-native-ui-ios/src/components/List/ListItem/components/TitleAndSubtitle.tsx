@@ -9,16 +9,30 @@ import type { Props as ListItemProps } from '../ListItem';
 export type Props = {
   title: ListItemProps['title'];
   subtitle: ListItemProps['subtitle'];
+  singleLine: ListItemProps['singleLine'];
   button: ListItemProps['button'];
   compact: ListItemProps['compact'];
   subtitleOnTop: ListItemProps['subtitleOnTop'];
   fixedHeight: ListItemProps['fixedHeight'];
 };
 
+export function propsSelector(p: ListItemProps): Props {
+  return {
+    title: p.title,
+    subtitle: p.subtitle,
+    singleLine: p.singleLine,
+    button: p.button,
+    compact: p.compact,
+    subtitleOnTop: p.subtitleOnTop,
+    fixedHeight: p.fixedHeight,
+  };
+}
+
 export const TitleAndSubtitle = React.memo(
   ({
     title,
     subtitle,
+    singleLine,
     button,
     compact,
     subtitleOnTop,
@@ -38,7 +52,7 @@ export const TitleAndSubtitle = React.memo(
                   ? BUTTON_TITLE_TEXT_PROPS
                   : TITLE_TEXT_PROPS;
 
-                if (fixedHeight) {
+                if (fixedHeight || singleLine) {
                   titleTextProps = {
                     ...titleTextProps,
                     numberOfLines: 1,
@@ -66,7 +80,7 @@ export const TitleAndSubtitle = React.memo(
                   ? SMALL_SUBTITLE_TEXT_PROPS
                   : SUBTITLE_TEXT_PROPS;
 
-                if (fixedHeight) {
+                if (fixedHeight || singleLine) {
                   subtitleTextProps = {
                     ...subtitleTextProps,
                     numberOfLines: 1,

@@ -1,3 +1,5 @@
+import { type Animated } from 'react-native';
+
 import IconDefinitions from '../../IconDefinitions';
 import { IconColor } from '../../types';
 
@@ -31,20 +33,23 @@ export type IconProps = {
   borderWidth?: number;
 
   /** Margin. */
-  m?: number;
+  m?: number | Animated.AnimatedNode;
   /** Margin vertical. */
-  mv?: number;
+  mv?: number | Animated.AnimatedNode;
   /** Margin horizontal. */
-  mh?: number;
+  mh?: number | Animated.AnimatedNode;
   /** Margin top. */
-  mt?: number;
+  mt?: number | Animated.AnimatedNode;
   /** Margin bottom. */
-  mb?: number;
+  mb?: number | Animated.AnimatedNode;
   /** Margin left. */
-  ml?: number;
+  ml?: number | Animated.AnimatedNode;
   /** Margin right. */
-  mr?: number;
+  mr?: number | Animated.AnimatedNode;
+
+  /** Align. */
+  align?: 'center' | 'start' | 'end';
 
   /** Opacity. */
-  opacity?: number;
+  opacity?: number | Animated.AnimatedNode;
 };

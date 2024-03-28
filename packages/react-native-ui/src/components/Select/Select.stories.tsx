@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Alert, View } from 'react-native';
 
-import type { Meta } from '@rnstudy/storybook-rn-types';
+import type { Meta, StoryObj } from '@rnstudy/storybook-rn-types';
 
 import { Button } from '../Button';
 import Text from '../Text';
 
+import { ExampleUncontrolledSelect } from './examples';
 import Select, { Props } from './Select';
 
 const meta: Meta<typeof Select> = {
@@ -22,42 +23,22 @@ const meta: Meta<typeof Select> = {
       kotlin: { label: 'Kotlin' },
     },
   },
+  render: (args) => <ExampleUncontrolledSelect {...args} />,
 };
 
 export default meta;
 
-export const Default: Meta<typeof Select> = {};
+type Story = StoryObj<typeof Select>;
 
-export const CustomPlaceholder: Meta<typeof Select> = {
+export const A1_Default: Story = {};
+
+export const A2_CustomPlaceholder: Story = {
   args: {
     placeholder: 'Choose your favorite language',
   },
 };
 
-function ExampleInteractiveComponent<T extends string>({
-  showInfo,
-  ...props
-}: Props<T> & { showInfo?: boolean }) {
-  const [value, setValue] = useState<T | undefined>(props.value);
-  return (
-    <>
-      <Select {...props} value={value} onValueChange={setValue} />
-      {showInfo && (
-        // eslint-disable-next-line react-native/no-inline-styles
-        <View style={{ marginTop: 12, gap: 4 }}>
-          <Text>Selected value: {value || 'undefined'}</Text>
-          <Button label="Clear Selection" onPress={() => setValue(undefined)} />
-        </View>
-      )}
-    </>
-  );
-}
-
-export const InteractiveExample: Meta<typeof Select> = {
-  render: (args) => <ExampleInteractiveComponent showInfo {...args} />,
-};
-
-export const WithAdditionalActions: Meta<typeof Select> = {
+export const A3_WithAdditionalActions: Story = {
   args: {
     additionalActions: [
       {
@@ -75,10 +56,13 @@ export const WithAdditionalActions: Meta<typeof Select> = {
       },
     ],
   },
-  render: (args) => <ExampleInteractiveComponent {...args} />,
 };
 
-export const Alignment: Meta<typeof Select> = {
+export const X1_Interactive: Story = {
+  render: (args) => <ExampleUncontrolledSelect showInfo {...args} />,
+};
+
+export const D1_Alignment: Story = {
   render: (args) => (
     <View
       // eslint-disable-next-line react-native/no-inline-styles
@@ -91,22 +75,22 @@ export const Alignment: Meta<typeof Select> = {
       }}
     >
       <Text variant="subheadline">Align: start</Text>
-      <ExampleInteractiveComponent {...args} align="start" />
+      <ExampleUncontrolledSelect {...args} align="start" />
 
       <Text />
 
       <Text variant="subheadline">Align: center</Text>
-      <ExampleInteractiveComponent {...args} align="center" />
+      <ExampleUncontrolledSelect {...args} align="center" />
 
       <Text />
 
       <Text variant="subheadline">Align: end</Text>
-      <ExampleInteractiveComponent {...args} align="end" />
+      <ExampleUncontrolledSelect {...args} align="end" />
     </View>
   ),
 };
 
-export const LongLabel: Meta<typeof Select> = {
+export const L1_LongLabel: Story = {
   args: {
     options: {
       long: {
@@ -122,10 +106,9 @@ export const LongLabel: Meta<typeof Select> = {
     value: 'long',
     style: { maxWidth: 300 },
   },
-  render: (args) => <ExampleInteractiveComponent {...args} />,
 };
 
-export const LongListOfOptions: Meta<typeof Select> = {
+export const L2_LongListOfOptions: Story = {
   args: {
     options: {
       ...Object.fromEntries(
@@ -137,5 +120,4 @@ export const LongListOfOptions: Meta<typeof Select> = {
     },
     value: 'option-0',
   },
-  render: (args) => <ExampleInteractiveComponent {...args} />,
 };

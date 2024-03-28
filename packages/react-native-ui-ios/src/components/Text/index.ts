@@ -1,4 +1,5 @@
 import Text from './Text';
-export { Text } from './Text';
-export { TextPropsContext } from './TextPropsContext';
 export default Text;
+
+export { Text, type Props as TextProps } from './Text';
+export { TextPropsContext } from './TextPropsContext';

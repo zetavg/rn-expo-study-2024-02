@@ -11,7 +11,7 @@ export type Props = {
 
   listStyle: NonNullable<ListItemProps['listStyle']>;
   listPosition: NonNullable<ListItemProps['listPosition']>;
-  dragActive: ListItemProps['dragActive'];
+  dragActive?: ListItemProps['dragActive'];
 };
 
 export const MainContentsContainer = ({

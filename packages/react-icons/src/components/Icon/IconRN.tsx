@@ -1,5 +1,6 @@
 import React, { forwardRef, useContext, useMemo } from 'react';
 import {
+  Animated,
   Image,
   Platform,
   StyleSheet,
@@ -42,6 +43,7 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
     mb,
     ml,
     mr,
+    align,
     opacity,
     backgroundColor,
     borderColor,
@@ -146,9 +148,15 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
         size * iconDefinition.materialIconConfig.additionalPaddingRatio;
     }
 
+    const materialIconName =
+      typeof iconDefinition.materialIconName === 'string'
+        ? iconDefinition.materialIconName
+        : iconDefinition.materialIconName[iconPlatform] ||
+          iconDefinition.materialIconName.default;
+
     return (
       <MaterialIcon
-        name={iconDefinition.materialIconName}
+        name={materialIconName}
         size={size - iconInset}
         color={iconColor}
         style={{ height: size - iconInset, width: size - iconInset }}
@@ -182,6 +190,10 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
       style.marginRight = mr;
     }
 
+    if (align !== undefined) {
+      style.alignSelf = align === 'center' ? align : `flex-${align}`;
+    }
+
     if (opacity !== undefined) {
       style.opacity = opacity;
     }
@@ -210,6 +222,7 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
     mr,
     mt,
     mv,
+    align,
     opacity,
     bordered,
     backgroundColor,
@@ -219,7 +232,7 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
   ]);
 
   const iconElement = (
-    <View
+    <Animated.View
       ref={label ? undefined : ref}
       style={[
         styles.iconContainer,
@@ -230,20 +243,21 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
             : iconTheme.grayBackgroundColor,
           borderRadius: iconTheme.borderRadius,
         },
-        iconContainerStyle,
+        !label && iconContainerStyle,
       ]}
     >
       {nativeIconElement}
-    </View>
+    </Animated.View>
   );
 
   if (label) {
     return (
-      <View
+      <Animated.View
         ref={ref}
         style={[
           styles.iconAndLabelContainer,
           { gap: size * (iconPlatform === 'ios' ? 1 / 8 : 1 / 12) },
+          iconContainerStyle,
         ]}
       >
         {iconElement}
@@ -260,7 +274,7 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
         >
           {label}
         </Text>
-      </View>
+      </Animated.View>
     );
   }
 

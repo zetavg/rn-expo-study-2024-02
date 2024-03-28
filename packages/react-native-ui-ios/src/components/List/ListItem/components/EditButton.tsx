@@ -14,9 +14,16 @@ import { useListItemAnimationContext } from '../ListItemAnimationContext';
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export type Props = {
-  editButton: ListItemProps['editButton'];
-  onEditButtonPress: ListItemProps['onEditButtonPress'];
+  editButton?: ListItemProps['editButton'];
+  onEditButtonPress?: ListItemProps['onEditButtonPress'];
 };
+
+export function propsSelector(p: ListItemProps): Props {
+  return {
+    editButton: p.editButton,
+    onEditButtonPress: p.onEditButtonPress,
+  };
+}
 
 export const EditButton = React.memo(
   ({ editButton, onEditButtonPress }: Props): JSX.Element | null => {

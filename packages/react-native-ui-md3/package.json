@@ -26,6 +26,7 @@
     "react-native-vector-icons": "^10"
   },
   "dependencies": {
+    "color": "^4",
     "react-native-paper": "^5"
   },
   "devDependencies": {

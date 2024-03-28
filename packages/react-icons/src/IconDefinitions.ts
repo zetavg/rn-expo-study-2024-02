@@ -227,6 +227,21 @@ export const IconDefinitions = makeIconDefinitions({
       },
     ],
   }),
+  _listitem_person: makeIconDefinition({
+    materialIconName: {
+      default: 'account-outline',
+      ios: 'account',
+    },
+    sfSymbolDefinitions: [
+      {
+        name: 'person.fill',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
   android: makeIconDefinition({
     materialIconName: 'android',
   }),
