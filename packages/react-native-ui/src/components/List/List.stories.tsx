@@ -1,25 +1,21 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Alert,
-  LayoutAnimation,
-  Switch,
-  useWindowDimensions,
-} from 'react-native';
+import { Alert, LayoutAnimation, useWindowDimensions } from 'react-native';
 
-import { Icon } from '@rnstudy/react-icons';
 import {
   DragEndParams,
   FlatList,
   RenderItem,
   SectionList,
 } from '@rnstudy/react-native-lists';
-import { collectPropsFromArgs } from '@rnstudy/react-utils/src';
-import { Meta } from '@rnstudy/storybook-rn-types';
+import { argTypesFrom, collectPropsFromArgs } from '@rnstudy/react-utils';
+import { Meta, StoryObj } from '@rnstudy/storybook-rn-types';
 
 import { useUIPlatform } from '../../contexts';
 import { Button } from '../Button';
-import Select from '../Select';
 
+import ListFooterMeta from './ListFooter/ListFooter.stories';
+import ListHeaderMeta from './ListHeader/ListHeader.stories';
+import ListItemMeta from './ListItem/ListItem.stories';
 import {
   getListItemHeight,
   getListPadding,
@@ -46,116 +42,45 @@ const meta: Meta<typeof List> = {
   },
   argTypes: {
     first: { control: false },
+    header: { control: false },
+    footer: { control: false },
     children: { control: false },
 
-    '__props:header:ListHeader': { control: 'boolean' },
-    '__props:header:ListHeader.title': {
-      control: 'text',
+    '__props:header': {
+      control: 'radio',
+      options: ['undefined', 'ListHeader'],
     },
-    '__props:header:ListHeader.titleStyle': {
-      control: 'select',
-      options: ['default', 'prominent'],
-    },
-    '__props:header:ListHeader.accessories': {
-      control: 'select',
-      options: [
-        'undefined',
-        'singleButton',
-        'singleButtonWithIcon',
-        'multipleButtons',
-      ],
-      mapping: {
-        undefined,
-        singleButton: <Button label="Button" />,
-        singleButtonWithIcon: <Button label="Add" icon="_plus" />,
-        multipleButtons: (
-          <>
-            <Button buttonStyle="bordered" icon="_list_edit" />
-            <Button buttonStyle="tinted" label="Add" icon="_plus" />
-          </>
-        ),
-      },
-    },
+    ...argTypesFrom(ListHeaderMeta, {
+      prefix: '__props:header:ListHeader.',
+      exclude: ['listStyle', 'first'],
+    }),
 
-    '__props:footer:ListFooter': { control: 'boolean' },
-    '__props:footer:ListFooter.text': {
-      control: 'text',
+    '__props:footer': {
+      control: 'radio',
+      options: ['undefined', 'ListFooter'],
     },
+    ...argTypesFrom(ListFooterMeta, {
+      prefix: '__props:footer:ListFooter.',
+      exclude: ['listStyle'],
+    }),
 
-    '__props:children:ListItem.title': { control: 'text' },
-    '__props:children:ListItem.subtitle': { control: 'text' },
-    '__props:children:ListItem.icon': {
-      control: 'select',
-      options: ['undefined', 'person', 'star', 'airplane', 'heart'],
-      mapping: {
-        undefined,
-        person: <Icon name="_listitem_person" />,
-        star: <Icon name="star" />,
-        airplane: ({ backgroundColor }: { backgroundColor: string }) => (
-          <Icon
-            name="airplane"
-            color={backgroundColor}
-            backgroundColor="orange"
-          />
-        ),
-        heart: <Icon name="heart" color="red" />,
-      },
-    },
-    '__props:children:ListItem.compact': { control: 'boolean' },
-    '__props:children:ListItem.subtitleOnTop': { control: 'boolean' },
-    '__props:children:ListItem.singleLine': { control: 'boolean' },
-    '__props:children:ListItem.detail': { control: 'text' },
-    '__props:children:ListItem.accessories': {
-      control: 'select',
-      options: ['undefined', 'switch', 'select'],
-      mapping: {
-        undefined,
-        switch: <Switch value={true} />,
-        select: (
-          <Select
-            options={{
-              js: { label: 'JavaScript' },
-              ts: { label: 'TypeScript', icon: 'star.outline' as const },
-              swift: { label: 'Swift' },
-              kotlin: { label: 'Kotlin' },
-            }}
-            value={undefined}
-            onValueChange={() => {}}
-          />
-        ),
-      },
-    },
-    '__props:children:ListItem.navigationLink': { control: 'boolean' },
-    '__props:children:ListItem.onPress': {
-      control: 'select',
-      options: ['undefined', 'Function', 'Empty Function'],
-      mapping: {
-        undefined,
-        Function: () => {
-          Alert.alert('Pressed');
-        },
-        'Empty Function': () => {},
-      },
-    },
-    '__props:children:ListItem.showGrabber': { control: 'boolean' },
-    '__props:children:ListItem.editButton': {
-      control: 'select',
-      options: [undefined, 'unselected', 'selected', 'add', 'remove'],
-    },
-    '__props:children:ListItem.fixedHeight': { control: 'boolean' },
+    ...argTypesFrom(ListItemMeta, {
+      prefix: '__props:children:ListItem.',
+      exclude: ['listStyle', 'listPosition', 'dragActive'],
+    }),
   },
   args: {
     '__props:header:ListHeader.title': 'Header Title',
     '__props:footer:ListFooter.text': 'This is the footer text.',
   },
   render: (args) => {
-    const useListHeader = !!args['__props:header:ListHeader'];
+    const useListHeader = args['__props:header'] === 'ListHeader';
     const listHeaderProps = collectPropsFromArgs<ListHeaderProps>(
       args,
       '__props:header:ListHeader.',
     );
 
-    const useListFooter = !!args['__props:footer:ListFooter'];
+    const useListFooter = args['__props:footer'] === 'ListFooter';
     const listFooterProps = collectPropsFromArgs<ListFooterProps>(
       args,
       '__props:footer:ListFooter.',
@@ -204,9 +129,11 @@ const meta: Meta<typeof List> = {
 
 export default meta;
 
-export const Default: Meta<typeof List> = {};
+type Story = StoryObj<typeof List>;
 
-export const WithFlatList: Meta<typeof List> = {
+export const Default: Story = {};
+
+export const WithFlatList: Story = {
   parameters: {
     storyContainer: 'basic',
   },
@@ -219,13 +146,13 @@ export const WithFlatList: Meta<typeof List> = {
     __itemsCount: 16,
   },
   render: (args) => {
-    const useListHeader = !!args['__props:header:ListHeader'];
+    const useListHeader = args['__props:header'] === 'ListHeader';
     const listHeaderProps = collectPropsFromArgs<ListHeaderProps>(
       args,
       '__props:header:ListHeader.',
     );
 
-    const useListFooter = !!args['__props:footer:ListFooter'];
+    const useListFooter = args['__props:footer'] === 'ListFooter';
     const listFooterProps = collectPropsFromArgs<ListFooterProps>(
       args,
       '__props:footer:ListFooter.',
@@ -283,7 +210,7 @@ export const WithFlatList: Meta<typeof List> = {
   },
 };
 
-export const WithFlatListEditable: Meta<typeof List> = {
+export const WithFlatListEditable: Story = {
   parameters: {
     storyContainer: 'basic',
   },
@@ -308,7 +235,7 @@ export const WithFlatListEditable: Meta<typeof List> = {
     '__props:children:ListItem.fixedHeight': true,
   },
   render: (args) => {
-    const useListFooter = !!args['__props:footer:ListFooter'];
+    const useListFooter = args['__props:footer'] === 'ListFooter';
     const listFooterProps = collectPropsFromArgs<ListFooterProps>(
       args,
       '__props:footer:ListFooter.',
@@ -331,7 +258,7 @@ export const WithFlatListEditable: Meta<typeof List> = {
   },
 };
 
-export const WithSectionList: Meta<typeof List> = {
+export const WithSectionList: Story = {
   parameters: {
     storyContainer: 'basic',
   },
@@ -348,13 +275,13 @@ export const WithSectionList: Meta<typeof List> = {
     __itemsCount: 5,
   },
   render: (args) => {
-    const useListHeader = !!args['__props:header:ListHeader'];
+    const useListHeader = args['__props:header'] === 'ListHeader';
     const listHeaderProps = collectPropsFromArgs<ListHeaderProps>(
       args,
       '__props:header:ListHeader.',
     );
 
-    const useListFooter = !!args['__props:footer:ListFooter'];
+    const useListFooter = args['__props:footer'] === 'ListFooter';
     const listFooterProps = collectPropsFromArgs<ListFooterProps>(
       args,
       '__props:footer:ListFooter.',
