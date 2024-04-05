@@ -4073,11 +4073,15 @@ __metadata:
     typescript: "npm:^5"
   peerDependencies:
     react: ^18
+    react-dom: ^18
     react-native: ">=0.71"
     react-native-svg: ^15
     react-native-vector-icons: ^10
     sweet-sfsymbols: ^0.5.0
+    typescript: ">= 4.2.x"
   peerDependenciesMeta:
+    react-dom:
+      optional: true
     react-native:
       optional: true
     react-native-svg:
@@ -4085,6 +4089,8 @@ __metadata:
     react-native-vector-icons:
       optional: true
     sweet-sfsymbols:
+      optional: true
+    typescript:
       optional: true
   languageName: unknown
   linkType: soft
@@ -4145,10 +4151,17 @@ __metadata:
   peerDependencies:
     expo-blur: ~12.9.2
     react: ^18.2
+    react-dom: ^18
     react-native: ">= 0.72.0"
     react-native-gesture-handler: ~2.14
     react-native-safe-area-context: ">=4.8"
     react-native-screens: ">=3.28.0"
+    typescript: ">= 4.2.x"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    typescript:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -4187,6 +4200,7 @@ __metadata:
     expo: "*"
     expo-blur: ^12
     react: ^18
+    react-dom: ^18
     react-native: ">=0.71"
     react-native-gesture-handler: ^2
     react-native-haptic-feedback: ^2
@@ -4194,6 +4208,12 @@ __metadata:
     react-native-reanimated: ^3
     react-native-svg: ^15
     sweet-sfsymbols: ^0.5.0
+    typescript: ">= 4.2.x"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    typescript:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -4260,6 +4280,7 @@ __metadata:
     expo: "*"
     expo-blur: ^12
     react: ^18
+    react-dom: ^18
     react-native: ">=0.71"
     react-native-gesture-handler: ^2
     react-native-haptic-feedback: ^2
@@ -4269,6 +4290,12 @@ __metadata:
     react-native-svg: ^15
     react-native-vector-icons: ^10
     sweet-sfsymbols: ^0.5.0
+    typescript: ">= 4.2.x"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    typescript:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -4292,7 +4319,14 @@ __metadata:
     react-test-renderer: "npm:^18"
     typescript: "npm:^5"
   peerDependencies:
-    react: ">=18"
+    react: ^18
+    react-dom: ^18
+    typescript: ">= 4.2.x"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    typescript:
+      optional: true
   languageName: unknown
   linkType: soft
 
