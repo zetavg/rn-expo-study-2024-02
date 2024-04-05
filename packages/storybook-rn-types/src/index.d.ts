@@ -26,6 +26,10 @@ export type ArgType = {
     }
   | { control: 'text' }
   | {
+      control: 'radio';
+      options: (string | undefined | null)[];
+    }
+  | {
       control: 'select';
       options: (string | undefined | null)[];
       mapping?: Record<string, unknown>;

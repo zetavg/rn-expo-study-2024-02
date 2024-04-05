@@ -4279,6 +4279,8 @@ __metadata:
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
+    "@storybook/docs-tools": "npm:8.0.0-rc.1"
+    "@storybook/react": "npm:8.0.0-rc.1"
     "@testing-library/react": "npm:^14"
     "@types/eslint": "npm:^8"
     "@types/jest": "npm:^29"
