@@ -3,8 +3,11 @@ import { StyleSheet, Text as NativeText, View } from 'react-native';
 import { ActivityIndicator, Button as RNButton } from 'react-native-paper';
 
 import { Icon, IconName } from '@rnstudy/react-icons';
+import { usePropsWithContextualDefaultValues } from '@rnstudy/react-utils';
 
 import { useTheme } from '../../contexts';
+
+import ButtonPropsContext from './ButtonPropsContext';
 
 export type Props = {
   mode?: 'text' | 'outlined' | 'contained' | 'elevated' | 'contained-tonal';
@@ -21,15 +24,17 @@ export type Props = {
   onLongPress?: React.ComponentProps<typeof RNButton>['onLongPress'];
 } & Omit<Partial<React.ComponentProps<typeof RNButton>>, 'icon' | 'children'>;
 
-export function Button({
-  mode = 'text',
-  size = 'regular',
-  text,
-  icon,
-  loading,
-  style,
-  ...restProps
-}: Props) {
+export function Button(rawProps: Props) {
+  const {
+    mode = 'text',
+    size = 'regular',
+    text,
+    icon,
+    loading,
+    style,
+    ...restProps
+  } = usePropsWithContextualDefaultValues(rawProps, ButtonPropsContext);
+
   const theme = useTheme();
 
   return (
@@ -134,6 +139,7 @@ export function Button({
               return theme.fonts.titleMedium;
           }
         })(),
+        !text && size === 'small' && styles.label_small,
         text ? styles[`label_${size}`] : styles.label_noText,
       ]}
     >

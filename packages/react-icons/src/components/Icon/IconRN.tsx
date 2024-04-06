@@ -130,14 +130,55 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
             if (defn.additionalPaddingRatio) {
               iconInset += size * defn.additionalPaddingRatio;
             }
-            return (
-              <SweetSFSymbol
-                name={defn.name}
-                size={size - iconInset}
-                renderingMode="monochrome"
-                colors={[iconColor]}
-              />
-            );
+
+            const sweetSFSymbolProps: React.ComponentProps<
+              typeof SweetSFSymbol
+            > = {
+              name: defn.name,
+              size: size - iconInset,
+              renderingMode: 'monochrome',
+              colors: [iconColor],
+            };
+
+            if (defn.opacityFix) {
+              return (
+                <View style={{ width: size - 1, height: size - 1 }}>
+                  <SweetSFSymbol
+                    {...sweetSFSymbolProps}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                  <SweetSFSymbol
+                    {...sweetSFSymbolProps}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                  <SweetSFSymbol
+                    {...sweetSFSymbolProps}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                  <SweetSFSymbol
+                    {...sweetSFSymbolProps}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                  <SweetSFSymbol
+                    {...sweetSFSymbolProps}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                  <SweetSFSymbol
+                    {...sweetSFSymbolProps}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                  <SweetSFSymbol
+                    {...sweetSFSymbolProps}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                  <SweetSFSymbol
+                    {...sweetSFSymbolProps}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                </View>
+              );
+            }
+            return <SweetSFSymbol {...sweetSFSymbolProps} />;
           }
         }
       }

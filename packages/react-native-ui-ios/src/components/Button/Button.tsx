@@ -75,7 +75,7 @@ const DEFAULT_HIT_SLOPS: { [k in ControlSize]: Insets } = {
   large: {},
 };
 
-export function Button(props: Props) {
+export function Button(rawProps: Props) {
   const {
     label,
     buttonStyle: buttonStyleFromProps = 'plain',
@@ -89,7 +89,7 @@ export function Button(props: Props) {
     onPressOut,
     hitSlop: hitSlopFromProps,
     ...restProps
-  } = usePropsWithContextualDefaultValues(props, ButtonPropsContext);
+  } = usePropsWithContextualDefaultValues(rawProps, ButtonPropsContext);
 
   const uiColors = useUIColors();
   const textStyles = useTextStyles();
