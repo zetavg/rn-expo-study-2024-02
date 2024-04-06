@@ -7,6 +7,7 @@ import { Icon } from '@rnstudy/react-icons';
 import { ExampleUncontrolledSelect } from '../../Select/examples';
 import { ExampleUncontrolledSwitch } from '../../Switch/examples';
 import Text from '../../Text';
+import { ExampleUncontrolledTextInput } from '../../TextInput/examples';
 
 import { AccessoryButton } from './AccessoryButton';
 
@@ -40,6 +41,27 @@ export const EXAMPLE_ACCESSORIES = {
   ),
   Switch: <ExampleUncontrolledSwitch />,
   Select: <ExampleUncontrolledSelect />,
+  TextInput: <ExampleUncontrolledTextInput placeholder="Text Input" />,
+  'TextInput with Long Value': (
+    <ExampleUncontrolledTextInput
+      placeholder="Text Input"
+      value="The quick brown fox jumps over the lazy dog."
+    />
+  ),
+  'TextInput with Clear Button': (
+    <ExampleUncontrolledTextInput
+      placeholder="Text Input"
+      value="Value"
+      clearButtonMode="always"
+    />
+  ),
+  'TextInput with Clear Button While Editing': (
+    <ExampleUncontrolledTextInput
+      placeholder="Text Input"
+      value="Value"
+      clearButtonMode="while-editing"
+    />
+  ),
 };
 
 export const EXAMPLE_CHILDREN = (

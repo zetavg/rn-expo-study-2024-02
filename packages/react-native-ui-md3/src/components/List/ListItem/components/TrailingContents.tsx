@@ -7,6 +7,7 @@ import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 import { useColors, useTheme } from '../../../../contexts';
 import { SelectProps, SelectPropsContext } from '../../../Select';
 import Text, { TextPropsContext } from '../../../Text';
+import { TextInputPropsContext } from '../../../TextInput';
 import type { Props as ListItemProps } from '../ListItem';
 import { useListItemAnimationContext } from '../ListItemAnimationContext';
 export type Props = {
@@ -14,6 +15,7 @@ export type Props = {
   detail: ListItemProps['detail'];
   checked: ListItemProps['checked'];
   singleLine: ListItemProps['singleLine'];
+  accessoriesContainsTextInput: ListItemProps['accessoriesContainsTextInput'];
   hasSubtitle: boolean;
   hide?: boolean;
 };
@@ -24,6 +26,7 @@ export function propsSelector(p: ListItemProps): Omit<Props, 'hide'> {
     detail: p.detail,
     checked: p.checked,
     singleLine: p.singleLine,
+    accessoriesContainsTextInput: p.accessoriesContainsTextInput,
     hasSubtitle: !!p.subtitle,
   };
 }
@@ -34,6 +37,7 @@ export const TrailingContents = React.memo(
     detail,
     checked,
     singleLine,
+    accessoriesContainsTextInput,
     hasSubtitle,
     hide,
   }: Props): JSX.Element | null => {
@@ -47,6 +51,10 @@ export const TrailingContents = React.memo(
           textProps: {
             value: TRAILING_DETAIL_TEXT_PROPS,
             context: TextPropsContext,
+          },
+          textInputProps: {
+            value: TRAILING_ACCESSORIES_TEXT_INPUT_PROPS,
+            context: TextInputPropsContext,
           },
           selectProps: {
             value: {
@@ -81,6 +89,8 @@ export const TrailingContents = React.memo(
           style={[
             styles.trailingContentsContainer,
             !!accessories && styles.trailingContentsContainer_withAccessories,
+            accessoriesContainsTextInput &&
+              styles.trailingContentsContainer_withTextInput,
             (hide || delayedHideTrailingContents) && styles.hidden,
             !singleLine && hasSubtitle && styles.alignSelfFlexStart,
           ]}
@@ -100,6 +110,10 @@ const TRAILING_DETAIL_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
   variant: 'labelSmall',
   color: 'onSurfaceVariant',
   numberOfLines: 1,
+};
+
+const TRAILING_ACCESSORIES_TEXT_INPUT_PROPS = {
+  textAlign: 'right' as const,
 };
 
 const TRAILING_ACCESSORIES_SELECT_PROPS: Partial<SelectProps<string>> = {
@@ -127,6 +141,11 @@ const styles = StyleSheet.create({
   },
   trailingContentsContainer_withAccessories: {
     marginEnd: -8,
+  },
+  trailingContentsContainer_withTextInput: {
+    flexGrow: 200,
+    maxWidth: '70%',
+    minWidth: '50%',
   },
   alignSelfFlexStart: {
     alignSelf: 'flex-start',

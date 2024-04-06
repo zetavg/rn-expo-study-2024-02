@@ -5,6 +5,7 @@ import { Icon } from '@rnstudy/react-icons';
 import type { Meta, StoryObj } from '@rnstudy/storybook-rn-types';
 
 import Text from '../../Text';
+import { ExampleUncontrolledTextInput } from '../../TextInput/examples';
 
 import {
   EMPTY_FUNCTION,
@@ -431,6 +432,50 @@ export const EC3_WithSelectAsAccessoryAndMultipleLineSubtitle: Story = {
   },
 };
 
+export const ED1_WithTextInputAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES.TextInput,
+    accessoriesContainsTextInput: true,
+  },
+};
+
+export const ED2_WithTextInputWithClearButtonAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES['TextInput with Clear Button'],
+    accessoriesContainsTextInput: true,
+  },
+};
+
+export const ED8_WithTextInputThatContainsALongValueAsAccessory: Story = {
+  parameters: {
+    containerStyle: {
+      width: 360,
+      alignSelf: 'center',
+    },
+  },
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES['TextInput with Long Value'],
+    accessoriesContainsTextInput: true,
+  },
+};
+
+export const ED9_WithLongTitleAndTextInputThatContainsALongValueAsAccessory: Story =
+  {
+    parameters: {
+      containerStyle: {
+        width: 360,
+        alignSelf: 'center',
+      },
+    },
+    args: {
+      ...ED8_WithTextInputThatContainsALongValueAsAccessory.args,
+      title: 'This is a long title',
+    },
+  };
+
 export const I2_WithColoredIcon: Story = {
   args: {
     icon: EXAMPLE_ICONS[
@@ -579,6 +624,37 @@ export const ME4_EditButtonRemove: Story = {
   args: {
     editButton: 'remove',
     onEditButtonPress: FUNCTION_WITH_PRESSED_ALERT,
+  },
+};
+
+export const NT1_TextInputAsChildren: Story = {
+  args: {
+    children: (
+      <ExampleUncontrolledTextInput
+        placeholder="Enter text here"
+        clearButtonMode="while-editing"
+      />
+    ),
+  },
+};
+
+export const NT2_TextInputAsChildrenWithoutTitle: Story = {
+  args: {
+    ...NT1_TextInputAsChildren.args,
+    title: '',
+  },
+};
+
+export const NT3_TextInputAsChildrenWithCustomTitle: Story = {
+  args: {
+    title: <Text variant="footnote">Title</Text>,
+    children: (
+      <ExampleUncontrolledTextInput
+        placeholder="Enter text here"
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{ marginTop: -4 }}
+      />
+    ),
   },
 };
 

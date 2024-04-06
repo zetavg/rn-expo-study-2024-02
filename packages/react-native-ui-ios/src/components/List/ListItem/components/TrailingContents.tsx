@@ -6,6 +6,7 @@ import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 import { useUIColors } from '../../../../contexts';
 import { SelectPropsContext } from '../../../Select';
 import Text, { TextPropsContext } from '../../../Text';
+import { TextInputPropsContext } from '../../../TextInput';
 import CheckmarkIcon from '../icons/CheckmarkIcon';
 import type { Props as ListItemProps } from '../ListItem';
 import { useListItemAnimationContext } from '../ListItemAnimationContext';
@@ -14,6 +15,7 @@ export type Props = {
   accessories: ListItemProps['accessories'];
   detail: ListItemProps['detail'];
   checked: ListItemProps['checked'];
+  accessoriesContainsTextInput: ListItemProps['accessoriesContainsTextInput'];
   hide?: boolean;
 };
 
@@ -22,12 +24,20 @@ export function propsSelector(p: ListItemProps): Props {
     accessories: p.accessories,
     detail: p.detail,
     checked: p.checked,
+    accessoriesContainsTextInput: p.accessoriesContainsTextInput,
   };
 }
 
 export const TrailingContents = React.memo(
-  ({ accessories, detail, checked, hide }: Props): JSX.Element | null => {
+  ({
+    accessories,
+    detail,
+    checked,
+    accessoriesContainsTextInput,
+    hide,
+  }: Props): JSX.Element | null => {
     const uiColors = useUIColors();
+
     const { delayedHideTrailingContents } = useListItemAnimationContext();
 
     const trailingContents = (() => {
@@ -36,6 +46,10 @@ export const TrailingContents = React.memo(
           textProps: {
             value: TRAILING_DETAIL_TEXT_PROPS,
             context: TextPropsContext,
+          },
+          textInputProps: {
+            value: TRAILING_ACCESSORIES_TEXT_INPUT_PROPS,
+            context: TextInputPropsContext,
           },
           selectProps: {
             value: TRAILING_ACCESSORIES_SELECT_PROPS,
@@ -60,6 +74,8 @@ export const TrailingContents = React.memo(
         <View
           style={[
             styles.trailingContentsContainer,
+            accessoriesContainsTextInput &&
+              styles.trailingContentsContainer_withTextInput,
             (hide || delayedHideTrailingContents) && styles.hidden,
           ]}
         >
@@ -78,6 +94,10 @@ const TRAILING_DETAIL_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
   textStyle: 'body',
   color: 'secondary',
   numberOfLines: 1,
+};
+
+const TRAILING_ACCESSORIES_TEXT_INPUT_PROPS = {
+  textAlign: 'right' as const,
 };
 
 const TRAILING_ACCESSORIES_SELECT_PROPS = {
@@ -101,6 +121,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     gap: 14,
+  },
+  trailingContentsContainer_withTextInput: {
+    flexGrow: 200,
+    maxWidth: '80%',
+    minWidth: '50%',
   },
   hidden: {
     display: 'none',

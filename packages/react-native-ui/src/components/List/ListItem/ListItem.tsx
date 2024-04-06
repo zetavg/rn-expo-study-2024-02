@@ -44,8 +44,15 @@ export type Props = {
   /** Shows a check mark on the item. Will be ignored if `accessories` is provided. */
   checked?: boolean;
 
-  /** The accessories to display on the right side of the list item, such as icon, switch, select or other components. */
+  /**
+   * The accessories to display on the right side of the list item, such as icon, switch, select or other components.
+   *
+   * Note: If you are using a `TextInput` in the accessories, you may also want to set the `accessoriesContainsTextInput` prop to `true` to prioritize space distribution for the text input.
+   */
   accessories?: React.ReactNode;
+
+  /** Set this to `true` if you are using a text input in the accessories of the list item. This will prioritize space distribution for the text input. */
+  accessoriesContainsTextInput?: boolean;
 
   onPress?: () => void;
   onLongPress?: () => void;
