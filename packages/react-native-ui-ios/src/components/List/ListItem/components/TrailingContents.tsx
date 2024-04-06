@@ -3,19 +3,31 @@ import { StyleSheet, View } from 'react-native';
 
 import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 
+import { useUIColors } from '../../../../contexts';
 import { SelectPropsContext } from '../../../Select';
 import Text, { TextPropsContext } from '../../../Text';
+import CheckmarkIcon from '../icons/CheckmarkIcon';
 import type { Props as ListItemProps } from '../ListItem';
 import { useListItemAnimationContext } from '../ListItemAnimationContext';
 
 export type Props = {
   accessories: ListItemProps['accessories'];
   detail: ListItemProps['detail'];
+  checked: ListItemProps['checked'];
   hide?: boolean;
 };
 
+export function propsSelector(p: ListItemProps): Props {
+  return {
+    accessories: p.accessories,
+    detail: p.detail,
+    checked: p.checked,
+  };
+}
+
 export const TrailingContents = React.memo(
-  ({ accessories, detail, hide }: Props): JSX.Element | null => {
+  ({ accessories, detail, checked, hide }: Props): JSX.Element | null => {
+    const uiColors = useUIColors();
     const { delayedHideTrailingContents } = useListItemAnimationContext();
 
     const trailingContents = (() => {
@@ -34,6 +46,10 @@ export const TrailingContents = React.memo(
 
       if (detail) {
         return <Text {...TRAILING_DETAIL_TEXT_PROPS}>{detail}</Text>;
+      }
+
+      if (checked) {
+        return <CheckmarkIcon fill={uiColors.tintColor} />;
       }
 
       return null;

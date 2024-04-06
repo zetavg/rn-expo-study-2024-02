@@ -1,17 +1,18 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 
-import { useTheme } from '../../../../contexts';
+import { useColors, useTheme } from '../../../../contexts';
 import { SelectProps, SelectPropsContext } from '../../../Select';
 import Text, { TextPropsContext } from '../../../Text';
 import type { Props as ListItemProps } from '../ListItem';
 import { useListItemAnimationContext } from '../ListItemAnimationContext';
-
 export type Props = {
   accessories: ListItemProps['accessories'];
   detail: ListItemProps['detail'];
+  checked: ListItemProps['checked'];
   singleLine: ListItemProps['singleLine'];
   hasSubtitle: boolean;
   hide?: boolean;
@@ -21,6 +22,7 @@ export function propsSelector(p: ListItemProps): Omit<Props, 'hide'> {
   return {
     accessories: p.accessories,
     detail: p.detail,
+    checked: p.checked,
     singleLine: p.singleLine,
     hasSubtitle: !!p.subtitle,
   };
@@ -30,12 +32,14 @@ export const TrailingContents = React.memo(
   ({
     accessories,
     detail,
+    checked,
     singleLine,
     hasSubtitle,
     hide,
   }: Props): JSX.Element | null => {
     const { delayedHideTrailingContents } = useListItemAnimationContext();
     const theme = useTheme();
+    const colors = useColors();
 
     const trailingContents = (() => {
       if (accessories) {
@@ -62,6 +66,10 @@ export const TrailingContents = React.memo(
 
       if (detail) {
         return <Text {...TRAILING_DETAIL_TEXT_PROPS}>{detail}</Text>;
+      }
+
+      if (checked) {
+        return <MaterialIcon name="check" size={24} color={colors.primary} />;
       }
 
       return null;

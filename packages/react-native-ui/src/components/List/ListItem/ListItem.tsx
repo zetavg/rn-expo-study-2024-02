@@ -39,6 +39,9 @@ export type Props = {
   /** The text to display on the right side of the list item. Will be ignored if `accessories` is provided. */
   detail?: string;
 
+  /** Shows a check mark on the item. Will be ignored if `accessories` is provided. */
+  checked?: boolean;
+
   /** The accessories to display on the right side of the list item, such as icon, switch, select or other components. */
   accessories?: React.ReactNode;
 

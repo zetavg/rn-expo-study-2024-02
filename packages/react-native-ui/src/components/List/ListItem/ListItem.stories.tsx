@@ -94,6 +94,12 @@ export const B4_WithIcon: Story = {
   },
 };
 
+export const B5_Checked: Story = {
+  args: {
+    checked: true,
+  },
+};
+
 export const BL1_WithSingleLineLongTitleAndIconAndIsNavigationLink: Story = {
   parameters: {
     containerStyle: {

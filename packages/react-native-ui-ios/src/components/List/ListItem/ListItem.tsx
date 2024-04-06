@@ -27,7 +27,9 @@ import TitleAndSubtitle, {
   propsSelector as tasPropsSelector,
 } from './components/TitleAndSubtitle';
 import TitleAndTrailingContentsContainer from './components/TitleAndTrailingContentsContainer';
-import TrailingContents from './components/TrailingContents';
+import TrailingContents, {
+  propsSelector as tcPropsSelector,
+} from './components/TrailingContents';
 import { ListItemAnimationContextProvider } from './ListItemAnimationContext';
 import ListItemPropsContext from './ListItemPropsContext';
 import { getListItemHeight } from './utils';
@@ -73,6 +75,9 @@ export type Props = {
 
   /** The text to display on the right side of the list item. Will be ignored if `accessories` is provided. */
   detail?: string;
+
+  /** Shows a check mark on the item. Will be ignored if `accessories` is provided. */
+  checked?: boolean;
 
   /** The accessories to display on the right side of the list item, such as icon, switch, select or other components. */
   accessories?: ReactNodePropWithPropDefaultValuesContext<{
@@ -176,10 +181,7 @@ export function ListItem(rawProps: Props) {
                     <TitleAndSubtitle {...tasPropsSelector(props)} />
 
                     {!props.hideTrailingContents && (
-                      <TrailingContents
-                        accessories={props.accessories}
-                        detail={props.detail}
-                      />
+                      <TrailingContents {...tcPropsSelector(props)} />
                     )}
 
                     {props.navigationLink && (
