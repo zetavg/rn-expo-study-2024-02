@@ -41,7 +41,7 @@ export function textPropsToMD3Props(props: TextProps): TextPropsMD3 {
 
       case 'body':
       default:
-        return 'bodyLarge' as const;
+        return undefined;
     }
   })();
 

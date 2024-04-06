@@ -48,12 +48,8 @@ export function ListFooter(props: Props) {
 }
 
 const TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
-  // color: 'secondary',
-  // style: {
-  //   fontSize: 13,
-  //   lineHeight: 16,
-  //   fontWeight: '400',
-  // },
+  variant: 'bodySmall',
+  color: 'secondary',
 };
 
 const styles = StyleSheet.create({
@@ -67,7 +63,7 @@ const containerStyles = StyleSheet.create({
   plain: {},
   grouped: {},
   insetGrouped: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
   },
 });
 

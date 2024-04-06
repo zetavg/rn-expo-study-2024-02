@@ -7,6 +7,8 @@ import { type ReactNodePropWithPropDefaultValuesContext } from '@rnstudy/react-u
 
 import { useUIPlatform } from '../../../contexts';
 
+import AccessoryButton from './AccessoryButton';
+
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
 export type Props = {
@@ -39,8 +41,18 @@ export type Props = {
   /** The text to display on the right side of the list item. Will be ignored if `accessories` is provided. */
   detail?: string;
 
-  /** The accessories to display on the right side of the list item, such as icon, switch, select or other components. */
+  /** Shows a check mark on the item. Will be ignored if `accessories` is provided. */
+  checked?: boolean;
+
+  /**
+   * The accessories to display on the right side of the list item, such as icon, switch, select or other components.
+   *
+   * Note: If you are using a `TextInput` in the accessories, you may also want to set the `accessoriesContainsTextInput` prop to `true` to prioritize space distribution for the text input.
+   */
   accessories?: React.ReactNode;
+
+  /** Set this to `true` if you are using a text input in the accessories of the list item. This will prioritize space distribution for the text input. */
+  accessoriesContainsTextInput?: boolean;
 
   onPress?: () => void;
   onLongPress?: () => void;
@@ -93,5 +105,7 @@ export function ListItem(props: Props) {
     }
   }
 }
+
+ListItem.AccessoryButton = AccessoryButton;
 
 export default ListItem;

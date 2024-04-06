@@ -51,15 +51,12 @@ export function ListHeader(props: Props) {
     accessories,
   } = usePropsWithContextualDefaultValues(props, ListHeaderPropsContext);
 
-  // const uiColors = useUIColors();
-
   const titleTextProps =
     listStyle === 'plain'
       ? PLAIN_TITLE_TEXT_PROPS
       : titleStyle === 'prominent'
         ? PROMINENT_TITLE_TEXT_PROPS
         : TITLE_TEXT_PROPS;
-
 
   return (
     <View
@@ -71,9 +68,6 @@ export function ListHeader(props: Props) {
           `${listStyle}_${titleStyle}` as keyof typeof containerStyles
         ],
       ]}
-      // tint={
-      //   Color(uiColors.systemBackground).lightness() > 50 ? 'light' : 'dark'
-      // }
     >
       {!!title && (
         <View style={[styles.titleContainer]}>
@@ -115,13 +109,13 @@ export function ListHeader(props: Props) {
               context: TextPropsContext,
             },
             buttonProps: {
-              value: {},
-              // titleStyle === 'prominent'
-              //   ? ({ buttonStyle }) =>
-              //       buttonStyle === 'plain'
-              //         ? PROMINENT_ACCESSORIES_PLAIN_BUTTON_PROPS
-              //         : PROMINENT_ACCESSORIES_BUTTON_PROPS
-              //   : ACCESSORIES_BUTTON_PROPS,
+              value:
+                titleStyle === 'prominent'
+                  ? ({ mode }) =>
+                      mode === 'text'
+                        ? PROMINENT_ACCESSORIES_TEXT_BUTTON_PROPS
+                        : PROMINENT_ACCESSORIES_BUTTON_PROPS
+                  : ACCESSORIES_BUTTON_PROPS,
               context: ButtonPropsContext,
             },
           })}
@@ -132,57 +126,41 @@ export function ListHeader(props: Props) {
 }
 
 const TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
-  // color: 'secondary',
-  // style: {
-  //   fontSize: 13,
-  //   lineHeight: 16,
-  //   fontWeight: '400',
-  //   textTransform: 'uppercase',
-  // },
+  variant: 'labelMedium',
+  color: 'onSurfaceVariant',
 };
 
 const PROMINENT_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
   variant: 'titleLarge',
+  color: 'onSurface',
 };
 
 const PLAIN_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
-  // color: 'secondary',
-  // textStyle: 'subheadline',
-  // emphasized: true,
+  variant: 'labelMedium',
+  color: 'secondary',
 };
 
-const DESCRIPTION_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
-  // textStyle: 'subheadline',
-  // color: 'secondary',
+const DESCRIPTION_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {};
+
+const ACCESSORIES_BUTTON_PROPS: Partial<React.ComponentProps<typeof Button>> = {
+  size: 'small',
+  style: {
+    marginVertical: -6,
+  },
 };
 
-// const ACCESSORIES_BUTTON_PROPS: Partial<React.ComponentProps<typeof Button>> = {
-//   controlSize: 'small',
-//   style: {
-//     marginBottom: -5,
-//   },
-// };
+const PROMINENT_ACCESSORIES_BUTTON_PROPS: Partial<
+  React.ComponentProps<typeof Button>
+> = {
+  mode: 'contained-tonal',
+  size: 'small',
+};
 
-// const PROMINENT_ACCESSORIES_BUTTON_PROPS: Partial<
-//   React.ComponentProps<typeof Button>
-// > = {
-//   buttonStyle: 'gray',
-//   controlSize: 'small',
-//   buttonBorderShape: 'rectangle',
-//   style: {
-//     marginBottom: 2,
-//   },
-// };
-
-// const PROMINENT_ACCESSORIES_PLAIN_BUTTON_PROPS: Partial<
-//   React.ComponentProps<typeof Button>
-// > = {
-//   controlSize: 'small',
-//   buttonBorderShape: 'rectangle',
-//   style: {
-//     marginBottom: -2,
-//   },
-// };
+const PROMINENT_ACCESSORIES_TEXT_BUTTON_PROPS: Partial<
+  React.ComponentProps<typeof Button>
+> = {
+  size: 'small',
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -218,7 +196,7 @@ const containerStyles = StyleSheet.create({
   },
   grouped: {},
   insetGrouped: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
   },
 
   insetGrouped_prominent: {

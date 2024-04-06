@@ -5,6 +5,7 @@ import { Icon } from '@rnstudy/react-icons';
 import type { Meta, StoryObj } from '@rnstudy/storybook-rn-types';
 
 import Text from '../../Text';
+import { ExampleUncontrolledTextInput } from '../../TextInput/examples';
 
 import {
   EMPTY_FUNCTION,
@@ -91,6 +92,12 @@ export const B3_PressableButtonStyle: Story = {
 export const B4_WithIcon: Story = {
   args: {
     icon: Object.values(EXAMPLE_ICONS)[1],
+  },
+};
+
+export const B5_Checked: Story = {
+  args: {
+    checked: true,
   },
 };
 
@@ -327,14 +334,42 @@ export const DL4_WithMultipleLineLongSubtitleAndLongTrailingDetailTextAndNavigat
     },
   };
 
-export const EA1_WithSwitchAsAccessory: Story = {
+export const EA1_WithIconButtonAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES['Icon Button'],
+  },
+};
+
+export const EA2_WithDetailTextAndIconButtonAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES['Detail Text and Icon Button'],
+  },
+};
+
+export const EA3_WithButtonAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES.Button,
+  },
+};
+
+export const EA4_WithButtonWithIconAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES['Button with Icon'],
+  },
+};
+
+export const EB1_WithSwitchAsAccessory: Story = {
   args: {
     title: 'Title',
     accessories: EXAMPLE_ACCESSORIES.Switch,
   },
 };
 
-export const EA2_WithSwitchAsAccessoryAndSingleLineSubtitle: Story = {
+export const EB2_WithSwitchAsAccessoryAndSingleLineSubtitle: Story = {
   parameters: {
     containerStyle: {
       width: 360,
@@ -342,13 +377,13 @@ export const EA2_WithSwitchAsAccessoryAndSingleLineSubtitle: Story = {
     },
   },
   args: {
-    ...EA1_WithSwitchAsAccessory.args,
+    ...EB1_WithSwitchAsAccessory.args,
     singleLine: true,
     subtitle: 'This is a long subtitle that will be truncated.',
   },
 };
 
-export const EA3_WithSwitchAsAccessoryAndMultipleLineSubtitle: Story = {
+export const EB3_WithSwitchAsAccessoryAndMultipleLineSubtitle: Story = {
   parameters: {
     containerStyle: {
       width: 360,
@@ -356,20 +391,20 @@ export const EA3_WithSwitchAsAccessoryAndMultipleLineSubtitle: Story = {
     },
   },
   args: {
-    ...EA1_WithSwitchAsAccessory.args,
+    ...EB1_WithSwitchAsAccessory.args,
     singleLine: false,
     subtitle: 'This is a long subtitle that will expand to multiple lines.',
   },
 };
 
-export const EB1_WithSelectAsAccessory: Story = {
+export const EC1_WithSelectAsAccessory: Story = {
   args: {
     title: 'Title',
     accessories: EXAMPLE_ACCESSORIES.Select,
   },
 };
 
-export const EB2_WithSelectAsAccessoryAndSingleLineSubtitle: Story = {
+export const EC2_WithSelectAsAccessoryAndSingleLineSubtitle: Story = {
   parameters: {
     containerStyle: {
       width: 360,
@@ -377,13 +412,13 @@ export const EB2_WithSelectAsAccessoryAndSingleLineSubtitle: Story = {
     },
   },
   args: {
-    ...EB1_WithSelectAsAccessory.args,
+    ...EC1_WithSelectAsAccessory.args,
     singleLine: true,
     subtitle: 'This is a long subtitle that will be truncated.',
   },
 };
 
-export const EB3_WithSelectAsAccessoryAndMultipleLineSubtitle: Story = {
+export const EC3_WithSelectAsAccessoryAndMultipleLineSubtitle: Story = {
   parameters: {
     containerStyle: {
       width: 360,
@@ -391,11 +426,55 @@ export const EB3_WithSelectAsAccessoryAndMultipleLineSubtitle: Story = {
     },
   },
   args: {
-    ...EB1_WithSelectAsAccessory.args,
+    ...EC1_WithSelectAsAccessory.args,
     singleLine: false,
     subtitle: 'This is a long subtitle that will expand to multiple lines.',
   },
 };
+
+export const ED1_WithTextInputAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES.TextInput,
+    accessoriesContainsTextInput: true,
+  },
+};
+
+export const ED2_WithTextInputWithClearButtonAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES['TextInput with Clear Button'],
+    accessoriesContainsTextInput: true,
+  },
+};
+
+export const ED8_WithTextInputThatContainsALongValueAsAccessory: Story = {
+  parameters: {
+    containerStyle: {
+      width: 360,
+      alignSelf: 'center',
+    },
+  },
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES['TextInput with Long Value'],
+    accessoriesContainsTextInput: true,
+  },
+};
+
+export const ED9_WithLongTitleAndTextInputThatContainsALongValueAsAccessory: Story =
+  {
+    parameters: {
+      containerStyle: {
+        width: 360,
+        alignSelf: 'center',
+      },
+    },
+    args: {
+      ...ED8_WithTextInputThatContainsALongValueAsAccessory.args,
+      title: 'This is a long title',
+    },
+  };
 
 export const I2_WithColoredIcon: Story = {
   args: {
@@ -545,6 +624,37 @@ export const ME4_EditButtonRemove: Story = {
   args: {
     editButton: 'remove',
     onEditButtonPress: FUNCTION_WITH_PRESSED_ALERT,
+  },
+};
+
+export const NT1_TextInputAsChildren: Story = {
+  args: {
+    children: (
+      <ExampleUncontrolledTextInput
+        placeholder="Enter text here"
+        clearButtonMode="while-editing"
+      />
+    ),
+  },
+};
+
+export const NT2_TextInputAsChildrenWithoutTitle: Story = {
+  args: {
+    ...NT1_TextInputAsChildren.args,
+    title: '',
+  },
+};
+
+export const NT3_TextInputAsChildrenWithCustomTitle: Story = {
+  args: {
+    title: <Text variant="footnote">Title</Text>,
+    children: (
+      <ExampleUncontrolledTextInput
+        placeholder="Enter text here"
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{ marginTop: -4 }}
+      />
+    ),
   },
 };
 

@@ -17,6 +17,7 @@ import {
 import BackgroundColor from '../../BackgroundColor';
 import Select from '../../Select';
 import Text from '../../Text';
+import TextInput from '../../TextInput';
 
 import ContentContainer from './components/ContentContainer';
 import EditButton, {
@@ -35,6 +36,7 @@ import TitleAndTrailingContentsContainer from './components/TitleAndTrailingCont
 import TrailingContents, {
   propsSelector as tcPropsSelector,
 } from './components/TrailingContents';
+import AccessoryButton from './AccessoryButton';
 import { CONTAINER_PADDING_VERTICAL } from './consts';
 import { ListItemAnimationContextProvider } from './ListItemAnimationContext';
 import ListItemPropsContext from './ListItemPropsContext';
@@ -82,11 +84,18 @@ export type Props = {
   /** The text to display on the right side of the list item. Will be ignored if `accessories` is provided. */
   detail?: string;
 
+  /** Shows a check mark on the item. Will be ignored if `accessories` is provided. */
+  checked?: boolean;
+
   /** The accessories to display on the right side of the list item, such as icon, switch, select or other components. */
   accessories?: ReactNodePropWithPropDefaultValuesContext<{
     textProps: Partial<React.ComponentProps<typeof Text>>;
+    textInputProps: Partial<React.ComponentProps<typeof TextInput>>;
     selectProps: Partial<React.ComponentProps<typeof Select>>;
   }>;
+
+  /** Set this to `true` if you are using a text input in the accessories of the list item. This will prioritize space distribution for the text input. */
+  accessoriesContainsTextInput?: boolean;
 
   onPress?: () => void;
   onLongPress?: () => void;
@@ -192,29 +201,39 @@ export function ListItem(rawProps: Props) {
               )}
 
               <MainContentsContainer {...props}>
-                {!!(
-                  props.title ||
-                  props.subtitle ||
-                  props.accessories ||
-                  props.detail
-                ) && (
-                  <TitleAndTrailingContentsContainer
-                    onLayout={handleTitleParentContainerLayout}
-                  >
-                    <TitleAndSubtitle
-                      {...tasPropsSelector(props)}
-                      onLayout={handleTitleContainerLayout}
-                    />
+                {
+                  // Using an array here since `React.Children.count(children)` is used in MainContentsContainer
+                  [
+                    !!(
+                      props.title ||
+                      props.subtitle ||
+                      props.accessories ||
+                      props.detail
+                    ) && (
+                      <TitleAndTrailingContentsContainer
+                        key="TitleAndTrailingContentsContainer"
+                        onLayout={handleTitleParentContainerLayout}
+                      >
+                        <TitleAndSubtitle
+                          {...tasPropsSelector(props)}
+                          onLayout={handleTitleContainerLayout}
+                        />
 
-                    {!props.hideTrailingContents && (
-                      <TrailingContents {...tcPropsSelector(props)} />
-                    )}
-                  </TitleAndTrailingContentsContainer>
-                )}
-
-                {!!props.children && (
-                  <View style={styles.childrenContainer}>{props.children}</View>
-                )}
+                        {!props.hideTrailingContents && (
+                          <TrailingContents {...tcPropsSelector(props)} />
+                        )}
+                      </TitleAndTrailingContentsContainer>
+                    ),
+                    !!props.children && (
+                      <View
+                        key="ChildrenContainer"
+                        style={styles.childrenContainer}
+                      >
+                        {props.children}
+                      </View>
+                    ),
+                  ].filter((e) => !!e)
+                }
               </MainContentsContainer>
 
               <Grabber
@@ -230,12 +249,11 @@ export function ListItem(rawProps: Props) {
   );
 }
 
+ListItem.AccessoryButton = AccessoryButton;
+
 const styles = StyleSheet.create({
   childrenContainer: {
     flex: 1,
-  },
-  alignSelfFlexStart: {
-    alignSelf: 'flex-start',
   },
 });
 

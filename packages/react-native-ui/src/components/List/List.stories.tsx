@@ -12,8 +12,10 @@ import { Meta, StoryObj } from '@rnstudy/storybook-rn-types';
 
 import { useUIPlatform } from '../../contexts';
 import { Button } from '../Button';
+import { Text } from '../Text';
 
 import ListFooterMeta from './ListFooter/ListFooter.stories';
+import { ACCESSORIES_EXAMPLES as LIST_HEADER_ACCESSORIES_EXAMPLES } from './ListHeader/examples';
 import ListHeaderMeta from './ListHeader/ListHeader.stories';
 import ListItemMeta from './ListItem/ListItem.stories';
 import {
@@ -131,18 +133,189 @@ export default meta;
 
 type Story = StoryObj<typeof List>;
 
-export const Default: Story = {};
+export const A0_Default: Story = {};
 
-export const WithFlatList: Story = {
+export const AA1_InsetGrouped: Story = {
+  args: {
+    listStyle: 'insetGrouped',
+  },
+};
+
+export const AA2_InsetGroupedWithHeaderAndFooter: Story = {
+  args: {
+    listStyle: 'insetGrouped',
+    '__props:header': 'ListHeader',
+    '__props:header:ListHeader.title': 'This is The Header Title',
+    '__props:footer': 'ListFooter',
+    '__props:footer:ListFooter.text': 'This is the footer text.',
+  },
+};
+
+export const AB1_Grouped: Story = {
+  args: {
+    listStyle: 'grouped',
+  },
+};
+
+export const AB1_GroupedWithHeaderAndFooter: Story = {
+  args: {
+    listStyle: 'grouped',
+    '__props:header': 'ListHeader',
+    '__props:header:ListHeader.title': 'This is The Header Title',
+    '__props:footer': 'ListFooter',
+    '__props:footer:ListFooter.text': 'This is the footer text.',
+  },
+};
+
+export const AC1_Plain: Story = {
+  parameters: {
+    containerBackground: 'system',
+  },
+  args: {
+    listStyle: 'plain',
+  },
+};
+
+export const AC1_PlainWithHeader: Story = {
+  parameters: {
+    containerBackground: 'system',
+  },
+  args: {
+    listStyle: 'plain',
+    '__props:header': 'ListHeader',
+    '__props:header:ListHeader.title': 'This is The Header Title',
+  },
+};
+
+export const BA1_WithHeaderTitle: Story = {
+  args: {
+    '__props:header': 'ListHeader',
+    '__props:header:ListHeader.title': 'This is The Header Title',
+  },
+};
+
+export const BA2_WithHeaderTitleAndButton: Story = {
+  args: {
+    ...BA1_WithHeaderTitle.args,
+    '__props:header:ListHeader.accessories':
+      LIST_HEADER_ACCESSORIES_EXAMPLES['Single Button'],
+  },
+};
+
+export const BA3_WithHeaderTitleAndButtonWithIcon: Story = {
+  args: {
+    ...BA1_WithHeaderTitle.args,
+    '__props:header:ListHeader.accessories':
+      LIST_HEADER_ACCESSORIES_EXAMPLES['Single Button with Icon'],
+  },
+};
+
+export const BA9_GroupedWithHeaderTitleAndButtonWithIcon: Story = {
+  args: {
+    ...BA3_WithHeaderTitleAndButtonWithIcon.args,
+    listStyle: 'grouped',
+  },
+};
+
+export const BB1_WithHeaderProminentTitle: Story = {
+  args: {
+    '__props:header': 'ListHeader',
+    '__props:header:ListHeader.title': 'This is The Header Title',
+    '__props:header:ListHeader.titleStyle': 'prominent',
+  },
+};
+
+export const BB2_WithHeaderProminentTitleAndButton: Story = {
+  args: {
+    ...BB1_WithHeaderProminentTitle.args,
+    '__props:header:ListHeader.accessories':
+      LIST_HEADER_ACCESSORIES_EXAMPLES['Single Button'],
+  },
+};
+
+export const BB3_WithHeaderProminentTitleAndButtonWithIcon: Story = {
+  args: {
+    ...BB1_WithHeaderProminentTitle.args,
+    '__props:header:ListHeader.accessories':
+      LIST_HEADER_ACCESSORIES_EXAMPLES['Single Button with Icon'],
+  },
+};
+
+export const BB4_WithHeaderProminentTitleAndPlainButton: Story = {
+  args: {
+    ...BB1_WithHeaderProminentTitle.args,
+    '__props:header:ListHeader.accessories':
+      LIST_HEADER_ACCESSORIES_EXAMPLES['Single Plain Button'],
+  },
+};
+
+export const BB5_WithHeaderProminentTitleAndPlainIconButton: Story = {
+  args: {
+    ...BB1_WithHeaderProminentTitle.args,
+    '__props:header:ListHeader.accessories':
+      LIST_HEADER_ACCESSORIES_EXAMPLES['Single Plain Icon Button'],
+  },
+};
+
+export const BB6_WithHeaderProminentTitleAndMultipleButtons: Story = {
+  args: {
+    ...BB1_WithHeaderProminentTitle.args,
+    '__props:header:ListHeader.accessories':
+      LIST_HEADER_ACCESSORIES_EXAMPLES['Multiple Buttons'],
+  },
+};
+
+export const BB9_GroupedWithHeaderProminentTitleAndMultipleButtons: Story = {
+  args: {
+    ...BB6_WithHeaderProminentTitleAndMultipleButtons.args,
+    listStyle: 'grouped',
+  },
+};
+
+export const CA1_WithFooterText: Story = {
+  args: {
+    '__props:footer': 'ListFooter',
+    '__props:footer:ListFooter.text': 'This is the footer text.',
+  },
+};
+
+export const CA2_WithFooterTextElement: Story = {
+  args: {
+    '__props:footer': 'ListFooter',
+    '__props:footer:ListFooter.text': (
+      <Text>
+        This is the footer text with a{' '}
+        <Text
+          link
+          onPress={() => {
+            Alert.alert('Link Pressed');
+          }}
+        >
+          link
+        </Text>
+        .
+      </Text>
+    ),
+  },
+};
+
+export const CA9_GroupedWithFooterText: Story = {
+  args: {
+    ...CA1_WithFooterText.args,
+    listStyle: 'grouped',
+  },
+};
+
+export const LA1_WithFlatList: Story = {
   parameters: {
     storyContainer: 'basic',
   },
   argTypes: {
-    ...Default.argTypes,
+    ...A0_Default.argTypes,
     __itemsCount: { control: { type: 'number' } },
   },
   args: {
-    ...Default.args,
+    ...A0_Default.args,
     __itemsCount: 16,
   },
   render: (args) => {
@@ -210,7 +383,7 @@ export const WithFlatList: Story = {
   },
 };
 
-export const WithFlatListEditable: Story = {
+export const LA2_WithFlatListEditable: Story = {
   parameters: {
     storyContainer: 'basic',
   },
@@ -258,18 +431,18 @@ export const WithFlatListEditable: Story = {
   },
 };
 
-export const WithSectionList: Story = {
+export const S0_WithSectionList: Story = {
   parameters: {
     storyContainer: 'basic',
   },
   argTypes: {
-    ...Default.argTypes,
+    ...A0_Default.argTypes,
     __sectionsCount: { control: { type: 'number' } },
     __itemsCount: { control: { type: 'number' } },
   },
   args: {
-    ...Default.args,
-    '__props:header:ListHeader': true,
+    ...A0_Default.args,
+    '__props:header': 'ListHeader',
     '__props:header:ListHeader.title': '',
     __sectionsCount: 5,
     __itemsCount: 5,
@@ -345,6 +518,89 @@ export const WithSectionList: Story = {
         )}
       />
     );
+  },
+};
+
+export const SA1_WithSectionListInsetGrouped: Story = {
+  ...S0_WithSectionList,
+  args: {
+    ...S0_WithSectionList.args,
+    listStyle: 'insetGrouped',
+  },
+};
+
+export const SA2_WithSectionListInsetGroupedAndProminentHeader: Story = {
+  ...SA1_WithSectionListInsetGrouped,
+  args: {
+    ...SA1_WithSectionListInsetGrouped.args,
+    '__props:header:ListHeader.titleStyle': 'prominent',
+  },
+};
+
+export const SA3_WithSectionListInsetGroupedAndFooter: Story = {
+  ...SA1_WithSectionListInsetGrouped,
+  args: {
+    ...SA1_WithSectionListInsetGrouped.args,
+    '__props:footer': 'ListFooter',
+    '__props:footer:ListFooter.text': 'This is the footer text.',
+  },
+};
+
+export const SA4_WithSectionListInsetGroupedAndProminentHeaderAndFooter: Story =
+  {
+    ...SA1_WithSectionListInsetGrouped,
+    args: {
+      ...SA1_WithSectionListInsetGrouped.args,
+      '__props:header:ListHeader.titleStyle': 'prominent',
+      '__props:footer': 'ListFooter',
+      '__props:footer:ListFooter.text': 'This is the footer text.',
+    },
+  };
+
+export const SB1_WithSectionListGrouped: Story = {
+  ...S0_WithSectionList,
+  args: {
+    ...S0_WithSectionList.args,
+    listStyle: 'grouped',
+  },
+};
+
+export const SB2_WithSectionListGroupedAndProminentHeader: Story = {
+  ...SB1_WithSectionListGrouped,
+  args: {
+    ...SB1_WithSectionListGrouped.args,
+    '__props:header:ListHeader.titleStyle': 'prominent',
+  },
+};
+
+export const SB3_WithSectionListGroupedAndFooter: Story = {
+  ...SB1_WithSectionListGrouped,
+  args: {
+    ...SB1_WithSectionListGrouped.args,
+    '__props:footer': 'ListFooter',
+    '__props:footer:ListFooter.text': 'This is the footer text.',
+  },
+};
+
+export const SB4_WithSectionListGroupedAndProminentHeaderAndFooter: Story = {
+  ...SB1_WithSectionListGrouped,
+  args: {
+    ...SB1_WithSectionListGrouped.args,
+    '__props:header:ListHeader.titleStyle': 'prominent',
+    '__props:footer': 'ListFooter',
+    '__props:footer:ListFooter.text': 'This is the footer text.',
+  },
+};
+
+export const SC1_WithSectionListPlain: Story = {
+  ...S0_WithSectionList,
+  parameters: {
+    ...S0_WithSectionList.parameters,
+    containerBackground: 'system',
+  },
+  args: {
+    ...S0_WithSectionList.args,
+    listStyle: 'plain',
   },
 };
 

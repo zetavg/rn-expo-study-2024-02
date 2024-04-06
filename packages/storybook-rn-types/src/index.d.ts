@@ -7,7 +7,7 @@ export type StoryParameters = SBParameters & {
   storyContainer?: 'default' | 'basic' | 'none';
   containerStyle?: ViewStyle;
   containerVerticalAlign?: 'top' | 'middle' | 'bottom';
-  containerBackground?: 'none' | 'transparent' | 'grouped';
+  containerBackground?: 'none' | 'transparent' | 'system' | 'grouped';
 };
 
 export type ArgType = {

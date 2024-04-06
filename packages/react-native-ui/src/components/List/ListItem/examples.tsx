@@ -1,11 +1,15 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Alert, View } from 'react-native';
 
 import { Icon } from '@rnstudy/react-icons';
 
 import { ExampleUncontrolledSelect } from '../../Select/examples';
 import { ExampleUncontrolledSwitch } from '../../Switch/examples';
+import Text from '../../Text';
+import { ExampleUncontrolledTextInput } from '../../TextInput/examples';
+
+import { AccessoryButton } from './AccessoryButton';
 
 export const EMPTY_FUNCTION = () => {};
 export const FUNCTION_WITH_PRESSED_ALERT = () => {
@@ -24,8 +28,40 @@ export const EXAMPLE_ICONS = {
 
 export const EXAMPLE_ACCESSORIES = {
   undefined,
+  'Icon Button': <AccessoryButton icon="_info" onPress={() => {}} />,
+  Button: <AccessoryButton label="Button" onPress={() => {}} />,
+  'Button with Icon': (
+    <AccessoryButton label="Info" icon="_info" onPress={() => {}} />
+  ),
+  'Detail Text and Icon Button': (
+    <>
+      <Text>Detail</Text>
+      <AccessoryButton icon="_info" onPress={() => {}} />
+    </>
+  ),
   Switch: <ExampleUncontrolledSwitch />,
   Select: <ExampleUncontrolledSelect />,
+  TextInput: <ExampleUncontrolledTextInput placeholder="Text Input" />,
+  'TextInput with Long Value': (
+    <ExampleUncontrolledTextInput
+      placeholder="Text Input"
+      value="The quick brown fox jumps over the lazy dog."
+    />
+  ),
+  'TextInput with Clear Button': (
+    <ExampleUncontrolledTextInput
+      placeholder="Text Input"
+      value="Value"
+      clearButtonMode="always"
+    />
+  ),
+  'TextInput with Clear Button While Editing': (
+    <ExampleUncontrolledTextInput
+      placeholder="Text Input"
+      value="Value"
+      clearButtonMode="while-editing"
+    />
+  ),
 };
 
 export const EXAMPLE_CHILDREN = (

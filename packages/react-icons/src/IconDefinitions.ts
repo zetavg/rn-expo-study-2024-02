@@ -212,6 +212,19 @@ export const IconDefinitions = makeIconDefinitions({
       },
     ],
   }),
+  _ellipsis: makeIconDefinition({
+    materialIconName: 'dots-horizontal',
+    sfSymbolDefinitions: [
+      {
+        name: 'ellipsis',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+        opacityFix: true,
+      },
+    ],
+  }),
   _play: makeIconDefinition({
     materialIconName: 'play',
     materialIconConfig: {

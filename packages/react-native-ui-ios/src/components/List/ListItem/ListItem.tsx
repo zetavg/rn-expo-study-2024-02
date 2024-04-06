@@ -11,6 +11,7 @@ import {
 import BackgroundColor from '../../BackgroundColor';
 import Select from '../../Select';
 import Text from '../../Text';
+import TextInput from '../../TextInput';
 
 import ContentContainer from './components/ContentContainer';
 import DrillInIcon from './components/DrillInIcon';
@@ -27,7 +28,10 @@ import TitleAndSubtitle, {
   propsSelector as tasPropsSelector,
 } from './components/TitleAndSubtitle';
 import TitleAndTrailingContentsContainer from './components/TitleAndTrailingContentsContainer';
-import TrailingContents from './components/TrailingContents';
+import TrailingContents, {
+  propsSelector as tcPropsSelector,
+} from './components/TrailingContents';
+import AccessoryButton from './AccessoryButton';
 import { ListItemAnimationContextProvider } from './ListItemAnimationContext';
 import ListItemPropsContext from './ListItemPropsContext';
 import { getListItemHeight } from './utils';
@@ -74,11 +78,18 @@ export type Props = {
   /** The text to display on the right side of the list item. Will be ignored if `accessories` is provided. */
   detail?: string;
 
+  /** Shows a check mark on the item. Will be ignored if `accessories` is provided. */
+  checked?: boolean;
+
   /** The accessories to display on the right side of the list item, such as icon, switch, select or other components. */
   accessories?: ReactNodePropWithPropDefaultValuesContext<{
     textProps: Partial<React.ComponentProps<typeof Text>>;
+    textInputProps: Partial<React.ComponentProps<typeof TextInput>>;
     selectProps: Partial<React.ComponentProps<typeof Select>>;
   }>;
+
+  /** Set this to `true` if you are using a text input in the accessories of the list item. This will prioritize space distribution for the text input. */
+  accessoriesContainsTextInput?: boolean;
 
   onPress?: () => void;
   onLongPress?: () => void;
@@ -176,10 +187,7 @@ export function ListItem(rawProps: Props) {
                     <TitleAndSubtitle {...tasPropsSelector(props)} />
 
                     {!props.hideTrailingContents && (
-                      <TrailingContents
-                        accessories={props.accessories}
-                        detail={props.detail}
-                      />
+                      <TrailingContents {...tcPropsSelector(props)} />
                     )}
 
                     {props.navigationLink && (
@@ -190,7 +198,10 @@ export function ListItem(rawProps: Props) {
 
                 {!!props.children && (
                   <View
-                    style={styles.childrenContainer}
+                    style={[
+                      styles.childrenContainer,
+                      !!props.title && styles.childrenContainer_withTitle,
+                    ]}
                     onLayout={(e) => {
                       childrenHeightAnim.setValue(e.nativeEvent.layout.height);
                     }}
@@ -213,10 +224,16 @@ export function ListItem(rawProps: Props) {
   );
 }
 
+ListItem.AccessoryButton = AccessoryButton;
+
 const styles = StyleSheet.create({
   childrenContainer: {
     flex: 1,
-    paddingBottom: 12,
+    paddingVertical: 12,
+    justifyContent: 'center',
+  },
+  childrenContainer_withTitle: {
+    paddingTop: 0,
   },
 });
 

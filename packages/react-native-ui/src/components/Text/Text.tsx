@@ -74,7 +74,6 @@ export function Text({
     else if (footnote) variant = 'footnote';
     else if (caption1) variant = 'caption1';
     else if (caption2) variant = 'caption2';
-    else variant = 'body';
   }
 
   if (!color) {

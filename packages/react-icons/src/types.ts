@@ -17,6 +17,8 @@ export type SFSymbolDefinition = {
   };
   /** If specified, additional padding will be added to the symbol (percentage of icon displayed size, 0.1 means 10%). */
   additionalPaddingRatio?: number;
+  /** Some sweet-sfsymbols will have unwanted opacity on parts of the symbol even in monochrome mode. Set this to true to apply a fix to that. */
+  opacityFix?: boolean;
 };
 
 export type MaterialIconNameDefinition =

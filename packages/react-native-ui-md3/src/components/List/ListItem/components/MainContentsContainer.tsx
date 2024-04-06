@@ -36,6 +36,7 @@ export const MainContentsContainer = ({
         mainContentContainerStyles[
           `${listStyle}_${listPosition}` as keyof typeof mainContentContainerStyles
         ],
+        React.Children.count(children) === 1 && styles.container_onlyOneChild,
         // Border is now set in OuterContainer
         // { borderColor: colors.outlineVariant },
       ]}
@@ -54,6 +55,11 @@ const styles = StyleSheet.create({
     paddingVertical: CONTAINER_PADDING_VERTICAL,
     paddingRight: 24,
     gap: 5,
+  },
+  container_onlyOneChild: {
+    // justifyContent: 'center' is not working properly on Android, so if there is only one child, switch to flexDirection: 'row' and use alignItems: 'center' for vertical centering.
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   container_compact: {
     paddingVertical: COMPACT_CONTAINER_PADDING_VERTICAL,
