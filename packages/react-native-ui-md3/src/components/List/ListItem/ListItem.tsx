@@ -35,6 +35,7 @@ import TitleAndTrailingContentsContainer from './components/TitleAndTrailingCont
 import TrailingContents, {
   propsSelector as tcPropsSelector,
 } from './components/TrailingContents';
+import AccessoryButton from './AccessoryButton';
 import { CONTAINER_PADDING_VERTICAL } from './consts';
 import { ListItemAnimationContextProvider } from './ListItemAnimationContext';
 import ListItemPropsContext from './ListItemPropsContext';
@@ -232,6 +233,8 @@ export function ListItem(rawProps: Props) {
     </ListItemAnimationContextProvider>
   );
 }
+
+ListItem.AccessoryButton = AccessoryButton;
 
 const styles = StyleSheet.create({
   childrenContainer: {

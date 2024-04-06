@@ -333,14 +333,42 @@ export const DL4_WithMultipleLineLongSubtitleAndLongTrailingDetailTextAndNavigat
     },
   };
 
-export const EA1_WithSwitchAsAccessory: Story = {
+export const EA1_WithIconButtonAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES['Icon Button'],
+  },
+};
+
+export const EA2_WithDetailTextAndIconButtonAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES['Detail Text and Icon Button'],
+  },
+};
+
+export const EA3_WithButtonAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES.Button,
+  },
+};
+
+export const EA4_WithButtonWithIconAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES['Button with Icon'],
+  },
+};
+
+export const EB1_WithSwitchAsAccessory: Story = {
   args: {
     title: 'Title',
     accessories: EXAMPLE_ACCESSORIES.Switch,
   },
 };
 
-export const EA2_WithSwitchAsAccessoryAndSingleLineSubtitle: Story = {
+export const EB2_WithSwitchAsAccessoryAndSingleLineSubtitle: Story = {
   parameters: {
     containerStyle: {
       width: 360,
@@ -348,13 +376,13 @@ export const EA2_WithSwitchAsAccessoryAndSingleLineSubtitle: Story = {
     },
   },
   args: {
-    ...EA1_WithSwitchAsAccessory.args,
+    ...EB1_WithSwitchAsAccessory.args,
     singleLine: true,
     subtitle: 'This is a long subtitle that will be truncated.',
   },
 };
 
-export const EA3_WithSwitchAsAccessoryAndMultipleLineSubtitle: Story = {
+export const EB3_WithSwitchAsAccessoryAndMultipleLineSubtitle: Story = {
   parameters: {
     containerStyle: {
       width: 360,
@@ -362,20 +390,20 @@ export const EA3_WithSwitchAsAccessoryAndMultipleLineSubtitle: Story = {
     },
   },
   args: {
-    ...EA1_WithSwitchAsAccessory.args,
+    ...EB1_WithSwitchAsAccessory.args,
     singleLine: false,
     subtitle: 'This is a long subtitle that will expand to multiple lines.',
   },
 };
 
-export const EB1_WithSelectAsAccessory: Story = {
+export const EC1_WithSelectAsAccessory: Story = {
   args: {
     title: 'Title',
     accessories: EXAMPLE_ACCESSORIES.Select,
   },
 };
 
-export const EB2_WithSelectAsAccessoryAndSingleLineSubtitle: Story = {
+export const EC2_WithSelectAsAccessoryAndSingleLineSubtitle: Story = {
   parameters: {
     containerStyle: {
       width: 360,
@@ -383,13 +411,13 @@ export const EB2_WithSelectAsAccessoryAndSingleLineSubtitle: Story = {
     },
   },
   args: {
-    ...EB1_WithSelectAsAccessory.args,
+    ...EC1_WithSelectAsAccessory.args,
     singleLine: true,
     subtitle: 'This is a long subtitle that will be truncated.',
   },
 };
 
-export const EB3_WithSelectAsAccessoryAndMultipleLineSubtitle: Story = {
+export const EC3_WithSelectAsAccessoryAndMultipleLineSubtitle: Story = {
   parameters: {
     containerStyle: {
       width: 360,
@@ -397,7 +425,7 @@ export const EB3_WithSelectAsAccessoryAndMultipleLineSubtitle: Story = {
     },
   },
   args: {
-    ...EB1_WithSelectAsAccessory.args,
+    ...EC1_WithSelectAsAccessory.args,
     singleLine: false,
     subtitle: 'This is a long subtitle that will expand to multiple lines.',
   },

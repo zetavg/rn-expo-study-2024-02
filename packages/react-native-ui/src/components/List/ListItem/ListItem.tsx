@@ -7,6 +7,8 @@ import { type ReactNodePropWithPropDefaultValuesContext } from '@rnstudy/react-u
 
 import { useUIPlatform } from '../../../contexts';
 
+import AccessoryButton from './AccessoryButton';
+
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
 export type Props = {
@@ -96,5 +98,7 @@ export function ListItem(props: Props) {
     }
   }
 }
+
+ListItem.AccessoryButton = AccessoryButton;
 
 export default ListItem;

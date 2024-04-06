@@ -20,14 +20,14 @@ export type Props = Partial<React.ComponentProps<typeof PaperText>> & {
   }>;
 };
 
-export function Text(props: Props) {
+export function Text(rawProps: Props) {
   const {
     variant = 'bodyMedium',
     color,
     style,
     children,
     ...restProps
-  } = usePropsWithContextualDefaultValues(props, TextPropsContext);
+  } = usePropsWithContextualDefaultValues(rawProps, TextPropsContext);
 
   const theme = useTheme();
   const colorScheme = useColorScheme();
