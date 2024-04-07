@@ -55,5 +55,24 @@ export default ({ config }: ConfigContext): ExpoConfig =>
           },
         },
       ],
+      [
+        'expo-font',
+        {
+          fonts: [
+            '../../assets/fonts/Roboto/Roboto-Thin.ttf',
+            '../../assets/fonts/Roboto/Roboto-ThinItalic.ttf',
+            '../../assets/fonts/Roboto/Roboto-Light.ttf',
+            '../../assets/fonts/Roboto/Roboto-LightItalic.ttf',
+            '../../assets/fonts/Roboto/Roboto-Regular.ttf',
+            '../../assets/fonts/Roboto/Roboto-Italic.ttf',
+            '../../assets/fonts/Roboto/Roboto-Medium.ttf',
+            '../../assets/fonts/Roboto/Roboto-MediumItalic.ttf',
+            '../../assets/fonts/Roboto/Roboto-Bold.ttf',
+            '../../assets/fonts/Roboto/Roboto-BoldItalic.ttf',
+            '../../assets/fonts/Roboto/Roboto-Black.ttf',
+            '../../assets/fonts/Roboto/Roboto-BlackItalic.ttf',
+          ],
+        },
+      ],
     ],
   );
