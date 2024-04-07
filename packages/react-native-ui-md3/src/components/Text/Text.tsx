@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import { Text as PaperText } from 'react-native-paper';
 
 import { type IconProps, IconPropsContext } from '@rnstudy/react-icons';
@@ -58,12 +59,16 @@ export function Text(rawProps: Props) {
   return (
     <PaperText
       variant={variant}
-      style={[{ color: textColor }, style]}
+      style={[{ color: textColor }, styles.text, style]}
       {...restProps}
     >
       {wrappedChildren}
     </PaperText>
   );
 }
+
+const styles = StyleSheet.create({
+  text: { fontFamily: 'Roboto' },
+});
 
 export default Text;

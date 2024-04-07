@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import {
   Platform,
+  StyleSheet,
   TextInput as RNTextInput,
   type TextInputProps as RNTextInputProps,
 } from 'react-native';
@@ -41,11 +42,15 @@ export const TextInput = forwardRef<RNTextInput, Props>(function TextInput(
       placeholder={placeholder}
       placeholderTextColor={colors.outlineVariant}
       {...restProps}
-      style={[textStyle, { color: colors.onSurface }, style]}
+      style={[textStyle, styles.text, { color: colors.onSurface }, style]}
     />
   );
 });
 
 TextInput.displayName = 'TextInputMD3';
+
+const styles = StyleSheet.create({
+  text: { fontFamily: 'Roboto' },
+});
 
 export default TextInput;
