@@ -57,8 +57,8 @@ export type Props = {
   editButton?: 'unselected' | 'selected' | 'add' | 'remove';
   onEditButtonPress?: () => void;
 
-  /** The icon to display in front of the list item. */
-  icon?: ReactNodePropWithPropDefaultValuesContext<{
+  /** The icon or image to display in front of the list item. */
+  image?: ReactNodePropWithPropDefaultValuesContext<{
     iconProps: Partial<React.ComponentProps<typeof Icon>>;
     backgroundColor: string;
   }>;
@@ -192,7 +192,7 @@ export function ListItem(rawProps: Props) {
             >
               <EditButton {...editButtonPropsSelector(props)} />
 
-              {!!props.icon && (
+              {!!props.image && (
                 <Image
                   {...props}
                   backgroundColor={backgroundColor}

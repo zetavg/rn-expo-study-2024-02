@@ -7,7 +7,7 @@ import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 import type { Props as ListItemProps } from '../ListItem';
 
 export type Props = {
-  icon?: ListItemProps['icon'];
+  image?: ListItemProps['image'];
   subtitle?: ListItemProps['subtitle'];
   compact?: ListItemProps['compact'];
   backgroundColor: string;
@@ -15,14 +15,14 @@ export type Props = {
 };
 
 export const Image = ({
-  icon,
+  image,
   subtitle,
   compact,
   backgroundColor,
   style,
 }: Props): JSX.Element => (
   <Animated.View style={[styles.iconContainer, style]}>
-    {withPropDefaultValuesContext(icon, {
+    {withPropDefaultValuesContext(image, {
       iconProps: {
         value: {
           color: 'gray',
