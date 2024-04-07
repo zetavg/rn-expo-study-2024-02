@@ -32,6 +32,7 @@ import {
   ListPadding,
   ListProps,
 } from './.';
+import ListPlaceholder from './ListPlaceholder';
 
 const meta: Meta<typeof List> = {
   title: 'UI/Components/List',
@@ -47,6 +48,8 @@ const meta: Meta<typeof List> = {
     header: { control: false },
     footer: { control: false },
     children: { control: false },
+
+    placeholder: { control: 'text' },
 
     '__props:header': {
       control: 'radio',
@@ -72,6 +75,7 @@ const meta: Meta<typeof List> = {
     }),
   },
   args: {
+    placeholder: 'Placeholder text.',
     '__props:header:ListHeader.title': 'Header Title',
     '__props:footer:ListFooter.text': 'This is the footer text.',
   },
@@ -306,7 +310,72 @@ export const CA9_GroupedWithFooterText: Story = {
   },
 };
 
-export const LA1_WithFlatList: Story = {
+export const I0_EmptyList: Story = {
+  args: {
+    children: [],
+    placeholder: 'Placeholder text.',
+  },
+  render: (args) => {
+    return <List {...args} />;
+  },
+};
+
+export const IA1_InsetGroupedEmptyListWithPlaceholderText: Story = {
+  ...I0_EmptyList,
+  args: {
+    ...I0_EmptyList.args,
+    listStyle: 'insetGrouped',
+  },
+};
+
+export const IA2_GroupedEmptyListWithPlaceholderText: Story = {
+  ...I0_EmptyList,
+  args: {
+    ...I0_EmptyList.args,
+    listStyle: 'grouped',
+  },
+};
+
+export const IA3_PlainEmptyListWithPlaceholderText: Story = {
+  ...I0_EmptyList,
+  parameters: {
+    ...I0_EmptyList,
+    containerBackground: 'system',
+  },
+  args: {
+    ...I0_EmptyList.args,
+    listStyle: 'plain',
+  },
+};
+
+export const IB1_EmptyListWithPlaceholderElement: Story = {
+  ...I0_EmptyList,
+  parameters: {
+    containerStyle: {
+      width: 360,
+      alignSelf: 'center',
+    },
+  },
+  args: {
+    ...I0_EmptyList.args,
+    placeholder: (
+      <>
+        This is the placeholder using{' '}
+        <Text
+          link
+          onPress={() => {
+            Alert.alert('Pressed');
+          }}
+        >
+          a text element
+        </Text>{' '}
+        for the empty list.
+      </>
+    ),
+  },
+};
+
+export const LA0_WithFlatList: Story = {
   parameters: {
     storyContainer: 'basic',
   },
@@ -341,6 +410,8 @@ export const LA1_WithFlatList: Story = {
       title: `Item ${i}`,
     }));
 
+    const isFirst = true;
+
     return (
       <FlatList
         ListHeaderComponent={() => (
@@ -348,7 +419,7 @@ export const LA1_WithFlatList: Story = {
             <ListPadding
               listStyle={args.listStyle}
               position="top"
-              first
+              first={isFirst}
               withHeader={useListHeader}
             />
             {useListHeader && (
@@ -368,6 +439,12 @@ export const LA1_WithFlatList: Story = {
             />
           </>
         )}
+        ListEmptyComponent={
+          <ListPlaceholder
+            listStyle={args.listStyle || 'insetGrouped'}
+            placeholder={args.placeholder || ''}
+          />
+        }
         data={data}
         keyExtractor={(d) => d.key}
         renderItem={({ item, listPosition }) => (
@@ -380,6 +457,14 @@ export const LA1_WithFlatList: Story = {
         )}
       />
     );
+  },
+};
+
+export const LA1_WithFlatListEmpty: Story = {
+  ...LA0_WithFlatList,
+  args: {
+    ...LA0_WithFlatList.args,
+    __itemsCount: 0,
   },
 };
 
@@ -474,18 +559,30 @@ export const S0_WithSectionList: Story = {
       })),
     }));
 
+    const processedData = data.map((d) => ({
+      ...d,
+      data: d.data.length > 0 ? d.data : ['empty' as const, ...d.data],
+    }));
+
     return (
       <SectionList
-        sections={data}
-        keyExtractor={(item, _index) => item.key}
-        renderItem={({ item, listPosition }) => (
-          <ListItem
-            listStyle={args.listStyle}
-            title={item.name}
-            {...listItemProps}
-            listPosition={listPosition}
-          />
-        )}
+        sections={processedData}
+        keyExtractor={(item, _index) => (item === 'empty' ? 'empty' : item.key)}
+        renderItem={({ item, listPosition }) =>
+          item === 'empty' ? (
+            <ListPlaceholder
+              listStyle={args.listStyle || 'insetGrouped'}
+              placeholder={args.placeholder || ''}
+            />
+          ) : (
+            <ListItem
+              listStyle={args.listStyle}
+              title={item.name}
+              {...listItemProps}
+              listPosition={listPosition}
+            />
+          )
+        }
         stickySectionHeadersEnabled={args.listStyle === 'plain'}
         renderSectionHeader={({ section, first }) => (
           <>
@@ -516,8 +613,44 @@ export const S0_WithSectionList: Story = {
             />
           </>
         )}
+        ListEmptyComponent={
+          <>
+            <ListPadding
+              listStyle={args.listStyle}
+              position="top"
+              first
+              withHeader={false}
+            />
+            <ListPlaceholder
+              listStyle={args.listStyle || 'insetGrouped'}
+              placeholder={args.placeholder || ''}
+            />
+            <ListPadding
+              listStyle={args.listStyle}
+              position="bottom"
+              withFooter={false}
+            />
+          </>
+        }
       />
     );
+  },
+};
+
+export const S1_WithSectionListEmptySections = {
+  ...S0_WithSectionList,
+  args: {
+    ...S0_WithSectionList.args,
+    __sectionsCount: 3,
+    __itemsCount: 0,
+  },
+};
+export const S2_WithSectionListEmptyList = {
+  ...S0_WithSectionList,
+  args: {
+    ...S0_WithSectionList.args,
+    __sectionsCount: 0,
+    __itemsCount: 0,
   },
 };
 

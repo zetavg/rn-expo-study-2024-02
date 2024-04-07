@@ -60,8 +60,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const containerStyles = StyleSheet.create({
-  plain: {},
+export const containerStyles = StyleSheet.create({
+  plain: {
+    backgroundColor: 'transparent',
+  },
   plain_first: {},
   plain_middle: {},
   plain_last: {},
@@ -86,7 +88,7 @@ const containerStyles = StyleSheet.create({
   insetGrouped_only: {},
 });
 
-const containerBorderRadiusStyles = StyleSheet.create({
+export const containerBorderRadiusStyles = StyleSheet.create({
   plain: {},
   plain_first: {},
   plain_middle: {},

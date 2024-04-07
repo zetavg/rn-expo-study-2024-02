@@ -47,6 +47,8 @@ const meta: Meta<typeof List> = {
     first: { control: false },
     children: { control: false },
 
+    placeholder: { control: 'text' },
+
     '__props:header:ListHeader': { control: 'boolean' },
     '__props:header:ListHeader.title': {
       control: 'text',
@@ -141,6 +143,7 @@ const meta: Meta<typeof List> = {
     '__props:children:ListItem.fixedHeight': { control: 'boolean' },
   },
   args: {
+    placeholder: 'Placeholder text.',
     '__props:header:ListHeader.title': 'Header Title',
     '__props:footer:ListFooter.text': 'This is the footer text.',
   },

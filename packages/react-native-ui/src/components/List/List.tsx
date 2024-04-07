@@ -8,11 +8,18 @@ import { useUIPlatform } from '../../contexts';
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
 export type Props = {
+  /** Set this to `true` if the list is the first element in a view, which allows it to have the correct top padding. */
   first?: boolean;
+  /** The style of the list. */
   listStyle?: ListStyle;
+  /** The footer of the list. Should be an `ListHeader` element. */
   header?: React.ReactNode;
+  /** The footer of the list. Should be an `ListFooter` element. */
   footer?: React.ReactNode;
+  /** The items in the list. Should be an array of `ListItem`s. */
   children: Readonly<React.JSX.Element> | readonly React.JSX.Element[];
+  /** The placeholder to display when children is empty. */
+  placeholder?: Readonly<React.JSX.Element> | string;
 };
 
 export function List(props: Props) {
