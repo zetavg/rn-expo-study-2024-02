@@ -11,6 +11,7 @@ import {
 import { useColors, useTextStyles, useUIColors } from '../../contexts';
 
 import TextPropsContext from './TextPropsContext';
+import Color from 'color';
 
 export type Props = React.ComponentProps<typeof RNText> & {
   textStyle?:
@@ -29,6 +30,7 @@ export type Props = React.ComponentProps<typeof RNText> & {
   color?:
     | 'default'
     | 'secondary'
+    | 'secondaryVariant'
     | 'tertiary'
     | 'quaternary'
     | 'link'
@@ -40,7 +42,10 @@ export type Props = React.ComponentProps<typeof RNText> & {
   }>;
 };
 
-export const Text = forwardRef<RNText, Props>(function Text(props: Props, ref) {
+export const Text = forwardRef<RNText, Props>(function Text(
+  rawProps: Props,
+  ref,
+) {
   const {
     style,
     textStyle = 'body',
@@ -48,7 +53,7 @@ export const Text = forwardRef<RNText, Props>(function Text(props: Props, ref) {
     emphasized,
     children,
     ...restProps
-  } = usePropsWithContextualDefaultValues(props, TextPropsContext);
+  } = usePropsWithContextualDefaultValues(rawProps, TextPropsContext);
 
   const colors = useColors();
   const uiColors = useUIColors();
@@ -58,15 +63,17 @@ export const Text = forwardRef<RNText, Props>(function Text(props: Props, ref) {
     colorProp && colorProp !== 'default'
       ? colorProp === 'destructive'
         ? colors.red
-        : uiColors[
-            colorProp === 'placeholder'
-              ? ('placeholderText' as const)
-              : colorProp === 'link'
-                ? ('link' as const)
-                : colorProp === 'tint'
-                  ? ('tintColor' as const)
-                  : (`${colorProp}Label` as const)
-          ]
+        : colorProp === 'secondaryVariant'
+          ? Color(uiColors.secondaryLabel).alpha(0.6).hexa()
+          : uiColors[
+              colorProp === 'placeholder'
+                ? ('placeholderText' as const)
+                : colorProp === 'link'
+                  ? ('link' as const)
+                  : colorProp === 'tint'
+                    ? ('tintColor' as const)
+                    : (`${colorProp}Label` as const)
+            ]
       : uiColors.label;
 
   const iconProps: Partial<IconProps> = {

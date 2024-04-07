@@ -89,6 +89,7 @@ export function Typography() {
       <Text tertiary>Tertiary Color</Text>
       <Text quaternary>Quaternary Color</Text>
       <Text placeholder>Placeholder Color</Text>
+      <Text color="secondaryVariant">Secondary Variant Color</Text>
       <Text link onPress={() => Alert.alert('Link Pressed')}>
         Link Color
       </Text>
