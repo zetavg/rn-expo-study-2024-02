@@ -5,6 +5,10 @@ import { List as ListMD3 } from '@rnstudy/react-native-ui-md3';
 
 import { useUIPlatform } from '../../contexts';
 
+import ListFooter from './ListFooter';
+import ListHeader from './ListHeader';
+import ListItem from './ListItem';
+
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
 export type Props = {
@@ -36,5 +40,9 @@ export function List(props: Props) {
     }
   }
 }
+
+List.Header = ListHeader;
+List.Footer = ListFooter;
+List.Item = ListItem;
 
 export default List;
