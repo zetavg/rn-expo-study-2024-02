@@ -476,6 +476,33 @@ export const ED9_WithLongTitleAndTextInputThatContainsALongValueAsAccessory: Sto
     },
   };
 
+export const EI1_WithIconAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES.Icon,
+    accessoriesContainsTextInput: true,
+  },
+};
+
+export const EI2_WithSubtitleAndIconAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    subtitle: 'Subtitle',
+    accessories: EXAMPLE_ACCESSORIES.Icon,
+    accessoriesContainsTextInput: true,
+  },
+};
+
+export const EI3_WithSubtitleCompactAndIconAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    subtitle: 'Subtitle',
+    compact: true,
+    accessories: EXAMPLE_ACCESSORIES.Icon,
+    accessoriesContainsTextInput: true,
+  },
+};
+
 export const I2_WithColoredIcon: Story = {
   args: {
     icon: EXAMPLE_ICONS[

@@ -86,6 +86,7 @@ export type Props = {
     textProps: Partial<React.ComponentProps<typeof Text>>;
     textInputProps: Partial<React.ComponentProps<typeof TextInput>>;
     selectProps: Partial<React.ComponentProps<typeof Select>>;
+    iconProps: Partial<React.ComponentProps<typeof Icon>>;
   }>;
 
   /** Set this to `true` if you are using a text input in the accessories of the list item. This will prioritize space distribution for the text input. */

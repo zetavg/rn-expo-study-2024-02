@@ -62,6 +62,7 @@ export const EXAMPLE_ACCESSORIES = {
       clearButtonMode="while-editing"
     />
   ),
+  Icon: <Icon name="cat" color="orange" />,
 };
 
 export const EXAMPLE_CHILDREN = (

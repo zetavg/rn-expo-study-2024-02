@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { Icon, IconPropsContext } from '@rnstudy/react-icons';
 import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 
 import { useUIColors } from '../../../../contexts';
@@ -16,6 +17,7 @@ export type Props = {
   detail: ListItemProps['detail'];
   checked: ListItemProps['checked'];
   accessoriesContainsTextInput: ListItemProps['accessoriesContainsTextInput'];
+  hasSubtitleAndNotCompact: boolean;
   hide?: boolean;
 };
 
@@ -25,6 +27,7 @@ export function propsSelector(p: ListItemProps): Props {
     detail: p.detail,
     checked: p.checked,
     accessoriesContainsTextInput: p.accessoriesContainsTextInput,
+    hasSubtitleAndNotCompact: !!p.subtitle && !p.compact,
   };
 }
 
@@ -34,6 +37,7 @@ export const TrailingContents = React.memo(
     detail,
     checked,
     accessoriesContainsTextInput,
+    hasSubtitleAndNotCompact,
     hide,
   }: Props): JSX.Element | null => {
     const uiColors = useUIColors();
@@ -54,6 +58,12 @@ export const TrailingContents = React.memo(
           selectProps: {
             value: TRAILING_ACCESSORIES_SELECT_PROPS,
             context: SelectPropsContext,
+          },
+          iconProps: {
+            value: hasSubtitleAndNotCompact
+              ? TALL_TRAILING_ACCESSORIES_ICON_PROPS
+              : TRAILING_ACCESSORIES_ICON_PROPS,
+            context: IconPropsContext,
           },
         });
       }
@@ -110,6 +120,20 @@ const TRAILING_ACCESSORIES_SELECT_PROPS = {
     paddingVertical: 8,
   },
   align: 'end' as const,
+};
+
+const TRAILING_ACCESSORIES_ICON_PROPS: Partial<
+  React.ComponentProps<typeof Icon>
+> = {
+  bordered: true,
+  size: 30,
+};
+
+const TALL_TRAILING_ACCESSORIES_ICON_PROPS: Partial<
+  React.ComponentProps<typeof Icon>
+> = {
+  bordered: true,
+  size: 36,
 };
 
 const styles = StyleSheet.create({

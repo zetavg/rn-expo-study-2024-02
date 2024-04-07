@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import { Icon, IconPropsContext } from '@rnstudy/react-icons';
 import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 
 import { useColors, useTheme } from '../../../../contexts';
@@ -16,6 +17,7 @@ export type Props = {
   checked: ListItemProps['checked'];
   singleLine: ListItemProps['singleLine'];
   accessoriesContainsTextInput: ListItemProps['accessoriesContainsTextInput'];
+  compact: ListItemProps['compact'];
   hasSubtitle: boolean;
   hide?: boolean;
 };
@@ -27,6 +29,7 @@ export function propsSelector(p: ListItemProps): Omit<Props, 'hide'> {
     checked: p.checked,
     singleLine: p.singleLine,
     accessoriesContainsTextInput: p.accessoriesContainsTextInput,
+    compact: p.compact,
     hasSubtitle: !!p.subtitle,
   };
 }
@@ -38,12 +41,15 @@ export const TrailingContents = React.memo(
     checked,
     singleLine,
     accessoriesContainsTextInput,
+    compact,
     hasSubtitle,
     hide,
   }: Props): JSX.Element | null => {
     const { delayedHideTrailingContents } = useListItemAnimationContext();
     const theme = useTheme();
     const colors = useColors();
+
+    const hasSubtitleAndNotCompact = hasSubtitle && !compact;
 
     const trailingContents = (() => {
       if (accessories) {
@@ -68,6 +74,12 @@ export const TrailingContents = React.memo(
               },
             },
             context: SelectPropsContext,
+          },
+          iconProps: {
+            value: hasSubtitleAndNotCompact
+              ? TALL_TRAILING_ACCESSORIES_ICON_PROPS
+              : TRAILING_ACCESSORIES_ICON_PROPS,
+            context: IconPropsContext,
           },
         });
       }
@@ -127,6 +139,20 @@ const TRAILING_ACCESSORIES_SELECT_PROPS: Partial<SelectProps<string>> = {
     variant: 'labelLarge' as const,
     color: 'onSurfaceVariant' as const,
   },
+};
+
+const TRAILING_ACCESSORIES_ICON_PROPS: Partial<
+  React.ComponentProps<typeof Icon>
+> = {
+  bordered: true,
+  size: 30,
+};
+
+const TALL_TRAILING_ACCESSORIES_ICON_PROPS: Partial<
+  React.ComponentProps<typeof Icon>
+> = {
+  bordered: true,
+  size: 36,
 };
 
 const styles = StyleSheet.create({
