@@ -1,3 +1,4 @@
+export * from './ActivityIndicator';
 export { BackgroundColor } from './BackgroundColor';
 export * from './Button';
 export * from './Icon';

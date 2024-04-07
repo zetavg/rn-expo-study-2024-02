@@ -1,3 +1,4 @@
+export * from './ActivityIndicator';
 export * from './BackgroundColor';
 export * from './Button';
 export * from './List';

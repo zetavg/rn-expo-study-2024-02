@@ -28,6 +28,8 @@ export type Props = {
   disabled?: ListItemProps['disabled'];
   disableOnPress?: ListItemProps['disableOnPress'];
 
+  loading?: ListItemProps['loading'];
+
   dragActive?: ListItemProps['dragActive'];
 
   backgroundColor: string;
@@ -42,6 +44,7 @@ export const ContentContainer = ({
   onLongPress,
   disabled,
   disableOnPress,
+  loading,
   dragActive,
   backgroundColor,
 }: Props): JSX.Element => {
@@ -90,7 +93,13 @@ export const ContentContainer = ({
         }}
       >
         {({ pressed }) => (
-          <Animated.View style={[...containerStyle, { backgroundColor: bgc }]}>
+          <Animated.View
+            style={[
+              ...containerStyle,
+              loading && styles.loadingContent,
+              { backgroundColor: bgc },
+            ]}
+          >
             {children}
             {pressed && Platform.OS !== 'android' && (
               <View
@@ -111,6 +120,7 @@ export const ContentContainer = ({
       style={[
         styles.wrapper,
         ...containerStyle,
+        loading && styles.loadingContent,
         !dragActive && { backgroundColor: bgc },
       ]}
     >
@@ -131,6 +141,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingStart: CONTENT_CONTAINER_PADDING_START,
     gap: CONTENT_CONTAINER_GAP,
+  },
+  loadingContent: {
+    opacity: 0.5,
   },
 });
 

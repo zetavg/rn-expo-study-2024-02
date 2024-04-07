@@ -70,6 +70,9 @@ export type Props = {
   /** Displays a navigation arrow on the right side of the list item if set to true. This has no effect on Android. */
   navigationLink?: boolean;
 
+  /** Show a loading indicator over the list item. */
+  loading?: boolean;
+
   /** Hides the trailing contents in the item. This is useful for hiding the trailing contents from items while the list is in edit mode (when `showGrabber` or `editButton` is set to `true`). */
   hideTrailingContents?: boolean;
   /** Disables the `onPress` on `onLongPress` events and removes the highlight effect when pressed, without giving the item a disabled appearance. This is useful for removing the pressable behavior from items while the list is in edit mode (when `showGrabber` or `editButton` is set to `true`). */

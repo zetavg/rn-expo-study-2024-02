@@ -115,6 +115,12 @@ export const B7_Checked: Story = {
   },
 };
 
+export const B9_Loading: Story = {
+  args: {
+    loading: true,
+  },
+};
+
 export const BL1_WithSingleLineLongTitleAndIconAndIsNavigationLink: Story = {
   parameters: {
     containerStyle: {

@@ -14,6 +14,7 @@ import {
   usePropsWithContextualDefaultValues,
 } from '@rnstudy/react-utils';
 
+import ActivityIndicator from '../../ActivityIndicator';
 import BackgroundColor from '../../BackgroundColor';
 import Select from '../../Select';
 import Text from '../../Text';
@@ -111,6 +112,9 @@ export type Props = {
   destructive?: boolean;
   /** Disable the item button. This will also disable the `onPress` and `onLongPress` events and remove the highlight effect when pressed. */
   disabled?: boolean;
+
+  /** Show a loading indicator over the list item. */
+  loading?: boolean;
 
   /** Hides the trailing contents in the item. This is useful for hiding the trailing contents from items while the list is in edit mode (when `showGrabber` or `editButton` is set to `true`). */
   hideTrailingContents?: boolean;
@@ -246,6 +250,12 @@ export function ListItem(rawProps: Props) {
                 {...grabberPropsSelector(props)}
                 backgroundColor={backgroundColor}
               />
+
+              {props.loading && (
+                <View style={styles.activityIndicatorOverlay}>
+                  <ActivityIndicator />
+                </View>
+              )}
             </ContentContainer>
           </OuterContainer>
         )}
@@ -259,6 +269,11 @@ ListItem.AccessoryButton = AccessoryButton;
 const styles = StyleSheet.create({
   childrenContainer: {
     flex: 1,
+  },
+  activityIndicatorOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
