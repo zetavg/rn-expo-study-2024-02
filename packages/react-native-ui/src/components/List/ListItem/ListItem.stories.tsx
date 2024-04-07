@@ -89,13 +89,27 @@ export const B3_PressableButtonStyle: Story = {
   },
 };
 
-export const B4_WithIcon: Story = {
+export const B4_PressableDestructiveStyle: Story = {
+  args: {
+    ...B2_Pressable.args,
+    destructive: true,
+  },
+};
+
+export const B5_PressableDisabled: Story = {
+  args: {
+    ...B2_Pressable.args,
+    disabled: true,
+  },
+};
+
+export const B6_WithIcon: Story = {
   args: {
     image: Object.values(EXAMPLE_IMAGES)[1],
   },
 };
 
-export const B5_Checked: Story = {
+export const B7_Checked: Story = {
   args: {
     checked: true,
   },
@@ -110,7 +124,7 @@ export const BL1_WithSingleLineLongTitleAndIconAndIsNavigationLink: Story = {
   },
   args: {
     ...B1_IsNavigationLink.args,
-    ...B4_WithIcon.args,
+    ...B6_WithIcon.args,
     singleLine: true,
     title: 'This is a long title that will be truncated.',
   },
@@ -125,7 +139,7 @@ export const BL2_WithMultipleLineLongTitleAndIconAndIsNavigationLink: Story = {
   },
   args: {
     ...B1_IsNavigationLink.args,
-    ...B4_WithIcon.args,
+    ...B6_WithIcon.args,
     singleLine: false,
     title: 'This is a long title that will expand to multiple lines.',
   },

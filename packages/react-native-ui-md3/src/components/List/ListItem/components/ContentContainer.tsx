@@ -25,6 +25,7 @@ export type Props = {
   onPress?: ListItemProps['onPress'];
   onLongPress?: ListItemProps['onLongPress'];
 
+  disabled?: ListItemProps['disabled'];
   disableOnPress?: ListItemProps['disableOnPress'];
 
   dragActive?: ListItemProps['dragActive'];
@@ -39,6 +40,7 @@ export const ContentContainer = ({
   height,
   onPress,
   onLongPress,
+  disabled,
   disableOnPress,
   dragActive,
   backgroundColor,
@@ -81,7 +83,7 @@ export const ContentContainer = ({
         onPress={handlePress}
         onLongPress={onLongPress}
         style={styles.wrapper}
-        disabled={disableOnPress}
+        disabled={disabled || disableOnPress}
         android_ripple={{
           color: rippleColor,
           foreground: true,

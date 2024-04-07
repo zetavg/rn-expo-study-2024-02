@@ -107,6 +107,10 @@ export type Props = {
   subtitleOnTop?: boolean;
   /** Display the list item as a button. */
   button?: boolean;
+  /** An option indicating the button will trigger a destructive action. */
+  destructive?: boolean;
+  /** Disable the item button. This will also disable the `onPress` and `onLongPress` events and remove the highlight effect when pressed. */
+  disabled?: boolean;
 
   /** Hides the trailing contents in the item. This is useful for hiding the trailing contents from items while the list is in edit mode (when `showGrabber` or `editButton` is set to `true`). */
   hideTrailingContents?: boolean;

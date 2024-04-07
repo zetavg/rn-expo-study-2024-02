@@ -101,6 +101,10 @@ export type Props = {
   subtitleOnTop?: boolean;
   /** Display the list item as a button. */
   button?: boolean;
+  /** An option indicating the button will trigger a destructive action. */
+  destructive?: boolean;
+  /** Disable the item button. This will also disable the `onPress` and `onLongPress` events and remove the highlight effect when pressed. */
+  disabled?: boolean;
   /** Displays a navigation arrow on the right side of the list item if set to true. */
   navigationLink?: boolean;
 

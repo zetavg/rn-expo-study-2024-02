@@ -18,6 +18,8 @@ export type Props = {
   footer?: React.ReactNode;
   /** The items in the list. Should be an array of `ListItem`s. */
   children: Readonly<React.JSX.Element> | readonly React.JSX.Element[];
+  /** Show a loading indicator over the list. */
+  loading?: boolean;
   /** The placeholder to display when children is empty. */
   placeholder?: Readonly<React.JSX.Element> | string;
 };

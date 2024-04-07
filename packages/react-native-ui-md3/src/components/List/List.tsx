@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
-import { View, ViewStyle } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { StyleSheet, View, ViewStyle } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 
 import { ListFooterPropsContext } from './ListFooter';
 import { ListHeaderPropsContext } from './ListHeader';
@@ -20,6 +21,8 @@ export type Props = {
   footer?: React.ReactNode;
   /** The items in the list. Should be an array of `ListItem`s. */
   children: Readonly<React.JSX.Element> | readonly React.JSX.Element[];
+  /** Show a loading indicator over the list. */
+  loading?: boolean;
   /** The placeholder to display when children is empty. */
   placeholder?: Readonly<React.JSX.Element> | string;
 };
@@ -30,6 +33,7 @@ export function List({
   header,
   footer,
   children,
+  loading,
   placeholder,
 }: Props) {
   const listItemPropsContextValue = useMemo(() => ({ listStyle }), [listStyle]);
@@ -85,6 +89,26 @@ export function List({
     [listStyle],
   );
 
+  const shouldRenderPlaceholder =
+    childrenCount === 0 && (placeholder || loading);
+  const [
+    shouldRenderPlaceholderForLayoutAnimation,
+    setShouldRenderPlaceholderForLayoutAnimation,
+  ] = useState(shouldRenderPlaceholder);
+  useEffect(() => {
+    if (shouldRenderPlaceholder) {
+      setShouldRenderPlaceholderForLayoutAnimation(true);
+    } else {
+      const timeout = setTimeout(() => {
+        setShouldRenderPlaceholderForLayoutAnimation(false);
+      }, 1000);
+      return () => clearTimeout(timeout);
+    }
+  }, [shouldRenderPlaceholder]);
+
+  const placeholderIsRenderedForLayoutAnimation =
+    shouldRenderPlaceholderForLayoutAnimation && !shouldRenderPlaceholder;
+
   return (
     <ListItemPropsContext.Provider value={listItemPropsContextValue}>
       <View style={containerStyle}>
@@ -93,18 +117,34 @@ export function List({
             {header}
           </ListHeaderPropsContext.Provider>
         )}
-        {(() => {
-          if (childrenCount === 0 && placeholder) {
-            return (
-              <ListPlaceholder
-                listStyle={listStyle}
-                placeholder={placeholder}
-              />
-            );
-          }
-
-          return processedChildren;
-        })()}
+        <View style={loading && styles.loadingContent}>
+          {(shouldRenderPlaceholder ||
+            shouldRenderPlaceholderForLayoutAnimation) && (
+            <ListPlaceholder
+              key="__list_placeholder__"
+              listStyle={listStyle}
+              placeholder={
+                placeholderIsRenderedForLayoutAnimation ? '' : placeholder || ''
+              }
+              style={
+                placeholderIsRenderedForLayoutAnimation
+                  ? styles.placeholderForLayoutAnimation
+                  : undefined
+              }
+            />
+          )}
+          {processedChildren}
+          {loading && (
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                styles.activityIndicatorContainer,
+              ]}
+            >
+              <ActivityIndicator size="small" />
+            </View>
+          )}
+        </View>
         {!!footer && (
           <ListFooterPropsContext.Provider value={listFooterPropsContextValue}>
             {footer}
@@ -114,5 +154,19 @@ export function List({
     </ListItemPropsContext.Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContent: {
+    opacity: 0.75,
+  },
+  activityIndicatorContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderForLayoutAnimation: {
+    ...StyleSheet.absoluteFillObject,
+    minHeight: 0,
+  },
+});
 
 export default List;

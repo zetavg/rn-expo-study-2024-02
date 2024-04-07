@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, LayoutAnimation, useWindowDimensions } from 'react-native';
 
@@ -12,6 +13,7 @@ import { Meta, StoryObj } from '@rnstudy/storybook-rn-types';
 
 import { useUIPlatform } from '../../contexts';
 import { Button } from '../Button';
+import Switch from '../Switch';
 import { Text } from '../Text';
 
 import ListFooterMeta from './ListFooter/ListFooter.stories';
@@ -138,6 +140,12 @@ export default meta;
 type Story = StoryObj<typeof List>;
 
 export const A0_Default: Story = {};
+
+export const A1_Loading: Story = {
+  args: {
+    loading: true,
+  },
+};
 
 export const AA1_InsetGrouped: Story = {
   args: {
@@ -317,6 +325,23 @@ export const I0_EmptyList: Story = {
   },
   render: (args) => {
     return <List {...args} />;
+  },
+};
+
+export const I1_LoadingEmptyList: Story = {
+  ...I0_EmptyList,
+  args: {
+    ...I0_EmptyList.args,
+    loading: true,
+  },
+};
+
+export const I2_LoadingEmptyListWithoutPlaceholder: Story = {
+  ...I0_EmptyList,
+  args: {
+    ...I0_EmptyList.args,
+    placeholder: undefined,
+    loading: true,
   },
 };
 
@@ -737,6 +762,81 @@ export const SC1_WithSectionListPlain: Story = {
   },
 };
 
+export const T1_InteractiveAddAndRemoveItem: Story = {
+  args: {
+    __layoutAnimationDuration: 300,
+  },
+  render: (args) => {
+    const useListHeader = args['__props:header'] === 'ListHeader';
+    const listHeaderProps = collectPropsFromArgs<ListHeaderProps>(
+      args,
+      '__props:header:ListHeader.',
+    );
+
+    const useListFooter = args['__props:footer'] === 'ListFooter';
+    const listFooterProps = collectPropsFromArgs<ListFooterProps>(
+      args,
+      '__props:footer:ListFooter.',
+    );
+
+    const listItemProps = collectPropsFromArgs<ListItemProps>(
+      args,
+      '__props:children:ListItem.',
+    );
+
+    return (
+      <InteractiveAddRemoveItemComponent
+        listProps={args}
+        useListHeader={useListHeader}
+        listHeaderProps={listHeaderProps}
+        useListFooter={useListFooter}
+        listFooterProps={listFooterProps}
+        listItemProps={listItemProps}
+        layoutAnimationDuration={args.__layoutAnimationDuration}
+      />
+    );
+  },
+};
+
+export const T1_InteractiveAddAndRemoveItemWithFlatList: Story = {
+  parameters: {
+    storyContainer: 'basic',
+  },
+  args: {
+    __layoutAnimationDuration: 300,
+  },
+  render: (args) => {
+    const useListHeader = args['__props:header'] === 'ListHeader';
+    const listHeaderProps = collectPropsFromArgs<ListHeaderProps>(
+      args,
+      '__props:header:ListHeader.',
+    );
+
+    const useListFooter = args['__props:footer'] === 'ListFooter';
+    const listFooterProps = collectPropsFromArgs<ListFooterProps>(
+      args,
+      '__props:footer:ListFooter.',
+    );
+
+    const listItemProps = collectPropsFromArgs<ListItemProps>(
+      args,
+      '__props:children:ListItem.',
+    );
+
+    return (
+      <InteractiveAddRemoveItemWithFlatListComponent
+        listProps={args}
+        useListHeader={useListHeader}
+        listHeaderProps={listHeaderProps}
+        useListFooter={useListFooter}
+        listFooterProps={listFooterProps}
+        listItemProps={listItemProps}
+        layoutAnimationDuration={args.__layoutAnimationDuration}
+      />
+    );
+  },
+};
+
 function WithFlatListEditableDemoComponent({
   listProps,
   itemCount,
@@ -890,5 +990,240 @@ function WithFlatListEditableDemoComponent({
         onDragEnd={handleDragEnd}
       />
     </ListItemPropsContextProvider>
+  );
+}
+
+function InteractiveAddRemoveItemComponent({
+  listProps,
+  useListHeader,
+  listHeaderProps,
+  useListFooter,
+  listFooterProps,
+  listItemProps,
+  layoutAnimationDuration,
+}: {
+  listProps: ListProps;
+  useListHeader: boolean;
+  listHeaderProps: Partial<ListHeaderProps>;
+  useListFooter: boolean;
+  listFooterProps: Partial<ListFooterProps>;
+  listItemProps: Partial<ListItemProps>;
+  layoutAnimationDuration: number;
+}) {
+  const [itemCount, setItemCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <>
+      <List
+        first
+        loading={loading}
+        {...listProps}
+        header={useListHeader ? <ListHeader {...listHeaderProps} /> : undefined}
+        footer={useListFooter ? <ListFooter {...listFooterProps} /> : undefined}
+      >
+        {Array.from({ length: itemCount }).map((_, i) => (
+          <ListItem key={`${i}`} title={`Item ${i}`} {...listItemProps} />
+        ))}
+      </List>
+      <List>
+        <ListItem
+          button
+          title="Add Item"
+          onPress={() => {
+            LayoutAnimation.configureNext({
+              ...LayoutAnimation.Presets.easeInEaseOut,
+              duration: layoutAnimationDuration,
+            });
+            setItemCount((n) => n + 1);
+            setLoading(false);
+          }}
+        />
+        <ListItem
+          button
+          title="Add 5 Items"
+          onPress={() => {
+            LayoutAnimation.configureNext({
+              ...LayoutAnimation.Presets.easeInEaseOut,
+              duration: layoutAnimationDuration,
+            });
+            setItemCount((n) => n + 5);
+            setLoading(false);
+          }}
+        />
+        <ListItem
+          button
+          destructive
+          disabled={itemCount <= 0}
+          title="Remove Item"
+          onPress={() => {
+            LayoutAnimation.configureNext({
+              ...LayoutAnimation.Presets.easeInEaseOut,
+              duration: layoutAnimationDuration,
+            });
+            setItemCount((n) => (n > 0 ? n - 1 : n));
+            setLoading(false);
+          }}
+        />
+        <ListItem
+          button
+          destructive
+          disabled={itemCount <= 0}
+          title="Remove All Items"
+          onPress={() => {
+            LayoutAnimation.configureNext({
+              ...LayoutAnimation.Presets.easeInEaseOut,
+              duration: layoutAnimationDuration,
+            });
+            setItemCount(0);
+            setLoading(false);
+          }}
+        />
+      </List>
+
+      <List>
+        <ListItem
+          title="Loading"
+          accessories={<Switch value={loading} onValueChange={setLoading} />}
+        />
+      </List>
+    </>
+  );
+}
+
+function InteractiveAddRemoveItemWithFlatListComponent({
+  listProps,
+  useListHeader,
+  listHeaderProps,
+  useListFooter,
+  listFooterProps,
+  listItemProps,
+  layoutAnimationDuration,
+}: {
+  listProps: ListProps;
+  useListHeader: boolean;
+  listHeaderProps: Partial<ListHeaderProps>;
+  useListFooter: boolean;
+  listFooterProps: Partial<ListFooterProps>;
+  listItemProps: Partial<ListItemProps>;
+  layoutAnimationDuration: number;
+}) {
+  const [itemCount, setItemCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const data = Array.from({ length: itemCount }, (_, i) => ({
+    key: `${i}`,
+    title: `Item ${i}`,
+  }));
+
+  const isFirst = true;
+
+  return (
+    <FlatList
+      ListHeaderComponent={() => (
+        <>
+          <ListPadding
+            listStyle={listProps.listStyle}
+            position="top"
+            first={isFirst}
+            withHeader={useListHeader}
+          />
+          {useListHeader && (
+            <ListHeader listStyle={listProps.listStyle} {...listHeaderProps} />
+          )}
+        </>
+      )}
+      ListFooterComponent={() => (
+        <>
+          {useListFooter && (
+            <ListFooter listStyle={listProps.listStyle} {...listFooterProps} />
+          )}
+          <ListPadding
+            listStyle={listProps.listStyle}
+            position="bottom"
+            withFooter={useListFooter}
+          />
+          <List>
+            <ListItem
+              button
+              title="Add Item"
+              onPress={() => {
+                LayoutAnimation.configureNext({
+                  ...LayoutAnimation.Presets.easeInEaseOut,
+                  duration: layoutAnimationDuration,
+                });
+                setItemCount((n) => n + 1);
+                setLoading(false);
+              }}
+            />
+            <ListItem
+              button
+              title="Add 5 Items"
+              onPress={() => {
+                LayoutAnimation.configureNext({
+                  ...LayoutAnimation.Presets.easeInEaseOut,
+                  duration: layoutAnimationDuration,
+                });
+                setItemCount((n) => n + 5);
+                setLoading(false);
+              }}
+            />
+            <ListItem
+              button
+              destructive
+              disabled={itemCount <= 0}
+              title="Remove Item"
+              onPress={() => {
+                LayoutAnimation.configureNext({
+                  ...LayoutAnimation.Presets.easeInEaseOut,
+                  duration: layoutAnimationDuration,
+                });
+                setItemCount((n) => (n > 0 ? n - 1 : n));
+                setLoading(false);
+              }}
+            />
+            <ListItem
+              button
+              destructive
+              disabled={itemCount <= 0}
+              title="Remove All Items"
+              onPress={() => {
+                LayoutAnimation.configureNext({
+                  ...LayoutAnimation.Presets.easeInEaseOut,
+                  duration: layoutAnimationDuration,
+                });
+                setItemCount(0);
+                setLoading(false);
+              }}
+            />
+          </List>
+
+          <List>
+            <ListItem
+              title="Loading"
+              accessories={
+                <Switch value={loading} onValueChange={setLoading} />
+              }
+            />
+          </List>
+        </>
+      )}
+      ListEmptyComponent={
+        <ListPlaceholder
+          listStyle={listProps.listStyle || 'insetGrouped'}
+          placeholder={listProps.placeholder || ''}
+          loading={loading}
+        />
+      }
+      data={data}
+      keyExtractor={(d) => d.key}
+      renderItem={({ item, listPosition }) => (
+        <ListItem
+          listStyle={listProps.listStyle}
+          listPosition={listPosition}
+          title={item.title}
+          {...listItemProps}
+        />
+      )}
+    />
   );
 }

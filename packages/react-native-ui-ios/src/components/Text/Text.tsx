@@ -8,7 +8,7 @@ import {
   withPropDefaultValuesContext,
 } from '@rnstudy/react-utils';
 
-import { useTextStyles, useUIColors } from '../../contexts';
+import { useColors, useTextStyles, useUIColors } from '../../contexts';
 
 import TextPropsContext from './TextPropsContext';
 
@@ -32,6 +32,7 @@ export type Props = React.ComponentProps<typeof RNText> & {
     | 'tertiary'
     | 'quaternary'
     | 'link'
+    | 'destructive'
     | 'placeholder'
     | 'tint';
   children?: ReactNodePropWithPropDefaultValuesContext<{
@@ -49,20 +50,23 @@ export const Text = forwardRef<RNText, Props>(function Text(props: Props, ref) {
     ...restProps
   } = usePropsWithContextualDefaultValues(props, TextPropsContext);
 
+  const colors = useColors();
   const uiColors = useUIColors();
   const textStyles = useTextStyles();
 
   const color =
     colorProp && colorProp !== 'default'
-      ? uiColors[
-          colorProp === 'placeholder'
-            ? ('placeholderText' as const)
-            : colorProp === 'link'
-              ? ('link' as const)
-              : colorProp === 'tint'
-                ? ('tintColor' as const)
-                : (`${colorProp}Label` as const)
-        ]
+      ? colorProp === 'destructive'
+        ? colors.red
+        : uiColors[
+            colorProp === 'placeholder'
+              ? ('placeholderText' as const)
+              : colorProp === 'link'
+                ? ('link' as const)
+                : colorProp === 'tint'
+                  ? ('tintColor' as const)
+                  : (`${colorProp}Label` as const)
+          ]
       : uiColors.label;
 
   const iconProps: Partial<IconProps> = {

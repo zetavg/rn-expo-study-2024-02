@@ -12,6 +12,7 @@ export type Props = {
   listStyle: ListStyle;
   /** The placeholder to display when children is empty. */
   placeholder: Readonly<React.JSX.Element> | string;
+  loading?: boolean;
 };
 
 export function ListPlaceholder(props: Props) {

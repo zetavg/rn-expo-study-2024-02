@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 
@@ -19,9 +19,16 @@ export type Props = {
   listStyle: ListStyle;
   /** The placeholder to display. */
   placeholder: Readonly<React.JSX.Element> | string;
+  loading?: boolean;
+  style?: ViewStyle;
 };
 
-export function ListPlaceholder({ listStyle, placeholder }: Props) {
+export function ListPlaceholder({
+  listStyle,
+  placeholder,
+  loading,
+  style,
+}: Props) {
   const uiColors = useUIColors();
   return (
     <BackgroundColor>
@@ -34,6 +41,8 @@ export function ListPlaceholder({ listStyle, placeholder }: Props) {
               borderColor: uiColors.opaqueSeparator,
             },
             placeholderContainerStyles[listStyle],
+            loading && styles.loadingContent,
+            style,
           ]}
         >
           <Text {...PLACEHOLDER_TEXT_PROPS}>
@@ -46,6 +55,17 @@ export function ListPlaceholder({ listStyle, placeholder }: Props) {
                   },
                 })}
           </Text>
+
+          {loading && (
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                styles.activityIndicatorContainer,
+              ]}
+            >
+              <ActivityIndicator color={uiColors.secondaryLabel} />
+            </View>
+          )}
         </View>
       )}
     </BackgroundColor>
@@ -57,6 +77,16 @@ const PLACEHOLDER_TEXT_PROPS: TextProps = {
   color: 'secondary',
   style: { textAlign: 'center' },
 };
+
+const styles = StyleSheet.create({
+  loadingContent: {
+    opacity: 0.75,
+  },
+  activityIndicatorContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 const placeholderContainerStyles = StyleSheet.create({
   default: {
