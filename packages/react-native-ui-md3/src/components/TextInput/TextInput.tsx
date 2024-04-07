@@ -31,8 +31,8 @@ export const TextInput = forwardRef<RNTextInput, Props>(function TextInput(
 
   let placeholder = placeholderProp;
   if (placeholder && Platform.OS === 'android') {
-    // On Android, sometimes the placeholder text will unexpectedly be broken into two lines while there is still enough space for it to be on one line. We observed that adding a space at the beginning and end of the placeholder text can help prevent this issue. The added space will not be visible - at least on the devices we tested.
-    placeholder = ` ${placeholder} `;
+    // On Android, sometimes the placeholder text will unexpectedly be broken into two lines while there is still enough space for it to be on one line. We observed that adding a space at the end of the placeholder text can help prevent this issue. The added space will not be visible - at least on the devices we tested.
+    placeholder = `${placeholder} `;
   }
 
   return (
