@@ -18,7 +18,7 @@ import {
 import type { Props as ListItemProps } from '../ListItem';
 
 export type Props = {
-  icon?: ListItemProps['icon'];
+  image?: ListItemProps['image'];
   subtitle?: ListItemProps['subtitle'];
   singleLine?: ListItemProps['singleLine'];
   compact?: ListItemProps['compact'];
@@ -32,7 +32,7 @@ export type Props = {
 
 export const Image = React.memo(
   ({
-    icon,
+    image,
     subtitle,
     singleLine,
     compact,
@@ -61,7 +61,7 @@ export const Image = React.memo(
           style,
         ]}
       >
-        {withPropDefaultValuesContext(icon, {
+        {withPropDefaultValuesContext(image, {
           iconProps: {
             value: (props) => {
               const iconShouldReallyAlignWithTitle =

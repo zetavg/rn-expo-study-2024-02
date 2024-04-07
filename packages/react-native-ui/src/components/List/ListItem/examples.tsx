@@ -16,7 +16,7 @@ export const FUNCTION_WITH_PRESSED_ALERT = () => {
   Alert.alert('Pressed');
 };
 
-export const EXAMPLE_ICONS = {
+export const EXAMPLE_IMAGES = {
   undefined,
   '<Icon name="_listitem_person" />': <Icon name="_listitem_person" />,
   '({ backgroundColor }: { backgroundColor: string }) => <Icon name="airplane" color={backgroundColor} backgroundColor="orange" />':
@@ -62,6 +62,7 @@ export const EXAMPLE_ACCESSORIES = {
       clearButtonMode="while-editing"
     />
   ),
+  Icon: <Icon name="cat" color="orange" />,
 };
 
 export const EXAMPLE_CHILDREN = (

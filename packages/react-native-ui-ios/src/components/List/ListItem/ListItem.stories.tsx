@@ -119,7 +119,7 @@ export const WithIcon: Meta<typeof ListItem> = {
   args: {
     title: 'Title',
     subtitle: undefined,
-    icon: <Icon name="star" color="gray" />,
+    image: <Icon name="star" color="gray" />,
     navigationLink: true,
   },
 };
@@ -128,7 +128,7 @@ export const WithIconAndSubtitle: Meta<typeof ListItem> = {
   args: {
     title: 'Title',
     subtitle: 'Subtitle',
-    icon: <Icon name="star" color="gray" />,
+    image: <Icon name="star" color="gray" />,
     navigationLink: true,
   },
 };
@@ -137,7 +137,7 @@ export const WithIconWithBackgroundColor: Meta<typeof ListItem> = {
   args: {
     title: 'Title',
     subtitle: undefined,
-    icon: ({ backgroundColor }) => (
+    image: ({ backgroundColor }) => (
       <Icon name="airplane" color={backgroundColor} backgroundColor="orange" />
     ),
     navigationLink: true,
@@ -149,7 +149,7 @@ export const WithIconAndSubtitleCompact: Meta<typeof ListItem> = {
   args: {
     title: 'Title',
     subtitle: 'Subtitle',
-    icon: <Icon name="star" color="gray" />,
+    image: <Icon name="star" color="gray" />,
     compact: true,
     navigationLink: true,
   },
@@ -678,7 +678,7 @@ export const ListPositionWithIcon: Meta<typeof ListItem> = {
   ...ListPosition,
   args: {
     ...ListPosition.args,
-    icon: <Icon name="star" color="gray" />,
+    image: <Icon name="star" color="gray" />,
   },
 };
 

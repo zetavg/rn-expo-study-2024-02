@@ -12,7 +12,7 @@ import {
   EXAMPLE_ACCESSORIES,
   EXAMPLE_CHILDREN,
   EXAMPLE_CHILDREN_TALL,
-  EXAMPLE_ICONS,
+  EXAMPLE_IMAGES,
   FUNCTION_WITH_PRESSED_ALERT,
 } from './examples';
 import ListItem from './ListItem';
@@ -29,10 +29,10 @@ const meta: Meta<typeof ListItem> = {
   argTypes: {
     title: { control: 'text' },
     subtitle: { control: 'text' },
-    icon: {
+    image: {
       control: 'select',
-      options: Object.keys(EXAMPLE_ICONS),
-      mapping: EXAMPLE_ICONS,
+      options: Object.keys(EXAMPLE_IMAGES),
+      mapping: EXAMPLE_IMAGES,
     },
     onPress: {
       control: 'select',
@@ -89,15 +89,35 @@ export const B3_PressableButtonStyle: Story = {
   },
 };
 
-export const B4_WithIcon: Story = {
+export const B4_PressableDestructiveStyle: Story = {
   args: {
-    icon: Object.values(EXAMPLE_ICONS)[1],
+    ...B2_Pressable.args,
+    destructive: true,
   },
 };
 
-export const B5_Checked: Story = {
+export const B5_PressableDisabled: Story = {
+  args: {
+    ...B2_Pressable.args,
+    disabled: true,
+  },
+};
+
+export const B6_WithIcon: Story = {
+  args: {
+    image: Object.values(EXAMPLE_IMAGES)[1],
+  },
+};
+
+export const B7_Checked: Story = {
   args: {
     checked: true,
+  },
+};
+
+export const B9_Loading: Story = {
+  args: {
+    loading: true,
   },
 };
 
@@ -110,7 +130,7 @@ export const BL1_WithSingleLineLongTitleAndIconAndIsNavigationLink: Story = {
   },
   args: {
     ...B1_IsNavigationLink.args,
-    ...B4_WithIcon.args,
+    ...B6_WithIcon.args,
     singleLine: true,
     title: 'This is a long title that will be truncated.',
   },
@@ -125,7 +145,7 @@ export const BL2_WithMultipleLineLongTitleAndIconAndIsNavigationLink: Story = {
   },
   args: {
     ...B1_IsNavigationLink.args,
-    ...B4_WithIcon.args,
+    ...B6_WithIcon.args,
     singleLine: false,
     title: 'This is a long title that will expand to multiple lines.',
   },
@@ -162,7 +182,7 @@ export const C4_WithSubtitleAndIsNavigationLinkCompact: Story = {
 export const C5_WithSubtitleAndIcon: Story = {
   args: {
     ...C1_WithSubtitle.args,
-    icon: Object.values(EXAMPLE_ICONS)[1],
+    image: Object.values(EXAMPLE_IMAGES)[1],
   },
 };
 
@@ -204,7 +224,7 @@ export const CL2_WithLongSubtitleAndNotSingleLineAndIcon: Story = {
   },
   args: {
     ...CL1_WithLongSubtitleAndNotSingleLine.args,
-    icon: Object.values(EXAMPLE_ICONS)[1],
+    image: Object.values(EXAMPLE_IMAGES)[1],
   },
 };
 
@@ -230,7 +250,7 @@ export const CL4_WithLongSubtitleAndIsSingleLineAndIcon: Story = {
   },
   args: {
     ...CL3_WithLongSubtitleAndIsSingleLine.args,
-    icon: Object.values(EXAMPLE_ICONS)[1],
+    image: Object.values(EXAMPLE_IMAGES)[1],
   },
 };
 
@@ -476,22 +496,49 @@ export const ED9_WithLongTitleAndTextInputThatContainsALongValueAsAccessory: Sto
     },
   };
 
+export const EI1_WithIconAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    accessories: EXAMPLE_ACCESSORIES.Icon,
+    accessoriesContainsTextInput: true,
+  },
+};
+
+export const EI2_WithSubtitleAndIconAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    subtitle: 'Subtitle',
+    accessories: EXAMPLE_ACCESSORIES.Icon,
+    accessoriesContainsTextInput: true,
+  },
+};
+
+export const EI3_WithSubtitleCompactAndIconAsAccessory: Story = {
+  args: {
+    title: 'Title',
+    subtitle: 'Subtitle',
+    compact: true,
+    accessories: EXAMPLE_ACCESSORIES.Icon,
+    accessoriesContainsTextInput: true,
+  },
+};
+
 export const I2_WithColoredIcon: Story = {
   args: {
-    icon: EXAMPLE_ICONS[
-      Object.keys(EXAMPLE_ICONS).find((s) =>
+    image: EXAMPLE_IMAGES[
+      Object.keys(EXAMPLE_IMAGES).find((s) =>
         s.match('color="'),
-      ) as keyof typeof EXAMPLE_ICONS
+      ) as keyof typeof EXAMPLE_IMAGES
     ],
   },
 };
 
 export const I3_WithIconUsingBackgroundColor: Story = {
   args: {
-    icon: EXAMPLE_ICONS[
-      Object.keys(EXAMPLE_ICONS).find((s) =>
+    image: EXAMPLE_IMAGES[
+      Object.keys(EXAMPLE_IMAGES).find((s) =>
         s.match('backgroundColor'),
-      ) as keyof typeof EXAMPLE_ICONS
+      ) as keyof typeof EXAMPLE_IMAGES
     ],
   },
 };
@@ -541,7 +588,7 @@ export const I33_WithIconUsingBackgroundColorAndMultipleLineSubtitle: Story = {
 export const N11_WithChildrenAndIcon: Story = {
   args: {
     title: 'Title',
-    icon: Object.values(EXAMPLE_ICONS)[1],
+    image: Object.values(EXAMPLE_IMAGES)[1],
     children: EXAMPLE_CHILDREN_TALL,
   },
 };
@@ -549,7 +596,7 @@ export const N11_WithChildrenAndIcon: Story = {
 export const N12_WithChildrenAndTitleAlignedIcon: Story = {
   args: {
     title: 'Title',
-    icon: Object.values(EXAMPLE_ICONS)[1],
+    image: Object.values(EXAMPLE_IMAGES)[1],
     alignIconWithTitle: true,
     children: EXAMPLE_CHILDREN_TALL,
   },
@@ -559,7 +606,7 @@ export const N13_WithChildrenAndSubtitleAndTitleAlignedIcon: Story = {
   args: {
     title: 'Title',
     subtitle: 'This is the subtitle.',
-    icon: Object.values(EXAMPLE_ICONS)[1],
+    image: Object.values(EXAMPLE_IMAGES)[1],
     alignIconWithTitle: true,
     children: EXAMPLE_CHILDREN_TALL,
   },

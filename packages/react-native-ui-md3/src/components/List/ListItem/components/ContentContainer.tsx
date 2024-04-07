@@ -25,7 +25,10 @@ export type Props = {
   onPress?: ListItemProps['onPress'];
   onLongPress?: ListItemProps['onLongPress'];
 
+  disabled?: ListItemProps['disabled'];
   disableOnPress?: ListItemProps['disableOnPress'];
+
+  loading?: ListItemProps['loading'];
 
   dragActive?: ListItemProps['dragActive'];
 
@@ -39,7 +42,9 @@ export const ContentContainer = ({
   height,
   onPress,
   onLongPress,
+  disabled,
   disableOnPress,
+  loading,
   dragActive,
   backgroundColor,
 }: Props): JSX.Element => {
@@ -81,14 +86,20 @@ export const ContentContainer = ({
         onPress={handlePress}
         onLongPress={onLongPress}
         style={styles.wrapper}
-        disabled={disableOnPress}
+        disabled={disabled || disableOnPress}
         android_ripple={{
           color: rippleColor,
           foreground: true,
         }}
       >
         {({ pressed }) => (
-          <Animated.View style={[...containerStyle, { backgroundColor: bgc }]}>
+          <Animated.View
+            style={[
+              ...containerStyle,
+              loading && styles.loadingContent,
+              { backgroundColor: bgc },
+            ]}
+          >
             {children}
             {pressed && Platform.OS !== 'android' && (
               <View
@@ -109,6 +120,7 @@ export const ContentContainer = ({
       style={[
         styles.wrapper,
         ...containerStyle,
+        loading && styles.loadingContent,
         !dragActive && { backgroundColor: bgc },
       ]}
     >
@@ -129,6 +141,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingStart: CONTENT_CONTAINER_PADDING_START,
     gap: CONTENT_CONTAINER_GAP,
+  },
+  loadingContent: {
+    opacity: 0.5,
   },
 });
 

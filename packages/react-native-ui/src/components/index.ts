@@ -1,5 +1,7 @@
+export * from './ActivityIndicator';
 export { BackgroundColor } from './BackgroundColor';
 export * from './Button';
+export * from './Form';
 export * from './Icon';
 export * from './List';
 export * from './Menu';

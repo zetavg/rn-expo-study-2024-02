@@ -24,6 +24,7 @@ type Variant =
 type Color =
   | 'default'
   | 'secondary'
+  | 'secondaryVariant'
   | 'tertiary'
   | 'quaternary'
   | 'link'

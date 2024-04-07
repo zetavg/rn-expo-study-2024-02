@@ -5,11 +5,15 @@ import { Props as TextProps } from './Text';
 
 export function textPropsToIOSProps(props: TextProps): TextPropsIOS {
   const { variant, ...restProps } = props;
-  return { ...restProps, textStyle: variant };
+
+  return {
+    ...restProps,
+    textStyle: variant,
+  };
 }
 
 export function textPropsToMD3Props(props: TextProps): TextPropsMD3 {
-  const { variant, emphasized, color, ...restProps } = props;
+  const { variant, emphasized, color, style, ...restProps } = props;
 
   const md3TextVariant: TextPropsMD3['variant'] = (() => {
     switch (variant) {
@@ -40,6 +44,8 @@ export function textPropsToMD3Props(props: TextProps): TextPropsMD3 {
         return 'labelSmall' as const;
 
       case 'body':
+        return 'bodyLarge' as const;
+
       default:
         return undefined;
     }
@@ -65,10 +71,15 @@ export function textPropsToMD3Props(props: TextProps): TextPropsMD3 {
     ((): NonNullable<TextPropsMD3['color']> => {
       switch (color) {
         case 'secondary':
+          return 'secondary';
+        case 'secondaryVariant':
+          return 'secondaryVariant';
         case 'tertiary':
+          return 'tertiaryVariant';
         case 'quaternary':
+          return 'quaternary';
         case 'placeholder':
-          return 'onSurfaceVariant';
+          return 'outlineVariant';
         case 'link':
         case 'tint':
           return 'primary';
@@ -81,6 +92,6 @@ export function textPropsToMD3Props(props: TextProps): TextPropsMD3 {
     ...restProps,
     variant: md3TextVariant,
     color: md3TextColor,
-    style: fontWeightStyle,
+    style: [fontWeightStyle, style],
   };
 }

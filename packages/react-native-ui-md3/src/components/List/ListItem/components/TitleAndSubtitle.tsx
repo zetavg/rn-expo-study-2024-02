@@ -11,6 +11,8 @@ export type Props = {
   subtitle: ListItemProps['subtitle'];
   singleLine: ListItemProps['singleLine'];
   button: ListItemProps['button'];
+  destructive: ListItemProps['destructive'];
+  disabled: ListItemProps['disabled'];
   compact: ListItemProps['compact'];
   subtitleOnTop: ListItemProps['subtitleOnTop'];
   fixedHeight: ListItemProps['fixedHeight'];
@@ -23,6 +25,8 @@ export function propsSelector(p: ListItemProps): Omit<Props, 'onLayout'> {
     subtitle: p.subtitle,
     singleLine: p.singleLine,
     button: p.button,
+    destructive: p.destructive,
+    disabled: p.disabled,
     compact: p.compact,
     subtitleOnTop: p.subtitleOnTop,
     fixedHeight: p.fixedHeight,
@@ -35,6 +39,8 @@ export const TitleAndSubtitle = React.memo(
     subtitle,
     singleLine,
     button,
+    destructive,
+    disabled,
     compact,
     subtitleOnTop,
     fixedHeight,
@@ -53,9 +59,13 @@ export const TitleAndSubtitle = React.memo(
           ).map((n) => {
             switch (n) {
               case 'title': {
-                let titleTextProps = button
-                  ? BUTTON_TITLE_TEXT_PROPS
-                  : TITLE_TEXT_PROPS;
+                let titleTextProps = disabled
+                  ? DISABLED_TITLE_TEXT_PROPS
+                  : destructive
+                    ? DESTRUCTIVE_TITLE_TEXT_PROPS
+                    : button
+                      ? BUTTON_TITLE_TEXT_PROPS
+                      : TITLE_TEXT_PROPS;
 
                 if (fixedHeight || singleLine) {
                   titleTextProps = {
@@ -123,6 +133,17 @@ const TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
 const BUTTON_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
   variant: 'bodyLarge',
   color: 'primary',
+};
+
+const DESTRUCTIVE_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> =
+  {
+    variant: 'bodyLarge',
+    color: 'error',
+  };
+
+const DISABLED_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
+  variant: 'bodyLarge',
+  color: 'outlineVariant',
 };
 
 const SUBTITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {

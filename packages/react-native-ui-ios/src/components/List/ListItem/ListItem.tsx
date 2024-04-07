@@ -8,6 +8,7 @@ import {
   usePropsWithContextualDefaultValues,
 } from '@rnstudy/react-utils';
 
+import ActivityIndicator from '../../ActivityIndicator';
 import BackgroundColor from '../../BackgroundColor';
 import Select from '../../Select';
 import Text from '../../Text';
@@ -51,8 +52,8 @@ export type Props = {
   editButton?: 'unselected' | 'selected' | 'add' | 'remove';
   onEditButtonPress?: () => void;
 
-  /** The icon to display in front of the list item. */
-  icon?: ReactNodePropWithPropDefaultValuesContext<{
+  /** The icon or image to display in front of the list item. */
+  image?: ReactNodePropWithPropDefaultValuesContext<{
     iconProps: Partial<React.ComponentProps<typeof Icon>>;
     backgroundColor: string;
   }>;
@@ -86,6 +87,7 @@ export type Props = {
     textProps: Partial<React.ComponentProps<typeof Text>>;
     textInputProps: Partial<React.ComponentProps<typeof TextInput>>;
     selectProps: Partial<React.ComponentProps<typeof Select>>;
+    iconProps: Partial<React.ComponentProps<typeof Icon>>;
   }>;
 
   /** Set this to `true` if you are using a text input in the accessories of the list item. This will prioritize space distribution for the text input. */
@@ -100,8 +102,15 @@ export type Props = {
   subtitleOnTop?: boolean;
   /** Display the list item as a button. */
   button?: boolean;
+  /** An option indicating the button will trigger a destructive action. */
+  destructive?: boolean;
+  /** Disable the item button. This will also disable the `onPress` and `onLongPress` events and remove the highlight effect when pressed. */
+  disabled?: boolean;
   /** Displays a navigation arrow on the right side of the list item if set to true. */
   navigationLink?: boolean;
+
+  /** Show a loading indicator over the list item. */
+  loading?: boolean;
 
   /** Hides the trailing contents in the item. This is useful for hiding the trailing contents from items while the list is in edit mode (when `showGrabber` or `editButton` is set to `true`). */
   hideTrailingContents?: boolean;
@@ -164,7 +173,7 @@ export function ListItem(rawProps: Props) {
             >
               <EditButton {...editButtonPropsSelector(props)} />
 
-              {!!props.icon && (
+              {!!props.image && (
                 <Image
                   {...props}
                   backgroundColor={backgroundColor}
@@ -216,6 +225,12 @@ export function ListItem(rawProps: Props) {
                 {...grabberPropsSelector(props)}
                 backgroundColor={backgroundColor}
               />
+
+              {props.loading && (
+                <View style={styles.activityIndicatorOverlay}>
+                  <ActivityIndicator />
+                </View>
+              )}
             </ContentContainer>
           </OuterContainer>
         )}
@@ -234,6 +249,11 @@ const styles = StyleSheet.create({
   },
   childrenContainer_withTitle: {
     paddingTop: 0,
+  },
+  activityIndicatorOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
