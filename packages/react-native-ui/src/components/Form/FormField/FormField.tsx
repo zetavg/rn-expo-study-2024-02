@@ -26,6 +26,7 @@ export function FormField(rawProps: Props) {
 
   return (
     <ListItem
+      accessoriesContainsTextInput={!vertical}
       title={
         <Text
           style={

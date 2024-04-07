@@ -113,6 +113,7 @@ const TRAILING_ACCESSORIES_TEXT_INPUT_PROPS = {
 const TRAILING_ACCESSORIES_SELECT_PROPS = {
   style: {
     flexShrink: 1,
+    flexGrow: 1,
     marginStart: -12,
   },
   innerContainerStyle: {
