@@ -20,7 +20,12 @@ export function AccessoryButton({ label, icon, onPress }: Props): JSX.Element {
       <View style={styles.container}>
         {!!icon && (
           <View style={styles.iconContainer}>
-            <Icon name={icon} color={colors.primary} size={20} />
+            <Icon
+              name={icon}
+              color={colors.primary}
+              size={24}
+              bordered={false}
+            />
           </View>
         )}
         {!!label && (
