@@ -38,6 +38,7 @@ export function StoryContainer({
   const [useGroupedBackground, setUseGroupedBackground] = useState(
     containerBackground === 'grouped',
   );
+  const [backgroundElevated, setBackgroundElevated] = useState(false);
 
   const [showBoundaryLines, setShowBoundaryLines] = useState(false);
   const [showSpecOverlay, setShowSpecOverlay] = useState(false);
@@ -60,6 +61,7 @@ export function StoryContainer({
         uiPlatform={uiPlatform || AVAILABLE_UI_PLATFORMS[0]}
         colorScheme={colorScheme}
         showBackground={showBackground}
+        backgroundElevated={backgroundElevated}
         useGroupedBackground={useGroupedBackground}
         showSpecOverlay={showSpecOverlay}
         showBoundaryLines={showBoundaryLines}
@@ -136,6 +138,17 @@ export function StoryContainer({
                       />
                     </View>
                   )}
+
+                  <View style={styles.previewControlGroup}>
+                    <Text style={[styles.previewControlLabelText]}>
+                      BG Elevated
+                    </Text>
+                    <Switch
+                      style={styles.previewControlSwitch}
+                      value={backgroundElevated}
+                      onValueChange={setBackgroundElevated}
+                    />
+                  </View>
 
                   <View style={styles.previewControlGroup}>
                     <Text style={[styles.previewControlLabelText]}>

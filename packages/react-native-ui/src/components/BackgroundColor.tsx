@@ -13,12 +13,15 @@ import { useUIPlatform } from '../contexts';
 export function BackgroundColor({
   grouped,
   root,
+  elevated,
   children,
 }: {
   /** Whether to use *grouped* background colors. In general, grouped background colors should be used when you have a grouped table view. See: https://developer.apple.com/design/human-interface-guidelines/color#iOS-iPadOS. */
   grouped?: boolean;
   /** Whether this should be the root of your view - setting this will reset the group level context */
   root?: boolean;
+  /** Only works on iOS. */
+  elevated?: boolean;
   children: (backgroundColor: string) => React.ReactNode;
 }): JSX.Element {
   const uiPlatform = useUIPlatform();
@@ -26,7 +29,12 @@ export function BackgroundColor({
   switch (uiPlatform) {
     case 'ios':
       return (
-        <BackgroundColorIOS grouped={grouped} root={root} children={children} />
+        <BackgroundColorIOS
+          grouped={grouped}
+          root={root}
+          elevated={elevated}
+          children={children}
+        />
       );
     case 'android':
     default:

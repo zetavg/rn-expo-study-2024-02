@@ -27,6 +27,7 @@ export type Props = {
   colorScheme: 'light' | 'dark';
   showBackground: boolean;
   useGroupedBackground: boolean;
+  backgroundElevated: boolean;
   showSpecOverlay: boolean;
   showBoundaryLines: boolean;
 };
@@ -46,6 +47,7 @@ export function StoryContentContainerWithoutContext({
   colorScheme,
   showBackground,
   useGroupedBackground,
+  backgroundElevated,
   showSpecOverlay,
   showBoundaryLines,
 }: Props) {
@@ -178,7 +180,10 @@ export function StoryContentContainerWithoutContext({
 
   if (showBackground) {
     return (
-      <BackgroundColor grouped={useGroupedBackground}>
+      <BackgroundColor
+        grouped={useGroupedBackground}
+        elevated={backgroundElevated}
+      >
         {(backgroundColor) => (
           <View style={[styles.rootContainer, { backgroundColor }]}>
             {content}
