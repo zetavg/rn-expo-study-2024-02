@@ -7,6 +7,7 @@ import { ListFooterProps, ListHeaderProps } from '../../List';
 import ListFooterMeta from '../../List/ListFooter/ListFooter.stories';
 import ListHeaderMeta from '../../List/ListHeader/ListHeader.stories';
 
+import { ExampleFormGroup } from './examples';
 import FormGroup from './FormGroup';
 
 const meta: Meta<typeof FormGroup> = {
@@ -63,16 +64,12 @@ const meta: Meta<typeof FormGroup> = {
     );
 
     return (
-      <>
-        <FormGroup
-          {...args}
-          first
-          header={useHeader ? <FormGroup.Header {...headerProps} /> : undefined}
-          footer={useFooter ? <FormGroup.Footer {...footerProps} /> : undefined}
-        >
-          {args.children ? args.children : []}
-        </FormGroup>
-      </>
+      <ExampleFormGroup
+        {...args}
+        first
+        header={useHeader ? <FormGroup.Header {...headerProps} /> : undefined}
+        footer={useFooter ? <FormGroup.Footer {...footerProps} /> : undefined}
+      />
     );
   },
 };

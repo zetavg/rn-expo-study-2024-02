@@ -4,7 +4,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { usePropsWithContextualDefaultValues } from '@rnstudy/react-utils';
 
 import { useUIPlatform } from '../../../contexts';
-import { ListItem } from '../../List';
+import { ListItem, ListItemProps } from '../../List';
 import Text from '../../Text';
 
 import FormFieldPropsContext from './FormFieldPropsContext';
@@ -14,18 +14,17 @@ export type Props = {
   /** Set this to true to make the field vertical. Fields are horizontal (i.e. the label is on the left and the input is on the right) by default. */
   vertical?: boolean;
   children: React.ReactElement;
-};
+} & Omit<ListItemProps, 'title' | 'accessories' | 'children'>;
 
 export function FormField(rawProps: Props) {
-  const { label, vertical, children } = usePropsWithContextualDefaultValues(
-    rawProps,
-    FormFieldPropsContext,
-  );
+  const { label, vertical, children, ...restProps } =
+    usePropsWithContextualDefaultValues(rawProps, FormFieldPropsContext);
 
   const uiPlatform = useUIPlatform();
 
   return (
     <ListItem
+      {...restProps}
       accessoriesContainsTextInput={!vertical}
       title={
         <Text
