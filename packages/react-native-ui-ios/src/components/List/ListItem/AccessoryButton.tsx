@@ -19,7 +19,12 @@ export function AccessoryButton({ label, icon, onPress }: Props): JSX.Element {
       <View style={styles.container}>
         {!!icon && (
           <View style={styles.iconContainer}>
-            <Icon name={icon} color={uiColors.tintColor} size={22} />
+            <Icon
+              name={icon}
+              color={uiColors.tintColor}
+              size={22}
+              bordered={false}
+            />
           </View>
         )}
         {!!label && <Text style={{ color: uiColors.tintColor }}>{label}</Text>}

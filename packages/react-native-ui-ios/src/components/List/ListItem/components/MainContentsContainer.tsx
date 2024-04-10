@@ -1,7 +1,8 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { useUIColors } from '../../../../contexts';
+import { useGroupLevel, useUIColors } from '../../../../contexts';
+import { useIsElevatedBackground } from '../../../../contexts/IsElevatedBackgroundContext';
 import { GRABBER_CONTAINER_WIDTH } from '../consts';
 import type { Props as ListItemProps } from '../ListItem';
 import { useListItemAnimationContext } from '../ListItemAnimationContext';
@@ -24,6 +25,9 @@ export const MainContentsContainer = ({
 
   const { isGrabberShown } = useListItemAnimationContext();
 
+  // Hack: according to Figma spec, this should be `opaqueSeparator`, but seems that the opaqueSeparator color is not displayed correctly when used as a border color with hairline width in React Native, especially in dark mode with elevated background. With our experiments on some iOS devices, using the separator color (aka "Non-opaque separator color") will actually produce the correct color that matches the Figma spec.
+  const borderColor = uiColors.separator;
+
   return (
     <View
       style={[
@@ -33,9 +37,7 @@ export const MainContentsContainer = ({
           ? mainContentContainerStyles_plain
           : mainContentContainerStyles)[listPosition],
         dragActive && mainContentContainerStyles.dragActive,
-        {
-          borderColor: uiColors.opaqueSeparator,
-        },
+        { borderColor },
       ]}
     >
       {children}

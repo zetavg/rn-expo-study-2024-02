@@ -6,7 +6,7 @@ import Text from '../Text';
 
 import Select, { Props } from './Select';
 
-const EXAMPLE_SELECT_OPTIONS: Props<string>['options'] = {
+export const EXAMPLE_SELECT_OPTIONS: Props<string>['options'] = {
   js: { label: 'JavaScript' },
   ts: { label: 'TypeScript', icon: 'star.outline' as const },
   swift: { label: 'Swift' },

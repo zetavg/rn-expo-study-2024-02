@@ -69,6 +69,13 @@ export type UIColors = {
   /** The color for content layered on top of secondary backgrounds of your grouped interface. */
   tertiarySystemGroupedBackground: Color;
 
+  elevatedSystemBackground?: Color;
+  elevatedSecondarySystemBackground?: Color;
+  elevatedTertiarySystemBackground?: Color;
+  elevatedSystemGroupedBackground?: Color;
+  elevatedSecondarySystemGroupedBackground?: Color;
+  elevatedTertiarySystemGroupedBackground?: Color;
+
   // Label colors
 
   /** The color for text labels that contain primary content. */

@@ -9,6 +9,7 @@ import { Color } from '../tokens';
 export function useBackgroundColor({
   grouped,
   level,
+  elevated,
 }: {
   /**
    * Whether we should use the *grouped* background colors. (See: https://developer.apple.com/design/human-interface-guidelines/color#iOS-iPadOS)
@@ -28,6 +29,7 @@ export function useBackgroundColor({
    * - ...
    */
   level: null | 'secondary' | 'tertiary' | number;
+  elevated?: boolean;
 }): Color {
   const uiColors = useUIColors();
 
@@ -49,13 +51,22 @@ export function useBackgroundColor({
     return level;
   })();
 
-  if (levelString) {
-    return uiColors[
-      `${levelString}System${grouped ? 'Grouped' : ''}Background`
-    ];
+  const colorName = levelString
+    ? (`${levelString}System${grouped ? 'Grouped' : ''}Background` as const)
+    : (`system${grouped ? 'Grouped' : ''}Background` as const);
+
+  if (elevated) {
+    const firstCharOfColorName = colorName.charAt(0);
+    const restOfColorName = colorName.slice(1);
+    const elevatedColorName =
+      `elevated${firstCharOfColorName.toUpperCase()}${restOfColorName}` as const;
+
+    const elevatedColor = uiColors[elevatedColorName as keyof typeof uiColors];
+
+    if (elevatedColor) return elevatedColor;
   }
 
-  return uiColors[`system${grouped ? 'Grouped' : ''}Background`];
+  return uiColors[colorName];
 }
 
 export default useBackgroundColor;
