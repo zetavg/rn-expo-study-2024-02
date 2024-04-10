@@ -1,6 +1,7 @@
 import { ColorScheme } from '../types';
 
 export const lightHighContrast: ColorScheme = {
+  type: 'light',
   colors: {
     red: 'rgba(215, 0, 21, 1.0)',
     orange: 'rgba(201, 52, 0, 1.0)',

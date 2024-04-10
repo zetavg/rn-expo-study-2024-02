@@ -71,8 +71,7 @@ export const UIContextProvider = ({
         <IconContextProvider platform={validatedPlatform} theme={iconTheme}>
           <ThemeProviderMD3 theme={theme.md3} colorScheme={colorScheme}>
             <TokensContextProviderIOS
-              colors={theme.ios.schemes[colorScheme].colors}
-              uiColors={theme.ios.schemes[colorScheme].uiColors}
+              colorScheme={theme.ios.schemes[colorScheme]}
               textStyles={theme.ios.textStyles}
             >
               {children}

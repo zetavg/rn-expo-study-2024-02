@@ -59,8 +59,7 @@ import App from '...';
 export default function Main() {
   return (
     <TokensContextProvider
-      colors={colorSchemes.light.colors}
-      uiColors={colorSchemes.light.uiColors}
+      colorScheme={colorSchemes.light}
       textStyles={textStyles} // Optional
     >
       <App />
