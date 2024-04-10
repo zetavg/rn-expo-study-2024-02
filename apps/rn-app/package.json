@@ -26,6 +26,7 @@
     "@react-native-community/datetimepicker": "^7",
     "@react-native-community/slider": "^4",
     "@react-native-picker/picker": "^2",
+    "@react-native-segmented-control/segmented-control": "2.4.1",
     "@rnstudy/ios-colors": "workspace:^",
     "@rnstudy/react-icons": "workspace:^",
     "@rnstudy/react-native-lists": "workspace:^",

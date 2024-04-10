@@ -17,6 +17,7 @@
     "clean": "rm -rf dist && rm -rf package.tgz"
   },
   "peerDependencies": {
+    "@react-native-segmented-control/segmented-control": "^2.4",
     "@rnstudy/react-icons": "workspace:^",
     "expo": "*",
     "expo-blur": "^12",
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7",
+    "@react-native-segmented-control/segmented-control": "^2.4",
     "@rnstudy/eslint-config": "workspace:^",
     "@rnstudy/jest-config": "workspace:^",
     "@rnstudy/react-icons": "workspace:^",
