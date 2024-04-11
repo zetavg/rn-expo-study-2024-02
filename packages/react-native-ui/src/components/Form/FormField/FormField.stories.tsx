@@ -33,6 +33,12 @@ type Story = StoryObj<typeof FormField>;
 
 export const A0_Default: Story = {};
 
+export const A1_Vertical: Story = {
+  args: {
+    vertical: true,
+  },
+};
+
 export const D1_WithDescription: Story = {
   parameters: {
     containerStyle: {
@@ -43,5 +49,33 @@ export const D1_WithDescription: Story = {
   args: {
     description:
       'This is a description of the form field. It can be used to provide additional context or instructions.',
+  },
+};
+
+export const DV1_WithDescriptionVertical: Story = {
+  ...D1_WithDescription,
+  args: {
+    ...D1_WithDescription.args,
+    vertical: true,
+  },
+};
+
+export const E1_WithErrorMessage: Story = {
+  parameters: {
+    containerStyle: {
+      alignSelf: 'center',
+      width: 320,
+    },
+  },
+  args: {
+    errorMessage: 'This is an error message.',
+  },
+};
+
+export const EV1_WithErrorMessageVertical: Story = {
+  ...E1_WithErrorMessage,
+  args: {
+    ...E1_WithErrorMessage.args,
+    vertical: true,
   },
 };

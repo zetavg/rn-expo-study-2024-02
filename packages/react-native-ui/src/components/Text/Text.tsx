@@ -29,7 +29,8 @@ type Color =
   | 'quaternary'
   | 'link'
   | 'placeholder'
-  | 'tint';
+  | 'tint'
+  | 'destructive';
 
 export type Props = React.ComponentProps<typeof RNText> & {
   children?: React.ReactNode;

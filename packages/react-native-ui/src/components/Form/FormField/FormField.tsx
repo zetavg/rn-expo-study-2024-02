@@ -12,16 +12,29 @@ import FormFieldPropsContext from './FormFieldPropsContext';
 export type Props = {
   label: string;
   description?: string;
+  errorMessage?: string;
   /** Set this to true to make the field vertical. Fields are horizontal (i.e. the label is on the left and the input is on the right) by default. */
   vertical?: boolean;
   children: React.ReactElement;
 } & Omit<ListItemProps, 'title' | 'accessories' | 'children'>;
 
 export function FormField(rawProps: Props) {
-  const { label, description, vertical, children, ...restProps } =
+  const { label, description, errorMessage, vertical, children, ...restProps } =
     usePropsWithContextualDefaultValues(rawProps, FormFieldPropsContext);
 
   const uiPlatform = useUIPlatform();
+
+  const errorMessageElement = errorMessage ? (
+    <Text
+      footnote
+      color="destructive"
+      style={
+        errorTextStyles[`${vertical ? 'vertical' : 'horizontal'}_${uiPlatform}`]
+      }
+    >
+      {errorMessage}
+    </Text>
+  ) : undefined;
 
   return (
     <ListItem
@@ -30,12 +43,7 @@ export function FormField(rawProps: Props) {
       accessoriesContainsTextInput={!vertical}
       accessoriesVerticalAlignCenter
       title={
-        <Text
-          style={
-            uiPlatform === 'android' ? styles.labelOnAndroid : styles.label
-          }
-          color="secondaryVariant"
-        >
+        <Text style={labelStyles[uiPlatform]} color="secondaryVariant">
           {label}
         </Text>
       }
@@ -43,11 +51,7 @@ export function FormField(rawProps: Props) {
         description ? (
           <Text
             footnote
-            style={
-              uiPlatform === 'android'
-                ? styles.descriptionOnAndroid
-                : styles.description
-            }
+            style={descriptionStyles[uiPlatform]}
             color={uiPlatform === 'android' ? 'tertiary' : 'secondary'}
           >
             {description}
@@ -57,45 +61,87 @@ export function FormField(rawProps: Props) {
       accessories={vertical ? undefined : children}
       children={
         vertical ? (
-          <View
-            style={
-              !description
-                ? uiPlatform === 'android'
-                  ? styles.childrenContainerWithoutDescriptionOnAndroid
-                  : styles.childrenContainerWithoutDescription
-                : undefined
-            }
-          >
-            {children}
-          </View>
-        ) : undefined
+          <>
+            <View
+              style={
+                childrenContainerStyles[
+                  `${description ? 'with' : 'without'}Description_${vertical ? 'vertical' : 'horizontal'}_${uiPlatform}`
+                ]
+              }
+            >
+              {children}
+            </View>
+            {errorMessageElement}
+          </>
+        ) : (
+          errorMessageElement
+        )
       }
     />
   );
 }
 
-const styles = StyleSheet.create({
-  label: {
+const childrenContainerStyles = StyleSheet.create({
+  withoutDescription_horizontal_ios: {
+    marginTop: -6,
+  },
+  withoutDescription_horizontal_android: {
+    marginTop: Platform.OS === 'ios' ? -4 : -6,
+    marginBottom: Platform.OS === 'ios' ? 2 : 0,
+  },
+  withoutDescription_vertical_ios: {
+    marginTop: -6,
+  },
+  withoutDescription_vertical_android: {
+    marginTop: Platform.OS === 'ios' ? -4 : -6,
+    marginBottom: Platform.OS === 'ios' ? 2 : 0,
+  },
+  withDescription_horizontal_ios: {},
+  withDescription_horizontal_android: {},
+  withDescription_vertical_ios: {
+    marginTop: -5,
+  },
+  withDescription_vertical_android: {},
+});
+
+const labelStyles = StyleSheet.create({
+  ios: {
     fontSize: 14,
     fontWeight: '500',
   },
-  labelOnAndroid: {
+  android: {
     fontSize: 14,
     fontWeight: '600',
     fontFamily: 'Roboto-Medium',
   },
-  description: {
+});
+
+const descriptionStyles = StyleSheet.create({
+  ios: {
     opacity: 0.8,
   },
-  descriptionOnAndroid: {
+  android: {
     opacity: 1,
   },
-  childrenContainerWithoutDescription: {
+});
+
+const errorTextStyles = StyleSheet.create({
+  horizontal_ios: {
+    textAlign: 'right',
     marginTop: -6,
+    marginBottom: -5,
   },
-  childrenContainerWithoutDescriptionOnAndroid: {
-    marginTop: Platform.OS === 'ios' ? -4 : -6,
-    marginBottom: Platform.OS === 'ios' ? 2 : 0,
+  horizontal_android: {
+    textAlign: 'right',
+    marginTop: -4,
+    marginRight: -10,
+    marginBottom: -5,
+  },
+  vertical_ios: {
+    marginBottom: -5,
+  },
+  vertical_android: {
+    marginBottom: -5,
   },
 });
 

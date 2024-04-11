@@ -93,7 +93,7 @@ type Story = StoryObj<typeof FormGroup>;
 
 export const A0_Default: Story = {};
 
-export const D1_WithDescription: Story = {
+export const D1_FieldsWithDescriptions: Story = {
   parameters: {
     containerStyle: {
       alignSelf: 'center',
@@ -103,5 +103,17 @@ export const D1_WithDescription: Story = {
   args: {
     '__props:children:FormField.description':
       'This is a description of the form field.',
+  },
+};
+
+export const E1_FieldsWithErrorMessages: Story = {
+  parameters: {
+    containerStyle: {
+      alignSelf: 'center',
+      width: 360,
+    },
+  },
+  args: {
+    '__props:children:FormField.errorMessage': 'This is an error message.',
   },
 };

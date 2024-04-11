@@ -83,6 +83,8 @@ export function textPropsToMD3Props(props: TextProps): TextPropsMD3 {
         case 'link':
         case 'tint':
           return 'primary';
+        case 'destructive':
+          return 'red';
         default:
           return 'onSurface';
       }
