@@ -17,6 +17,7 @@ export type Props = {
   checked: ListItemProps['checked'];
   singleLine: ListItemProps['singleLine'];
   accessoriesContainsTextInput: ListItemProps['accessoriesContainsTextInput'];
+  accessoriesVerticalAlignCenter: ListItemProps['accessoriesVerticalAlignCenter'];
   compact: ListItemProps['compact'];
   hasSubtitle: boolean;
   hide?: boolean;
@@ -29,6 +30,7 @@ export function propsSelector(p: ListItemProps): Omit<Props, 'hide'> {
     checked: p.checked,
     singleLine: p.singleLine,
     accessoriesContainsTextInput: p.accessoriesContainsTextInput,
+    accessoriesVerticalAlignCenter: p.accessoriesVerticalAlignCenter,
     compact: p.compact,
     hasSubtitle: !!p.subtitle,
   };
@@ -41,6 +43,7 @@ export const TrailingContents = React.memo(
     checked,
     singleLine,
     accessoriesContainsTextInput,
+    accessoriesVerticalAlignCenter,
     compact,
     hasSubtitle,
     hide,
@@ -104,7 +107,10 @@ export const TrailingContents = React.memo(
             accessoriesContainsTextInput &&
               styles.trailingContentsContainer_withTextInput,
             (hide || delayedHideTrailingContents) && styles.hidden,
-            !singleLine && hasSubtitle && styles.alignSelfFlexStart,
+            !accessoriesVerticalAlignCenter &&
+              !singleLine &&
+              hasSubtitle &&
+              styles.alignSelfFlexStart,
           ]}
         >
           {trailingContents}

@@ -11,13 +11,14 @@ import FormFieldPropsContext from './FormFieldPropsContext';
 
 export type Props = {
   label: string;
+  description?: string;
   /** Set this to true to make the field vertical. Fields are horizontal (i.e. the label is on the left and the input is on the right) by default. */
   vertical?: boolean;
   children: React.ReactElement;
 } & Omit<ListItemProps, 'title' | 'accessories' | 'children'>;
 
 export function FormField(rawProps: Props) {
-  const { label, vertical, children, ...restProps } =
+  const { label, description, vertical, children, ...restProps } =
     usePropsWithContextualDefaultValues(rawProps, FormFieldPropsContext);
 
   const uiPlatform = useUIPlatform();
@@ -25,7 +26,9 @@ export function FormField(rawProps: Props) {
   return (
     <ListItem
       {...restProps}
+      singleLine={false}
       accessoriesContainsTextInput={!vertical}
+      accessoriesVerticalAlignCenter
       title={
         <Text
           style={
@@ -36,14 +39,31 @@ export function FormField(rawProps: Props) {
           {label}
         </Text>
       }
+      subtitle={
+        description ? (
+          <Text
+            footnote
+            style={
+              uiPlatform === 'android'
+                ? styles.descriptionOnAndroid
+                : styles.description
+            }
+            color={uiPlatform === 'android' ? 'tertiary' : 'secondary'}
+          >
+            {description}
+          </Text>
+        ) : undefined
+      }
       accessories={vertical ? undefined : children}
       children={
         vertical ? (
           <View
             style={
-              uiPlatform === 'android'
-                ? styles.childrenContainerOnAndroid
-                : styles.childrenContainer
+              !description
+                ? uiPlatform === 'android'
+                  ? styles.childrenContainerWithoutDescriptionOnAndroid
+                  : styles.childrenContainerWithoutDescription
+                : undefined
             }
           >
             {children}
@@ -64,10 +84,16 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Roboto-Medium',
   },
-  childrenContainer: {
+  description: {
+    opacity: 0.8,
+  },
+  descriptionOnAndroid: {
+    opacity: 1,
+  },
+  childrenContainerWithoutDescription: {
     marginTop: -6,
   },
-  childrenContainerOnAndroid: {
+  childrenContainerWithoutDescriptionOnAndroid: {
     marginTop: Platform.OS === 'ios' ? -4 : -6,
     marginBottom: Platform.OS === 'ios' ? 2 : 0,
   },

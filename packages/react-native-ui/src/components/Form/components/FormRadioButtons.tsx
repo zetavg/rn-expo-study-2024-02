@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { SegmentedControl } from '@rnstudy/react-native-ui-ios';
 import { RadioButton, Text as TextMD3 } from '@rnstudy/react-native-ui-md3';
@@ -63,14 +63,14 @@ export function FormRadioButtons<T extends string>(props: Props<T>) {
                           props.onValueChange(k as T);
                         }}
                       />
-                      <TextMD3
-                        variant="labelMedium"
+                      <TouchableOpacity
+                        style={styles.radioButtonLabelContainer}
                         onPress={() => {
                           props.onValueChange(k as T);
                         }}
                       >
-                        {option.label}
-                      </TextMD3>
+                        <TextMD3 variant="labelMedium">{option.label}</TextMD3>
+                      </TouchableOpacity>
                     </View>
                   );
                 })}
@@ -86,6 +86,9 @@ const styles = StyleSheet.create({
   radioButtonItem: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
+  },
+  radioButtonLabelContainer: {
+    paddingVertical: 5,
   },
 });
 

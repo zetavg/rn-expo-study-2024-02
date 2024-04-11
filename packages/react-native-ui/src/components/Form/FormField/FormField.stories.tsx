@@ -32,3 +32,16 @@ export default meta;
 type Story = StoryObj<typeof FormField>;
 
 export const A0_Default: Story = {};
+
+export const D1_WithDescription: Story = {
+  parameters: {
+    containerStyle: {
+      alignSelf: 'center',
+      width: 320,
+    },
+  },
+  args: {
+    description:
+      'This is a description of the form field. It can be used to provide additional context or instructions.',
+  },
+};

@@ -98,6 +98,8 @@ export type Props = {
 
   /** Set this to `true` if you are using a text input in the accessories of the list item. This will prioritize space distribution for the text input. */
   accessoriesContainsTextInput?: boolean;
+  /** Force accessories to be vertically aligned to the center, regardless if the list item has multiple lines or not. */
+  accessoriesVerticalAlignCenter?: boolean;
 
   onPress?: () => void;
   onLongPress?: () => void;
