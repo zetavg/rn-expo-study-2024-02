@@ -30,12 +30,11 @@ export function FormRadioButtons<T extends string>(props: Props<T>) {
         switch (uiPlatform) {
           case 'ios': {
             const options = Object.fromEntries(
-              Object.entries(props.options).map(([k, v]) => [
-                k,
-                (
-                  v as (typeof props)['options'][keyof (typeof props)['options']]
-                ).label,
-              ]),
+              Object.entries(props.options).map(([k, v]) => {
+                const option =
+                  v as (typeof props)['options'][keyof (typeof props)['options']];
+                return [k, option.shortLabel || option.label];
+              }),
             ) as { [key in T]: string };
             return <SegmentedControl {...props} options={options} />;
           }
@@ -48,6 +47,7 @@ export function FormRadioButtons<T extends string>(props: Props<T>) {
                     v as (typeof props)['options'][keyof (typeof props)['options']];
                   return (
                     <View
+                      key={k}
                       style={[
                         styles.radioButtonItem,
                         // {

@@ -33,9 +33,10 @@ export function ExampleFormGroup(props: FormGroupProps) {
       />
       <Form.RadioButtons
         label="Radio Buttons"
-        options={Object.fromEntries(
-          Object.entries(EXAMPLE_SELECT_OPTIONS).slice(0, 2),
-        )}
+        options={EXAMPLE_SELECT_OPTIONS}
+        // options={Object.fromEntries(
+        //   Object.entries(EXAMPLE_SELECT_OPTIONS).slice(0, 2),
+        // )}
         value={state.select}
         onValueChange={(v) => setState((s) => ({ ...s, select: v }))}
       />

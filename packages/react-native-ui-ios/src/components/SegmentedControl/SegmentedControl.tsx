@@ -84,7 +84,13 @@ export function SegmentedControl<T extends string>({
   return (
     <View style={[styles.container, containerStyle, style]}>
       {/* Render all the labels to give the container a minimum width that fits all the labels. */}
-      <Text style={styles.containerAutoSizeText}>{labels.join(' | ')}</Text>
+      <View style={styles.containerAutoSizeTextContainer}>
+        {labels.map((label, i) => (
+          <Text key={i} style={styles.containerAutoSizeText}>
+            {label}
+          </Text>
+        ))}
+      </View>
 
       <RNSegmentedControl
         enabled={!disabled}
@@ -108,9 +114,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  containerAutoSizeTextContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 8,
+    gap: 8,
+  },
   containerAutoSizeText: {
     fontSize: FONT_SIZE,
-    marginHorizontal: 8,
+    minWidth: 32,
+    textAlign: 'center',
     opacity: 0,
   },
 });

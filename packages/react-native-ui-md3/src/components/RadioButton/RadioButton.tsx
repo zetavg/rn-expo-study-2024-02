@@ -5,6 +5,6 @@ import {
 
 export type Props = RNRadioButtonProps;
 
-export const RadioButton = RNRadioButton;
+export const RadioButton = RNRadioButton.Android;
 
 export default RadioButton;

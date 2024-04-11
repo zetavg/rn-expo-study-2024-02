@@ -5,5 +5,6 @@ export * from './List';
 export * from './Menu';
 export * from './SegmentedControl';
 export * from './Select';
+export * from './Switch';
 export * from './Text';
 export * from './TextInput';

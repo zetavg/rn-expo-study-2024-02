@@ -7,10 +7,10 @@ import Text from '../Text';
 import Select, { Props } from './Select';
 
 export const EXAMPLE_SELECT_OPTIONS: Props<string>['options'] = {
-  js: { label: 'JavaScript' },
-  ts: { label: 'TypeScript', icon: 'star.outline' as const },
+  js: { label: 'JavaScript', shortLabel: 'JS' },
+  ts: { label: 'TypeScript', shortLabel: 'TS', icon: 'star.outline' as const },
   swift: { label: 'Swift' },
-  kotlin: { label: 'Kotlin' },
+  kotlin: { label: 'Kotlin', shortLabel: 'KT' },
 };
 
 export function ExampleUncontrolledSelect<T extends string>({
