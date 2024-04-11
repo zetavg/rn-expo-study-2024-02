@@ -7,7 +7,7 @@ import { Select as SelectMD3 } from '@rnstudy/react-native-ui-md3';
 
 import { useUIPlatform } from '../../contexts';
 
-export type Option = { label: string; icon?: IconName };
+export type Option = { label: string; shortLabel?: string; icon?: IconName };
 export type Action = { label: string; icon?: IconName; handler: () => void };
 
 export type Props<T extends string> = {

@@ -6,6 +6,8 @@ import { Meta, StoryObj } from '@rnstudy/storybook-rn-types';
 import { ListFooterProps, ListHeaderProps } from '../../List';
 import ListFooterMeta from '../../List/ListFooter/ListFooter.stories';
 import ListHeaderMeta from '../../List/ListHeader/ListHeader.stories';
+import { FormFieldProps } from '../FormField';
+import FormFieldMeta from '../FormField/FormField.stories';
 
 import { ExampleFormGroup } from './examples';
 import FormGroup from './FormGroup';
@@ -44,6 +46,11 @@ const meta: Meta<typeof FormGroup> = {
       prefix: '__props:footer:Footer.',
       exclude: ['listStyle'],
     }),
+
+    ...argTypesFrom(FormFieldMeta, {
+      prefix: '__props:children:FormField.',
+      exclude: ['vertical'],
+    }),
   },
   args: {
     placeholder: 'Placeholder text.',
@@ -63,12 +70,18 @@ const meta: Meta<typeof FormGroup> = {
       '__props:footer:Footer.',
     );
 
+    const formFieldProps = collectPropsFromArgs<FormFieldProps>(
+      args,
+      '__props:children:FormField.',
+    );
+
     return (
       <ExampleFormGroup
         {...args}
         first
         header={useHeader ? <FormGroup.Header {...headerProps} /> : undefined}
         footer={useFooter ? <FormGroup.Footer {...footerProps} /> : undefined}
+        formFieldProps={formFieldProps}
       />
     );
   },
@@ -79,3 +92,16 @@ export default meta;
 type Story = StoryObj<typeof FormGroup>;
 
 export const A0_Default: Story = {};
+
+export const D1_WithDescription: Story = {
+  parameters: {
+    containerStyle: {
+      alignSelf: 'center',
+      width: 360,
+    },
+  },
+  args: {
+    '__props:children:FormField.description':
+      'This is a description of the form field.',
+  },
+};

@@ -9,14 +9,8 @@ import { Theme } from '../types';
 export const baselineTheme: Theme = {
   ios: {
     schemes: {
-      light: {
-        colors: iosColorSchemes.light.colors,
-        uiColors: iosColorSchemes.light.uiColors,
-      },
-      dark: {
-        colors: iosColorSchemes.dark.colors,
-        uiColors: iosColorSchemes.dark.uiColors,
-      },
+      light: iosColorSchemes.light,
+      dark: iosColorSchemes.dark,
     },
     textStyles: iosTextStyles,
   },

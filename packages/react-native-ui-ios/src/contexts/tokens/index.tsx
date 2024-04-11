@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Colors, UIColors } from '../../tokens/colors';
+import { ColorScheme } from '../../tokens/colors';
 import {
   textStyles as defaultTextStyles,
   TextStyleTokens,
 } from '../../tokens/text-styles';
 
+import ColorSchemeTypeContext from './ColorSchemeTypeContext';
 import ColorsContext from './ColorsContext';
 import TextStylesContext from './TextStylesContext';
 import UIColorsContext from './UIColorsContext';
@@ -14,24 +15,24 @@ import UIColorsContext from './UIColorsContext';
  * The iOS UI tokens context provider that should be used to wrap the entire application, providing the colors, text styles and other design tokens to all components.
  */
 export function TokensContextProvider({
-  colors,
-  uiColors,
+  colorScheme,
   textStyles = defaultTextStyles,
   children,
 }: {
-  colors: Colors;
-  uiColors: UIColors;
+  colorScheme: ColorScheme;
   textStyles?: TextStyleTokens;
   children: React.ReactNode;
 }) {
   return (
-    <ColorsContext.Provider value={colors}>
-      <UIColorsContext.Provider value={uiColors}>
-        <TextStylesContext.Provider value={textStyles}>
-          {children}
-        </TextStylesContext.Provider>
-      </UIColorsContext.Provider>
-    </ColorsContext.Provider>
+    <ColorSchemeTypeContext.Provider value={colorScheme.type}>
+      <ColorsContext.Provider value={colorScheme.colors}>
+        <UIColorsContext.Provider value={colorScheme.uiColors}>
+          <TextStylesContext.Provider value={textStyles}>
+            {children}
+          </TextStylesContext.Provider>
+        </UIColorsContext.Provider>
+      </ColorsContext.Provider>
+    </ColorSchemeTypeContext.Provider>
   );
 }
 

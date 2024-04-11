@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleProp, Switch as RNSwitch, ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
 
+import { Switch as SwitchIOS } from '@rnstudy/react-native-ui-ios';
 import { Switch as SwitchMD3 } from '@rnstudy/react-native-ui-md3';
 
 import { useUIPlatform } from '../../contexts';
@@ -34,7 +35,7 @@ export function Switch(props: Props) {
       return <SwitchMD3 {...props} />;
 
     default:
-      return <RNSwitch {...props} />;
+      return <SwitchIOS {...props} />;
   }
 }
 

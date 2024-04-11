@@ -125,6 +125,7 @@ export type UIColors = {
 };
 
 export type ColorScheme = {
+  type: 'dark' | 'light';
   colors: Colors;
   uiColors: UIColors;
 };

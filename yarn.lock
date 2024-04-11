@@ -3572,6 +3572,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-segmented-control/segmented-control@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@react-native-segmented-control/segmented-control@npm:2.4.1"
+  peerDependencies:
+    react: ">=16.0"
+    react-native: ">=0.62"
+  checksum: 10c0/4393445c3cab753df28ee72d3fa504fd10fc645ca9b91e2cfef2a084da7e67147294f3bb5701af025e4a68b2ec6a13ba0e933e17299b3c12c7d87e4d67d7e2f7
+  languageName: node
+  linkType: hard
+
+"@react-native-segmented-control/segmented-control@npm:^2.4":
+  version: 2.5.0
+  resolution: "@react-native-segmented-control/segmented-control@npm:2.5.0"
+  peerDependencies:
+    react: ">=16.0"
+    react-native: ">=0.62"
+  checksum: 10c0/0e617b4728b4e147ea6a4ffeb8a588b4819a6046640e5735bb9dc5205939fd5075ec5cd09cfce84afea06d7963eb1eaa10e0edac7c240e2187463690be8fb290
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:0.73.1, @react-native/assets-registry@npm:~0.73.1":
   version: 0.73.1
   resolution: "@react-native/assets-registry@npm:0.73.1"
@@ -4170,6 +4190,7 @@ __metadata:
   resolution: "@rnstudy/react-native-ui-ios@workspace:packages/react-native-ui-ios"
   dependencies:
     "@babel/core": "npm:^7"
+    "@react-native-segmented-control/segmented-control": "npm:^2.4"
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
@@ -4196,6 +4217,7 @@ __metadata:
     sweet-sfsymbols: "npm:^0.5.0"
     typescript: "npm:^5"
   peerDependencies:
+    "@react-native-segmented-control/segmented-control": ^2.4
     "@rnstudy/react-icons": "workspace:^"
     expo: "*"
     expo-blur: ^12
@@ -4276,6 +4298,7 @@ __metadata:
     typescript: "npm:^5"
   peerDependencies:
     "@react-native-picker/picker": ^2
+    "@react-native-segmented-control/segmented-control": ^2.4
     "@rnstudy/react-icons": "workspace:^"
     expo: "*"
     expo-blur: ^12
@@ -15389,6 +15412,7 @@ __metadata:
     "@react-native-community/datetimepicker": "npm:^7"
     "@react-native-community/slider": "npm:^4"
     "@react-native-picker/picker": "npm:^2"
+    "@react-native-segmented-control/segmented-control": "npm:2.4.1"
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/expo-app-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"

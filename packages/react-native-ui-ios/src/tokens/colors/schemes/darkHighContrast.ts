@@ -1,6 +1,7 @@
 import { ColorScheme } from '../types';
 
 export const darkHighContrast: ColorScheme = {
+  type: 'dark',
   colors: {
     red: 'rgba(255, 105, 97, 1.0)',
     orange: 'rgba(255, 179, 64, 1.0)',

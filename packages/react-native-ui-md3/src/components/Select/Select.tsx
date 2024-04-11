@@ -4,10 +4,12 @@ import {
   Platform,
   StyleProp,
   StyleSheet,
-  Text as RNText,
+  TouchableOpacity,
   View,
   ViewStyle,
 } from 'react-native';
+import { Divider, Menu as RNMenu } from 'react-native-paper';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
 
 import { usePropsWithContextualDefaultValues } from '@rnstudy/react-utils';
@@ -48,29 +50,132 @@ const NATIVE_SELECT_HEIGHT = 60;
 
 export function Select<T extends string>(rawProps: Props<T>) {
   const { options, value, onValueChange } = rawProps;
-  const {
-    placeholder,
-    additionalActions,
-    align,
-    textPaddingVertical = 4,
-    textProps,
-    placeholderColor = 'outlineVariant',
-    style,
-    innerContainerStyle,
-  } = usePropsWithContextualDefaultValues(rawProps, SelectPropsContext);
+  const props = usePropsWithContextualDefaultValues(
+    rawProps,
+    SelectPropsContext,
+  );
+
+  const { additionalActions } = props;
 
   const theme = useTheme();
   const colorScheme = useColorScheme();
 
-  const textHeightAnim = useRef(new Animated.Value(14)).current;
+  const [menuVisible, setMenuVisible] = React.useState(false);
+  const openMenu = () => setMenuVisible(true);
+  const closeMenu = () => setMenuVisible(false);
 
   if (Platform.OS !== 'android') {
     return (
-      <RNText style={[styles.unsupportedErrorText, style]}>
-        [MD3 Select] Unsupported platform: {Platform.OS}
-      </RNText>
+      <PickerContainer
+        options={options}
+        value={value}
+        {...props}
+        // eslint-disable-next-line react/no-unstable-nested-components
+        contentWrapper={(content) => (
+          <RNMenu
+            visible={menuVisible}
+            onDismiss={closeMenu}
+            anchor={
+              <TouchableOpacity onPress={openMenu}>{content}</TouchableOpacity>
+            }
+          >
+            {Object.entries(options).map(([val, d]) => (
+              <RNMenu.Item
+                key={val}
+                leadingIcon={value === val ? 'check' : undefined}
+                title={(d as { label: string }).label}
+                onPress={() => {
+                  onValueChange(val as T);
+                  closeMenu();
+                }}
+              />
+            ))}
+            {!!additionalActions && additionalActions.length > 0 && <Divider />}
+            {additionalActions?.map((action, i) => (
+              <RNMenu.Item
+                key={i}
+                title={action.label}
+                onPress={action.handler}
+              />
+            ))}
+          </RNMenu>
+        )}
+      >
+        <View style={styles.dropdownIconContainer}>
+          <MaterialIcon
+            name="menu-down"
+            size={24}
+            color={theme.schemes[colorScheme].outline}
+            style={styles.dropdownIcon}
+          />
+        </View>
+      </PickerContainer>
     );
   }
+
+  return (
+    <PickerContainer options={options} value={value} {...props}>
+      <Picker
+        selectedValue={value || ('__undefined__' as const)}
+        onValueChange={(v) => {
+          if (v === '__undefined__') return;
+
+          if (v.startsWith('__additional_action__')) {
+            const i = parseInt(v.split('.')[1] || '0', 10);
+            const action = additionalActions?.[i]?.handler;
+            if (action) action();
+            return;
+          }
+
+          onValueChange(v);
+        }}
+        style={[styles.picker]}
+        mode="dropdown"
+        dropdownIconColor={theme.schemes[colorScheme].outline}
+      >
+        {Object.entries(options).map(([val, d]) => (
+          <Picker.Item
+            key={val}
+            value={val}
+            label={(d as { label: string }).label}
+          />
+        ))}
+        {additionalActions &&
+          additionalActions.map((action, i) => (
+            <Picker.Item
+              key={`__additional_action__.${i}`}
+              value={`__additional_action__.${i}`}
+              label={action.label}
+              style={theme.fonts.labelMedium}
+              color={theme.schemes[colorScheme].outline}
+            />
+          ))}
+        {!value && (
+          // [TODO] A hack to allow the value to be undefined. This is not meant to be selected.
+          <Picker.Item key="__undefined__" value="__undefined__" label="" />
+        )}
+      </Picker>
+    </PickerContainer>
+  );
+}
+
+function PickerContainer({
+  style,
+  innerContainerStyle,
+  textProps,
+  textPaddingVertical = 4,
+  value,
+  placeholderColor,
+  options,
+  placeholder,
+  align,
+  contentWrapper = (content) => content,
+  children,
+}: Omit<Props<string>, 'onValueChange'> & {
+  children: React.ReactElement;
+  contentWrapper?: (content: React.ReactElement) => React.ReactElement;
+}) {
+  const textHeightAnim = useRef(new Animated.Value(14)).current;
 
   return (
     <View style={[styles.container, style]}>
@@ -86,75 +191,40 @@ export function Select<T extends string>(rawProps: Props<T>) {
           },
         ]}
       >
-        <Text
-          {...textProps}
-          numberOfLines={1}
-          onLayout={(event) => {
-            const { height } = event.nativeEvent.layout;
-            textHeightAnim.setValue(height + textPaddingVertical * 2);
-          }}
-          color={value ? undefined : placeholderColor}
-          style={[
-            styles.text,
-            {
-              textAlign: (() => {
-                switch (align) {
-                  case 'start':
+        {contentWrapper(
+          <>
+            <Text
+              {...textProps}
+              numberOfLines={1}
+              onLayout={(event) => {
+                const { height } = event.nativeEvent.layout;
+                textHeightAnim.setValue(height + textPaddingVertical * 2);
+              }}
+              color={value ? undefined : placeholderColor || 'secondaryVariant'}
+              style={[
+                styles.text,
+                {
+                  textAlign: (() => {
+                    switch (align) {
+                      case 'start':
+                        return 'left';
+                      case 'end':
+                        return 'right';
+                      case 'center':
+                        return 'center';
+                    }
+
                     return 'left';
-                  case 'end':
-                    return 'right';
-                  case 'center':
-                    return 'center';
-                }
-
-                return 'left';
-              })(),
-            },
-            textProps?.style,
-          ]}
-        >
-          {value ? options[value].label : placeholder || 'Select...'}
-        </Text>
-        <Picker
-          selectedValue={value || ('__undefined__' as const)}
-          onValueChange={(v) => {
-            if (v === '__undefined__') return;
-
-            if (v.startsWith('__additional_action__')) {
-              const i = parseInt(v.split('.')[1] || '0', 10);
-              const action = additionalActions?.[i]?.handler;
-              if (action) action();
-              return;
-            }
-
-            onValueChange(v);
-          }}
-          style={[styles.picker]}
-          mode="dropdown"
-          dropdownIconColor={theme.schemes[colorScheme].outline}
-        >
-          {Object.entries(options).map(([val, d]) => (
-            <Picker.Item
-              key={val}
-              value={val}
-              label={(d as { label: string }).label}
-            />
-          ))}
-          {additionalActions &&
-            additionalActions.map((action, i) => (
-              <Picker.Item
-                key={`__additional_action__.${i}`}
-                value={`__additional_action__.${i}`}
-                label={action.label}
-                style={theme.fonts.labelMedium}
-                color={theme.schemes[colorScheme].outline}
-              />
-            ))}
-          {!value && (
-            // [TODO] A hack to allow the value to be undefined. This is not meant to be selected.
-            <Picker.Item key="__undefined__" value="__undefined__" label="" />
-          )}
-        </Picker>
+                  })(),
+                },
+                textProps?.style,
+              ]}
+            >
+              {value ? options[value]?.label : placeholder || 'Select...'}
+            </Text>
+            {children}
+          </>,
+        )}
       </Animated.View>
     </View>
   );
@@ -179,16 +249,15 @@ const styles = StyleSheet.create({
   },
   picker: {
     color: 'transparent',
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
+    ...StyleSheet.absoluteFillObject,
   },
-  unsupportedErrorText: {
-    backgroundColor: 'red',
-    color: 'white',
+  dropdownIconContainer: {
+    ...StyleSheet.absoluteFillObject,
+    right: -32,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
   },
+  dropdownIcon: {},
 });
 
 export default Select;
