@@ -1,5 +1,6 @@
 import React, { forwardRef } from 'react';
 import { Text as RNText } from 'react-native';
+import Color from 'color';
 
 import { type IconProps, IconPropsContext } from '@rnstudy/react-icons';
 import { usePropsWithContextualDefaultValues } from '@rnstudy/react-utils';
@@ -11,7 +12,6 @@ import {
 import { useColors, useTextStyles, useUIColors } from '../../contexts';
 
 import TextPropsContext from './TextPropsContext';
-import Color from 'color';
 
 export type Props = React.ComponentProps<typeof RNText> & {
   textStyle?:
