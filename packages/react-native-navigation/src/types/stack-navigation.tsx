@@ -1,11 +1,12 @@
-import { type RouteProp } from '@react-navigation/native';
-import { StackNavigationOptions } from '@react-navigation/stack';
+import type { NavigationProp, RouteProp } from '@react-navigation/native';
+import type { StackNavigationOptions } from '@react-navigation/stack';
 
 /**
  * Props of a screen in a stack navigator.
  */
 export type StackScreenProps<Params extends object | undefined = undefined> = {
   route: RouteProp<{ screen: Params }, 'screen'>;
+  navigation: NavigationProp<{ __: unknown }, '__', undefined>;
 };
 
 /**

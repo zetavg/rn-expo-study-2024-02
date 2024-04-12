@@ -1,1 +1,4 @@
-export * from './ModalScreenContent';
+export {
+  getModalScreenContentComponent,
+  type Props as ModalScreenContentProps,
+} from './ModalScreenContent';

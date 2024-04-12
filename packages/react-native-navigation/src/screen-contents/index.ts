@@ -9,3 +9,6 @@ export function getScreenContentComponents(config: NavigationConfig) {
     ModalScreenContent: getModalScreenContentComponent(config),
   };
 }
+
+export * from './ModalScreenContent';
+export * from './StackScreenContent';
