@@ -10,7 +10,7 @@ export const BottomTabNavigation = createBottomTabNavigator({
   screens: {
     Home: {
       screen: ModalStackNavigation.withMainScreen(
-        MainStackNavigation.withInitialRouteName('Example1List'),
+        MainStackNavigation.withInitialRouteName('ExampleScreensList'),
       ),
       options: {},
     },

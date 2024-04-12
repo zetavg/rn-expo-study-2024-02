@@ -21,6 +21,7 @@ export type Props = {
   placeholder: Readonly<React.JSX.Element> | string;
   loading?: boolean;
   style?: ViewStyle;
+  _isInListComponent?: boolean;
 };
 
 export function ListPlaceholder({
@@ -28,6 +29,7 @@ export function ListPlaceholder({
   placeholder,
   loading,
   style,
+  _isInListComponent,
 }: Props) {
   const uiColors = useUIColors();
   return (
@@ -40,23 +42,24 @@ export function ListPlaceholder({
               backgroundColor,
               borderColor: uiColors.opaqueSeparator,
             },
-            placeholderContainerStyles[listStyle],
-            loading && styles.loadingContent,
+            !_isInListComponent && placeholderContainerStyles[listStyle],
             style,
           ]}
         >
-          <Text {...PLACEHOLDER_TEXT_PROPS}>
-            {typeof placeholder === 'string'
-              ? placeholder
-              : withPropDefaultValuesContext(placeholder, {
-                  textProps: {
-                    value: PLACEHOLDER_TEXT_PROPS,
-                    context: TextPropsContext,
-                  },
-                })}
-          </Text>
+          <View style={loading && styles.loadingContent}>
+            <Text {...PLACEHOLDER_TEXT_PROPS}>
+              {typeof placeholder === 'string'
+                ? placeholder
+                : withPropDefaultValuesContext(placeholder, {
+                    textProps: {
+                      value: PLACEHOLDER_TEXT_PROPS,
+                      context: TextPropsContext,
+                    },
+                  })}
+            </Text>
+          </View>
 
-          {loading && (
+          {loading && !_isInListComponent && (
             <View
               style={[
                 StyleSheet.absoluteFill,
@@ -80,7 +83,7 @@ const PLACEHOLDER_TEXT_PROPS: TextProps = {
 
 const styles = StyleSheet.create({
   loadingContent: {
-    opacity: 0.75,
+    opacity: 0.1,
   },
   activityIndicatorContainer: {
     justifyContent: 'center',

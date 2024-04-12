@@ -1,5 +1,7 @@
 /** Options to render a search bar on the navigation header. */
 export type HeaderSearchBarOptions = {
+  /** Whether to enable the search bar. Defaults to `true` if `headerSearchBarOptions` is provided. */
+  enable?: boolean;
   /** A callback that gets called when the text changes. It receives the current text value of the search bar. */
   onChangeText?: (text: string) => void;
   /** A callback that gets called when the cancel button is pressed. */

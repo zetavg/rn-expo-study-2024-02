@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useMemo } from 'react';
+import React, { forwardRef, useEffect, useLayoutEffect, useMemo } from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { SearchBarProps as RNScreensSearchBarProps } from 'react-native-screens';
 import { useNavigation } from '@react-navigation/native';
@@ -10,7 +10,8 @@ import bottomTabPressReactive from '../bottomTabPressReactive';
 import { useContentInset } from '../hooks';
 import { HeaderSearchBarOptions } from '../types';
 
-type Props = {
+export type Props = {
+  title?: string;
   /**
    * Whether to enable header with large title which collapses to regular header on scroll.
    *
@@ -28,6 +29,7 @@ export function getStackScreenContentComponent(config: NavigationConfig) {
   const { useColorScheme } = config;
 
   function StackScreenContent({
+    title,
     headerLargeTitle,
     headerSearchBarOptions,
     backgroundColor: backgroundColorProp,
@@ -47,12 +49,16 @@ export function getStackScreenContentComponent(config: NavigationConfig) {
     }, [backgroundColorProp, colorScheme]);
 
     const memoizedHeaderSearchBarOptions = useMemo(
-      () => headerSearchBarOptions,
+      () => {
+        if (headerSearchBarOptions?.enable === false) return null;
+
+        return headerSearchBarOptions;
+      },
       // eslint-disable-next-line react-hooks/exhaustive-deps
       Object.values(headerSearchBarOptions || {}),
     );
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       const processedHeaderSearchBarOptions:
         | RNScreensSearchBarProps
         | undefined = memoizedHeaderSearchBarOptions
@@ -71,6 +77,7 @@ export function getStackScreenContentComponent(config: NavigationConfig) {
         : undefined;
 
       navigation.setOptions({
+        title,
         headerSearchBarOptions: processedHeaderSearchBarOptions,
         // Handle `headerLargeTitle`.
         ...(() => {
@@ -83,6 +90,7 @@ export function getStackScreenContentComponent(config: NavigationConfig) {
         })(),
       });
     }, [
+      title,
       headerLargeTitle,
       navigation,
       backgroundColor,

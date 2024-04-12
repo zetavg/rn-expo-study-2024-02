@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import Color from 'color';
 import { BlurView } from 'expo-blur';
 
 import { useUIColors } from '../../../../contexts';
+import { useColorSchemeType } from '../../../../contexts/tokens/ColorSchemeTypeContext';
 import { useBackgroundColor } from '../hooks';
 import type { Props as ListItemProps } from '../ListItem';
 
@@ -15,6 +15,8 @@ export type Props = {
 
   dragActive?: ListItemProps['dragActive'];
 
+  _isInListComponent?: ListItemProps['_isInListComponent'];
+
   backgroundColor: string;
 };
 
@@ -24,30 +26,35 @@ export const OuterContainer = ({
   listPosition,
   dragActive,
   backgroundColor,
+  _isInListComponent,
 }: Props): JSX.Element => {
   const uiColors = useUIColors();
+  const colorSchemeType = useColorSchemeType();
+
+  const listItemBackgroundColor = useBackgroundColor({
+    backgroundColor,
+    listStyle,
+    dragActive,
+  });
 
   return (
     <View
       style={[
         styles.container,
-        containerStyles[listStyle],
-        containerStyles[`${listStyle}_${listPosition}`],
-        containerBorderRadiusStyles[listStyle],
-        containerBorderRadiusStyles[`${listStyle}_${listPosition}`],
+        !_isInListComponent && [
+          containerStyles[listStyle],
+          containerStyles[`${listStyle}_${listPosition}`],
+          containerBorderRadiusStyles[listStyle],
+          containerBorderRadiusStyles[`${listStyle}_${listPosition}`],
+          {
+            backgroundColor: listItemBackgroundColor,
+          },
+        ],
         {
-          backgroundColor: useBackgroundColor({
-            backgroundColor,
-            listStyle,
-            dragActive,
-          }),
           borderColor: uiColors.opaqueSeparator,
         },
         dragActive && dragActiveStyles.default,
-        dragActive &&
-          dragActiveStyles[
-            Color(backgroundColor).lightness() > 50 ? 'light' : 'dark'
-          ],
+        dragActive && dragActiveStyles[colorSchemeType],
       ]}
     >
       {dragActive && (
@@ -58,12 +65,7 @@ export const OuterContainer = ({
             styles.backgroundBlurViewContainer,
           ]}
         >
-          <BlurView
-            tint={
-              Color(backgroundColor).lightness() > 50 ? 'extraLight' : 'dark'
-            }
-            style={styles.backgroundBlurView}
-          />
+          <BlurView tint={colorSchemeType} style={styles.backgroundBlurView} />
         </View>
       )}
       {children}

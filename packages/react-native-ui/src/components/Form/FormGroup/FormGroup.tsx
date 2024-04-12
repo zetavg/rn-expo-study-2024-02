@@ -14,7 +14,7 @@ export type Props = {
   /** Set this to true to make the field vertical. Fields are horizontal (i.e. the label is on the left and the input is on the right) by default. */
   vertical?: boolean;
   /** The items in the list. */
-  children: Readonly<React.JSX.Element> | readonly React.JSX.Element[];
+  children: React.ComponentProps<typeof List>['children'];
   /** Show a loading indicator over the list. */
   loading?: boolean;
   /** The placeholder to display when children is empty. */

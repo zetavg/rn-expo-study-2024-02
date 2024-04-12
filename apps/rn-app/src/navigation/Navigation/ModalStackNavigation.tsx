@@ -1,4 +1,5 @@
 import { modalStackScreens as feature1ModalStackScreens } from '@/features/example1/screens';
+import { modalStackScreens as exampleModalStackScreens } from '@/features/navigation-examples/screens';
 import { createModalStackNavigator } from '@rnstudy/react-native-navigation';
 
 import config from '../config';
@@ -12,6 +13,7 @@ export const ModalStackNavigation = createModalStackNavigator({
   mainScreen: MainStackNavigation,
   screens: {
     ...feature1ModalStackScreens,
+    ...exampleModalStackScreens,
   },
   config,
 });

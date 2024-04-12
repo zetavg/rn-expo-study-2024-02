@@ -11,7 +11,7 @@ import { useContentInset } from '../hooks';
 
 import dismissible from './dismissible';
 
-type Props = {
+export type Props = {
   title: string;
   /** Specify a custom background color. */
   backgroundColor?: string;
