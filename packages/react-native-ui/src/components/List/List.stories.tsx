@@ -119,14 +119,10 @@ const meta: Meta<typeof List> = {
         <List
           {...args}
           header={
-            args['__props:header:ListHeader'] ? (
-              <ListHeader {...listHeaderProps} />
-            ) : undefined
+            useListHeader ? <ListHeader {...listHeaderProps} /> : undefined
           }
           footer={
-            args['__props:footer:ListFooter'] ? (
-              <ListFooter {...listFooterProps} />
-            ) : undefined
+            useListFooter ? <ListFooter {...listFooterProps} /> : undefined
           }
         >
           <ListItem title="Only Item" {...listItemProps} />

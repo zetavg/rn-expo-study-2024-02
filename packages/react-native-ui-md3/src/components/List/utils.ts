@@ -20,8 +20,15 @@ export function getListPadding(conditions: ListPaddingConditions): number {
   }
 
   switch (conditions.position) {
-    case 'top':
-      return conditions.withHeader ? 18 : 24;
+    case 'top': {
+      const padding = conditions.withHeader ? 18 : 24;
+
+      if (!conditions.withHeader) {
+        return padding - 16;
+      }
+
+      return padding;
+    }
 
     case 'bottom':
       return conditions.withFooter ? 18 : 24;

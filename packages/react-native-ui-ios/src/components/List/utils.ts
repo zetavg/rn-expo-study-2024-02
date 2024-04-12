@@ -27,6 +27,11 @@ export function getListPadding(conditions: ListPaddingConditions): number {
         return padding - 8;
       }
 
+      // This seems to not be in the official spec, but it's common in iOS apps.
+      if (!conditions.withHeader) {
+        return padding - 12;
+      }
+
       return padding;
     }
 
