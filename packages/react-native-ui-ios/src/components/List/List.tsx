@@ -1,9 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, View, ViewStyle } from 'react-native';
-import Color from 'color';
 
 import { useUIColors } from '../../contexts';
+import BackgroundColor from '../BackgroundColor';
 
+import {
+  containerBorderRadiusStyles,
+  containerStyles,
+} from './ListItem/components/OuterContainer';
 import { ListFooterPropsContext } from './ListFooter';
 import { ListHeaderPropsContext } from './ListHeader';
 import { ListItemProps, ListItemPropsContext } from './ListItem';
@@ -22,7 +26,9 @@ export type Props = {
   /** The footer of the list. Should be an `ListFooter` element. */
   footer?: React.ReactNode;
   /** The items in the list. Should be an array of `ListItem`s. */
-  children: Readonly<React.JSX.Element> | readonly React.JSX.Element[];
+  children:
+    | Readonly<React.JSX.Element | null | undefined | false>
+    | readonly (React.JSX.Element | null | undefined | false)[];
   /** Show a loading indicator over the list. */
   loading?: boolean;
   /** The placeholder to display when children is empty. */
@@ -39,7 +45,11 @@ export function List({
   placeholder,
 }: Props) {
   const uiColors = useUIColors();
-  const listItemPropsContextValue = useMemo(() => ({ listStyle }), [listStyle]);
+
+  const listItemPropsContextValue = useMemo(
+    () => ({ listStyle, _isInListComponent: true }),
+    [listStyle],
+  );
 
   const hasHeader = !!header;
   const hasFooter = !!footer;
@@ -61,26 +71,31 @@ export function List({
     [first, listStyle, hasHeader, hasFooter],
   );
 
-  const childrenCount = React.Children.count(children);
+  const childrenWithoutFalselyValues =
+    React.Children.map(children, (c) => c)?.filter((c) => !!c) || [];
+  const childrenCount = childrenWithoutFalselyValues.length;
   const isSingleChild = childrenCount === 1;
 
-  const processedChildren = React.Children.map(children, (child, i) => {
-    const listPosition: ListItemProps['listPosition'] = isSingleChild
-      ? 'only'
-      : i === 0
-        ? 'first'
-        : i === childrenCount - 1
-          ? 'last'
-          : 'middle';
+  const processedChildren = React.Children.map(
+    childrenWithoutFalselyValues,
+    (child, i) => {
+      const listPosition: ListItemProps['listPosition'] = isSingleChild
+        ? 'only'
+        : i === 0
+          ? 'first'
+          : i === childrenCount - 1
+            ? 'last'
+            : 'middle';
 
-    return {
-      ...child,
-      props: {
-        ...child.props,
-        listPosition,
-      },
-    };
-  });
+      return {
+        ...child,
+        props: {
+          ...child.props,
+          listPosition,
+        },
+      };
+    },
+  );
 
   const listHeaderPropsContextValue = useMemo(
     () => ({ listStyle }),
@@ -94,23 +109,6 @@ export function List({
 
   const shouldRenderPlaceholder =
     childrenCount === 0 && (placeholder || loading);
-  const [
-    shouldRenderPlaceholderForLayoutAnimation,
-    setShouldRenderPlaceholderForLayoutAnimation,
-  ] = useState(shouldRenderPlaceholder);
-  useEffect(() => {
-    if (shouldRenderPlaceholder) {
-      setShouldRenderPlaceholderForLayoutAnimation(true);
-    } else {
-      const timeout = setTimeout(() => {
-        setShouldRenderPlaceholderForLayoutAnimation(false);
-      }, 1000);
-      return () => clearTimeout(timeout);
-    }
-  }, [shouldRenderPlaceholder]);
-
-  const placeholderIsRenderedForLayoutAnimation =
-    shouldRenderPlaceholderForLayoutAnimation && !shouldRenderPlaceholder;
 
   return (
     <ListItemPropsContext.Provider value={listItemPropsContextValue}>
@@ -120,34 +118,42 @@ export function List({
             {header}
           </ListHeaderPropsContext.Provider>
         )}
-        <View style={loading && styles.loadingContent}>
-          {(shouldRenderPlaceholder ||
-            shouldRenderPlaceholderForLayoutAnimation) && (
-            <ListPlaceholder
-              key="__list_placeholder__"
-              listStyle={listStyle}
-              placeholder={
-                placeholderIsRenderedForLayoutAnimation ? '' : placeholder || ''
-              }
-              style={
-                placeholderIsRenderedForLayoutAnimation
-                  ? styles.placeholderForLayoutAnimation
-                  : undefined
-              }
-            />
-          )}
-          {processedChildren}
-          {loading && (
+        <BackgroundColor doNotIncreaseGroupLevelForChildren>
+          {(backgroundColor) => (
             <View
               style={[
-                StyleSheet.absoluteFill,
-                styles.activityIndicatorContainer,
+                styles.itemsContainer,
+                containerStyles[listStyle],
+                containerBorderRadiusStyles[listStyle],
+                { backgroundColor },
               ]}
             >
-              <ActivityIndicator color={uiColors.secondaryLabel} />
+              <View style={loading && styles.loadingContent}>
+                {shouldRenderPlaceholder && (
+                  <ListPlaceholder
+                    key="__list_placeholder__"
+                    listStyle={listStyle}
+                    placeholder={placeholder || ''}
+                    loading={loading}
+                    _isInListComponent
+                  />
+                )}
+                {processedChildren}
+              </View>
+
+              {loading && (
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    styles.activityIndicatorContainer,
+                  ]}
+                >
+                  <ActivityIndicator color={uiColors.secondaryLabel} />
+                </View>
+              )}
             </View>
           )}
-        </View>
+        </BackgroundColor>
         {!!footer && (
           <ListFooterPropsContext.Provider value={listFooterPropsContextValue}>
             {footer}
@@ -159,16 +165,15 @@ export function List({
 }
 
 const styles = StyleSheet.create({
+  itemsContainer: {
+    overflow: 'hidden',
+  },
   loadingContent: {
-    opacity: 0.75,
+    opacity: 0.5,
   },
   activityIndicatorContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  placeholderForLayoutAnimation: {
-    ...StyleSheet.absoluteFillObject,
-    minHeight: 0,
   },
 });
 

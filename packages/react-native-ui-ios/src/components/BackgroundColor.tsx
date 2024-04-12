@@ -6,9 +6,11 @@ import {
   useGroupLevel,
   useIsGroupedBackground,
 } from '../contexts';
+import IsElevatedBackgroundContext, {
+  useIsElevatedBackground,
+} from '../contexts/IsElevatedBackgroundContext';
 import { useBackgroundColor } from '../hooks';
 import { Color } from '../tokens';
-import IsElevatedBackgroundContext, { useIsElevatedBackground } from '../contexts/IsElevatedBackgroundContext';
 
 /**
  * This component can be used in components that uses context-aware background colors.
@@ -20,6 +22,7 @@ export function BackgroundColor({
   root,
   elevated,
   children,
+  doNotIncreaseGroupLevelForChildren,
 }: {
   /** Whether to use *grouped* background colors. In general, grouped background colors should be used when you have a grouped table view. See: https://developer.apple.com/design/human-interface-guidelines/color#iOS-iPadOS. */
   grouped?: boolean;
@@ -27,6 +30,7 @@ export function BackgroundColor({
   root?: boolean;
   elevated?: boolean;
   children: (backgroundColor: Color) => React.ReactNode;
+  doNotIncreaseGroupLevelForChildren?: boolean;
 }) {
   const isGroupedBackgroundFromContext = useIsGroupedBackground();
   const groupLevelFromContext = useGroupLevel();
@@ -42,11 +46,15 @@ export function BackgroundColor({
     elevated: isElevatedBackground,
   });
 
-  let content = (
-    <GroupLevelContext.Provider value={groupLevel + 1}>
-      {children(backgroundColor)}
-    </GroupLevelContext.Provider>
-  );
+  let content = children(backgroundColor);
+
+  if (doNotIncreaseGroupLevelForChildren !== true) {
+    content = (
+      <GroupLevelContext.Provider value={groupLevel + 1}>
+        {content}
+      </GroupLevelContext.Provider>
+    );
+  }
 
   if (grouped !== undefined) {
     content = (

@@ -13,6 +13,8 @@ export type Props = {
 
   dragActive?: ListItemProps['dragActive'];
 
+  _isInListComponent?: ListItemProps['_isInListComponent'];
+
   backgroundColor: string;
 };
 
@@ -22,26 +24,35 @@ export const OuterContainer = ({
   listPosition,
   dragActive,
   backgroundColor,
+  _isInListComponent,
 }: Props): JSX.Element => {
   const colorScheme = useColorScheme();
   const colors = useColors();
+
+  const listItemBackgroundColor = useBackgroundColor({
+    backgroundColor,
+    listStyle,
+    dragActive,
+  });
 
   return (
     <View
       style={[
         styles.container,
-        containerStyles[listStyle],
-        containerStyles[`${listStyle}_${listPosition}`],
-        containerBorderRadiusStyles[listStyle],
-        containerBorderRadiusStyles[`${listStyle}_${listPosition}`],
-        dragActive && dragActiveStyles.default,
-        dragActive && dragActiveStyles[colorScheme],
+        !_isInListComponent && [
+          containerStyles[listStyle],
+          containerStyles[`${listStyle}_${listPosition}`],
+          containerBorderRadiusStyles[listStyle],
+          containerBorderRadiusStyles[`${listStyle}_${listPosition}`],
+          dragActive && dragActiveStyles.default,
+          dragActive && dragActiveStyles[colorScheme],
+          {
+            backgroundColor: listItemBackgroundColor,
+          },
+        ],
+        containerStylesForSeparator[listStyle],
+        containerStylesForSeparator[`${listStyle}_${listPosition}`],
         {
-          backgroundColor: useBackgroundColor({
-            backgroundColor,
-            listStyle,
-            dragActive,
-          }),
           borderColor: colors.outlineVariant,
         },
       ]}
@@ -78,6 +89,26 @@ export const containerStyles = StyleSheet.create({
   insetGrouped: {
     marginHorizontal: 16,
   },
+  insetGrouped_first: {},
+  insetGrouped_middle: {},
+  insetGrouped_last: {},
+  insetGrouped_only: {},
+});
+
+const containerStylesForSeparator = StyleSheet.create({
+  plain: {},
+  plain_first: {},
+  plain_middle: {},
+  plain_last: {},
+  plain_only: {},
+
+  grouped: {},
+  grouped_first: {},
+  grouped_middle: {},
+  grouped_last: {},
+  grouped_only: {},
+
+  insetGrouped: {},
   insetGrouped_first: {},
   insetGrouped_middle: {
     borderTopWidth: StyleSheet.hairlineWidth,

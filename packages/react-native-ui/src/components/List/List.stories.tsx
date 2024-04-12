@@ -12,6 +12,7 @@ import { argTypesFrom, collectPropsFromArgs } from '@rnstudy/react-utils';
 import { Meta, StoryObj } from '@rnstudy/storybook-rn-types';
 
 import { useUIPlatform } from '../../contexts';
+import { configureNextLayoutAnimation } from '../../utils';
 import { Button } from '../Button';
 import Switch from '../Switch';
 import { Text } from '../Text';
@@ -876,6 +877,7 @@ function WithFlatListEditableDemoComponent({
   const renderItem = useCallback<RenderItem<(typeof data)[number]>>(
     ({ item, listPosition, drag, isDragActive }) => (
       <ListItem
+        listStyle={listProps.listStyle}
         listPosition={listPosition}
         title={item.title}
         dragActive={isDragActive}
@@ -893,8 +895,7 @@ function WithFlatListEditableDemoComponent({
               style: 'destructive',
               isPreferred: true,
               onPress: () => {
-                LayoutAnimation.configureNext({
-                  ...LayoutAnimation.Presets.easeInEaseOut,
+                configureNextLayoutAnimation({
                   duration: 100,
                 });
                 setData((prevData) =>
@@ -907,7 +908,7 @@ function WithFlatListEditableDemoComponent({
         {...listItemProps}
       />
     ),
-    [listItemProps],
+    [listItemProps, listProps.listStyle],
   );
 
   const getItemLayout = useCallback(
@@ -1010,7 +1011,7 @@ function InteractiveAddRemoveItemComponent({
   listItemProps: Partial<ListItemProps>;
   layoutAnimationDuration: number;
 }) {
-  const [itemCount, setItemCount] = useState(0);
+  const [itemsCount, setItemsCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
   return (
@@ -1022,7 +1023,7 @@ function InteractiveAddRemoveItemComponent({
         header={useListHeader ? <ListHeader {...listHeaderProps} /> : undefined}
         footer={useListFooter ? <ListFooter {...listFooterProps} /> : undefined}
       >
-        {Array.from({ length: itemCount }).map((_, i) => (
+        {Array.from({ length: itemsCount }).map((_, i) => (
           <ListItem key={`${i}`} title={`Item ${i}`} {...listItemProps} />
         ))}
       </List>
@@ -1031,11 +1032,10 @@ function InteractiveAddRemoveItemComponent({
           button
           title="Add Item"
           onPress={() => {
-            LayoutAnimation.configureNext({
-              ...LayoutAnimation.Presets.easeInEaseOut,
+            configureNextLayoutAnimation({
               duration: layoutAnimationDuration,
             });
-            setItemCount((n) => n + 1);
+            setItemsCount((n) => n + 1);
             setLoading(false);
           }}
         />
@@ -1043,39 +1043,36 @@ function InteractiveAddRemoveItemComponent({
           button
           title="Add 5 Items"
           onPress={() => {
-            LayoutAnimation.configureNext({
-              ...LayoutAnimation.Presets.easeInEaseOut,
+            configureNextLayoutAnimation({
               duration: layoutAnimationDuration,
             });
-            setItemCount((n) => n + 5);
+            setItemsCount((n) => n + 5);
             setLoading(false);
           }}
         />
         <ListItem
           button
           destructive
-          disabled={itemCount <= 0}
+          disabled={itemsCount <= 0}
           title="Remove Item"
           onPress={() => {
-            LayoutAnimation.configureNext({
-              ...LayoutAnimation.Presets.easeInEaseOut,
+            configureNextLayoutAnimation({
               duration: layoutAnimationDuration,
             });
-            setItemCount((n) => (n > 0 ? n - 1 : n));
+            setItemsCount((n) => (n > 0 ? n - 1 : n));
             setLoading(false);
           }}
         />
         <ListItem
           button
           destructive
-          disabled={itemCount <= 0}
+          disabled={itemsCount <= 0}
           title="Remove All Items"
           onPress={() => {
-            LayoutAnimation.configureNext({
-              ...LayoutAnimation.Presets.easeInEaseOut,
+            configureNextLayoutAnimation({
               duration: layoutAnimationDuration,
             });
-            setItemCount(0);
+            setItemsCount(0);
             setLoading(false);
           }}
         />
@@ -1108,9 +1105,9 @@ function InteractiveAddRemoveItemWithFlatListComponent({
   listItemProps: Partial<ListItemProps>;
   layoutAnimationDuration: number;
 }) {
-  const [itemCount, setItemCount] = useState(0);
+  const [itemsCount, setItemsCount] = useState(0);
   const [loading, setLoading] = useState(false);
-  const data = Array.from({ length: itemCount }, (_, i) => ({
+  const data = Array.from({ length: itemsCount }, (_, i) => ({
     key: `${i}`,
     title: `Item ${i}`,
   }));
@@ -1147,11 +1144,10 @@ function InteractiveAddRemoveItemWithFlatListComponent({
               button
               title="Add Item"
               onPress={() => {
-                LayoutAnimation.configureNext({
-                  ...LayoutAnimation.Presets.easeInEaseOut,
+                configureNextLayoutAnimation({
                   duration: layoutAnimationDuration,
                 });
-                setItemCount((n) => n + 1);
+                setItemsCount((n) => n + 1);
                 setLoading(false);
               }}
             />
@@ -1159,49 +1155,56 @@ function InteractiveAddRemoveItemWithFlatListComponent({
               button
               title="Add 5 Items"
               onPress={() => {
-                LayoutAnimation.configureNext({
-                  ...LayoutAnimation.Presets.easeInEaseOut,
+                configureNextLayoutAnimation({
                   duration: layoutAnimationDuration,
                 });
-                setItemCount((n) => n + 5);
+                setItemsCount((n) => n + 5);
                 setLoading(false);
               }}
             />
             <ListItem
               button
               destructive
-              disabled={itemCount <= 0}
+              disabled={itemsCount <= 0}
               title="Remove Item"
               onPress={() => {
-                LayoutAnimation.configureNext({
-                  ...LayoutAnimation.Presets.easeInEaseOut,
+                configureNextLayoutAnimation({
                   duration: layoutAnimationDuration,
                 });
-                setItemCount((n) => (n > 0 ? n - 1 : n));
+                setItemsCount((n) => (n > 0 ? n - 1 : n));
                 setLoading(false);
               }}
             />
             <ListItem
               button
               destructive
-              disabled={itemCount <= 0}
+              disabled={itemsCount <= 0}
               title="Remove All Items"
               onPress={() => {
-                LayoutAnimation.configureNext({
-                  ...LayoutAnimation.Presets.easeInEaseOut,
+                configureNextLayoutAnimation({
                   duration: layoutAnimationDuration,
                 });
-                setItemCount(0);
+                setItemsCount(0);
                 setLoading(false);
               }}
             />
           </List>
 
-          <List>
+          <List
+            footer={
+              itemsCount > 0 && (
+                <List.Footer text="Currently, the loading state is not implemented while using FlatList with items." />
+              )
+            }
+          >
             <ListItem
               title="Loading"
               accessories={
-                <Switch value={loading} onValueChange={setLoading} />
+                <Switch
+                  value={loading}
+                  onValueChange={setLoading}
+                  disabled={itemsCount > 0}
+                />
               }
             />
           </List>

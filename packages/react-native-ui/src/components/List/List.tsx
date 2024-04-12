@@ -21,7 +21,9 @@ export type Props = {
   /** The footer of the list. Should be an `ListFooter` element. */
   footer?: React.ReactNode;
   /** The items in the list. Should be an array of `ListItem`s. */
-  children: Readonly<React.JSX.Element> | readonly React.JSX.Element[];
+  children:
+    | Readonly<React.JSX.Element | null | undefined | false>
+    | readonly (React.JSX.Element | null | undefined | false)[];
   /** Show a loading indicator over the list. */
   loading?: boolean;
   /** The placeholder to display when children is empty. */
