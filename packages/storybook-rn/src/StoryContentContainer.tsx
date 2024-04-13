@@ -174,33 +174,40 @@ export function StoryContentContainerWithoutContext({
       ? parameters.containerBackground
       : controlsState.background;
 
-  if (backgroundType !== 'transparent') {
-    return (
-      <BackgroundColor
-        grouped={backgroundType ? backgroundType === 'grouped' : undefined}
-        elevated={controlsState.elevated}
-      >
-        {(backgroundColor) => (
-          <View style={[styles.rootContainer, { backgroundColor }]}>
+  return (
+    <BackgroundColor
+      grouped={(() => {
+        if (backgroundType === 'transparent') {
+          return undefined;
+        }
+
+        if (backgroundType) {
+          return backgroundType === 'grouped';
+        }
+      })()}
+      elevated={controlsState.elevated}
+    >
+      {(backgroundColor) => (
+        <ImageBackground
+          source={
+            controlsState.colorScheme.startsWith('dark')
+              ? require('./images/transparent-dark.png')
+              : require('./images/transparent-light.png')
+          }
+          imageStyle={styles.transparentBackgroundImage}
+          style={styles.rootContainer}
+        >
+          <View
+            style={[
+              styles.rootContainer,
+              backgroundType !== 'transparent' && { backgroundColor },
+            ]}
+          >
             {content}
           </View>
-        )}
-      </BackgroundColor>
-    );
-  }
-
-  return (
-    <ImageBackground
-      source={
-        controlsState.colorScheme.startsWith('dark')
-          ? require('./images/transparent-dark.png')
-          : require('./images/transparent-light.png')
-      }
-      imageStyle={styles.transparentBackgroundImage}
-      style={styles.rootContainer}
-    >
-      {content}
-    </ImageBackground>
+        </ImageBackground>
+      )}
+    </BackgroundColor>
   );
 }
 

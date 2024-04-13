@@ -1,22 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Keyboard,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { Keyboard, StyleSheet, useColorScheme, View } from 'react-native';
 import { ReactRenderer } from '@storybook/react';
 import { PartialStoryFn } from '@storybook/types';
 
-import {
-  AVAILABLE_UI_PLATFORMS,
-  BackgroundColor,
-  SeparatorColor,
-  Text,
-} from '@rnstudy/react-native-ui';
+import { AVAILABLE_UI_PLATFORMS } from '@rnstudy/react-native-ui';
 import { StoryParameters } from '@rnstudy/storybook-rn-types';
 
 import StoryContainerControls from './StoryContainerControls';

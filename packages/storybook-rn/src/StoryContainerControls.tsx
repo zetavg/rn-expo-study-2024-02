@@ -1,16 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import {
-  ImageBackground,
-  LayoutChangeEvent,
-  LayoutRectangle,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ReactRenderer } from '@storybook/react';
-import { PartialStoryFn } from '@storybook/types';
+import React from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import {
   AVAILABLE_UI_PLATFORMS,
@@ -53,11 +42,6 @@ export function StoryContainerControlsWithoutContext({
   parameters,
 }: Props) {
   const { specOverlay } = parameters;
-
-  const backgroundType =
-    value.background === 'default'
-      ? parameters.containerBackground
-      : value.background;
 
   return (
     <BackgroundColor grouped={false}>
@@ -217,7 +201,7 @@ export function StoryContainerControlsWithoutContext({
                     color="secondaryVariant"
                     style={[styles.previewControlLabelText]}
                   >
-                    Show Boundary Lines
+                    Show Boundaries
                   </Text>
                   <Switch
                     size="small"
