@@ -1,7 +1,5 @@
 import React from 'react';
-import { Alert, View } from 'react-native';
 
-import { Icon } from '@rnstudy/react-icons';
 import type { Meta, StoryObj } from '@rnstudy/storybook-rn-types';
 
 import Text from '../../Text';
@@ -10,8 +8,9 @@ import { ExampleUncontrolledTextInput } from '../../TextInput/examples';
 import {
   EMPTY_FUNCTION,
   EXAMPLE_ACCESSORIES,
-  EXAMPLE_CHILDREN,
+  EXAMPLE_CHILDREN_S,
   EXAMPLE_CHILDREN_TALL,
+  EXAMPLE_CHILDREN_WITH_PADDING_CANCELING,
   EXAMPLE_IMAGES,
   FUNCTION_WITH_PRESSED_ALERT,
 } from './examples';
@@ -50,12 +49,8 @@ const meta: Meta<typeof ListItem> = {
     },
     children: {
       control: 'select',
-      options: ['undefined', 'Example Children', 'Example Children (Tall)'],
-      mapping: {
-        undefined,
-        'Example Children': EXAMPLE_CHILDREN,
-        'Example Children (Tall)': EXAMPLE_CHILDREN_TALL,
-      },
+      options: Object.keys(EXAMPLE_CHILDREN_S),
+      mapping: EXAMPLE_CHILDREN_S,
     },
   },
   args: {
@@ -525,21 +520,23 @@ export const EI3_WithSubtitleCompactAndIconAsAccessory: Story = {
 
 export const I2_WithColoredIcon: Story = {
   args: {
-    image: EXAMPLE_IMAGES[
-      Object.keys(EXAMPLE_IMAGES).find((s) =>
-        s.match('color="'),
-      ) as keyof typeof EXAMPLE_IMAGES
-    ],
+    image:
+      EXAMPLE_IMAGES[
+        Object.keys(EXAMPLE_IMAGES).find((s) =>
+          s.match('color="'),
+        ) as keyof typeof EXAMPLE_IMAGES
+      ],
   },
 };
 
 export const I3_WithIconUsingBackgroundColor: Story = {
   args: {
-    image: EXAMPLE_IMAGES[
-      Object.keys(EXAMPLE_IMAGES).find((s) =>
-        s.match('backgroundColor'),
-      ) as keyof typeof EXAMPLE_IMAGES
-    ],
+    image:
+      EXAMPLE_IMAGES[
+        Object.keys(EXAMPLE_IMAGES).find((s) =>
+          s.match('backgroundColor'),
+        ) as keyof typeof EXAMPLE_IMAGES
+      ],
   },
 };
 
@@ -597,7 +594,7 @@ export const N12_WithChildrenAndTitleAlignedIcon: Story = {
   args: {
     title: 'Title',
     image: Object.values(EXAMPLE_IMAGES)[1],
-    alignIconWithTitle: true,
+    alignImageWithTitle: true,
     children: EXAMPLE_CHILDREN_TALL,
   },
 };
@@ -607,8 +604,16 @@ export const N13_WithChildrenAndSubtitleAndTitleAlignedIcon: Story = {
     title: 'Title',
     subtitle: 'This is the subtitle.',
     image: Object.values(EXAMPLE_IMAGES)[1],
-    alignIconWithTitle: true,
+    alignImageWithTitle: true,
     children: EXAMPLE_CHILDREN_TALL,
+  },
+};
+
+export const N91_WithPaddingCancelingChildren: Story = {
+  args: {
+    title: 'Title',
+    image: Object.values(EXAMPLE_IMAGES)[1],
+    children: EXAMPLE_CHILDREN_WITH_PADDING_CANCELING,
   },
 };
 

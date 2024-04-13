@@ -13,6 +13,8 @@ import BackgroundColor from '../../BackgroundColor';
 import Select from '../../Select';
 import Text from '../../Text';
 import TextInput from '../../TextInput';
+import ListPropsContext from '../ListPropsContext';
+import { ListProps } from '..';
 
 import ContentContainer from './components/ContentContainer';
 import DrillInIcon from './components/DrillInIcon';
@@ -33,6 +35,7 @@ import TrailingContents, {
   propsSelector as tcPropsSelector,
 } from './components/TrailingContents';
 import AccessoryButton from './AccessoryButton';
+import { CHILDREN_CONTAINER_PADDING_VERTICAL } from './consts';
 import { ListItemAnimationContextProvider } from './ListItemAnimationContext';
 import ListItemPropsContext from './ListItemPropsContext';
 import { getListItemHeight } from './utils';
@@ -57,8 +60,8 @@ export type Props = {
     iconProps: Partial<React.ComponentProps<typeof Icon>>;
     backgroundColor: string;
   }>;
-  /** Align the icon with the title. Will only take effect when `children` is provided. */
-  alignIconWithTitle?: boolean;
+  /** Align the image with the title. Will only take effect when `children` is provided. */
+  alignImageWithTitle?: boolean;
 
   /** The text to display as the title. */
   title:
@@ -138,8 +141,14 @@ export type Props = {
   /** Additional content to render inside the list item. This will be rendered below of the title, subtitle and accessories. */
   children?: React.ReactNode;
 
+  /** Whether to shrink the vertical space of the title when the children has enough height to reach the minimum height of the list item. */
+  shrinkTitleVertical?: boolean;
+
   /** A private prop to indicate that the list item is being used inside a `List` component, which will remove the margin, background color, outer border radius, top border of the first item and bottom border of the last item as they will be handled by the `List` component. */
   _isInListComponent?: boolean;
+
+  /** Private prop indicating that the list item is nested inside a list item. */
+  _isNested?: boolean;
 };
 
 const DEFAULT_PROPS = {
@@ -161,7 +170,12 @@ export function ListItem(rawProps: Props) {
     fontScale: windowDimensions.fontScale,
   });
 
-  const childrenHeightAnim = useRef(new Animated.Value(0)).current;
+  const titleAndTrailingContentsContainerHeightAnim = useRef(
+    new Animated.Value(0),
+  ).current;
+  const titleAndTrailingContentsContainerYAnim = useRef(
+    new Animated.Value(0),
+  ).current;
 
   return (
     <ListItemAnimationContextProvider {...props}>
@@ -180,10 +194,11 @@ export function ListItem(rawProps: Props) {
                 <Image
                   {...props}
                   backgroundColor={backgroundColor}
-                  style={
-                    props.alignIconWithTitle && props.children
-                      ? { marginBottom: childrenHeightAnim }
-                      : undefined
+                  titleAndTrailingContentsContainerHeightAnim={
+                    titleAndTrailingContentsContainerHeightAnim
+                  }
+                  titleAndTrailingContentsContainerYAnim={
+                    titleAndTrailingContentsContainerYAnim
                   }
                 />
               )}
@@ -195,8 +210,22 @@ export function ListItem(rawProps: Props) {
                   props.accessories ||
                   props.detail
                 ) && (
-                  <TitleAndTrailingContentsContainer>
-                    <TitleAndSubtitle {...tasPropsSelector(props)} />
+                  <TitleAndTrailingContentsContainer
+                    onLayout={(e) => {
+                      titleAndTrailingContentsContainerYAnim.setValue(
+                        e.nativeEvent.layout.y,
+                      );
+                      titleAndTrailingContentsContainerHeightAnim.setValue(
+                        e.nativeEvent.layout.height,
+                      );
+                    }}
+                  >
+                    <TitleAndSubtitle
+                      {...tasPropsSelector(props)}
+                      minHeight={
+                        props.shrinkTitleVertical ? undefined : minHeight
+                      }
+                    />
 
                     {!props.hideTrailingContents && (
                       <TrailingContents {...tcPropsSelector(props)} />
@@ -214,11 +243,13 @@ export function ListItem(rawProps: Props) {
                       styles.childrenContainer,
                       !!props.title && styles.childrenContainer_withTitle,
                     ]}
-                    onLayout={(e) => {
-                      childrenHeightAnim.setValue(e.nativeEvent.layout.height);
-                    }}
+                    // onLayout={(e) => {
+                    //   childrenHeightAnim.setValue(e.nativeEvent.layout.height);
+                    // }}
                   >
-                    {props.children}
+                    <ListPropsContext.Provider value={NESTED_LIST_PROPS}>
+                      {props.children}
+                    </ListPropsContext.Provider>
                   </View>
                 )}
               </MainContentsContainer>
@@ -244,10 +275,14 @@ export function ListItem(rawProps: Props) {
 
 ListItem.AccessoryButton = AccessoryButton;
 
+const NESTED_LIST_PROPS: Partial<ListProps> = {
+  _isNested: true,
+};
+
 const styles = StyleSheet.create({
   childrenContainer: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: CHILDREN_CONTAINER_PADDING_VERTICAL,
     justifyContent: 'center',
   },
   childrenContainer_withTitle: {

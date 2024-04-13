@@ -50,7 +50,12 @@ export const Grabber = React.memo(
 
     const colors = useColors();
 
-    const bgc = useBackgroundColor({ backgroundColor, dragActive, listStyle });
+    const bgc = useBackgroundColor({
+      backgroundColor,
+      dragActive,
+      listStyle,
+      _isNested: false,
+    });
 
     const [delayedHideTrailingContents, setDelayedHideTrailingContents] =
       useState(hideTrailingContents);

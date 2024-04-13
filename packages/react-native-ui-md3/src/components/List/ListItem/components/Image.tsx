@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
   Animated,
+  LayoutChangeEvent,
   StyleSheet,
   useWindowDimensions,
-  View,
   ViewStyle,
 } from 'react-native';
 
@@ -11,21 +11,15 @@ import { IconPropsContext } from '@rnstudy/react-icons';
 import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 
 import { useColors, useTheme } from '../../../../contexts';
-import {
-  COMPACT_CONTAINER_PADDING_VERTICAL,
-  CONTAINER_PADDING_VERTICAL,
-} from '../consts';
 import type { Props as ListItemProps } from '../ListItem';
 
 export type Props = {
   image?: ListItemProps['image'];
   subtitle?: ListItemProps['subtitle'];
-  singleLine?: ListItemProps['singleLine'];
   compact?: ListItemProps['compact'];
-  children?: ListItemProps['children'];
-  alignIconWithTitle?: ListItemProps['alignIconWithTitle'];
-  iconShouldAlignWithTitle: boolean;
-  titleYAnim: Animated.AnimatedNode;
+  imageShouldAlignWithTitle: boolean;
+  titleTextYAnim: Animated.AnimatedNode;
+  titleTextHeightAnim: Animated.AnimatedNode;
   backgroundColor: string;
   style?: ViewStyle;
 };
@@ -34,12 +28,10 @@ export const Image = React.memo(
   ({
     image,
     subtitle,
-    singleLine,
     compact,
-    children,
-    alignIconWithTitle,
-    iconShouldAlignWithTitle,
-    titleYAnim,
+    imageShouldAlignWithTitle,
+    titleTextYAnim,
+    titleTextHeightAnim,
     backgroundColor,
     style,
   }: Props): JSX.Element => {
@@ -50,27 +42,57 @@ export const Image = React.memo(
     const iconSize =
       theme.fonts.bodyLarge.lineHeight * windowDimensions.fontScale;
 
+    const imageHeightAnim = useRef(new Animated.Value(0)).current;
+
+    const handleImageLayout = useCallback(
+      (event: LayoutChangeEvent) => {
+        imageHeightAnim.setValue(event.nativeEvent.layout.height);
+      },
+      [imageHeightAnim],
+    );
+
+    /** Used to eliminate the image flicker when aligning with the title. */
+    const imageOpacityForAlignWithTitleAnim = useRef(
+      new Animated.Value(imageShouldAlignWithTitle ? 0 : 1),
+    ).current;
+    useEffect(() => {
+      Animated.timing(imageOpacityForAlignWithTitleAnim, {
+        toValue: 1,
+        duration: 150,
+        delay: 50,
+        useNativeDriver: true,
+      }).start();
+    }, [imageOpacityForAlignWithTitleAnim]);
+
     return (
-      <View
+      <Animated.View
         style={[
-          styles.iconContainer,
-          compact && styles.iconContainer_compact,
-          iconShouldAlignWithTitle &&
-            !subtitle &&
-            styles.iconContainer_iconAlignStartWithoutSubtitle,
+          styles.imageContainer,
+          imageShouldAlignWithTitle && [
+            styles.imageContainer_alignedWithTitle,
+            {
+              transform: [
+                {
+                  translateY: Animated.subtract(
+                    Animated.add(
+                      titleTextYAnim,
+                      Animated.divide(titleTextHeightAnim, 2),
+                    ),
+                    Animated.divide(imageHeightAnim, 2),
+                  ),
+                },
+              ],
+              opacity: imageOpacityForAlignWithTitleAnim,
+            },
+          ],
           style,
         ]}
+        onLayout={handleImageLayout}
       >
         {withPropDefaultValuesContext(image, {
           iconProps: {
             value: (props) => {
-              const iconShouldReallyAlignWithTitle =
-                iconShouldAlignWithTitle && !props.backgroundColor;
               return {
-                align: iconShouldReallyAlignWithTitle
-                  ? ('start' as const)
-                  : ('center' as const),
-                mt: iconShouldReallyAlignWithTitle ? titleYAnim : undefined,
                 color: colors.onSurfaceVariant,
                 size: !props.backgroundColor
                   ? iconSize
@@ -85,7 +107,7 @@ export const Image = React.memo(
             context: null,
           },
         })}
-      </View>
+      </Animated.View>
     );
   },
 );
@@ -93,18 +115,14 @@ export const Image = React.memo(
 Image.displayName = 'ListItem_Image';
 
 const styles = StyleSheet.create({
-  iconContainer: {
+  imageContainer: {
     alignSelf: 'stretch',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    // paddingVertical: CONTAINER_PADDING_VERTICAL,
   },
-  iconContainer_compact: {
-    // paddingVertical: COMPACT_CONTAINER_PADDING_VERTICAL,
-  },
-  iconContainer_iconAlignStartWithoutSubtitle: {
-    // paddingVertical: COMPACT_CONTAINER_PADDING_VERTICAL + 4,
+  imageContainer_alignedWithTitle: {
+    alignSelf: 'flex-start',
   },
 });
 

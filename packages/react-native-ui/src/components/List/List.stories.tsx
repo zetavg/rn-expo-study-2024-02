@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, LayoutAnimation, useWindowDimensions } from 'react-native';
+import { Alert, useWindowDimensions } from 'react-native';
 
 import {
   DragEndParams,
@@ -20,6 +20,7 @@ import { Text } from '../Text';
 import ListFooterMeta from './ListFooter/ListFooter.stories';
 import { ACCESSORIES_EXAMPLES as LIST_HEADER_ACCESSORIES_EXAMPLES } from './ListHeader/examples';
 import ListHeaderMeta from './ListHeader/ListHeader.stories';
+import { EXAMPLE_IMAGES } from './ListItem/examples';
 import ListItemMeta from './ListItem/ListItem.stories';
 import {
   getListItemHeight,
@@ -394,6 +395,84 @@ export const IB1_EmptyListWithPlaceholderElement: Story = {
         for the empty list.
       </>
     ),
+  },
+};
+
+export const J0_NestedList: Story = {
+  render: (args) => {
+    const useListHeader = args['__props:header'] === 'ListHeader';
+    const listHeaderProps = collectPropsFromArgs<ListHeaderProps>(
+      args,
+      '__props:header:ListHeader.',
+    );
+
+    const useListFooter = args['__props:footer'] === 'ListFooter';
+    const listFooterProps = collectPropsFromArgs<ListFooterProps>(
+      args,
+      '__props:footer:ListFooter.',
+    );
+
+    const listItemProps = collectPropsFromArgs<ListItemProps>(
+      args,
+      '__props:children:ListItem.',
+    );
+
+    return (
+      <>
+        <List
+          {...args}
+          first
+          header={
+            useListHeader ? <ListHeader {...listHeaderProps} /> : undefined
+          }
+          footer={
+            useListFooter ? <ListFooter {...listFooterProps} /> : undefined
+          }
+        >
+          <ListItem title="First Item" {...listItemProps}>
+            <List>
+              <ListItem title="Nested First Item" {...listItemProps} />
+              <ListItem title="Nested Middle Item" {...listItemProps} />
+              <ListItem title="Nested Last Item" {...listItemProps} />
+            </List>
+          </ListItem>
+
+          <ListItem title="Middle Item" {...listItemProps}>
+            <List>
+              <ListItem title="Nested First Item" {...listItemProps} />
+              <ListItem title="Nested Middle Item" {...listItemProps} />
+              <ListItem title="Nested Last Item" {...listItemProps} />
+            </List>
+          </ListItem>
+
+          <ListItem title="Last Item" {...listItemProps}>
+            <List>
+              <ListItem title="Nested First Item" {...listItemProps} />
+              <ListItem title="Nested Middle Item" {...listItemProps}>
+                <List>
+                  <ListItem title="Deep Nested First Item" {...listItemProps} />
+                  <ListItem
+                    title="Deep Nested Middle Item"
+                    {...listItemProps}
+                  />
+                  <ListItem title="Deep Nested Last Item" {...listItemProps} />
+                </List>
+              </ListItem>
+              <ListItem title="Nested Last Item" {...listItemProps} />
+            </List>
+          </ListItem>
+        </List>
+      </>
+    );
+  },
+};
+
+export const J1_NestedListWithIcon: Story = {
+  ...J0_NestedList,
+  args: {
+    ...J0_NestedList.args,
+    '__props:children:ListItem.image': Object.values(EXAMPLE_IMAGES)[1],
+    '__props:children:ListItem.alignImageWithTitle': true,
   },
 };
 

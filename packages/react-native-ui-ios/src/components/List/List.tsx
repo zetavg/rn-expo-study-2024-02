@@ -1,5 +1,13 @@
 import React, { useMemo } from 'react';
-import { ActivityIndicator, StyleSheet, View, ViewStyle } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from 'react-native';
+
+import { usePropsWithContextualDefaultValues } from '@rnstudy/react-utils';
 
 import { useUIColors } from '../../contexts';
 import BackgroundColor from '../BackgroundColor';
@@ -8,10 +16,16 @@ import {
   containerBorderRadiusStyles,
   containerStyles,
 } from './ListItem/components/OuterContainer';
+import { SEPARATOR_COLOR_NAME } from './ListItem/consts';
 import { ListFooterPropsContext } from './ListFooter';
 import { ListHeaderPropsContext } from './ListHeader';
-import { ListItemProps, ListItemPropsContext } from './ListItem';
+import {
+  listItemChildrenPaddingCancelingStyle,
+  ListItemProps,
+  ListItemPropsContext,
+} from './ListItem';
 import ListPlaceholder from './ListPlaceholder';
+import ListPropsContext from './ListPropsContext';
 import { getListPadding } from './utils';
 
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
@@ -33,42 +47,62 @@ export type Props = {
   loading?: boolean;
   /** The placeholder to display when children is empty. */
   placeholder?: Readonly<React.JSX.Element> | string;
+
+  /** Private prop indicating that the list is nested inside a list item. */
+  _isNested?: boolean;
 };
 
-export function List({
-  first = false,
-  listStyle = 'insetGrouped',
-  header,
-  footer,
-  children,
-  loading,
-  placeholder,
-}: Props) {
+export function List(rawProps: Props) {
+  const {
+    first = false,
+    listStyle: listStyleProp,
+    header,
+    footer,
+    children,
+    loading,
+    placeholder,
+    _isNested,
+  } = usePropsWithContextualDefaultValues(rawProps, ListPropsContext);
+
+  const listStyle =
+    listStyleProp ||
+    (_isNested ? ('grouped' as const) : ('insetGrouped' as const));
+
   const uiColors = useUIColors();
 
   const listItemPropsContextValue = useMemo(
-    () => ({ listStyle, _isInListComponent: true }),
-    [listStyle],
+    () => ({ listStyle, _isInListComponent: true, _isNested }),
+    [listStyle, _isNested],
   );
 
   const hasHeader = !!header;
   const hasFooter = !!footer;
 
-  const containerStyle = useMemo<ViewStyle>(
-    () => ({
-      paddingTop: getListPadding({
-        position: 'top',
-        first,
-        listStyle,
-        withHeader: hasHeader,
-      }),
-      paddingBottom: getListPadding({
-        position: 'bottom',
-        listStyle,
-        withFooter: hasFooter,
-      }),
-    }),
-    [first, listStyle, hasHeader, hasFooter],
+  const separatorColor = uiColors[SEPARATOR_COLOR_NAME];
+  const containerStyle = useMemo<StyleProp<ViewStyle>>(
+    () =>
+      _isNested
+        ? [
+            listItemChildrenPaddingCancelingStyle,
+            {
+              borderTopWidth: StyleSheet.hairlineWidth,
+              borderTopColor: separatorColor,
+            },
+          ]
+        : {
+            paddingTop: getListPadding({
+              position: 'top',
+              first,
+              listStyle,
+              withHeader: hasHeader,
+            }),
+            paddingBottom: getListPadding({
+              position: 'bottom',
+              listStyle,
+              withFooter: hasFooter,
+            }),
+          },
+    [_isNested, separatorColor, first, listStyle, hasHeader, hasFooter],
   );
 
   const childrenWithoutFalselyValues =
@@ -123,9 +157,14 @@ export function List({
             <View
               style={[
                 styles.itemsContainer,
-                containerStyles[listStyle],
-                containerBorderRadiusStyles[listStyle],
-                { backgroundColor },
+                !_isNested && [
+                  containerStyles[listStyle],
+                  containerBorderRadiusStyles[listStyle],
+                  {
+                    backgroundColor,
+                    borderColor: uiColors.opaqueSeparator,
+                  },
+                ],
               ]}
             >
               <View style={loading && styles.loadingContent}>

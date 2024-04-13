@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import {
   COMPACT_CONTAINER_PADDING_VERTICAL,
+  CONTAINER_PADDING_END,
   CONTAINER_PADDING_VERTICAL,
   GRABBER_CONTAINER_WIDTH,
 } from '../consts';
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingVertical: CONTAINER_PADDING_VERTICAL,
-    paddingRight: 24,
+    paddingEnd: CONTAINER_PADDING_END,
     gap: 5,
   },
   container_onlyOneChild: {
