@@ -19,6 +19,8 @@ import BackgroundColor from '../../BackgroundColor';
 import Select from '../../Select';
 import Text from '../../Text';
 import TextInput from '../../TextInput';
+import { DEFAULT_LIST_STYLE } from '../consts';
+import { ListPropsContext } from '../ListPropsContext';
 
 import ContentContainer from './components/ContentContainer';
 import EditButton, {
@@ -63,8 +65,8 @@ export type Props = {
     iconProps: Partial<React.ComponentProps<typeof Icon>>;
     backgroundColor: string;
   }>;
-  /** Align the icon with the title. Will only take effect when `children` is provided. */
-  alignIconWithTitle?: boolean;
+  /** Align the image with the title. */
+  alignImageWithTitle?: boolean;
 
   /** The text to display as the title. */
   title:
@@ -144,12 +146,18 @@ export type Props = {
   /** Additional content to render inside the list item. This will be rendered below of the title, subtitle and accessories. */
   children?: React.ReactNode;
 
+  /** Whether to shrink the vertical space of the title when the children has enough height to reach the minimum height of the list item. */
+  shrinkTitleVertical?: boolean;
+
   /** A private prop to indicate that the list item is being used inside a `List` component, which will remove the margin, background color, outer border radius, top border of the first item and bottom border of the last item as they will be handled by the `List` component. */
   _isInListComponent?: boolean;
+
+  /** Private prop indicating that the list item is nested inside a list item. */
+  _isNested?: boolean;
 };
 
 const DEFAULT_PROPS = {
-  listStyle: 'insetGrouped' as ListStyle,
+  listStyle: DEFAULT_LIST_STYLE,
   listPosition: 'only' as PositionInList,
   singleLine: true,
 };
@@ -168,17 +176,32 @@ export function ListItem(rawProps: Props) {
     fontScale: windowDimensions.fontScale,
   });
 
-  const iconShouldAlignWithTitle =
-    !props.singleLine || !!(props.children && props.alignIconWithTitle);
+  const imageShouldAlignWithTitle =
+    props.alignImageWithTitle ||
+    (props.alignImageWithTitle !== false &&
+      ((!props.singleLine && !!props.subtitle) || !!props.children));
 
+  const titleTextYAnim = useRef(new Animated.Value(0)).current;
+  const titleTextHeightAnim = useRef(new Animated.Value(0)).current;
   const titleContainerYAnim = useRef(new Animated.Value(0)).current;
   const titleParentContainerYAnim = useRef(
     new Animated.Value(CONTAINER_PADDING_VERTICAL),
   ).current;
-  const titleYAnim = useRef(
-    Animated.add(titleContainerYAnim, titleParentContainerYAnim),
+
+  const titleTextYRelatedToContainerAnim = useRef(
+    Animated.add(
+      Animated.add(titleContainerYAnim, titleParentContainerYAnim),
+      titleTextYAnim,
+    ),
   ).current;
 
+  const handleTitleTextLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      titleTextYAnim.setValue(event.nativeEvent.layout.y);
+      titleTextHeightAnim.setValue(event.nativeEvent.layout.height);
+    },
+    [titleTextYAnim, titleTextHeightAnim],
+  );
   const handleTitleContainerLayout = useCallback(
     (event: LayoutChangeEvent) => {
       titleContainerYAnim.setValue(event.nativeEvent.layout.y);
@@ -209,8 +232,9 @@ export function ListItem(rawProps: Props) {
                 <Image
                   {...props}
                   backgroundColor={backgroundColor}
-                  iconShouldAlignWithTitle={iconShouldAlignWithTitle}
-                  titleYAnim={titleYAnim}
+                  imageShouldAlignWithTitle={imageShouldAlignWithTitle}
+                  titleTextYAnim={titleTextYRelatedToContainerAnim}
+                  titleTextHeightAnim={titleTextHeightAnim}
                 />
               )}
 
@@ -231,6 +255,12 @@ export function ListItem(rawProps: Props) {
                         <TitleAndSubtitle
                           {...tasPropsSelector(props)}
                           onLayout={handleTitleContainerLayout}
+                          onTitleTextLayout={handleTitleTextLayout}
+                          minHeight={
+                            props.shrinkTitleVertical
+                              ? undefined
+                              : minHeight - CONTAINER_PADDING_VERTICAL * 2
+                          }
                         />
 
                         {!props.hideTrailingContents && (
@@ -243,7 +273,9 @@ export function ListItem(rawProps: Props) {
                         key="ChildrenContainer"
                         style={styles.childrenContainer}
                       >
-                        {props.children}
+                        <ListPropsContext.Provider value={NESTED_LIST_PROPS}>
+                          {props.children}
+                        </ListPropsContext.Provider>
                       </View>
                     ),
                   ].filter((e) => !!e)
@@ -270,6 +302,10 @@ export function ListItem(rawProps: Props) {
 }
 
 ListItem.AccessoryButton = AccessoryButton;
+
+const NESTED_LIST_PROPS: React.ContextType<typeof ListPropsContext> = {
+  _isNested: true,
+};
 
 const styles = StyleSheet.create({
   childrenContainer: {

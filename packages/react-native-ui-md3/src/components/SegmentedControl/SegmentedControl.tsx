@@ -8,11 +8,17 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import RNSegmentedControl, {
-  NativeSegmentedControlIOSChangeEvent,
+import RNNSegmentedControl, {
+  type NativeSegmentedControlIOSChangeEvent,
 } from '@react-native-segmented-control/segmented-control';
+import Color from 'color';
 
-import { useColorSchemeType } from '../../contexts/tokens/ColorSchemeTypeContext';
+import { useColors, useColorScheme } from '../../contexts';
+
+// Force using the JS implementation of the SegmentedControl component.
+const RNSegmentedControl: typeof RNNSegmentedControl =
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  require('@react-native-segmented-control/segmented-control/js/SegmentedControl.js').default;
 
 export type Props<T extends string> = {
   disabled?: boolean;
@@ -62,16 +68,19 @@ export function SegmentedControl<T extends string>({
     [values, onValueChange],
   );
 
+  const appearance = useColorScheme();
+  const colors = useColors();
+
   const { fontScale } = useWindowDimensions();
-  const appearance = useColorSchemeType();
 
   const fontSize = FONT_SIZE * (size === 'small' ? 0.8 : 1);
 
   const fontStyle = useMemo(
     () => ({
-      fontSize: fontSize * fontScale,
+      fontSize,
+      color: colors.onSurfaceVariant,
     }),
-    [fontSize, fontScale],
+    [fontSize, colors.onSurfaceVariant],
   );
 
   const height =
@@ -128,7 +137,12 @@ export function SegmentedControl<T extends string>({
         {labels.map((label, i) => (
           <Text
             key={i}
-            style={[styles.containerSizeMeasuringText, { fontSize }]}
+            numberOfLines={1}
+            style={[
+              styles.containerSizeMeasuringText,
+              size === 'small' && styles.containerSizeMeasuringText_small,
+              { fontSize },
+            ]}
             onLayout={handleSizeMeasuringTextLayout}
           >
             {label}
@@ -143,6 +157,8 @@ export function SegmentedControl<T extends string>({
         selectedIndex={value ? values.indexOf(value) : undefined}
         onChange={handleChange}
         style={[StyleSheet.absoluteFill, segmentedControlStyle]}
+        backgroundColor={Color(colors.outlineVariant).alpha(0.5).hexa()}
+        tintColor={colors.surface}
         fontStyle={fontStyle}
       />
     </View>
@@ -162,11 +178,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   containerSizeMeasuringText: {
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     fontSize: FONT_SIZE,
     minWidth: 32,
     textAlign: 'center',
     opacity: 0,
+  },
+  containerSizeMeasuringText_small: {
+    paddingHorizontal: 6,
   },
 });
 

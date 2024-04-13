@@ -10,6 +10,7 @@ import Text from '../../Text';
 import { ExampleUncontrolledTextInput } from '../../TextInput/examples';
 
 import { AccessoryButton } from './AccessoryButton';
+import ListItem from './ListItem';
 
 export const EMPTY_FUNCTION = () => {};
 export const FUNCTION_WITH_PRESSED_ALERT = () => {
@@ -89,3 +90,25 @@ export const EXAMPLE_CHILDREN_TALL = (
     <Text style={{ color: 'black', fontSize: 14 }}>This is the children.</Text>
   </View>
 );
+
+export const EXAMPLE_CHILDREN_WITH_PADDING_CANCELING = (
+  <ListItem.ChildrenPaddingCancelingContainer
+    style={{
+      borderColor: '#88888888',
+      borderWidth: 1,
+      backgroundColor: '#88888855',
+      height: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
+    <Text style={{ color: 'black', fontSize: 14 }}>This is the children.</Text>
+  </ListItem.ChildrenPaddingCancelingContainer>
+);
+
+export const EXAMPLE_CHILDREN_S = {
+  'Example Children': EXAMPLE_CHILDREN,
+  'Example Children Tall': EXAMPLE_CHILDREN_TALL,
+  'Example Children with Padding Canceling':
+    EXAMPLE_CHILDREN_WITH_PADDING_CANCELING,
+};

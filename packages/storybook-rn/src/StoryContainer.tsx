@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  Keyboard,
   Platform,
   ScrollView,
   StyleSheet,
@@ -18,7 +19,9 @@ import {
 } from '@rnstudy/react-native-ui';
 import { StoryParameters } from '@rnstudy/storybook-rn-types';
 
+import StoryContainerControls from './StoryContainerControls';
 import StoryContentContainer from './StoryContentContainer';
+import { ControlsState } from './types';
 
 export function StoryContainer({
   story,
@@ -27,26 +30,36 @@ export function StoryContainer({
   story: PartialStoryFn<ReactRenderer>;
   parameters: StoryParameters;
 }) {
-  const { storyContainer, containerBackground, specOverlay } = parameters;
+  const { storyContainer } = parameters;
 
-  const [useAlternativePlatform, setUseAlternativePlatform] = useState(false);
-  const [darkMode, setDarkMode] = useState(useColorScheme() === 'dark');
+  const [state, setState] = useState<ControlsState>({
+    uiPlatform: AVAILABLE_UI_PLATFORMS[0],
+    colorScheme: useColorScheme() === 'dark' ? 'dark' : 'light',
+    background: 'default',
+    elevated: undefined,
+  });
 
-  const [showBackground, setShowBackground] = useState(
-    !['none', 'transparent'].includes(containerBackground || ''),
-  );
-  const [useGroupedBackground, setUseGroupedBackground] = useState(
-    containerBackground === 'grouped',
-  );
-  const [backgroundElevated, setBackgroundElevated] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  const [showBoundaryLines, setShowBoundaryLines] = useState(false);
-  const [showSpecOverlay, setShowSpecOverlay] = useState(false);
+  useEffect(() => {
+    const keyboardShowListener = Keyboard.addListener(
+      'keyboardWillShow',
+      () => {
+        setIsKeyboardVisible(true);
+      },
+    );
+    const keyboardHideListener = Keyboard.addListener(
+      'keyboardWillHide',
+      () => {
+        setIsKeyboardVisible(false);
+      },
+    );
 
-  const colorScheme = darkMode ? 'dark' : 'light';
-  const uiPlatform = useAlternativePlatform
-    ? AVAILABLE_UI_PLATFORMS[1]
-    : AVAILABLE_UI_PLATFORMS[0];
+    return () => {
+      keyboardHideListener.remove();
+      keyboardShowListener.remove();
+    };
+  }, []);
 
   if (storyContainer === 'none') {
     const Story = story;
@@ -58,114 +71,16 @@ export function StoryContainer({
       <StoryContentContainer
         story={story}
         parameters={parameters}
-        uiPlatform={uiPlatform || AVAILABLE_UI_PLATFORMS[0]}
-        colorScheme={colorScheme}
-        showBackground={showBackground}
-        backgroundElevated={backgroundElevated}
-        useGroupedBackground={useGroupedBackground}
-        showSpecOverlay={showSpecOverlay}
-        showBoundaryLines={showBoundaryLines}
+        controlsState={state}
       />
 
-      <BackgroundColor>
-        {(backgroundColor) => (
-          <SeparatorColor opaque>
-            {(separatorColor) => (
-              <>
-                <ScrollView
-                  horizontal
-                  style={[
-                    styles.previewControls,
-                    { borderColor: separatorColor },
-                    { backgroundColor },
-                  ]}
-                  contentContainerStyle={styles.previewControlsContent}
-                >
-                  {AVAILABLE_UI_PLATFORMS.length > 1 && (
-                    <View style={styles.previewControlGroup}>
-                      <Text style={[styles.previewControlLabelText]}>
-                        Altr. P.
-                      </Text>
-                      <Switch
-                        style={styles.previewControlSwitch}
-                        value={useAlternativePlatform}
-                        onValueChange={setUseAlternativePlatform}
-                      />
-                    </View>
-                  )}
-                  {!!specOverlay && (
-                    <View style={styles.previewControlGroup}>
-                      <Text style={[styles.previewControlLabelText]}>
-                        Spec Overlay
-                      </Text>
-                      <Switch
-                        style={styles.previewControlSwitch}
-                        value={showSpecOverlay}
-                        onValueChange={setShowSpecOverlay}
-                      />
-                    </View>
-                  )}
-
-                  <View style={styles.previewControlGroup}>
-                    <Text style={[styles.previewControlLabelText]}>
-                      Dark Mode
-                    </Text>
-                    <Switch
-                      style={styles.previewControlSwitch}
-                      value={darkMode}
-                      onValueChange={setDarkMode}
-                    />
-                  </View>
-
-                  <View style={styles.previewControlGroup}>
-                    <Text style={[styles.previewControlLabelText]}>BG</Text>
-                    <Switch
-                      style={styles.previewControlSwitch}
-                      value={showBackground}
-                      onValueChange={setShowBackground}
-                    />
-                  </View>
-
-                  {showBackground && (
-                    <View style={styles.previewControlGroup}>
-                      <Text style={[styles.previewControlLabelText]}>
-                        BG Grouped
-                      </Text>
-                      <Switch
-                        style={styles.previewControlSwitch}
-                        value={useGroupedBackground}
-                        onValueChange={setUseGroupedBackground}
-                      />
-                    </View>
-                  )}
-
-                  <View style={styles.previewControlGroup}>
-                    <Text style={[styles.previewControlLabelText]}>
-                      BG Elevated
-                    </Text>
-                    <Switch
-                      style={styles.previewControlSwitch}
-                      value={backgroundElevated}
-                      onValueChange={setBackgroundElevated}
-                    />
-                  </View>
-
-                  <View style={styles.previewControlGroup}>
-                    <Text style={[styles.previewControlLabelText]}>
-                      Boundary L.
-                    </Text>
-                    <Switch
-                      style={styles.previewControlSwitch}
-                      value={showBoundaryLines}
-                      onValueChange={setShowBoundaryLines}
-                    />
-                  </View>
-                </ScrollView>
-              </>
-            )}
-          </SeparatorColor>
-        )}
-      </BackgroundColor>
+      {!isKeyboardVisible && (
+        <StoryContainerControls
+          value={state}
+          onValueChange={setState}
+          parameters={parameters}
+        />
+      )}
     </View>
   );
 }
@@ -174,32 +89,6 @@ const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
     overflow: 'hidden',
-  },
-  previewControls: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    flexGrow: 0,
-  },
-  previewControlsContent: {
-    flexGrow: 1,
-    paddingVertical: 4,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    gap: 8,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  previewControlGroup: {
-    flexDirection: 'row',
-    gap: 4,
-    alignItems: 'center',
-  },
-  previewControlLabelText: {
-    fontSize: 12,
-  },
-  previewControlSwitch: {
-    ...Platform.select({
-      ios: { transform: [{ scale: 0.8 }] },
-    }),
   },
 });
 

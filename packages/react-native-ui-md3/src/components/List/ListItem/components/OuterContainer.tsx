@@ -2,6 +2,7 @@ import React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 import { useColors, useColorScheme } from '../../../../contexts';
+import { SEPARATOR_COLOR_NAME } from '../consts';
 import { useBackgroundColor } from '../hooks';
 import type { Props as ListItemProps } from '../ListItem';
 
@@ -14,6 +15,7 @@ export type Props = {
   dragActive?: ListItemProps['dragActive'];
 
   _isInListComponent?: ListItemProps['_isInListComponent'];
+  _isNested?: ListItemProps['_isNested'];
 
   backgroundColor: string;
 };
@@ -25,6 +27,7 @@ export const OuterContainer = ({
   dragActive,
   backgroundColor,
   _isInListComponent,
+  _isNested,
 }: Props): JSX.Element => {
   const colorScheme = useColorScheme();
   const colors = useColors();
@@ -33,6 +36,7 @@ export const OuterContainer = ({
     backgroundColor,
     listStyle,
     dragActive,
+    _isNested,
   });
 
   return (
@@ -53,7 +57,7 @@ export const OuterContainer = ({
         containerStylesForSeparator[listStyle],
         containerStylesForSeparator[`${listStyle}_${listPosition}`],
         {
-          borderColor: colors.outlineVariant,
+          borderColor: colors[SEPARATOR_COLOR_NAME],
         },
       ]}
     >

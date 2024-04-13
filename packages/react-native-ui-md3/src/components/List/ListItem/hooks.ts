@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import Color from 'color';
 
-import { useColors, useTheme } from '../../../contexts';
+import { useColors } from '../../../contexts';
 
 import type { Props as ListItemProps } from './ListItem';
 
@@ -9,14 +9,18 @@ export function useBackgroundColor({
   backgroundColor,
   listStyle,
   dragActive,
+  _isNested,
 }: {
   backgroundColor: string;
   listStyle: ListItemProps['listStyle'];
   dragActive: ListItemProps['dragActive'];
+  _isNested: ListItemProps['_isNested'];
 }) {
   const colors = useColors();
 
   const color = useMemo(() => {
+    if (_isNested) return 'transparent';
+
     const backgroundColorBase =
       listStyle === 'plain' ? colors.surface : backgroundColor;
 
@@ -25,7 +29,7 @@ export function useBackgroundColor({
         ? backgroundColorBase
         : Color(backgroundColorBase).lighten(0.5).hexa()
       : backgroundColorBase;
-  }, [backgroundColor, colors.surface, dragActive, listStyle]);
+  }, [_isNested, backgroundColor, colors.surface, dragActive, listStyle]);
 
   return color;
 }

@@ -58,6 +58,7 @@ export function FormField(rawProps: Props) {
           </Text>
         ) : undefined
       }
+      shrinkTitleVertical
       accessories={vertical ? undefined : children}
       children={
         vertical ? (

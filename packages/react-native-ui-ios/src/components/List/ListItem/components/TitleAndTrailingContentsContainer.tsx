@@ -3,11 +3,17 @@ import { StyleSheet, View } from 'react-native';
 
 export type Props = {
   children: React.ReactNode;
+  onLayout?: React.ComponentProps<typeof View>['onLayout'];
 };
 
 export const TitleAndTrailingContentsContainer = ({
   children,
-}: Props): JSX.Element => <View style={styles.container}>{children}</View>;
+  onLayout,
+}: Props): JSX.Element => (
+  <View style={styles.container} onLayout={onLayout}>
+    {children}
+  </View>
+);
 
 TitleAndTrailingContentsContainer.displayName =
   'ListItem_TitleAndTrailingContentsContainer';

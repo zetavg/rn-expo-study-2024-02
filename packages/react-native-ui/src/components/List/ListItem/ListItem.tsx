@@ -1,8 +1,15 @@
 import React from 'react';
+import { StyleProp, View, ViewStyle } from 'react-native';
 
 import { Icon } from '@rnstudy/react-icons';
-import { ListItem as ListItemIOS } from '@rnstudy/react-native-ui-ios';
-import { ListItem as ListItemMD3 } from '@rnstudy/react-native-ui-md3';
+import {
+  ListItem as ListItemIOS,
+  listItemChildrenPaddingCancelingStyle as listItemChildrenPaddingCancelingStyleIOS,
+} from '@rnstudy/react-native-ui-ios';
+import {
+  ListItem as ListItemMD3,
+  listItemChildrenPaddingCancelingStyle as listItemChildrenPaddingCancelingStyleMD3,
+} from '@rnstudy/react-native-ui-md3';
 import { type ReactNodePropWithPropDefaultValuesContext } from '@rnstudy/react-utils';
 
 import { useUIPlatform } from '../../../contexts';
@@ -27,8 +34,8 @@ export type Props = {
     iconProps: Partial<React.ComponentProps<typeof Icon>>;
     backgroundColor: string;
   }>;
-  /** Align the icon with the title. Will only take effect when `children` is provided. */
-  alignIconWithTitle?: boolean;
+  /** Align the image with the title. Will only take effect when `children` is provided. */
+  alignImageWithTitle?: boolean;
 
   /** The text to display as the title. */
   title: string | React.ReactNode;
@@ -98,6 +105,9 @@ export type Props = {
   /** Specify the height of the list item. This will only work if `fixedHeight` is set to `true`. */
   height?: number;
 
+  /** Whether to shrink the vertical space of the title when the children has enough height to reach the minimum height of the list item. */
+  shrinkTitleVertical?: boolean;
+
   /** Additional content to render inside the list item. This will be rendered below of the title, subtitle and accessories. */
   children?: React.ReactNode;
 };
@@ -116,5 +126,32 @@ export function ListItem(props: Props) {
 }
 
 ListItem.AccessoryButton = AccessoryButton;
+
+ListItem.ChildrenPaddingCancelingContainer =
+  function ChildrenPaddingCancelingContainer({
+    style,
+    children,
+  }: {
+    style: StyleProp<ViewStyle>;
+    children: React.ReactNode;
+  }) {
+    const uiPlatform = useUIPlatform();
+
+    const listItemChildrenPaddingCancelingStyle = (() => {
+      switch (uiPlatform) {
+        case 'ios':
+          return listItemChildrenPaddingCancelingStyleIOS;
+
+        case 'android':
+          return listItemChildrenPaddingCancelingStyleMD3;
+      }
+    })();
+
+    return (
+      <View style={[listItemChildrenPaddingCancelingStyle, style]}>
+        {children}
+      </View>
+    );
+  };
 
 export default ListItem;

@@ -9,7 +9,7 @@ type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
 export type Props = {
   /** The style of the list. */
-  listStyle: ListStyle;
+  listStyle?: ListStyle;
   /** The placeholder to display when children is empty. */
   placeholder: Readonly<React.JSX.Element> | string;
   loading?: boolean;

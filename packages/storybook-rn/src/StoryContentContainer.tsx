@@ -16,24 +16,19 @@ import {
   BackgroundColor,
   Text,
   UIContextProvider,
-  UIPlatform,
 } from '@rnstudy/react-native-ui';
 import { StoryParameters } from '@rnstudy/storybook-rn-types';
+
+import { ControlsState } from './types';
 
 export type Props = {
   story: PartialStoryFn<ReactRenderer>;
   parameters: StoryParameters;
-  uiPlatform: UIPlatform;
-  colorScheme: 'light' | 'dark';
-  showBackground: boolean;
-  useGroupedBackground: boolean;
-  backgroundElevated: boolean;
-  showSpecOverlay: boolean;
-  showBoundaryLines: boolean;
+  controlsState: ControlsState;
 };
 
 export function StoryContentContainer(props: Props) {
-  const { uiPlatform, colorScheme } = props;
+  const { uiPlatform, colorScheme } = props.controlsState;
   return (
     <UIContextProvider colorScheme={colorScheme} platform={uiPlatform}>
       <StoryContentContainerWithoutContext {...props} />
@@ -44,12 +39,7 @@ export function StoryContentContainer(props: Props) {
 export function StoryContentContainerWithoutContext({
   story,
   parameters,
-  colorScheme,
-  showBackground,
-  useGroupedBackground,
-  backgroundElevated,
-  showSpecOverlay,
-  showBoundaryLines,
+  controlsState,
 }: Props) {
   const {
     storyContainer,
@@ -79,21 +69,22 @@ export function StoryContentContainerWithoutContext({
     ) : (
       <GestureHandlerRootView style={styles.rootContainer}>
         <ScrollView
-          alwaysBounceVertical={showBoundaryLines || false}
+          alwaysBounceVertical={controlsState.showBoundaryLines || false}
           style={styles.previewContent}
           contentContainerStyle={contentContainerStyle}
         >
           <ScrollView
             horizontal
-            alwaysBounceHorizontal={showBoundaryLines || false}
+            alwaysBounceHorizontal={controlsState.showBoundaryLines || false}
             style={styles.previewContent}
             contentContainerStyle={contentContainerStyle}
           >
             <View
               style={[
                 styles.previewWrapper,
-                showBoundaryLines && styles.previewWrapper_withBoundaryLines,
-                showBoundaryLines &&
+                controlsState.showBoundaryLines &&
+                  styles.previewWrapper_withBoundaryLines,
+                controlsState.showBoundaryLines &&
                   containerVerticalAlign === 'top' &&
                   styles.previewWrapper_withBoundaryLines_verticalAlignTop,
                 containerStyle,
@@ -101,12 +92,12 @@ export function StoryContentContainerWithoutContext({
               onLayout={handleContainerLayout}
             >
               <Story />
-              {!!specOverlay && showSpecOverlay && (
+              {!!specOverlay && controlsState.showSpecOverlay && (
                 <View style={styles.specOverlayContainer}>{specOverlay}</View>
               )}
             </View>
 
-            {showBoundaryLines && (
+            {controlsState.showBoundaryLines && (
               <>
                 <View
                   style={[
@@ -178,11 +169,16 @@ export function StoryContentContainerWithoutContext({
       </GestureHandlerRootView>
     );
 
-  if (showBackground) {
+  const backgroundType =
+    controlsState.background === 'default'
+      ? parameters.containerBackground
+      : controlsState.background;
+
+  if (backgroundType !== 'transparent') {
     return (
       <BackgroundColor
-        grouped={useGroupedBackground}
-        elevated={backgroundElevated}
+        grouped={backgroundType ? backgroundType === 'grouped' : undefined}
+        elevated={controlsState.elevated}
       >
         {(backgroundColor) => (
           <View style={[styles.rootContainer, { backgroundColor }]}>
@@ -196,7 +192,7 @@ export function StoryContentContainerWithoutContext({
   return (
     <ImageBackground
       source={
-        colorScheme.startsWith('dark')
+        controlsState.colorScheme.startsWith('dark')
           ? require('./images/transparent-dark.png')
           : require('./images/transparent-light.png')
       }

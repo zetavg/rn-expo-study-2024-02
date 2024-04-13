@@ -16,7 +16,7 @@ type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
 export type Props = {
   /** The style of the list. */
-  listStyle: ListStyle;
+  listStyle?: ListStyle;
   /** The placeholder to display. */
   placeholder: Readonly<React.JSX.Element> | string;
   loading?: boolean;
@@ -25,7 +25,7 @@ export type Props = {
 };
 
 export function ListPlaceholder({
-  listStyle,
+  listStyle = 'insetGrouped',
   placeholder,
   loading,
   style,

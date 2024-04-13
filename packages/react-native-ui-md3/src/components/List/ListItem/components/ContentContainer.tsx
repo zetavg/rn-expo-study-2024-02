@@ -32,6 +32,8 @@ export type Props = {
 
   dragActive?: ListItemProps['dragActive'];
 
+  _isNested?: ListItemProps['_isNested'];
+
   backgroundColor: string;
 };
 
@@ -46,9 +48,15 @@ export const ContentContainer = ({
   disableOnPress,
   loading,
   dragActive,
+  _isNested,
   backgroundColor,
 }: Props): JSX.Element => {
-  const bgc = useBackgroundColor({ backgroundColor, dragActive, listStyle });
+  const bgc = useBackgroundColor({
+    backgroundColor,
+    dragActive,
+    listStyle,
+    _isNested,
+  });
   const colors = useColors();
 
   const onPressTimerRef = React.useRef<null | ReturnType<typeof setTimeout>>(

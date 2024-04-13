@@ -4,6 +4,7 @@ import { BlurView } from 'expo-blur';
 
 import { useUIColors } from '../../../../contexts';
 import { useColorSchemeType } from '../../../../contexts/tokens/ColorSchemeTypeContext';
+import { SEPARATOR_COLOR_NAME } from '../consts';
 import { useBackgroundColor } from '../hooks';
 import type { Props as ListItemProps } from '../ListItem';
 
@@ -16,6 +17,7 @@ export type Props = {
   dragActive?: ListItemProps['dragActive'];
 
   _isInListComponent?: ListItemProps['_isInListComponent'];
+  _isNested?: ListItemProps['_isNested'];
 
   backgroundColor: string;
 };
@@ -27,6 +29,7 @@ export const OuterContainer = ({
   dragActive,
   backgroundColor,
   _isInListComponent,
+  _isNested,
 }: Props): JSX.Element => {
   const uiColors = useUIColors();
   const colorSchemeType = useColorSchemeType();
@@ -35,6 +38,7 @@ export const OuterContainer = ({
     backgroundColor,
     listStyle,
     dragActive,
+    _isNested,
   });
 
   return (
@@ -51,7 +55,7 @@ export const OuterContainer = ({
           },
         ],
         {
-          borderColor: uiColors.opaqueSeparator,
+          borderColor: uiColors[SEPARATOR_COLOR_NAME],
         },
         dragActive && dragActiveStyles.default,
         dragActive && dragActiveStyles[colorSchemeType],
@@ -87,29 +91,33 @@ const styles = StyleSheet.create({
   backgroundBlurView: {
     flex: 1,
   },
+  noBackground: {
+    backgroundColor: 'transparent',
+  },
 });
 
 export const containerStyles = StyleSheet.create({
-  plain: {
-    backgroundColor: 'transparent',
-  },
+  plain: {},
   plain_first: {},
   plain_middle: {},
   plain_last: {},
   plain_only: {},
 
-  grouped: {},
+  grouped: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
   grouped_first: {
-    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: 0,
   },
-  grouped_middle: {},
+  grouped_middle: {
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
+  },
   grouped_last: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderTopWidth: 0,
   },
-  grouped_only: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
+  grouped_only: {},
 
   insetGrouped: {
     marginHorizontal: 16,

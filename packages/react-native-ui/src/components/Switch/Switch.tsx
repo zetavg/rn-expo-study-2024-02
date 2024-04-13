@@ -24,6 +24,8 @@ export type Props = {
    */
   disabled?: boolean | undefined;
 
+  size?: 'small';
+
   style?: StyleProp<ViewStyle>;
 };
 

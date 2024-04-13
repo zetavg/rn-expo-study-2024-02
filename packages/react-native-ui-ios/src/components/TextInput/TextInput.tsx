@@ -1,5 +1,7 @@
-import React, { forwardRef, useCallback } from 'react';
+import React, { forwardRef, useCallback, useRef } from 'react';
 import {
+  Animated,
+  LayoutChangeEvent,
   Pressable,
   StyleSheet,
   TextInput as RNTextInput,
@@ -19,6 +21,8 @@ import Text from '../Text';
 import ClearIcon from './ClearIcon';
 import TextInputPropsContext from './TextInputPropsContext';
 
+const AnimatedText = Animated.createAnimatedComponent(Text);
+
 export type Props = RNTextInputProps;
 
 export const TextInput = forwardRef<RNTextInput, Props>(function TextInput(
@@ -33,6 +37,7 @@ export const TextInput = forwardRef<RNTextInput, Props>(function TextInput(
     onChangeText,
     onFocus,
     onBlur,
+    onLayout,
     clearButtonMode,
     ...restProps
   } = usePropsWithContextualDefaultValues(rawProps, TextInputPropsContext);
@@ -66,6 +71,34 @@ export const TextInput = forwardRef<RNTextInput, Props>(function TextInput(
     [onBlur],
   );
 
+  const placeholderOpacityAnim = useRef(new Animated.Value(1)).current;
+
+  const handleChangeText = useCallback(
+    (text: string) => {
+      if (text.length > 0) {
+        placeholderOpacityAnim.setValue(0);
+      } else {
+        placeholderOpacityAnim.setValue(1);
+      }
+
+      onChangeText?.(text);
+    },
+    [onChangeText, placeholderOpacityAnim],
+  );
+
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      // if (event.nativeEvent.layout.width <= 8) {
+      //   placeholderOpacityAnim.setValue(1);
+      // } else {
+      //   placeholderOpacityAnim.setValue(0);
+      // }
+
+      onLayout?.(event);
+    },
+    [onLayout],
+  );
+
   const {
     lineHeight: _, // Setting the lineHeight for TextInput will cause the text not to be vertically centered, so we omit it here.
     ...textStyle
@@ -84,11 +117,12 @@ export const TextInput = forwardRef<RNTextInput, Props>(function TextInput(
       ]}
       placeholderTextColor={uiColors.placeholderText}
       placeholder={useFakeAlignRight ? undefined : placeholder}
-      onChangeText={onChangeText}
+      onChangeText={handleChangeText}
       onFocus={handleFocus}
       onBlur={handleBlur}
       clearButtonMode={useFakeAlignRight ? undefined : clearButtonMode}
       value={value}
+      onLayout={handleLayout}
     />
   );
 
@@ -105,14 +139,17 @@ export const TextInput = forwardRef<RNTextInput, Props>(function TextInput(
         onPress={() => textInputRefObject.current?.focus()}
       >
         {!value && (
-          <Text
+          <AnimatedText
             textStyle="body"
             color="placeholder"
             numberOfLines={1}
-            style={styles.fakeAlignRightTextInputContainerPlaceholder}
+            style={[
+              styles.fakeAlignRightTextInputContainerPlaceholder,
+              { opacity: placeholderOpacityAnim },
+            ]}
           >
             {placeholder}
-          </Text>
+          </AnimatedText>
         )}
         {textInputElement}
         {shouldShowClearButton && (

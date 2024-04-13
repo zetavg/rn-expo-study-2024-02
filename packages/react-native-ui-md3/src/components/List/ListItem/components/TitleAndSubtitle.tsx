@@ -16,10 +16,14 @@ export type Props = {
   compact: ListItemProps['compact'];
   subtitleOnTop: ListItemProps['subtitleOnTop'];
   fixedHeight: ListItemProps['fixedHeight'];
+  minHeight: number | undefined;
   onLayout?: React.ComponentProps<typeof View>['onLayout'];
+  onTitleTextLayout?: React.ComponentProps<typeof Text>['onLayout'];
 };
 
-export function propsSelector(p: ListItemProps): Omit<Props, 'onLayout'> {
+export function propsSelector(
+  p: ListItemProps,
+): Omit<Props, 'minHeight' | 'onLayout' | 'onTitleTextLayout'> {
   return {
     title: p.title,
     subtitle: p.subtitle,
@@ -44,13 +48,19 @@ export const TitleAndSubtitle = React.memo(
     compact,
     subtitleOnTop,
     fixedHeight,
+    minHeight,
     onLayout,
+    onTitleTextLayout,
   }: Props): JSX.Element | null => {
     if (!title && !subtitle) return null;
 
     return (
       <View
-        style={[styles.container, compact && styles.container_compact]}
+        style={[
+          styles.container,
+          !!minHeight && { minHeight },
+          compact && styles.container_compact,
+        ]}
         onLayout={onLayout}
       >
         {(() => {
@@ -75,7 +85,11 @@ export const TitleAndSubtitle = React.memo(
                 }
 
                 return (
-                  <Text key="title" {...titleTextProps}>
+                  <Text
+                    key="title"
+                    {...titleTextProps}
+                    onLayout={onTitleTextLayout}
+                  >
                     {typeof title === 'string'
                       ? title
                       : withPropDefaultValuesContext(title, {

@@ -1,17 +1,27 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
+import { usePropsWithContextualDefaultValues } from '@rnstudy/react-utils';
+
+import { useColors } from '../../contexts';
 import BackgroundColor from '../BackgroundColor';
 
 import {
   containerBorderRadiusStyles,
   containerStyles,
 } from './ListItem/components/OuterContainer';
+import { SEPARATOR_COLOR_NAME } from './ListItem/consts';
+import { DEFAULT_LIST_STYLE } from './consts';
 import { ListFooterPropsContext } from './ListFooter';
 import { ListHeaderPropsContext } from './ListHeader';
-import { ListItemProps, ListItemPropsContext } from './ListItem';
+import {
+  listItemChildrenPaddingCancelingStyle,
+  ListItemProps,
+  ListItemPropsContext,
+} from './ListItem';
 import ListPlaceholder from './ListPlaceholder';
+import ListPropsContext from './ListPropsContext';
 import { getListPadding } from './utils';
 
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
@@ -33,40 +43,67 @@ export type Props = {
   loading?: boolean;
   /** The placeholder to display when children is empty. */
   placeholder?: Readonly<React.JSX.Element> | string;
+
+  /** Private prop indicating that the list is nested inside a list item. */
+  _isNested?: boolean;
 };
 
-export function List({
-  first = false,
-  listStyle = 'insetGrouped',
-  header,
-  footer,
-  children,
-  loading,
-  placeholder,
-}: Props) {
+export function List(rawProps: Props) {
+  const {
+    first = false,
+    listStyle: listStyleProp,
+    header,
+    footer,
+    children,
+    loading,
+    placeholder,
+    _isNested,
+  } = usePropsWithContextualDefaultValues(rawProps, ListPropsContext);
+
+  const colors = useColors();
+
+  const listStyle =
+    listStyleProp ||
+    (_isNested ? ('insetGrouped' as const) : DEFAULT_LIST_STYLE);
+
   const listItemPropsContextValue = useMemo(
-    () => ({ listStyle, _isInListComponent: true }),
-    [listStyle],
+    () => ({ listStyle, _isNested, _isInListComponent: true }),
+    [listStyle, _isNested],
   );
 
   const hasHeader = !!header;
   const hasFooter = !!footer;
 
-  const containerStyle = useMemo<ViewStyle>(
-    () => ({
-      paddingTop: getListPadding({
-        position: 'top',
-        first,
-        listStyle,
-        withHeader: hasHeader,
-      }),
-      paddingBottom: getListPadding({
-        position: 'bottom',
-        listStyle,
-        withFooter: hasFooter,
-      }),
-    }),
-    [first, listStyle, hasHeader, hasFooter],
+  const itemSeparatorColor = colors[SEPARATOR_COLOR_NAME];
+
+  const containerStyle = useMemo<StyleProp<ViewStyle>>(
+    () =>
+      _isNested
+        ? [
+            {
+              borderColor: itemSeparatorColor,
+              borderTopWidth: StyleSheet.hairlineWidth,
+            },
+            listItemChildrenPaddingCancelingStyle,
+          ]
+        : [
+            {
+              borderColor: itemSeparatorColor,
+              paddingTop: getListPadding({
+                position: 'top',
+                first,
+                listStyle,
+                withHeader: hasHeader,
+              }),
+              paddingBottom: getListPadding({
+                position: 'bottom',
+                listStyle,
+                withFooter: hasFooter,
+              }),
+            },
+            listStyle === 'plain' && !first && styles.plainListNotFirstBorder,
+          ],
+    [_isNested, itemSeparatorColor, first, listStyle, hasHeader, hasFooter],
   );
 
   const childrenWithoutFalselyValues =
@@ -138,9 +175,16 @@ export function List({
             <View
               style={[
                 styles.itemsContainer,
-                containerStyles[listStyle],
-                containerBorderRadiusStyles[listStyle],
-                { backgroundColor },
+                !_isNested && [
+                  containerStyles[listStyle],
+                  containerBorderRadiusStyles[listStyle],
+                  listStyle !== 'plain' && {
+                    backgroundColor,
+                  },
+                  {
+                    borderColor: colors.outlineVariant,
+                  },
+                ],
               ]}
             >
               <View style={loading && styles.loadingContent}>
@@ -180,7 +224,7 @@ export function List({
   );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   itemsContainer: {
     overflow: 'hidden',
   },
@@ -191,6 +235,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     opacity: 0,
+  },
+  plainListNotFirstBorder: {
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
   activityIndicatorContainer_shown: {
     opacity: 1,
