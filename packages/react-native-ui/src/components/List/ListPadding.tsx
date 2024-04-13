@@ -1,21 +1,25 @@
 import React from 'react';
-import { View } from 'react-native';
+
+import { ListPadding as ListPaddingIOS } from '@rnstudy/react-native-ui-ios';
+import { ListPadding as ListPaddingMD3 } from '@rnstudy/react-native-ui-md3';
 
 import { useUIPlatform } from '../../contexts';
 
-import { getListPadding, ListPaddingConditions } from './utils';
+import { ListPaddingConditions } from './utils';
 
 type Props = ListPaddingConditions;
 
 export function ListPadding(props: Props) {
   const uiPlatform = useUIPlatform();
-  return <View style={getPaddingStyle(uiPlatform, props)} />;
-}
 
-function getPaddingStyle(uiPlatform: 'ios' | 'android', props: Props) {
-  return {
-    height: getListPadding(uiPlatform, props),
-  };
+  switch (uiPlatform) {
+    case 'ios': {
+      return <ListPaddingIOS {...props} />;
+    }
+    case 'android': {
+      return <ListPaddingMD3 {...props} />;
+    }
+  }
 }
 
 export default ListPadding;

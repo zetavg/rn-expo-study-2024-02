@@ -12,6 +12,7 @@ import {
   containerStyles,
 } from './ListItem/components/OuterContainer';
 import { SEPARATOR_COLOR_NAME } from './ListItem/consts';
+import { DEFAULT_LIST_STYLE } from './consts';
 import { ListFooterPropsContext } from './ListFooter';
 import { ListHeaderPropsContext } from './ListHeader';
 import {
@@ -63,7 +64,7 @@ export function List(rawProps: Props) {
 
   const listStyle =
     listStyleProp ||
-    (_isNested ? ('insetGrouped' as const) : ('insetGrouped' as const));
+    (_isNested ? ('insetGrouped' as const) : DEFAULT_LIST_STYLE);
 
   const listItemPropsContextValue = useMemo(
     () => ({ listStyle, _isNested, _isInListComponent: true }),
@@ -73,32 +74,36 @@ export function List(rawProps: Props) {
   const hasHeader = !!header;
   const hasFooter = !!footer;
 
-  const separatorColor = colors[SEPARATOR_COLOR_NAME];
+  const itemSeparatorColor = colors[SEPARATOR_COLOR_NAME];
 
   const containerStyle = useMemo<StyleProp<ViewStyle>>(
     () =>
       _isNested
         ? [
             {
-              borderColor: separatorColor,
+              borderColor: itemSeparatorColor,
               borderTopWidth: StyleSheet.hairlineWidth,
             },
             listItemChildrenPaddingCancelingStyle,
           ]
-        : {
-            paddingTop: getListPadding({
-              position: 'top',
-              first,
-              listStyle,
-              withHeader: hasHeader,
-            }),
-            paddingBottom: getListPadding({
-              position: 'bottom',
-              listStyle,
-              withFooter: hasFooter,
-            }),
-          },
-    [_isNested, separatorColor, first, listStyle, hasHeader, hasFooter],
+        : [
+            {
+              borderColor: itemSeparatorColor,
+              paddingTop: getListPadding({
+                position: 'top',
+                first,
+                listStyle,
+                withHeader: hasHeader,
+              }),
+              paddingBottom: getListPadding({
+                position: 'bottom',
+                listStyle,
+                withFooter: hasFooter,
+              }),
+            },
+            listStyle === 'plain' && !first && styles.plainListNotFirstBorder,
+          ],
+    [_isNested, itemSeparatorColor, first, listStyle, hasHeader, hasFooter],
   );
 
   const childrenWithoutFalselyValues =
@@ -173,8 +178,10 @@ export function List(rawProps: Props) {
                 !_isNested && [
                   containerStyles[listStyle],
                   containerBorderRadiusStyles[listStyle],
-                  {
+                  listStyle !== 'plain' && {
                     backgroundColor,
+                  },
+                  {
                     borderColor: colors.outlineVariant,
                   },
                 ],
@@ -217,7 +224,7 @@ export function List(rawProps: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   itemsContainer: {
     overflow: 'hidden',
   },
@@ -228,6 +235,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     opacity: 0,
+  },
+  plainListNotFirstBorder: {
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
   activityIndicatorContainer_shown: {
     opacity: 1,

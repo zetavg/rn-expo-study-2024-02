@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   container_grabberShown: {
-    paddingRight: 8 + GRABBER_CONTAINER_WIDTH,
+    paddingEnd: 8 + GRABBER_CONTAINER_WIDTH,
   },
 });
 

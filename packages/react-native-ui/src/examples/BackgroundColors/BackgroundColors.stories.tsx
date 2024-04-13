@@ -6,7 +6,7 @@ const meta: Meta<typeof BackgroundColors> = {
   title: 'UI/Background Colors',
   component: BackgroundColors,
   parameters: {
-    containerBackground: 'none',
+    containerBackground: 'transparent',
     containerStyle: {
       marginTop: 16,
       alignSelf: 'stretch',

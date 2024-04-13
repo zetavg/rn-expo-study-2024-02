@@ -18,6 +18,7 @@
   },
   "peerDependencies": {
     "@react-native-picker/picker": "^2",
+    "@react-native-segmented-control/segmented-control": "^2.4",
     "@rnstudy/react-icons": "workspace:^",
     "react": "^18",
     "react-native": ">=0.71",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@react-native-picker/picker": "^2",
+    "@react-native-segmented-control/segmented-control": "^2.4",
     "@rnstudy/eslint-config": "workspace:^",
     "@rnstudy/jest-config": "workspace:^",
     "@rnstudy/react-icons": "workspace:^",

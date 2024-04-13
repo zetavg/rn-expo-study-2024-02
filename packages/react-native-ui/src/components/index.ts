@@ -5,6 +5,7 @@ export * from './Form';
 export * from './Icon';
 export * from './List';
 export * from './Menu';
+export * from './SegmentedControl';
 export * from './Select';
 export { SeparatorColor } from './SeparatorColor';
 export * from './Switch';

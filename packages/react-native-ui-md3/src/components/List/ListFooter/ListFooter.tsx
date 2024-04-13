@@ -8,6 +8,7 @@ import {
 } from '@rnstudy/react-utils';
 
 import Text, { TextPropsContext } from '../../Text';
+import { DEFAULT_LIST_STYLE } from '../consts';
 
 import ListFooterPropsContext from './ListFooterPropsContext';
 
@@ -23,7 +24,7 @@ export type Props = {
 };
 
 export function ListFooter(props: Props) {
-  const { listStyle = 'insetGrouped', text } =
+  const { listStyle = DEFAULT_LIST_STYLE, text } =
     usePropsWithContextualDefaultValues(props, ListFooterPropsContext);
   const textProps = TEXT_PROPS;
 
@@ -60,7 +61,9 @@ const styles = StyleSheet.create({
 });
 
 const containerStyles = StyleSheet.create({
-  plain: {},
+  plain: {
+    paddingBottom: 8,
+  },
   grouped: {},
   insetGrouped: {
     paddingHorizontal: 14,

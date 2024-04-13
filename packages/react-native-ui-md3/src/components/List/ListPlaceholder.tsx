@@ -12,12 +12,13 @@ import {
   containerBorderRadiusStyles,
   containerStyles,
 } from './ListItem/components/OuterContainer';
+import { DEFAULT_LIST_STYLE } from './consts';
 
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
 export type Props = {
   /** The style of the list. */
-  listStyle: ListStyle;
+  listStyle?: ListStyle;
   /** The placeholder to display. */
   placeholder: Readonly<React.JSX.Element> | string;
   loading?: boolean;
@@ -26,7 +27,7 @@ export type Props = {
 };
 
 export function ListPlaceholder({
-  listStyle,
+  listStyle = DEFAULT_LIST_STYLE,
   placeholder,
   loading,
   style,
@@ -40,8 +41,10 @@ export function ListPlaceholder({
         <View
           style={[
             placeholderContainerStyles.default,
-            {
+            listStyle !== 'plain' && {
               backgroundColor,
+            },
+            {
               borderColor: colors.outlineVariant,
             },
             !_isInListComponent && placeholderContainerStyles[listStyle],

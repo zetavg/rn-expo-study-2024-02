@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     paddingVertical: COMPACT_CONTAINER_PADDING_VERTICAL,
   },
   container_grabberShown: {
-    paddingRight: 20 + GRABBER_CONTAINER_WIDTH,
+    paddingEnd: 8 + GRABBER_CONTAINER_WIDTH,
   },
 });
 

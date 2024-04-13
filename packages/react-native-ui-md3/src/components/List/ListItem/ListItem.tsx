@@ -19,6 +19,7 @@ import BackgroundColor from '../../BackgroundColor';
 import Select from '../../Select';
 import Text from '../../Text';
 import TextInput from '../../TextInput';
+import { DEFAULT_LIST_STYLE } from '../consts';
 import { ListPropsContext } from '../ListPropsContext';
 
 import ContentContainer from './components/ContentContainer';
@@ -156,7 +157,7 @@ export type Props = {
 };
 
 const DEFAULT_PROPS = {
-  listStyle: 'insetGrouped' as ListStyle,
+  listStyle: DEFAULT_LIST_STYLE,
   listPosition: 'only' as PositionInList,
   singleLine: true,
 };

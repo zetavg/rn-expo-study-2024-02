@@ -1,3 +1,5 @@
+import { DEFAULT_LIST_STYLE } from './consts';
+
 type ListStyle = 'plain' | 'grouped' | 'insetGrouped';
 
 export type ListPaddingConditions = {
@@ -15,7 +17,9 @@ export type ListPaddingConditions = {
 );
 
 export function getListPadding(conditions: ListPaddingConditions): number {
-  if (conditions.listStyle === 'plain' && conditions.position === 'top') {
+  const { listStyle = DEFAULT_LIST_STYLE } = conditions;
+
+  if (listStyle === 'plain') {
     return 0;
   }
 

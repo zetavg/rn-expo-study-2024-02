@@ -13,6 +13,7 @@ import {
 import { Button } from '../../Button';
 import ButtonPropsContext from '../../Button/ButtonPropsContext';
 import Text, { TextPropsContext } from '../../Text';
+import { DEFAULT_LIST_STYLE } from '../consts';
 
 import ListHeaderPropsContext from './ListHeaderPropsContext';
 
@@ -44,19 +45,24 @@ export type Props = {
 
 export function ListHeader(props: Props) {
   const {
-    listStyle = 'insetGrouped',
+    listStyle = DEFAULT_LIST_STYLE,
     title,
     titleStyle = 'default',
     description,
     accessories,
   } = usePropsWithContextualDefaultValues(props, ListHeaderPropsContext);
 
-  const titleTextProps =
-    listStyle === 'plain'
-      ? PLAIN_TITLE_TEXT_PROPS
-      : titleStyle === 'prominent'
-        ? PROMINENT_TITLE_TEXT_PROPS
-        : TITLE_TEXT_PROPS;
+  const titleTextProps = (() => {
+    if (titleStyle === 'prominent') {
+      return PROMINENT_TITLE_TEXT_PROPS;
+    }
+
+    if (listStyle === 'plain') {
+      return PLAIN_TITLE_TEXT_PROPS;
+    }
+
+    return TITLE_TEXT_PROPS;
+  })();
 
   return (
     <View
@@ -126,7 +132,7 @@ export function ListHeader(props: Props) {
 }
 
 const TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
-  variant: 'labelMedium',
+  variant: 'labelLarge',
   color: 'onSurfaceVariant',
 };
 
@@ -136,7 +142,7 @@ const PROMINENT_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
 };
 
 const PLAIN_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
-  variant: 'labelMedium',
+  variant: 'labelLarge',
   color: 'secondary',
 };
 
@@ -192,7 +198,8 @@ const containerStyles = StyleSheet.create({
   },
 
   plain: {
-    paddingTop: 7,
+    paddingTop: 24,
+    paddingBottom: 4,
   },
   grouped: {},
   insetGrouped: {

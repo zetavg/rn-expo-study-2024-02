@@ -20,6 +20,7 @@ export type Props = {
   dragActive: ListItemProps['dragActive'];
   navigationLink: ListItemProps['navigationLink'];
   hideTrailingContents: ListItemProps['hideTrailingContents'];
+  _isNested: ListItemProps['_isNested'];
   hasAccessories: boolean;
   backgroundColor: string;
 };
@@ -34,6 +35,7 @@ export function propsSelector(
     dragActive: p.dragActive,
     navigationLink: p.navigationLink,
     hideTrailingContents: p.hideTrailingContents,
+    _isNested: p._isNested,
     hasAccessories: !!p.accessories,
   };
 }
@@ -46,11 +48,17 @@ export const Grabber = React.memo(
     dragActive,
     navigationLink,
     hideTrailingContents,
+    _isNested,
     hasAccessories,
     backgroundColor,
   }: Props): JSX.Element | null => {
     const uiColors = useUIColors();
-    const bgc = useBackgroundColor({ backgroundColor, dragActive, listStyle });
+    const bgc = useBackgroundColor({
+      backgroundColor,
+      dragActive,
+      listStyle,
+      _isNested,
+    });
 
     const [delayedHideTrailingContents, setDelayedHideTrailingContents] =
       useState(hideTrailingContents);

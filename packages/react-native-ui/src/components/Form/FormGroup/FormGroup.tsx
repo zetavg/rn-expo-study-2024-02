@@ -29,7 +29,9 @@ export function FormGroup({ vertical = false, children, ...restProps }: Props) {
 
   return (
     <FormFieldPropsContext.Provider value={formFieldPropsContextValue}>
-      <List {...restProps}>{children}</List>
+      <List listStyle="insetGrouped" {...restProps}>
+        {children}
+      </List>
     </FormFieldPropsContext.Provider>
   );
 }

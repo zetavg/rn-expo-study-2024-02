@@ -45,7 +45,6 @@ const meta: Meta<typeof List> = {
     containerStyle: {
       alignSelf: 'stretch',
     },
-    containerBackground: 'grouped',
   },
   argTypes: {
     first: { control: false },
@@ -228,7 +227,11 @@ export const BA9_GroupedWithHeaderTitleAndButtonWithIcon: Story = {
 };
 
 export const BB1_WithHeaderProminentTitle: Story = {
+  parameters: {
+    containerBackground: 'grouped',
+  },
   args: {
+    listStyle: 'insetGrouped',
     '__props:header': 'ListHeader',
     '__props:header:ListHeader.title': 'This is The Header Title',
     '__props:header:ListHeader.titleStyle': 'prominent',
@@ -236,6 +239,7 @@ export const BB1_WithHeaderProminentTitle: Story = {
 };
 
 export const BB2_WithHeaderProminentTitleAndButton: Story = {
+  ...BB1_WithHeaderProminentTitle,
   args: {
     ...BB1_WithHeaderProminentTitle.args,
     '__props:header:ListHeader.accessories':
@@ -244,6 +248,7 @@ export const BB2_WithHeaderProminentTitleAndButton: Story = {
 };
 
 export const BB3_WithHeaderProminentTitleAndButtonWithIcon: Story = {
+  ...BB1_WithHeaderProminentTitle,
   args: {
     ...BB1_WithHeaderProminentTitle.args,
     '__props:header:ListHeader.accessories':
@@ -252,6 +257,7 @@ export const BB3_WithHeaderProminentTitleAndButtonWithIcon: Story = {
 };
 
 export const BB4_WithHeaderProminentTitleAndPlainButton: Story = {
+  ...BB1_WithHeaderProminentTitle,
   args: {
     ...BB1_WithHeaderProminentTitle.args,
     '__props:header:ListHeader.accessories':
@@ -260,6 +266,7 @@ export const BB4_WithHeaderProminentTitleAndPlainButton: Story = {
 };
 
 export const BB5_WithHeaderProminentTitleAndPlainIconButton: Story = {
+  ...BB1_WithHeaderProminentTitle,
   args: {
     ...BB1_WithHeaderProminentTitle.args,
     '__props:header:ListHeader.accessories':
@@ -268,6 +275,7 @@ export const BB5_WithHeaderProminentTitleAndPlainIconButton: Story = {
 };
 
 export const BB6_WithHeaderProminentTitleAndMultipleButtons: Story = {
+  ...BB1_WithHeaderProminentTitle,
   args: {
     ...BB1_WithHeaderProminentTitle.args,
     '__props:header:ListHeader.accessories':
@@ -276,6 +284,7 @@ export const BB6_WithHeaderProminentTitleAndMultipleButtons: Story = {
 };
 
 export const BB9_GroupedWithHeaderProminentTitleAndMultipleButtons: Story = {
+  ...BB1_WithHeaderProminentTitle,
   args: {
     ...BB6_WithHeaderProminentTitleAndMultipleButtons.args,
     listStyle: 'grouped',
@@ -542,7 +551,7 @@ export const LA0_WithFlatList: Story = {
         )}
         ListEmptyComponent={
           <ListPlaceholder
-            listStyle={args.listStyle || 'insetGrouped'}
+            listStyle={args.listStyle}
             placeholder={args.placeholder || ''}
           />
         }
@@ -672,7 +681,7 @@ export const S0_WithSectionList: Story = {
         renderItem={({ item, listPosition }) =>
           item === 'empty' ? (
             <ListPlaceholder
-              listStyle={args.listStyle || 'insetGrouped'}
+              listStyle={args.listStyle}
               placeholder={args.placeholder || ''}
             />
           ) : (
@@ -723,7 +732,7 @@ export const S0_WithSectionList: Story = {
               withHeader={false}
             />
             <ListPlaceholder
-              listStyle={args.listStyle || 'insetGrouped'}
+              listStyle={args.listStyle}
               placeholder={args.placeholder || ''}
             />
             <ListPadding
@@ -1102,7 +1111,7 @@ function InteractiveAddRemoveItemComponent({
           <ListItem key={`${i}`} title={`Item ${i}`} {...listItemProps} />
         ))}
       </List>
-      <List>
+      <List listStyle={listProps.listStyle}>
         <ListItem
           button
           title="Add Item"
@@ -1153,7 +1162,7 @@ function InteractiveAddRemoveItemComponent({
         />
       </List>
 
-      <List>
+      <List listStyle={listProps.listStyle}>
         <ListItem
           title="Loading"
           accessories={<Switch value={loading} onValueChange={setLoading} />}
@@ -1214,7 +1223,7 @@ function InteractiveAddRemoveItemWithFlatListComponent({
             position="bottom"
             withFooter={useListFooter}
           />
-          <List>
+          <List listStyle={listProps.listStyle}>
             <ListItem
               button
               title="Add Item"
@@ -1266,6 +1275,7 @@ function InteractiveAddRemoveItemWithFlatListComponent({
           </List>
 
           <List
+            listStyle={listProps.listStyle}
             footer={
               itemsCount > 0 && (
                 <List.Footer text="Currently, the loading state is not implemented while using FlatList with items." />
@@ -1287,7 +1297,7 @@ function InteractiveAddRemoveItemWithFlatListComponent({
       )}
       ListEmptyComponent={
         <ListPlaceholder
-          listStyle={listProps.listStyle || 'insetGrouped'}
+          listStyle={listProps.listStyle}
           placeholder={listProps.placeholder || ''}
           loading={loading}
         />
