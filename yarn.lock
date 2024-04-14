@@ -3907,7 +3907,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-navigation/native-stack@npm:^7.0.0-alpha.20":
+"@react-navigation/native-stack@npm:7.0.0-alpha.20":
   version: 7.0.0-alpha.20
   resolution: "@react-navigation/native-stack@npm:7.0.0-alpha.20"
   dependencies:
@@ -3920,6 +3920,22 @@ __metadata:
     react-native-safe-area-context: ">= 4.0.0"
     react-native-screens: ">= 3.0.0"
   checksum: 10c0/73fde255b79baf0c3ba8686b5825ce5f6251cab3a46210d64775a230dc98a823ee24c0c3f928fa80312fa66456a9c4a9cba81a4641a7f310cfb7090eb85b1544
+  languageName: node
+  linkType: hard
+
+"@react-navigation/native-stack@patch:@react-navigation/native-stack@npm%3A7.0.0-alpha.20#~/.yarn/patches/@react-navigation-native-stack-npm-7.0.0-alpha.20-0585dd4951.patch":
+  version: 7.0.0-alpha.20
+  resolution: "@react-navigation/native-stack@patch:@react-navigation/native-stack@npm%3A7.0.0-alpha.20#~/.yarn/patches/@react-navigation-native-stack-npm-7.0.0-alpha.20-0585dd4951.patch::version=7.0.0-alpha.20&hash=19c04c"
+  dependencies:
+    "@react-navigation/elements": "npm:^2.0.0-alpha.17"
+    warn-once: "npm:^0.1.1"
+  peerDependencies:
+    "@react-navigation/native": ^7.0.0-alpha.18
+    react: ">= 18.2.0"
+    react-native: ">= 0.72.0"
+    react-native-safe-area-context: ">= 4.0.0"
+    react-native-screens: ">= 3.0.0"
+  checksum: 10c0/4d9364c25d122ae9373342fcb657e7510592d5aadcb3103959a9827027134921e0f90987b389fe44a339cc222cc0e9954627ef8b6484d368a64fc3d1f13096d1
   languageName: node
   linkType: hard
 
@@ -4162,7 +4178,7 @@ __metadata:
     "@react-native-segmented-control/segmented-control": "npm:*"
     "@react-navigation/bottom-tabs": "npm:^7.0.0-alpha.22"
     "@react-navigation/native": "npm:^7.0.0-alpha.18"
-    "@react-navigation/native-stack": "npm:^7.0.0-alpha.20"
+    "@react-navigation/native-stack": "patch:@react-navigation/native-stack@npm%3A7.0.0-alpha.20#~/.yarn/patches/@react-navigation-native-stack-npm-7.0.0-alpha.20-0585dd4951.patch"
     "@react-navigation/stack": "npm:^7.0.0-alpha.20"
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"

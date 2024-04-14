@@ -1,0 +1,37 @@
+diff --git a/lib/commonjs/views/HeaderConfig.js b/lib/commonjs/views/HeaderConfig.js
+index 57995849e6276a587b969e08e875e94aed1b2d6d..5e3392d05b8f8494815dbbe991a3124bb0f8ac03 100644
+--- a/lib/commonjs/views/HeaderConfig.js
++++ b/lib/commonjs/views/HeaderConfig.js
+@@ -123,6 +123,7 @@ function HeaderConfig(_ref) {
+     backButtonInCustomView: backButtonInCustomView,
+     backgroundColor: headerBackgroundColor,
+     backTitle: headerBackTitleVisible ? headerBackTitle : ' ',
++    backTitleVisible: headerBackTitleVisible,
+     backTitleFontFamily: backTitleFontFamily,
+     backTitleFontSize: backTitleFontSize,
+     blurEffect: headerBlurEffect,
+diff --git a/lib/module/views/HeaderConfig.js b/lib/module/views/HeaderConfig.js
+index fe545e2fd58fec448ee47377e75d218e07878820..692e035dd580f5739bd7468f8a5c4ad609669d5f 100644
+--- a/lib/module/views/HeaderConfig.js
++++ b/lib/module/views/HeaderConfig.js
+@@ -115,6 +115,7 @@ export function HeaderConfig(_ref) {
+     backButtonInCustomView: backButtonInCustomView,
+     backgroundColor: headerBackgroundColor,
+     backTitle: headerBackTitleVisible ? headerBackTitle : ' ',
++    backTitleVisible: headerBackTitleVisible,
+     backTitleFontFamily: backTitleFontFamily,
+     backTitleFontSize: backTitleFontSize,
+     blurEffect: headerBlurEffect,
+diff --git a/src/views/HeaderConfig.tsx b/src/views/HeaderConfig.tsx
+index ce7e0eff34d693ce7d973bfc1616ee00f812b0c2..76c75bb38d091a66e0b56854c2237f300537d379 100644
+--- a/src/views/HeaderConfig.tsx
++++ b/src/views/HeaderConfig.tsx
+@@ -182,6 +182,8 @@ export function HeaderConfig({
+       backButtonInCustomView={backButtonInCustomView}
+       backgroundColor={headerBackgroundColor}
+       backTitle={headerBackTitleVisible ? headerBackTitle : ' '}
++      // See: https://github.com/react-navigation/react-navigation/pull/11937
++      backTitleVisible={headerBackTitleVisible}
+       backTitleFontFamily={backTitleFontFamily}
+       backTitleFontSize={backTitleFontSize}
+       blurEffect={headerBlurEffect}
