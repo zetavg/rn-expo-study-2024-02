@@ -4113,6 +4113,7 @@ __metadata:
     expo: "npm:*"
     jest: "npm:^29"
     react-native: "npm:0.72"
+    react-native-sfsymbols: "npm:^1.2"
     react-native-svg: "npm:^15"
     react-native-vector-icons: "npm:^10"
     sweet-sfsymbols: "npm:^0.5.0"
@@ -4121,6 +4122,7 @@ __metadata:
     react: ^18
     react-dom: ^18
     react-native: ">=0.71"
+    react-native-sfsymbols: ^1.2
     react-native-svg: ^15
     react-native-vector-icons: ^10
     sweet-sfsymbols: ^0.5.0
@@ -4129,6 +4131,8 @@ __metadata:
     react-dom:
       optional: true
     react-native:
+      optional: true
+    react-native-sfsymbols:
       optional: true
     react-native-svg:
       optional: true
@@ -14833,6 +14837,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-sfsymbols@npm:^1.2":
+  version: 1.2.1
+  resolution: "react-native-sfsymbols@npm:1.2.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/fcf9f8ad32ac218af12a4759a54b043f3ebdffc15180b9364e2227bbbb816a606f7d3779fd6c243060d565feafdcfa34de42fc6616c194c7a5a07ef31b03f604
+  languageName: node
+  linkType: hard
+
 "react-native-svg-transformer@npm:^1":
   version: 1.3.0
   resolution: "react-native-svg-transformer@npm:1.3.0"
@@ -15508,6 +15522,7 @@ __metadata:
     react-native-reanimated: "npm:^3"
     react-native-safe-area-context: "npm:4.8.2"
     react-native-screens: "patch:react-native-screens@npm%3A3.31.0-rc.1#~/.yarn/patches/react-native-screens-npm-3.31.0-rc.1-c13c81e686.patch"
+    react-native-sfsymbols: "npm:^1.2"
     react-native-svg: "npm:^15"
     react-native-vector-icons: "npm:^10"
     react-test-renderer: "npm:^18"
