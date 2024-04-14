@@ -13,7 +13,9 @@ export function ExampleUncontrolledSegmentedControl<T extends string>({
   options = EXAMPLE_SELECT_OPTIONS as any,
   ...props
 }: Partial<Props<T>> & { showInfo?: boolean }) {
-  const [value, setValue] = useState<T | undefined>(props.value);
+  const [value, setValue] = useState<T | undefined>(
+    props.value || (Object.keys(options)[0] as T),
+  );
 
   return (
     <>

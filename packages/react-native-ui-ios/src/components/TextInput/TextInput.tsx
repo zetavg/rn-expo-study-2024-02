@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useRef } from 'react';
+import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
 import {
   Animated,
   LayoutChangeEvent,
@@ -73,6 +73,12 @@ export const TextInput = forwardRef<RNTextInput, Props>(function TextInput(
 
   const placeholderOpacityAnim = useRef(new Animated.Value(1)).current;
 
+  useEffect(() => {
+    if ((value?.length ?? 0) <= 0) {
+      placeholderOpacityAnim.setValue(1);
+    }
+  }, [placeholderOpacityAnim, value?.length]);
+
   const handleChangeText = useCallback(
     (text: string) => {
       if (text.length > 0) {
@@ -85,6 +91,16 @@ export const TextInput = forwardRef<RNTextInput, Props>(function TextInput(
     },
     [onChangeText, placeholderOpacityAnim],
   );
+
+  const handleClearButtonPress = useCallback(() => {
+    if (value) {
+      textInputRefObject.current?.clear();
+      onChangeText?.('');
+      placeholderOpacityAnim.setValue(1);
+    } else {
+      textInputRefObject.current?.focus();
+    }
+  }, [onChangeText, placeholderOpacityAnim, textInputRefObject, value]);
 
   const handleLayout = useCallback(
     (event: LayoutChangeEvent) => {
@@ -159,16 +175,7 @@ export const TextInput = forwardRef<RNTextInput, Props>(function TextInput(
               !value && styles.clearIconContainer_disabled,
             ]}
           >
-            <ClearButtonPressable
-              onPress={() => {
-                if (value) {
-                  textInputRefObject.current?.clear();
-                  onChangeText?.('');
-                } else {
-                  textInputRefObject.current?.focus();
-                }
-              }}
-            >
+            <ClearButtonPressable onPress={handleClearButtonPress}>
               <ClearIcon fill={uiColors.placeholderText} />
             </ClearButtonPressable>
           </View>

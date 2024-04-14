@@ -7,7 +7,7 @@ type Props = Omit<FormFieldProps, 'children' | 'vertical'> & SwitchProps;
 
 export function FormSwitch(props: Props) {
   return (
-    <FormField {...props} vertical={false}>
+    <FormField preserveChildrenSpace={false} {...props} vertical={false}>
       <Switch {...props} />
     </FormField>
   );

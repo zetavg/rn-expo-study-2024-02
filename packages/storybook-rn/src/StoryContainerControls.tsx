@@ -71,6 +71,7 @@ export function StoryContainerControlsWithoutContext({
                     </Text>
                     <SegmentedControl
                       size="small"
+                      height={28}
                       options={
                         Object.fromEntries(
                           AVAILABLE_UI_PLATFORMS.map((p) => [
@@ -111,6 +112,7 @@ export function StoryContainerControlsWithoutContext({
                   </Text>
                   <SegmentedControl
                     size="small"
+                    height={28}
                     options={{
                       light: 'Light',
                       dark: 'Dark',
@@ -139,6 +141,7 @@ export function StoryContainerControlsWithoutContext({
                   </Text>
                   <SegmentedControl
                     size="small"
+                    height={28}
                     options={{
                       default: 'Default',
                       transparent: 'Transp.',
@@ -220,21 +223,25 @@ export function StoryContainerControlsWithoutContext({
   );
 }
 
-export const STORY_CONTAINER_CONTROLS_HEIGHT = 120;
+export const STORY_CONTAINER_CONTROLS_HEIGHT = 100;
+export const STORY_CONTAINER_CONTROLS_CONTAINER_VERTICAL_PADDING = 4;
 
 const styles = StyleSheet.create({
   rootContainer: { height: STORY_CONTAINER_CONTROLS_HEIGHT },
   previewControls: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    flexGrow: 0,
     height: STORY_CONTAINER_CONTROLS_HEIGHT,
-    paddingVertical: 4,
+    flexGrow: 0,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingVertical: STORY_CONTAINER_CONTROLS_CONTAINER_VERTICAL_PADDING,
     justifyContent: 'center',
   },
   previewControlsContent: {
+    height:
+      (STORY_CONTAINER_CONTROLS_HEIGHT -
+        STORY_CONTAINER_CONTROLS_CONTAINER_VERTICAL_PADDING * 2) /
+      3,
     flexGrow: 1,
     flexDirection: 'row',
-    paddingVertical: 4,
     paddingHorizontal: 8,
     justifyContent: 'center',
     alignItems: 'center',

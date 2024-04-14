@@ -21,6 +21,7 @@ export type Props<T extends string> = {
    */
   onValueChange?: (value: T) => void;
 
+  height?: number;
   size?: 'small';
 
   style?: React.ComponentProps<typeof View>['style'];
