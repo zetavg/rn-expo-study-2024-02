@@ -7,8 +7,8 @@ import { Color } from '../tokens';
  * In most cases, consider using the `BackgroundColor` component instead of this hook, as it will handle background colors automatically with the context.
  */
 export function useBackgroundColor({
-  grouped,
-  level,
+  grouped = true,
+  level = -1,
   elevated,
 }: {
   /**
@@ -16,7 +16,7 @@ export function useBackgroundColor({
    *
    * If you are specifying this to set the background color of a view, be sure to wrap the children in a `IsGroupedBackgroundContext.Provider` so that the children components will be able to use the correct set of background colors.
    */
-  grouped: boolean;
+  grouped: boolean | undefined;
   /**
    * The level of the background color.
    *
@@ -28,7 +28,7 @@ export function useBackgroundColor({
    * - `4`: `'tertiary'`
    * - ...
    */
-  level: null | 'secondary' | 'tertiary' | number;
+  level?: null | 'secondary' | 'tertiary' | number;
   elevated?: boolean;
 }): Color {
   const uiColors = useUIColors();

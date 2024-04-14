@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Button, View } from 'react-native';
 
 import { useMainStackNavigation } from '@/navigation/hooks';
-import { StackScreenContent } from '@/navigation/screens';
 import { Icon } from '@rnstudy/react-icons';
 import type {
   StackScreenContentProps,
   StackScreenProps,
 } from '@rnstudy/react-native-navigation';
+import { StackScreenContent } from '@rnstudy/react-native-navigation';
 import {
   configureNextLayoutAnimation,
   Form,
@@ -39,6 +39,7 @@ export default function ExampleStackScreen({
       hideWhenScrolling: true,
       autoFocus: false,
     },
+    grouped: true,
     ...route.params?.stackScreenContentProps,
   });
 
@@ -66,11 +67,31 @@ export default function ExampleStackScreen({
               setStackScreenContentProps((s) => ({ ...s, headerLargeTitle }))
             }
           />
+          <Form.RadioButtons
+            label="Grouped"
+            options={{
+              undefined: { label: 'Default' },
+              true: { label: 'true' },
+              false: { label: 'false' },
+            }}
+            value={
+              typeof stackScreenContentProps.grouped === 'boolean'
+                ? JSON.stringify(stackScreenContentProps.grouped)
+                : 'undefined'
+            }
+            onValueChange={(value) => {
+              setStackScreenContentProps((s) => ({
+                ...s,
+                grouped: value === 'undefined' ? undefined : JSON.parse(value),
+              }));
+            }}
+          />
         </FormGroup>
 
-        <List>
+        <List listStyle="insetGrouped">
           <List.Item button title="Go Back" onPress={() => nav.goBack()} />
         </List>
+
         <FormGroup header={<FormGroup.Header title="Header Search Bar" />}>
           <Form.Switch
             label="Enable"

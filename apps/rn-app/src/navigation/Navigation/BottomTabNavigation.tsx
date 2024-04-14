@@ -1,7 +1,5 @@
 import { createBottomTabNavigator } from '@rnstudy/react-native-navigation';
 
-import config from '../config';
-
 import { MainStackNavigation } from './MainStackNavigation';
 import { ModalStackNavigation } from './ModalStackNavigation';
 
@@ -21,7 +19,6 @@ export const BottomTabNavigation = createBottomTabNavigator({
       options: {},
     },
   },
-  config,
 });
 
 export type BottomTabNavigationType = typeof BottomTabNavigation;

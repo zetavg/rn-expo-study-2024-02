@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'react-native';
 
 import { useMainStackNavigation } from '@/navigation/hooks';
-import { StackScreenContent } from '@/navigation/screens';
+import { StackScreenContent } from '@rnstudy/react-native-navigation';
 import { Icon } from '@rnstudy/react-icons';
 import type { StackScreenProps } from '@rnstudy/react-native-navigation';
 import { Text } from '@rnstudy/react-native-ui';

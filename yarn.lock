@@ -3562,6 +3562,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-picker/picker@npm:*":
+  version: 2.7.5
+  resolution: "@react-native-picker/picker@npm:2.7.5"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/461cee92d2aeebe64a33948b61b2d8706663c09c3d18181fc32c2650f27096cd02d0b1a69d32fb567d60be74e71a01b1b19eb0202b3b1b1e06f0a748b849ed7a
+  languageName: node
+  linkType: hard
+
 "@react-native-picker/picker@npm:^2":
   version: 2.6.1
   resolution: "@react-native-picker/picker@npm:2.6.1"
@@ -4147,6 +4157,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@rnstudy/react-native-navigation@workspace:packages/react-native-navigation"
   dependencies:
+    "@babel/core": "npm:*"
+    "@react-native-picker/picker": "npm:*"
+    "@react-native-segmented-control/segmented-control": "npm:*"
     "@react-navigation/bottom-tabs": "npm:^7.0.0-alpha.11"
     "@react-navigation/native": "npm:^7.0.0-alpha.15"
     "@react-navigation/native-stack": "npm:^7.0.0-alpha.11"
@@ -4154,6 +4167,7 @@ __metadata:
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/react-native-ui": "workspace:^"
     "@rnstudy/react-utils": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
     "@types/eslint": "npm:^8"
@@ -4165,10 +4179,15 @@ __metadata:
     jest: "npm:^29"
     react-native: "npm:0.72"
     react-native-gesture-handler: "npm:~2.14"
+    react-native-haptic-feedback: "npm:*"
+    react-native-ios-utilities: "npm:*"
+    react-native-reanimated: "npm:*"
     react-native-safe-area-context: "npm:4.8.2"
     react-native-screens: "npm:3.29.0"
+    sweet-sfsymbols: "npm:*"
     typescript: "npm:^5"
   peerDependencies:
+    "@rnstudy/react-native-ui": "workspace:^"
     expo-blur: ~12.9.2
     react: ^18.2
     react-dom: ^18

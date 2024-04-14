@@ -1,4 +1,4 @@
 export {
-  getStackScreenContentComponent,
+  StackScreenContent,
   type Props as StackScreenContentProps,
 } from './StackScreenContent';

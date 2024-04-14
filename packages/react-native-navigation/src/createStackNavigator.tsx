@@ -3,11 +3,11 @@ import { Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import * as iosColors from '@rnstudy/ios-colors';
+import { useColorScheme } from '@rnstudy/react-native-ui';
 
 import {
   AnyStackNavigatorScreens,
   GeneratedStackNavigator,
-  NavigationConfig,
   StackParamListOfScreens,
 } from './types';
 
@@ -21,7 +21,6 @@ export function createStackNavigator<
   id,
   screens,
   defaultInitialRouteName,
-  config,
 }: {
   /** The ID of the navigator. It should be unique within the app. */
   id: ID;
@@ -29,24 +28,12 @@ export function createStackNavigator<
   screens: S;
   /** The default initial route name of the navigator. */
   defaultInitialRouteName: keyof S;
-  /** Config object. */
-  config: NavigationConfig;
 }) {
   const Stack = createNativeStackNavigator<StackParamListOfScreens<S>>();
-
-  const { useColorScheme } = config;
 
   const getNavigatorWithInitialRouteName = (initialRouteName: keyof S) =>
     function StackNavigator() {
       const colorScheme = useColorScheme();
-
-      const backgroundColor = useMemo(() => {
-        switch (Platform.OS) {
-          default:
-          case 'ios':
-            return iosColors[colorScheme].uiColors.systemGroupedBackground;
-        }
-      }, [colorScheme]);
 
       const screenOptions = useMemo<
         React.ComponentProps<
@@ -74,10 +61,6 @@ export function createStackNavigator<
                   ...{
                     headerLargeTitle: true,
                     headerLargeTitleShadowVisible: false,
-                    headerLargeStyle: {
-                      // There's no way to set the background color of the large title header as transparent, so we need to set it to the same color as the background here
-                      backgroundColor,
-                    },
                   },
                 };
               }
@@ -87,7 +70,7 @@ export function createStackNavigator<
             }
           })(),
         }),
-        [colorScheme, backgroundColor],
+        [colorScheme],
       );
 
       return (
