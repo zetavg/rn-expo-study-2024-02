@@ -4183,7 +4183,7 @@ __metadata:
     react-native-ios-utilities: "npm:*"
     react-native-reanimated: "npm:*"
     react-native-safe-area-context: "npm:4.8.2"
-    react-native-screens: "npm:3.29.0"
+    react-native-screens: "patch:react-native-screens@npm%3A3.31.0-rc.1#~/.yarn/patches/react-native-screens-npm-3.31.0-rc.1-c13c81e686.patch"
     sweet-sfsymbols: "npm:*"
     typescript: "npm:^5"
   peerDependencies:
@@ -4194,7 +4194,7 @@ __metadata:
     react-native: ">= 0.72.0"
     react-native-gesture-handler: ~2.14
     react-native-safe-area-context: ">=4.8"
-    react-native-screens: ">=3.28.0"
+    react-native-screens: ^3.28.0
     typescript: ">= 4.2.x"
   peerDependenciesMeta:
     react-dom:
@@ -14791,16 +14791,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-screens@npm:3.29.0":
-  version: 3.29.0
-  resolution: "react-native-screens@npm:3.29.0"
+"react-native-screens@npm:3.31.0-rc.1":
+  version: 3.31.0-rc.1
+  resolution: "react-native-screens@npm:3.31.0-rc.1"
   dependencies:
     react-freeze: "npm:^1.0.0"
     warn-once: "npm:^0.1.0"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/90c32eb5452007f64c2f56412c671de98b4b89f09cf09cc7a7dca1cb23b1ac6de9bc726c67e774c7cb68dbd05bb329c053c1c2f071f534ad4e27d9d60be76eb0
+  checksum: 10c0/af09463c88aed68b785156f90664c70a40c193f0b2b7164a8e86a7983c7d681cc681f96055fc00db7d840b7ffb7f71f7c290383ebbb8e5dcb192794f7329acb6
+  languageName: node
+  linkType: hard
+
+"react-native-screens@patch:react-native-screens@npm%3A3.31.0-rc.1#~/.yarn/patches/react-native-screens-npm-3.31.0-rc.1-c13c81e686.patch":
+  version: 3.31.0-rc.1
+  resolution: "react-native-screens@patch:react-native-screens@npm%3A3.31.0-rc.1#~/.yarn/patches/react-native-screens-npm-3.31.0-rc.1-c13c81e686.patch::version=3.31.0-rc.1&hash=106327"
+  dependencies:
+    react-freeze: "npm:^1.0.0"
+    warn-once: "npm:^0.1.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/166d590262f0ae94be6309369069dcbfcb5f603b704d0c3a936a9332625a9fdbd83a1d19f29433c1d705561dab2fe69cd6c9295a4dccfe0f746c98de15c18b19
   languageName: node
   linkType: hard
 
@@ -15478,7 +15491,7 @@ __metadata:
     react-native-ios-utilities: "npm:4.4.x"
     react-native-reanimated: "npm:^3"
     react-native-safe-area-context: "npm:4.8.2"
-    react-native-screens: "npm:3.29.0"
+    react-native-screens: "patch:react-native-screens@npm%3A3.31.0-rc.1#~/.yarn/patches/react-native-screens-npm-3.31.0-rc.1-c13c81e686.patch"
     react-native-svg: "npm:^15"
     react-native-vector-icons: "npm:^10"
     react-test-renderer: "npm:^18"

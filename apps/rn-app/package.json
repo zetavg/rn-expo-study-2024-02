@@ -51,7 +51,7 @@
     "react-native-ios-utilities": "4.4.x",
     "react-native-reanimated": "^3",
     "react-native-safe-area-context": "4.8.2",
-    "react-native-screens": "3.29.0",
+    "react-native-screens": "patch:react-native-screens@npm%3A3.31.0-rc.1#~/.yarn/patches/react-native-screens-npm-3.31.0-rc.1-c13c81e686.patch",
     "react-native-svg": "^15",
     "react-native-vector-icons": "^10",
     "sweet-sfsymbols": "^0.5.0"
