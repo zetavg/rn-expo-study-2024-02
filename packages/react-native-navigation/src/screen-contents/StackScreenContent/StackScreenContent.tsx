@@ -16,6 +16,7 @@ import {
   useBackgroundColor,
   useColorScheme,
   useIOSUIColors,
+  useIsElevatedBackground,
 } from '@rnstudy/react-native-ui';
 
 import {
@@ -81,6 +82,7 @@ export function StackScreenContent({
   const colorScheme = useColorScheme();
   const backgroundColor = useBackgroundColor({
     grouped,
+    elevated: useIsElevatedBackground(),
   });
   const iosUIColors = useIOSUIColors();
 
