@@ -1,4 +1,5 @@
 export { useBackgroundColor } from './useBackgroundColor';
+export { useIsElevatedBackground } from './useIsElevatedBackground';
 export { useSeparatorColor } from './useSeparatorColor';
 export {
   useColors as useIOSColors,
