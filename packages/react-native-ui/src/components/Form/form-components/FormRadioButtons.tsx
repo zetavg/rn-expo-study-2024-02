@@ -3,20 +3,28 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { SegmentedControl } from '@rnstudy/react-native-ui-ios';
 import { RadioButton, Text as TextMD3 } from '@rnstudy/react-native-ui-md3';
+import {
+  arePropsWithOnValueChangeFunctionEqual,
+  OnValueChangeIsDependencyFreeProps,
+  typedMemo,
+} from '@rnstudy/react-utils';
 
 import { useUIPlatform } from '../../../contexts';
 import { SelectProps } from '../../Select';
 import FormField, { FormFieldProps } from '../FormField';
 
 type Props<T extends string> = Omit<FormFieldProps, 'children'> &
-  SelectProps<T>;
+  SelectProps<T> &
+  OnValueChangeIsDependencyFreeProps;
 
 /**
  * A form control that uses segmented control on iOS and radio buttons on other platforms, as a drop-in replacement for `Select`.
  *
  * Recommended for controls with 3 or less options.
  */
-export function FormRadioButtons<T extends string>(props: Props<T>) {
+export const FormRadioButtons = typedMemo(function FormRadioButtons<
+  T extends string,
+>(props: Props<T>) {
   const uiPlatform = useUIPlatform();
 
   // const { vertical } = usePropsWithContextualDefaultValues(
@@ -80,7 +88,9 @@ export function FormRadioButtons<T extends string>(props: Props<T>) {
       })()}
     </FormField>
   );
-}
+}, arePropsWithOnValueChangeFunctionEqual);
+
+FormRadioButtons.displayName = 'FormRadioButtons';
 
 const styles = StyleSheet.create({
   radioButtonItem: {

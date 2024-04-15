@@ -2,8 +2,8 @@ import React, { forwardRef } from 'react';
 import { ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 
-import bottomTabPressReactive from '../../bottomTabPressReactive';
-import { useContentInset } from '../../hooks';
+import bottomTabPressReactive from '../bottomTabPressReactive';
+import { useContentInset } from '../hooks';
 
 const BottomTabPressReactiveScrollView = bottomTabPressReactive(ScrollView);
 
