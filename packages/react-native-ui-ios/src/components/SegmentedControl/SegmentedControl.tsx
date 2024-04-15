@@ -33,6 +33,8 @@ export type Props<T extends string> = {
    */
   onValueChange?: (value: T) => void;
 
+  emphasizeSelectedText?: boolean;
+
   height?: number;
   size?: 'small';
 
@@ -45,6 +47,7 @@ export function SegmentedControl<T extends string>(rawProps: Props<T>) {
   const { options, value, onValueChange } = rawProps;
   const {
     disabled,
+    emphasizeSelectedText,
     height: heightProp = 32,
     size,
     style,
@@ -153,6 +156,9 @@ export function SegmentedControl<T extends string>(rawProps: Props<T>) {
         onChange={handleChange}
         style={[StyleSheet.absoluteFill, segmentedControlStyle]}
         fontStyle={fontStyle}
+        activeFontStyle={
+          emphasizeSelectedText ? styles.selectedText_emphasized : undefined
+        }
       />
     </View>
   );
@@ -174,6 +180,9 @@ const styles = StyleSheet.create({
     minWidth: 32,
     textAlign: 'center',
     opacity: 0,
+  },
+  selectedText_emphasized: {
+    fontWeight: '600',
   },
 });
 

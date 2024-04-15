@@ -1,24 +1,61 @@
-import React, { forwardRef, useLayoutEffect, useMemo } from 'react';
-import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+import React, { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import {
+  Animated,
+  LayoutChangeEvent,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { SearchBarProps as RNScreensSearchBarProps } from 'react-native-screens';
 import { useNavigation } from '@react-navigation/native';
 
-import { BackgroundColor, useBackgroundColor } from '@rnstudy/react-native-ui';
+import {
+  BackgroundColor,
+  SegmentedControlProps,
+  SegmentedControlPropsContextProvider,
+  useBackgroundColor,
+  useColorScheme,
+  useIOSUIColors,
+} from '@rnstudy/react-native-ui';
 
-import bottomTabPressReactive from '../bottomTabPressReactive';
-import { useContentInset } from '../hooks';
+import {
+  getHeaderTitleStyleIOS,
+  getScreenOptionsForHeaderBackgroundAndBorderIOS,
+} from '../../createStackNavigator';
+import HeaderControlButton from '../components/HeaderControlButton';
 import { HeaderSearchBarOptions } from '../types';
+
+import StackScreenContentScrollView from './components/StackScreenContentScrollView';
 
 export type Props = {
   title?: string;
+  /** Whether to show the header or not. Defaults to `true`. */
+  showHeader?: boolean;
+  headerBackgroundTransparent?: boolean;
+  headerTitleVisible?: boolean;
   /**
    * Whether to enable header with large title which collapses to regular header on scroll.
    *
-   * Only supported on iOS.
+   * Only supported on iOS for now.
    */
   headerLargeTitle?: boolean;
+
+  /**
+   * Label string on the back button on iOS. Defaults to the previous scene's title, or "Back" if there's not enough space.
+   *
+   * Only supported on iOS.
+   */
+  headerBackTitle?: string;
+  /**
+   * Whether to show the back button label on iOS. Defaults to `true`.
+   */
+  headerBackTitleVisible?: boolean;
+
   /** Options to render a search bar on the header. **Note that this should not be changed during the component's lifecycle.** */
   headerSearchBarOptions?: HeaderSearchBarOptions;
+
+  headerTitleContent?: React.ReactNode;
+  headerTrailingContent?: React.ReactNode;
 
   grouped?: boolean | undefined;
 
@@ -27,16 +64,25 @@ export type Props = {
 
 export function StackScreenContent({
   title,
+  showHeader,
+  headerBackgroundTransparent,
+  headerTitleVisible = true,
   headerLargeTitle,
+  headerBackTitle,
+  headerBackTitleVisible,
+  headerTitleContent,
+  headerTrailingContent,
   headerSearchBarOptions,
   grouped,
   children,
 }: Props) {
   const navigation = useNavigation();
 
+  const colorScheme = useColorScheme();
   const backgroundColor = useBackgroundColor({
     grouped,
   });
+  const iosUIColors = useIOSUIColors();
 
   const memoizedHeaderSearchBarOptions = useMemo(
     () => {
@@ -67,7 +113,35 @@ export function StackScreenContent({
 
     navigation.setOptions({
       title,
-      headerSearchBarOptions: processedHeaderSearchBarOptions,
+      headerShown: showHeader ?? true,
+
+      // Handle `headerBackgroundTransparent`.
+      ...(() => {
+        if (headerBackgroundTransparent)
+          return {
+            headerTransparent: true,
+            headerBlurEffect: null,
+            headerShadowVisible: false,
+            headerStyle: {
+              backgroundColor: 'transparent',
+            },
+          };
+
+        return getScreenOptionsForHeaderBackgroundAndBorderIOS({ colorScheme });
+      })(),
+
+      // Handle `headerTitleVisible`.
+      ...(() => {
+        if (headerTitleVisible)
+          return {
+            headerTitleStyle: getHeaderTitleStyleIOS({ iosUIColors }),
+          };
+
+        return {
+          headerTitleStyle: { color: 'transparent' },
+        };
+      })(),
+
       // Handle `headerLargeTitle`.
       ...(() => {
         if (Platform.OS !== 'ios') return {};
@@ -78,17 +152,48 @@ export function StackScreenContent({
           headerLargeStyle: { backgroundColor },
         };
       })(),
+
+      headerBackTitle: headerBackTitle || ' ',
+      headerBackTitleVisible,
+
+      headerTitle: headerTitleContent
+        ? () => (
+            <SegmentedControlPropsContextProvider
+              value={HEADER_SEGMENTED_CONTROL_PROPS}
+            >
+              {headerTitleContent}
+            </SegmentedControlPropsContextProvider>
+          )
+        : undefined,
+      headerRight: headerTrailingContent
+        ? () => (
+            <HeaderTrailingContentContainerIOS>
+              {headerTrailingContent}
+            </HeaderTrailingContentContainerIOS>
+          )
+        : undefined,
+
+      headerSearchBarOptions: processedHeaderSearchBarOptions,
     });
   }, [
     title,
+    showHeader,
+    headerBackgroundTransparent,
+    headerTitleVisible,
     headerLargeTitle,
+    headerBackTitle,
+    headerBackTitleVisible,
+    headerTitleContent,
+    headerTrailingContent,
     navigation,
     backgroundColor,
     memoizedHeaderSearchBarOptions,
+    iosUIColors,
+    colorScheme,
   ]);
 
   return (
-    <BackgroundColor grouped={grouped}>
+    <BackgroundColor root grouped={grouped}>
       {(bg) => (
         <View style={[styles.stackScreenContent, { backgroundColor: bg }]}>
           {children}
@@ -98,35 +203,62 @@ export function StackScreenContent({
   );
 }
 
-StackScreenContent.ScrollView = forwardRef<
-  ScrollView,
-  React.ComponentProps<typeof ScrollView>
->(function StackScreenContentScrollView(
-  props: React.ComponentProps<typeof ScrollView>,
-  ref,
-) {
-  const contentInset = useContentInset(props.contentInset);
+function HeaderTrailingContentContainerIOS({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  /** The content of headerRight will have trouble laying out in the correct position if it's rendered with a larger width before and has been re-rendered with a smaller width. To workaround this, we need to keep track of the maximum width that has been rendered and set the minWidth of the container to that value. */
+  const minWidthAnim = useRef(new Animated.Value(0)).current;
+  const maxRenderedWidthRef = React.useRef<number>(0);
+
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const { width } = event.nativeEvent.layout;
+
+      if (width <= maxRenderedWidthRef.current) return;
+
+      minWidthAnim.setValue(width);
+      maxRenderedWidthRef.current = width;
+    },
+    [maxRenderedWidthRef, minWidthAnim],
+  );
 
   return (
-    <BottomTabPressReactiveScrollView
-      ref={ref}
-      {...props}
-      keyboardDismissMode="interactive"
-      keyboardShouldPersistTaps="handled"
-      automaticallyAdjustKeyboardInsets
-      // For `headerLargeTitle` to work. See: https://reactnavigation.org/docs/7.x/native-stack-navigator#headerlargetitle
-      contentInsetAdjustmentBehavior="automatic"
-      contentInset={contentInset}
-      scrollIndicatorInsets={contentInset}
-    />
+    <Animated.View
+      onLayout={handleLayout}
+      style={[
+        styles.headerTrailingContentContainerIOS,
+        {
+          minWidth: minWidthAnim,
+        },
+      ]}
+    >
+      {children}
+    </Animated.View>
   );
-});
+}
 
-const BottomTabPressReactiveScrollView = bottomTabPressReactive(ScrollView);
+StackScreenContent.ScrollView = StackScreenContentScrollView;
+
+StackScreenContent.HeaderControlButton = HeaderControlButton;
+
+const HEADER_SEGMENTED_CONTROL_PROPS: Partial<SegmentedControlProps<string>> = {
+  height: 28,
+  emphasizeSelectedText: true,
+};
 
 const styles = StyleSheet.create({
   stackScreenContent: {
     flex: 1,
+  },
+  headerTrailingContentContainerIOS: {
+    alignSelf: 'center',
+    height: 44,
+    flexDirection: 'row',
+    justifyContent: 'flex-end', // Should change to 'flex-start' if flexDirection is set to 'row-reverse'.
+    alignItems: 'center',
+    gap: 16,
   },
 });
 

@@ -1,0 +1,7 @@
+import STACK_NAVIGATION_EXAMPLES from './stack';
+
+export const NAVIGATION_EXAMPLES = {
+  ...STACK_NAVIGATION_EXAMPLES,
+};
+
+export default NAVIGATION_EXAMPLES;

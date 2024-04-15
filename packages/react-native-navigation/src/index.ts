@@ -1,6 +1,7 @@
 export { createBottomTabNavigator } from './createBottomTabNavigator';
 export { createModalStackNavigator } from './createModalStackNavigator';
 export { createStackNavigator } from './createStackNavigator';
+export * from './examples';
 export { generateUseNavigationHook } from './generateUseNavigationHook';
 export * from './NavigationContainer';
 export * from './screen-contents';

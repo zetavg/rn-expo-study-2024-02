@@ -37,6 +37,7 @@ export type Props = React.ComponentProps<typeof RNText> & {
   variant?: Variant;
   color?: Color;
   emphasized?: boolean;
+  monospaced?: boolean;
 } & { [V in Variant]?: boolean } & { [V in Color]?: boolean };
 
 export function Text({

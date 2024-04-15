@@ -2,14 +2,21 @@ import React, { useMemo } from 'react';
 import { Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import * as iosColors from '@rnstudy/ios-colors';
-import { useColorScheme } from '@rnstudy/react-native-ui';
+import {
+  useColorScheme,
+  useIOSColors,
+  useIOSUIColors,
+} from '@rnstudy/react-native-ui';
 
 import {
   AnyStackNavigatorScreens,
   GeneratedStackNavigator,
   StackParamListOfScreens,
 } from './types';
+
+type ScreenOptions = React.ComponentProps<
+  ReturnType<typeof createNativeStackNavigator>['Navigator']
+>['screenOptions'];
 
 /**
  * Creates a pre-configured stack navigator.
@@ -34,29 +41,18 @@ export function createStackNavigator<
   const getNavigatorWithInitialRouteName = (initialRouteName: keyof S) =>
     function StackNavigator() {
       const colorScheme = useColorScheme();
+      const iosUIColors = useIOSUIColors();
 
-      const screenOptions = useMemo<
-        React.ComponentProps<
-          ReturnType<typeof createNativeStackNavigator>['Navigator']
-        >['screenOptions']
-      >(
+      const screenOptions = useMemo<ScreenOptions>(
         () => ({
           ...(() => {
             switch (Platform.OS) {
               case 'ios': {
                 return {
-                  headerTitleStyle: {
-                    color: iosColors[colorScheme].uiColors.label,
-                  },
-                  // Blur effect.
-                  headerTransparent: true,
-                  headerBlurEffect: colorScheme,
-                  headerShadowVisible: true,
-                  // Set a close-to-transparent background to make `headerShadowVisible: true` work.
-                  // See: https://github.com/react-navigation/react-navigation/issues/10845#issuecomment-1276312567
-                  headerStyle: {
-                    backgroundColor: 'rgba(255, 255, 255, 0.002)',
-                  },
+                  headerTitleStyle: getHeaderTitleStyleIOS({ iosUIColors }),
+                  ...getScreenOptionsForHeaderBackgroundAndBorderIOS({
+                    colorScheme,
+                  }),
                   // We defaults `headerLargeTitle` to `true` on iOS, allowing screens that used `headerLargeTitle` to be initialized correctly.
                   ...{
                     headerLargeTitle: true,
@@ -70,7 +66,7 @@ export function createStackNavigator<
             }
           })(),
         }),
-        [colorScheme],
+        [colorScheme, iosUIColors],
       );
 
       return (
@@ -125,6 +121,34 @@ export function createStackNavigator<
   navigator.withInitialRouteName = getNavigatorWithInitialRouteName;
 
   return navigator as Navigator;
+}
+
+export function getHeaderTitleStyleIOS({
+  iosUIColors,
+}: {
+  iosUIColors: ReturnType<typeof useIOSUIColors>;
+}) {
+  return {
+    color: iosUIColors.label,
+  };
+}
+
+export function getScreenOptionsForHeaderBackgroundAndBorderIOS({
+  colorScheme,
+}: {
+  colorScheme: 'light' | 'dark';
+}) {
+  return {
+    // Blur effect.
+    headerTransparent: true,
+    headerBlurEffect: colorScheme,
+    headerShadowVisible: true,
+    // Set a close-to-transparent background to make `headerShadowVisible: true` work.
+    // See: https://github.com/react-navigation/react-navigation/issues/10845#issuecomment-1276312567
+    headerStyle: {
+      backgroundColor: 'rgba(255, 255, 255, 0.002)',
+    },
+  };
 }
 
 export default createStackNavigator;

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   Animated,
   Platform,
@@ -46,6 +46,10 @@ export type Props<T extends string> = {
 
 export function Select<T extends string>(rawProps: Props<T>) {
   const { options, value, onValueChange } = rawProps;
+
+  /** Used to opt-out Layout Animations for the shown selected value. */
+  const [tmpValue, setTmpValue] = useState<typeof value | null>(null);
+
   const { placeholder, additionalActions, align, style, innerContainerStyle } =
     usePropsWithContextualDefaultValues(rawProps, SelectPropsContext);
 
@@ -59,7 +63,11 @@ export function Select<T extends string>(rawProps: Props<T>) {
         title: label,
         icon,
         handler: () => {
-          onValueChange(v as T);
+          setTmpValue(v as T);
+          setTimeout(() => {
+            onValueChange(v as T);
+            setTmpValue(null);
+          }, 2);
         },
         checked: v === value,
       };
@@ -117,6 +125,8 @@ export function Select<T extends string>(rawProps: Props<T>) {
     );
   }
 
+  const valueToShow = tmpValue ?? value;
+
   return (
     <View style={[styles.wrapper, style]}>
       <Menu items={menuItems}>
@@ -149,12 +159,12 @@ export function Select<T extends string>(rawProps: Props<T>) {
             >
               <AnimatedText
                 textStyle="body"
-                color={value ? 'secondary' : 'placeholder'}
+                color={valueToShow ? 'secondary' : 'placeholder'}
                 numberOfLines={1}
                 style={[styles.text, { opacity: contentOpacity }]}
               >
                 {(() => {
-                  const iconName = value && options[value]?.icon;
+                  const iconName = valueToShow && options[valueToShow]?.icon;
 
                   if (iconName) {
                     return (
@@ -166,7 +176,9 @@ export function Select<T extends string>(rawProps: Props<T>) {
 
                   return null;
                 })()}
-                {value ? options[value].label : placeholder || 'Select...'}
+                {valueToShow
+                  ? options[valueToShow].label
+                  : placeholder || 'Select...'}
               </AnimatedText>
               <Animated.View style={{ opacity: indicatorOpacity }}>
                 <PopUpMenuIndicator color={uiColors.secondaryLabel} />

@@ -8,7 +8,7 @@ type Props<T extends string> = Omit<FormFieldProps, 'children' | 'vertical'> &
 
 export function FormSelect<T extends string>(props: Props<T>) {
   return (
-    <FormField {...props} vertical={false}>
+    <FormField preserveChildrenSpace={false} {...props} vertical={false}>
       <Select {...props} />
     </FormField>
   );

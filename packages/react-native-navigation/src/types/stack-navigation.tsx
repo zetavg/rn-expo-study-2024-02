@@ -1,12 +1,24 @@
-import type { NavigationProp, RouteProp } from '@react-navigation/native';
+import type {
+  NavigationProp,
+  RouteProp,
+  StackActionHelpers,
+} from '@react-navigation/native';
 import type { StackNavigationOptions } from '@react-navigation/stack';
 
 /**
  * Props of a screen in a stack navigator.
  */
-export type StackScreenProps<Params extends object | undefined = undefined> = {
-  route: RouteProp<{ screen: Params }, 'screen'>;
-  navigation: NavigationProp<{ __: unknown }, '__', undefined>;
+export type StackScreenProps<
+  Params extends object | undefined = undefined,
+  RouteName extends string = 'unsafe-route-name',
+> = {
+  route: RouteProp<{ [k in RouteName]: Params }, RouteName>;
+  navigation: NavigationProp<
+    { [k in RouteName]: Params },
+    RouteName,
+    undefined
+  > &
+    StackActionHelpers<{ [k in RouteName]: Params }>;
 };
 
 /**
