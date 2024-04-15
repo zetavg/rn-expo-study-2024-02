@@ -27,6 +27,8 @@ export type SubMenu = {
   title?: string;
   /** An optional subtitle that will be displayed below the title. Note that this may not be shown if `inline` is set to true. */
   subtitle?: string;
+  /** The name of the icon to display on the item. **Note that this will only use the SF Symbol version of the icon, and will not fallback to Material Icon nor use the SVG icon.** */
+  icon?: IconName;
   /** Items to be displayed in the submenu. */
   items: Readonly<MenuItems>;
   /** The submenu will be displayed inline when set to true. */
@@ -50,6 +52,7 @@ export function buildNativeMenuItems(
         menuSubtitle: subMenu.subtitle,
         menuItems: buildNativeMenuItems(subMenu.items, key),
         menuOptions: [...(subMenu.inline ? ['displayInline' as const] : [])],
+        icon: subMenu.icon ? getMenuIcon(subMenu.icon) : undefined,
       };
     } else {
       const item = it as MenuAction;
@@ -59,32 +62,8 @@ export function buildNativeMenuItems(
         actionKey: key,
         actionTitle: item.title,
         actionSubtitle: item.subtitle,
+        icon: item.icon ? getMenuIcon(item.icon) : undefined,
       };
-      if (item.icon) {
-        const iconDefinition = IconDefinitions[item.icon];
-        const sfSymbolDefn = iconDefinition.sfSymbolDefinitions;
-
-        if (sfSymbolDefn) {
-          const osVersion =
-            typeof Platform.Version === 'string'
-              ? parseFloat(Platform.Version)
-              : Platform.Version;
-          for (const defn of sfSymbolDefn) {
-            if (
-              typeof defn.availability?.iOS === 'number' &&
-              osVersion >= defn.availability.iOS
-            ) {
-              menuItem.icon = {
-                type: 'IMAGE_SYSTEM',
-                imageValue: {
-                  systemName: defn.name,
-                },
-              };
-              break;
-            }
-          }
-        }
-      }
       if (item.checked) {
         menuItem.menuState = 'on';
       }
@@ -131,4 +110,29 @@ export function buildNativePressMenuItemHandler(
     const item = getItem(items, path);
     (item as Partial<MenuAction>)?.handler?.();
   };
+}
+
+export function getMenuIcon(iconName: IconName) {
+  const iconDefinition = IconDefinitions[iconName];
+  const sfSymbolDefn = iconDefinition.sfSymbolDefinitions;
+
+  if (sfSymbolDefn) {
+    const osVersion =
+      typeof Platform.Version === 'string'
+        ? parseFloat(Platform.Version)
+        : Platform.Version;
+    for (const defn of sfSymbolDefn) {
+      if (
+        typeof defn.availability?.iOS === 'number' &&
+        osVersion >= defn.availability.iOS
+      ) {
+        return {
+          type: 'IMAGE_SYSTEM',
+          imageValue: {
+            systemName: defn.name,
+          },
+        } as const;
+      }
+    }
+  }
 }

@@ -26,6 +26,8 @@ export type SubMenu = {
   title?: string;
   /** [TODO: Android not implemented, iOS only] An optional subtitle that will be displayed below the title. Note that this may not be shown if `inline` is set to true. */
   subtitle?: string;
+  /** The name of the icon to display on the item. **Note that on iOS, this will only use the SF Symbol version of the icon, and will not fallback to Material Icon nor use the SVG icon, and on Android, this will only use the Material Icon version of the icon, ignoring the SVG icon.** */
+  icon?: IconName;
   /** Items to be displayed in the submenu. */
   items: Readonly<MenuItems>;
   /** [TODO: Android not implemented, currently submenus will always be inline on Android] The submenu will be displayed inline when set to true. */
