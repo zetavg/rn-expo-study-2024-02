@@ -32,6 +32,9 @@ export default ({ config }: ConfigContext): ExpoConfig =>
           backgroundColor: '#ffffff',
         },
       },
+      androidNavigationBar: {
+        backgroundColor: '#ffffff00',
+      },
       extra: {
         ...config.extra,
       },
