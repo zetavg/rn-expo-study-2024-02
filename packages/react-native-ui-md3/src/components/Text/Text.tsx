@@ -22,6 +22,7 @@ export type Props = Partial<React.ComponentProps<typeof PaperText>> & {
     | 'secondaryVariant'
     | 'tertiaryVariant'
     | 'quaternary';
+  monospaced?: boolean;
   children?: ReactNodePropWithPropDefaultValuesContext<{
     iconProps: Partial<IconProps>;
   }>;
@@ -32,6 +33,7 @@ export function Text(rawProps: Props) {
     variant = 'bodyLarge',
     color,
     style,
+    monospaced,
     children,
     ...restProps
   } = usePropsWithContextualDefaultValues(rawProps, TextPropsContext);
@@ -76,7 +78,12 @@ export function Text(rawProps: Props) {
   return (
     <PaperText
       variant={variant}
-      style={[{ color: textColor }, styles.text, style]}
+      style={[
+        { color: textColor },
+        styles.text,
+        monospaced && styles.monospaced,
+        style,
+      ]}
       {...restProps}
     >
       {wrappedChildren}
@@ -86,6 +93,9 @@ export function Text(rawProps: Props) {
 
 const styles = StyleSheet.create({
   text: { fontFamily: 'Roboto' },
+  monospaced: {
+    fontFamily: 'monospace',
+  },
 });
 
 export default Text;

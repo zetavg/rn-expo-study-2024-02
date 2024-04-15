@@ -3,11 +3,12 @@ import { Platform, StyleSheet } from 'react-native';
 import { createBottomTabNavigator as rnCreateBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
 
+import { useColorScheme } from '@rnstudy/react-native-ui';
+
 import { BottomTabNavigationContext } from './screen-contents/contexts';
 import {
   AnyBottomTabNavigatorScreens,
   GeneratedBottomTabNavigator,
-  NavigationConfig,
 } from './types';
 
 /**
@@ -19,18 +20,13 @@ export function createBottomTabNavigator<
 >({
   id,
   screens,
-  config,
 }: {
   /** The ID of the navigator. It should be unique within the app. */
   id: ID;
   /** Screens in the navigator. */
   screens: S;
-  /** Config object. */
-  config: NavigationConfig;
 }): GeneratedBottomTabNavigator<ID, S> {
   const BottomTab = rnCreateBottomTabNavigator();
-
-  const { useColorScheme } = config;
 
   const navigator: Partial<GeneratedBottomTabNavigator<ID, S>> =
     function BottomTabNavigator() {

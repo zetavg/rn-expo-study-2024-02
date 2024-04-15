@@ -4,11 +4,11 @@ import { useFocusEffect } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import * as iosColors from '@rnstudy/ios-colors';
+import { useColorScheme } from '@rnstudy/react-native-ui';
 
 import {
   AnyStackNavigatorScreens,
   GeneratedStackNavigator,
-  NavigationConfig,
   StackParamListOfScreens,
 } from './types';
 
@@ -24,7 +24,6 @@ export function createModalStackNavigator<
   id,
   mainScreen,
   screens,
-  config,
 }: {
   /** The ID of the navigator. It should be unique within the app. */
   id: ID;
@@ -32,25 +31,11 @@ export function createModalStackNavigator<
   mainScreen: () => JSX.Element;
   /** Screens in the navigator. */
   screens: S;
-  /** Config object. */
-  config: NavigationConfig;
 }) {
   const Stack = createStackNavigator<StackParamListOfScreens<S>>();
 
-  const { useColorScheme } = config;
-
   const getNavigatorWithMainScreen = (MainScreenComponent: () => JSX.Element) =>
     function StackNavigator() {
-      const colorScheme = useColorScheme();
-
-      const backgroundColor = useMemo(() => {
-        switch (Platform.OS) {
-          default:
-          case 'ios':
-            return iosColors[colorScheme].uiColors.systemGroupedBackground;
-        }
-      }, [colorScheme]);
-
       const screenOptions = useMemo<
         React.ComponentProps<
           ReturnType<typeof createStackNavigator>['Navigator']

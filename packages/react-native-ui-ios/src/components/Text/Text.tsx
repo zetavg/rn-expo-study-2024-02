@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { Text as RNText } from 'react-native';
+import { StyleSheet, Text as RNText } from 'react-native';
 import Color from 'color';
 
 import { type IconProps, IconPropsContext } from '@rnstudy/react-icons';
@@ -27,6 +27,7 @@ export type Props = React.ComponentProps<typeof RNText> & {
     | 'title2'
     | 'title3';
   emphasized?: boolean;
+  monospaced?: boolean;
   color?:
     | 'default'
     | 'secondary'
@@ -51,6 +52,7 @@ export const Text = forwardRef<RNText, Props>(function Text(
     textStyle = 'body',
     color: colorProp,
     emphasized,
+    monospaced,
     children,
     ...restProps
   } = usePropsWithContextualDefaultValues(rawProps, TextPropsContext);
@@ -92,6 +94,7 @@ export const Text = forwardRef<RNText, Props>(function Text(
       style={[
         textStyles[textStyle],
         emphasized && textStyles[`${textStyle}_emphasized`],
+        monospaced && styles.monospaced,
         { color },
         style,
       ]}
@@ -99,6 +102,12 @@ export const Text = forwardRef<RNText, Props>(function Text(
       {wrappedChildren}
     </RNText>
   );
+});
+
+const styles = StyleSheet.create({
+  monospaced: {
+    fontFamily: 'Menlo',
+  },
 });
 
 export default Text;

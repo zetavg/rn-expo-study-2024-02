@@ -16,9 +16,10 @@ import {
 
 import ActivityIndicator from '../../ActivityIndicator';
 import BackgroundColor from '../../BackgroundColor';
-import Select from '../../Select';
-import Text from '../../Text';
-import TextInput from '../../TextInput';
+import { type SegmentedControlProps } from '../../SegmentedControl';
+import { type SelectProps } from '../../Select';
+import Text, { type TextProps } from '../../Text';
+import { type TextInputProps } from '../../TextInput';
 import { DEFAULT_LIST_STYLE } from '../consts';
 import { ListPropsContext } from '../ListPropsContext';
 
@@ -92,9 +93,10 @@ export type Props = {
 
   /** The accessories to display on the right side of the list item, such as icon, switch, select or other components. */
   accessories?: ReactNodePropWithPropDefaultValuesContext<{
-    textProps: Partial<React.ComponentProps<typeof Text>>;
-    textInputProps: Partial<React.ComponentProps<typeof TextInput>>;
-    selectProps: Partial<React.ComponentProps<typeof Select>>;
+    textProps: Partial<TextProps>;
+    textInputProps: Partial<TextInputProps>;
+    selectProps: Partial<SelectProps<string>>;
+    segmentedControlProps: Partial<SegmentedControlProps<string>>;
     iconProps: Partial<React.ComponentProps<typeof Icon>>;
   }>;
 

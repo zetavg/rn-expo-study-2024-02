@@ -5,8 +5,8 @@ import {
   useMainStackNavigation,
   useModalStackNavigation,
 } from '@/navigation/hooks';
-import { StackScreenContent } from '@/navigation/screens';
 import type { StackScreenProps } from '@rnstudy/react-native-navigation';
+import { StackScreenContent } from '@rnstudy/react-native-navigation';
 
 export default function Example1DetailsScreen({
   route,

@@ -15,12 +15,21 @@ export type Props = {
   errorMessage?: string;
   /** Set this to true to make the field vertical. Fields are horizontal (i.e. the label is on the left and the input is on the right) by default. */
   vertical?: boolean;
+  /** Preserves a wider space for the children. Defaults to `true`. */
+  preserveChildrenSpace?: boolean;
   children: React.ReactElement;
 } & Omit<ListItemProps, 'title' | 'accessories' | 'children'>;
 
 export function FormField(rawProps: Props) {
-  const { label, description, errorMessage, vertical, children, ...restProps } =
-    usePropsWithContextualDefaultValues(rawProps, FormFieldPropsContext);
+  const {
+    label,
+    description,
+    errorMessage,
+    vertical,
+    preserveChildrenSpace = true,
+    children,
+    ...restProps
+  } = usePropsWithContextualDefaultValues(rawProps, FormFieldPropsContext);
 
   const uiPlatform = useUIPlatform();
 
@@ -40,7 +49,7 @@ export function FormField(rawProps: Props) {
     <ListItem
       {...restProps}
       singleLine={false}
-      accessoriesContainsTextInput={!vertical}
+      accessoriesContainsTextInput={!vertical && preserveChildrenSpace}
       accessoriesVerticalAlignCenter
       title={
         <Text style={labelStyles[uiPlatform]} color="secondaryVariant">

@@ -4,7 +4,7 @@ import {
   useMainStackNavigation,
   useModalStackNavigation,
 } from '@/navigation/hooks';
-import { StackScreenContent } from '@/navigation/screens';
+import { StackScreenContent } from '@rnstudy/react-native-navigation';
 import { List } from '@rnstudy/react-native-ui';
 
 export default function ExampleScreensListScreen() {

@@ -4,6 +4,7 @@ import { Alert, View } from 'react-native';
 
 import { Icon } from '@rnstudy/react-icons';
 
+import { ExampleUncontrolledSegmentedControl } from '../../SegmentedControl/examples';
 import { ExampleUncontrolledSelect } from '../../Select/examples';
 import { ExampleUncontrolledSwitch } from '../../Switch/examples';
 import Text from '../../Text';
@@ -42,6 +43,7 @@ export const EXAMPLE_ACCESSORIES = {
   ),
   Switch: <ExampleUncontrolledSwitch />,
   Select: <ExampleUncontrolledSelect />,
+  SegmentedControl: <ExampleUncontrolledSegmentedControl />,
   TextInput: <ExampleUncontrolledTextInput placeholder="Text Input" />,
   'TextInput with Long Value': (
     <ExampleUncontrolledTextInput

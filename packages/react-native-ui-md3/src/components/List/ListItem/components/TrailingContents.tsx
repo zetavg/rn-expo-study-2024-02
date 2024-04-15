@@ -6,9 +6,13 @@ import { Icon, IconPropsContext } from '@rnstudy/react-icons';
 import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 
 import { useColors, useTheme } from '../../../../contexts';
-import { SelectProps, SelectPropsContext } from '../../../Select';
-import Text, { TextPropsContext } from '../../../Text';
-import { TextInputPropsContext } from '../../../TextInput';
+import {
+  type SegmentedControlProps,
+  SegmentedControlPropsContext,
+} from '../../../SegmentedControl';
+import { type SelectProps, SelectPropsContext } from '../../../Select';
+import Text, { type TextProps, TextPropsContext } from '../../../Text';
+import { type TextInputProps, TextInputPropsContext } from '../../../TextInput';
 import type { Props as ListItemProps } from '../ListItem';
 import { useListItemAnimationContext } from '../ListItemAnimationContext';
 export type Props = {
@@ -78,6 +82,10 @@ export const TrailingContents = React.memo(
             },
             context: SelectPropsContext,
           },
+          segmentedControlProps: {
+            value: TRAILING_ACCESSORIES_SEGMENTED_CONTROL_PROPS,
+            context: SegmentedControlPropsContext,
+          },
           iconProps: {
             value: hasSubtitleAndNotCompact
               ? TALL_TRAILING_ACCESSORIES_ICON_PROPS
@@ -124,13 +132,13 @@ export const TrailingContents = React.memo(
 
 TrailingContents.displayName = 'ListItem_TrailingContents';
 
-const TRAILING_DETAIL_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
+const TRAILING_DETAIL_TEXT_PROPS: Partial<TextProps> = {
   variant: 'labelSmall',
   color: 'onSurfaceVariant',
   numberOfLines: 1,
 };
 
-const TRAILING_ACCESSORIES_TEXT_INPUT_PROPS = {
+const TRAILING_ACCESSORIES_TEXT_INPUT_PROPS: Partial<TextInputProps> = {
   textAlign: 'right' as const,
 };
 
@@ -145,6 +153,12 @@ const TRAILING_ACCESSORIES_SELECT_PROPS: Partial<SelectProps<string>> = {
     variant: 'labelLarge' as const,
     color: 'onSurfaceVariant' as const,
   },
+};
+
+const TRAILING_ACCESSORIES_SEGMENTED_CONTROL_PROPS: Partial<
+  SegmentedControlProps<string>
+> = {
+  height: 28,
 };
 
 const TRAILING_ACCESSORIES_ICON_PROPS: Partial<

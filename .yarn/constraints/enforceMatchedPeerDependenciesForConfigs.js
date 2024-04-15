@@ -42,7 +42,10 @@ function enforceMatchedPeerDependenciesForConfigs({ Yarn }) {
             workspace.manifest.dependencies?.[peerDependencyIdent] ||
             workspace.manifest[dependenciesKey]?.[peerDependencyIdent];
 
-          if (semver.subset(listedVersion, peerDependencyVersion)) {
+          if (
+            listedVersion.startsWith('patch:') ||
+            semver.subset(listedVersion, peerDependencyVersion)
+          ) {
             continue;
           }
 

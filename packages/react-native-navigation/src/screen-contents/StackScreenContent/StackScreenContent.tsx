@@ -1,67 +1,102 @@
-import React, { forwardRef, useEffect, useLayoutEffect, useMemo } from 'react';
-import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+import React, { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import {
+  Animated,
+  LayoutChangeEvent,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { SearchBarProps as RNScreensSearchBarProps } from 'react-native-screens';
 import { useNavigation } from '@react-navigation/native';
 
-import * as iosColors from '@rnstudy/ios-colors';
+import {
+  BackgroundColor,
+  SegmentedControlProps,
+  SegmentedControlPropsContextProvider,
+  useBackgroundColor,
+  useColorScheme,
+  useIOSUIColors,
+} from '@rnstudy/react-native-ui';
 
-import { NavigationConfig } from '../../types';
-import bottomTabPressReactive from '../bottomTabPressReactive';
-import { useContentInset } from '../hooks';
+import {
+  getHeaderTitleStyleIOS,
+  getScreenOptionsForHeaderBackgroundAndBorderIOS,
+} from '../../createStackNavigator';
+import HeaderControlButton from '../components/HeaderControlButton';
 import { HeaderSearchBarOptions } from '../types';
+
+import StackScreenContentScrollView from './components/StackScreenContentScrollView';
 
 export type Props = {
   title?: string;
+  /** Whether to show the header or not. Defaults to `true`. */
+  showHeader?: boolean;
+  headerBackgroundTransparent?: boolean;
+  headerTitleVisible?: boolean;
   /**
    * Whether to enable header with large title which collapses to regular header on scroll.
    *
-   * Only supported on iOS.
+   * Only supported on iOS for now.
    */
   headerLargeTitle?: boolean;
+
+  /**
+   * Label string on the back button on iOS. Defaults to the previous scene's title, or "Back" if there's not enough space.
+   *
+   * Only supported on iOS.
+   */
+  headerBackTitle?: string;
+  /**
+   * Whether to show the back button label on iOS. Defaults to `true`.
+   */
+  headerBackTitleVisible?: boolean;
+
   /** Options to render a search bar on the header. **Note that this should not be changed during the component's lifecycle.** */
   headerSearchBarOptions?: HeaderSearchBarOptions;
-  /** Specify a custom background color. */
-  backgroundColor?: string;
+
+  headerTitleContent?: React.ReactNode;
+  headerTrailingContent?: React.ReactNode;
+
+  grouped?: boolean | undefined;
+
   children: React.ReactNode;
 };
 
-export function getStackScreenContentComponent(config: NavigationConfig) {
-  const { useColorScheme } = config;
+export function StackScreenContent({
+  title,
+  showHeader,
+  headerBackgroundTransparent,
+  headerTitleVisible = true,
+  headerLargeTitle,
+  headerBackTitle,
+  headerBackTitleVisible,
+  headerTitleContent,
+  headerTrailingContent,
+  headerSearchBarOptions,
+  grouped,
+  children,
+}: Props) {
+  const navigation = useNavigation();
 
-  function StackScreenContent({
-    title,
-    headerLargeTitle,
-    headerSearchBarOptions,
-    backgroundColor: backgroundColorProp,
-    children,
-  }: Props) {
-    const navigation = useNavigation();
-    const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme();
+  const backgroundColor = useBackgroundColor({
+    grouped,
+  });
+  const iosUIColors = useIOSUIColors();
 
-    const backgroundColor = useMemo(() => {
-      if (backgroundColorProp) return backgroundColorProp;
+  const memoizedHeaderSearchBarOptions = useMemo(
+    () => {
+      if (headerSearchBarOptions?.enable === false) return null;
 
-      switch (Platform.OS) {
-        case 'ios':
-        default:
-          return iosColors[colorScheme].uiColors.systemGroupedBackground;
-      }
-    }, [backgroundColorProp, colorScheme]);
+      return headerSearchBarOptions;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    Object.values(headerSearchBarOptions || {}),
+  );
 
-    const memoizedHeaderSearchBarOptions = useMemo(
-      () => {
-        if (headerSearchBarOptions?.enable === false) return null;
-
-        return headerSearchBarOptions;
-      },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      Object.values(headerSearchBarOptions || {}),
-    );
-
-    useLayoutEffect(() => {
-      const processedHeaderSearchBarOptions:
-        | RNScreensSearchBarProps
-        | undefined = memoizedHeaderSearchBarOptions
+  useLayoutEffect(() => {
+    const processedHeaderSearchBarOptions: RNScreensSearchBarProps | undefined =
+      memoizedHeaderSearchBarOptions
         ? {
             ...memoizedHeaderSearchBarOptions,
             onChangeText: memoizedHeaderSearchBarOptions.onChangeText
@@ -76,67 +111,155 @@ export function getStackScreenContentComponent(config: NavigationConfig) {
           }
         : undefined;
 
-      navigation.setOptions({
-        title,
-        headerSearchBarOptions: processedHeaderSearchBarOptions,
-        // Handle `headerLargeTitle`.
-        ...(() => {
-          if (Platform.OS !== 'ios') return {};
-
-          return {
-            headerLargeTitle,
-            headerLargeStyle: { backgroundColor },
-          };
-        })(),
-      });
-    }, [
+    navigation.setOptions({
       title,
-      headerLargeTitle,
-      navigation,
-      backgroundColor,
-      memoizedHeaderSearchBarOptions,
-    ]);
+      headerShown: showHeader ?? true,
 
-    return (
-      <View style={[styles.stackScreenContent, { backgroundColor }]}>
-        {children}
-      </View>
-    );
-  }
+      // Handle `headerBackgroundTransparent`.
+      ...(() => {
+        if (headerBackgroundTransparent)
+          return {
+            headerTransparent: true,
+            headerBlurEffect: null,
+            headerShadowVisible: false,
+            headerStyle: {
+              backgroundColor: 'transparent',
+            },
+          };
 
-  StackScreenContent.ScrollView = forwardRef<
-    ScrollView,
-    React.ComponentProps<typeof ScrollView>
-  >(function StackScreenContentScrollView(
-    props: React.ComponentProps<typeof ScrollView>,
-    ref,
-  ) {
-    const contentInset = useContentInset(props.contentInset);
+        return getScreenOptionsForHeaderBackgroundAndBorderIOS({ colorScheme });
+      })(),
 
-    return (
-      <BottomTabPressReactiveScrollView
-        ref={ref}
-        {...props}
-        keyboardDismissMode="interactive"
-        keyboardShouldPersistTaps="handled"
-        automaticallyAdjustKeyboardInsets
-        // For `headerLargeTitle` to work. See: https://reactnavigation.org/docs/7.x/native-stack-navigator#headerlargetitle
-        contentInsetAdjustmentBehavior="automatic"
-        contentInset={contentInset}
-        scrollIndicatorInsets={contentInset}
-      />
-    );
-  });
+      // Handle `headerTitleVisible`.
+      ...(() => {
+        if (headerTitleVisible)
+          return {
+            headerTitleStyle: getHeaderTitleStyleIOS({ iosUIColors }),
+          };
 
-  return StackScreenContent;
+        return {
+          headerTitleStyle: { color: 'transparent' },
+        };
+      })(),
+
+      // Handle `headerLargeTitle`.
+      ...(() => {
+        if (Platform.OS !== 'ios') return {};
+
+        return {
+          headerLargeTitle,
+          // There's no way to set the background color of the large title header as transparent, so we need to set it to the same color as the background here
+          headerLargeStyle: { backgroundColor },
+        };
+      })(),
+
+      headerBackTitle: headerBackTitle || ' ',
+      headerBackTitleVisible,
+
+      headerTitle: headerTitleContent
+        ? () => (
+            <SegmentedControlPropsContextProvider
+              value={HEADER_SEGMENTED_CONTROL_PROPS}
+            >
+              {headerTitleContent}
+            </SegmentedControlPropsContextProvider>
+          )
+        : undefined,
+      headerRight: headerTrailingContent
+        ? () => (
+            <HeaderTrailingContentContainerIOS>
+              {headerTrailingContent}
+            </HeaderTrailingContentContainerIOS>
+          )
+        : undefined,
+
+      headerSearchBarOptions: processedHeaderSearchBarOptions,
+    });
+  }, [
+    title,
+    showHeader,
+    headerBackgroundTransparent,
+    headerTitleVisible,
+    headerLargeTitle,
+    headerBackTitle,
+    headerBackTitleVisible,
+    headerTitleContent,
+    headerTrailingContent,
+    navigation,
+    backgroundColor,
+    memoizedHeaderSearchBarOptions,
+    iosUIColors,
+    colorScheme,
+  ]);
+
+  return (
+    <BackgroundColor root grouped={grouped}>
+      {(bg) => (
+        <View style={[styles.stackScreenContent, { backgroundColor: bg }]}>
+          {children}
+        </View>
+      )}
+    </BackgroundColor>
+  );
 }
 
-const BottomTabPressReactiveScrollView = bottomTabPressReactive(ScrollView);
+function HeaderTrailingContentContainerIOS({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  /** The content of headerRight will have trouble laying out in the correct position if it's rendered with a larger width before and has been re-rendered with a smaller width. To workaround this, we need to keep track of the maximum width that has been rendered and set the minWidth of the container to that value. */
+  const minWidthAnim = useRef(new Animated.Value(0)).current;
+  const maxRenderedWidthRef = React.useRef<number>(0);
+
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const { width } = event.nativeEvent.layout;
+
+      if (width <= maxRenderedWidthRef.current) return;
+
+      minWidthAnim.setValue(width);
+      maxRenderedWidthRef.current = width;
+    },
+    [maxRenderedWidthRef, minWidthAnim],
+  );
+
+  return (
+    <Animated.View
+      onLayout={handleLayout}
+      style={[
+        styles.headerTrailingContentContainerIOS,
+        {
+          minWidth: minWidthAnim,
+        },
+      ]}
+    >
+      {children}
+    </Animated.View>
+  );
+}
+
+StackScreenContent.ScrollView = StackScreenContentScrollView;
+
+StackScreenContent.HeaderControlButton = HeaderControlButton;
+
+const HEADER_SEGMENTED_CONTROL_PROPS: Partial<SegmentedControlProps<string>> = {
+  height: 28,
+  emphasizeSelectedText: true,
+};
 
 const styles = StyleSheet.create({
   stackScreenContent: {
     flex: 1,
   },
+  headerTrailingContentContainerIOS: {
+    alignSelf: 'center',
+    height: 44,
+    flexDirection: 'row',
+    justifyContent: 'flex-end', // Should change to 'flex-start' if flexDirection is set to 'row-reverse'.
+    alignItems: 'center',
+    gap: 16,
+  },
 });
 
-export default getStackScreenContentComponent;
+export default StackScreenContent;

@@ -12,7 +12,11 @@ import RNSegmentedControl, {
   NativeSegmentedControlIOSChangeEvent,
 } from '@react-native-segmented-control/segmented-control';
 
+import { usePropsWithContextualDefaultValues } from '@rnstudy/react-utils';
+
 import { useColorSchemeType } from '../../contexts/tokens/ColorSchemeTypeContext';
+
+import SegmentedControlPropsContext from './SegmentedControlPropsContext';
 
 export type Props<T extends string> = {
   disabled?: boolean;
@@ -29,6 +33,9 @@ export type Props<T extends string> = {
    */
   onValueChange?: (value: T) => void;
 
+  emphasizeSelectedText?: boolean;
+
+  height?: number;
   size?: 'small';
 
   style?: React.ComponentProps<typeof View>['style'];
@@ -36,15 +43,20 @@ export type Props<T extends string> = {
   disableAdvancedAutoSizing?: boolean;
 };
 
-export function SegmentedControl<T extends string>({
-  options,
-  value,
-  onValueChange,
-  disabled,
-  size,
-  style,
-  disableAdvancedAutoSizing,
-}: Props<T>) {
+export function SegmentedControl<T extends string>(rawProps: Props<T>) {
+  const { options, value, onValueChange } = rawProps;
+  const {
+    disabled,
+    emphasizeSelectedText,
+    height: heightProp = 32,
+    size,
+    style,
+    disableAdvancedAutoSizing,
+  } = usePropsWithContextualDefaultValues(
+    rawProps,
+    SegmentedControlPropsContext,
+  );
+
   const values = useMemo(
     () => Reflect.ownKeys(options) as (keyof typeof options)[],
     [options],
@@ -75,7 +87,7 @@ export function SegmentedControl<T extends string>({
   );
 
   const height =
-    HEIGHT *
+    heightProp *
     Math.min(Math.max(fontScale, 1), 1.2) *
     (size === 'small' ? 0.8 : 1);
 
@@ -144,12 +156,13 @@ export function SegmentedControl<T extends string>({
         onChange={handleChange}
         style={[StyleSheet.absoluteFill, segmentedControlStyle]}
         fontStyle={fontStyle}
+        activeFontStyle={
+          emphasizeSelectedText ? styles.selectedText_emphasized : undefined
+        }
       />
     </View>
   );
 }
-
-const HEIGHT = 32;
 
 const FONT_SIZE = 13;
 
@@ -167,6 +180,9 @@ const styles = StyleSheet.create({
     minWidth: 32,
     textAlign: 'center',
     opacity: 0,
+  },
+  selectedText_emphasized: {
+    fontWeight: '600',
   },
 });
 

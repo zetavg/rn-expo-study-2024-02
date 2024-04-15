@@ -2,14 +2,21 @@ import React, { useMemo } from 'react';
 import { Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import * as iosColors from '@rnstudy/ios-colors';
+import {
+  useColorScheme,
+  useIOSColors,
+  useIOSUIColors,
+} from '@rnstudy/react-native-ui';
 
 import {
   AnyStackNavigatorScreens,
   GeneratedStackNavigator,
-  NavigationConfig,
   StackParamListOfScreens,
 } from './types';
+
+type ScreenOptions = React.ComponentProps<
+  ReturnType<typeof createNativeStackNavigator>['Navigator']
+>['screenOptions'];
 
 /**
  * Creates a pre-configured stack navigator.
@@ -21,7 +28,6 @@ export function createStackNavigator<
   id,
   screens,
   defaultInitialRouteName,
-  config,
 }: {
   /** The ID of the navigator. It should be unique within the app. */
   id: ID;
@@ -29,55 +35,28 @@ export function createStackNavigator<
   screens: S;
   /** The default initial route name of the navigator. */
   defaultInitialRouteName: keyof S;
-  /** Config object. */
-  config: NavigationConfig;
 }) {
   const Stack = createNativeStackNavigator<StackParamListOfScreens<S>>();
-
-  const { useColorScheme } = config;
 
   const getNavigatorWithInitialRouteName = (initialRouteName: keyof S) =>
     function StackNavigator() {
       const colorScheme = useColorScheme();
+      const iosUIColors = useIOSUIColors();
 
-      const backgroundColor = useMemo(() => {
-        switch (Platform.OS) {
-          default:
-          case 'ios':
-            return iosColors[colorScheme].uiColors.systemGroupedBackground;
-        }
-      }, [colorScheme]);
-
-      const screenOptions = useMemo<
-        React.ComponentProps<
-          ReturnType<typeof createNativeStackNavigator>['Navigator']
-        >['screenOptions']
-      >(
+      const screenOptions = useMemo<ScreenOptions>(
         () => ({
           ...(() => {
             switch (Platform.OS) {
               case 'ios': {
                 return {
-                  headerTitleStyle: {
-                    color: iosColors[colorScheme].uiColors.label,
-                  },
-                  // Blur effect.
-                  headerTransparent: true,
-                  headerBlurEffect: colorScheme,
-                  headerShadowVisible: true,
-                  // Set a close-to-transparent background to make `headerShadowVisible: true` work.
-                  // See: https://github.com/react-navigation/react-navigation/issues/10845#issuecomment-1276312567
-                  headerStyle: {
-                    backgroundColor: 'rgba(255, 255, 255, 0.002)',
-                  },
+                  headerTitleStyle: getHeaderTitleStyleIOS({ iosUIColors }),
+                  ...getScreenOptionsForHeaderBackgroundAndBorderIOS({
+                    colorScheme,
+                  }),
                   // We defaults `headerLargeTitle` to `true` on iOS, allowing screens that used `headerLargeTitle` to be initialized correctly.
                   ...{
                     headerLargeTitle: true,
                     headerLargeTitleShadowVisible: false,
-                    headerLargeStyle: {
-                      // There's no way to set the background color of the large title header as transparent, so we need to set it to the same color as the background here
-                      backgroundColor,
-                    },
                   },
                 };
               }
@@ -87,7 +66,7 @@ export function createStackNavigator<
             }
           })(),
         }),
-        [colorScheme, backgroundColor],
+        [colorScheme, iosUIColors],
       );
 
       return (
@@ -142,6 +121,34 @@ export function createStackNavigator<
   navigator.withInitialRouteName = getNavigatorWithInitialRouteName;
 
   return navigator as Navigator;
+}
+
+export function getHeaderTitleStyleIOS({
+  iosUIColors,
+}: {
+  iosUIColors: ReturnType<typeof useIOSUIColors>;
+}) {
+  return {
+    color: iosUIColors.label,
+  };
+}
+
+export function getScreenOptionsForHeaderBackgroundAndBorderIOS({
+  colorScheme,
+}: {
+  colorScheme: 'light' | 'dark';
+}) {
+  return {
+    // Blur effect.
+    headerTransparent: true,
+    headerBlurEffect: colorScheme,
+    headerShadowVisible: true,
+    // Set a close-to-transparent background to make `headerShadowVisible: true` work.
+    // See: https://github.com/react-navigation/react-navigation/issues/10845#issuecomment-1276312567
+    headerStyle: {
+      backgroundColor: 'rgba(255, 255, 255, 0.002)',
+    },
+  };
 }
 
 export default createStackNavigator;

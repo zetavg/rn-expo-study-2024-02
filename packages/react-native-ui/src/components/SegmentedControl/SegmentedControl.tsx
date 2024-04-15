@@ -21,6 +21,9 @@ export type Props<T extends string> = {
    */
   onValueChange?: (value: T) => void;
 
+  emphasizeSelectedText?: boolean;
+
+  height?: number;
   size?: 'small';
 
   style?: React.ComponentProps<typeof View>['style'];

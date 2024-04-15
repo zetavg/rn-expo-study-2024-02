@@ -5,9 +5,13 @@ import { Icon, IconPropsContext } from '@rnstudy/react-icons';
 import { withPropDefaultValuesContext } from '@rnstudy/react-utils';
 
 import { useUIColors } from '../../../../contexts';
-import { SelectPropsContext } from '../../../Select';
-import Text, { TextPropsContext } from '../../../Text';
-import { TextInputPropsContext } from '../../../TextInput';
+import {
+  SegmentedControlProps,
+  SegmentedControlPropsContext,
+} from '../../../SegmentedControl';
+import { type SelectProps, SelectPropsContext } from '../../../Select';
+import Text, { type TextProps, TextPropsContext } from '../../../Text';
+import { type TextInputProps, TextInputPropsContext } from '../../../TextInput';
 import CheckmarkIcon from '../icons/CheckmarkIcon';
 import type { Props as ListItemProps } from '../ListItem';
 import { useListItemAnimationContext } from '../ListItemAnimationContext';
@@ -59,6 +63,10 @@ export const TrailingContents = React.memo(
             value: TRAILING_ACCESSORIES_SELECT_PROPS,
             context: SelectPropsContext,
           },
+          segmentedControlProps: {
+            value: TRAILING_ACCESSORIES_SEGMENTED_CONTROL_PROPS,
+            context: SegmentedControlPropsContext,
+          },
           iconProps: {
             value: hasSubtitleAndNotCompact
               ? TALL_TRAILING_ACCESSORIES_ICON_PROPS
@@ -100,17 +108,17 @@ export const TrailingContents = React.memo(
 
 TrailingContents.displayName = 'ListItem_TrailingContents';
 
-const TRAILING_DETAIL_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
+const TRAILING_DETAIL_TEXT_PROPS: Partial<TextProps> = {
   textStyle: 'body',
   color: 'secondary',
   numberOfLines: 1,
 };
 
-const TRAILING_ACCESSORIES_TEXT_INPUT_PROPS = {
+const TRAILING_ACCESSORIES_TEXT_INPUT_PROPS: Partial<TextInputProps> = {
   textAlign: 'right' as const,
 };
 
-const TRAILING_ACCESSORIES_SELECT_PROPS = {
+const TRAILING_ACCESSORIES_SELECT_PROPS: Partial<SelectProps<string>> = {
   style: {
     flexShrink: 1,
     flexGrow: 1,
@@ -121,6 +129,12 @@ const TRAILING_ACCESSORIES_SELECT_PROPS = {
     paddingVertical: 8,
   },
   align: 'end' as const,
+};
+
+const TRAILING_ACCESSORIES_SEGMENTED_CONTROL_PROPS: Partial<
+  SegmentedControlProps<string>
+> = {
+  height: 28,
 };
 
 const TRAILING_ACCESSORIES_ICON_PROPS: Partial<

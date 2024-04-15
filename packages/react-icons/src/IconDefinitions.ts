@@ -209,6 +209,67 @@ export const IconDefinitions = makeIconDefinitions({
           iOS: 13,
           macOS: 11,
         },
+        opacityFix: true,
+      },
+    ],
+  }),
+  _copy: makeIconDefinition({
+    materialIconName: 'content-copy',
+    sfSymbolDefinitions: [
+      {
+        name: 'doc.on.doc',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
+  _duplicate: makeIconDefinition({
+    materialIconName: 'content-duplicate',
+    sfSymbolDefinitions: [
+      {
+        name: 'plus.square.on.square',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
+  _share: makeIconDefinition({
+    materialIconName: 'export-variant',
+    sfSymbolDefinitions: [
+      {
+        name: 'square.and.arrow.up',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
+  _select: makeIconDefinition({
+    materialIconName: 'check-circle-outline',
+    sfSymbolDefinitions: [
+      {
+        name: 'checkmark.circle',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+      },
+    ],
+  }),
+  _sort_by: makeIconDefinition({
+    materialIconName: 'sort',
+    sfSymbolDefinitions: [
+      {
+        name: 'arrow.up.arrow.down',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
       },
     ],
   }),

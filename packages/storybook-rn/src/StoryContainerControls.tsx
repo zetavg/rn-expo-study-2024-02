@@ -1,16 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import {
-  ImageBackground,
-  LayoutChangeEvent,
-  LayoutRectangle,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ReactRenderer } from '@storybook/react';
-import { PartialStoryFn } from '@storybook/types';
+import React from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import {
   AVAILABLE_UI_PLATFORMS,
@@ -54,11 +43,6 @@ export function StoryContainerControlsWithoutContext({
 }: Props) {
   const { specOverlay } = parameters;
 
-  const backgroundType =
-    value.background === 'default'
-      ? parameters.containerBackground
-      : value.background;
-
   return (
     <BackgroundColor grouped={false}>
       {(backgroundColor) => (
@@ -87,6 +71,7 @@ export function StoryContainerControlsWithoutContext({
                     </Text>
                     <SegmentedControl
                       size="small"
+                      height={28}
                       options={
                         Object.fromEntries(
                           AVAILABLE_UI_PLATFORMS.map((p) => [
@@ -127,6 +112,7 @@ export function StoryContainerControlsWithoutContext({
                   </Text>
                   <SegmentedControl
                     size="small"
+                    height={28}
                     options={{
                       light: 'Light',
                       dark: 'Dark',
@@ -155,6 +141,7 @@ export function StoryContainerControlsWithoutContext({
                   </Text>
                   <SegmentedControl
                     size="small"
+                    height={28}
                     options={{
                       default: 'Default',
                       transparent: 'Transp.',
@@ -217,7 +204,7 @@ export function StoryContainerControlsWithoutContext({
                     color="secondaryVariant"
                     style={[styles.previewControlLabelText]}
                   >
-                    Show Boundary Lines
+                    Show Boundaries
                   </Text>
                   <Switch
                     size="small"
@@ -236,21 +223,25 @@ export function StoryContainerControlsWithoutContext({
   );
 }
 
-export const STORY_CONTAINER_CONTROLS_HEIGHT = 120;
+export const STORY_CONTAINER_CONTROLS_HEIGHT = 100;
+export const STORY_CONTAINER_CONTROLS_CONTAINER_VERTICAL_PADDING = 4;
 
 const styles = StyleSheet.create({
   rootContainer: { height: STORY_CONTAINER_CONTROLS_HEIGHT },
   previewControls: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    flexGrow: 0,
     height: STORY_CONTAINER_CONTROLS_HEIGHT,
-    paddingVertical: 4,
+    flexGrow: 0,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingVertical: STORY_CONTAINER_CONTROLS_CONTAINER_VERTICAL_PADDING,
     justifyContent: 'center',
   },
   previewControlsContent: {
+    height:
+      (STORY_CONTAINER_CONTROLS_HEIGHT -
+        STORY_CONTAINER_CONTROLS_CONTAINER_VERTICAL_PADDING * 2) /
+      3,
     flexGrow: 1,
     flexDirection: 'row',
-    paddingVertical: 4,
     paddingHorizontal: 8,
     justifyContent: 'center',
     alignItems: 'center',

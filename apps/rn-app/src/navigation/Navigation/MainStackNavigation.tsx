@@ -2,7 +2,6 @@ import { mainStackScreens as feature1MainStackScreens } from '@/features/example
 import { mainStackScreens as exampleMainStackScreens } from '@/features/navigation-examples/screens';
 import { createStackNavigator } from '@rnstudy/react-native-navigation';
 
-import config from '../config';
 import { registerMainStackNavigation } from '../hooks';
 
 export const MainStackNavigation = createStackNavigator({
@@ -12,7 +11,6 @@ export const MainStackNavigation = createStackNavigator({
     ...exampleMainStackScreens,
   },
   defaultInitialRouteName: 'Example1List',
-  config,
 });
 
 export type MainStackNavigationType = typeof MainStackNavigation;
