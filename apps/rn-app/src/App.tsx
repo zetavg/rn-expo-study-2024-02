@@ -4,13 +4,13 @@ import Navigation from '@/navigation/Navigation';
 import { UIContextProvider } from '@rnstudy/react-native-ui';
 
 import useColorScheme from './hooks/useColorScheme';
-import AndroidNavigationBar from './AndroidNavigationBar';
+import StatusAndNavigationBar from './StatusAndNavigationBar';
 
 export default function App() {
   const colorScheme = useColorScheme();
   return (
     <UIContextProvider colorScheme={colorScheme}>
-      <AndroidNavigationBar />
+      <StatusAndNavigationBar />
       <Navigation />
     </UIContextProvider>
   );
