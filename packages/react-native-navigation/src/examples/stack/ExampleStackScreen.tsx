@@ -15,6 +15,7 @@ import {
   StackScreenContentProps,
 } from '../../screen-contents';
 import { StackScreenProps } from '../../types';
+import { View, StyleSheet } from 'react-native';
 
 const EXAMPLE_MENU_ITEMS: React.ComponentProps<typeof Menu>['items'] = [
   { title: 'Copy', icon: '_copy' },
@@ -178,6 +179,9 @@ export default function ExampleStackScreen({
       }
     >
       <StackScreenContent.ScrollView>
+        <View style={{width: 120, height: 100, top: 0, backgroundColor: '#333', position: 'absolute' }}></View>
+        <View style={{width: 120, height: 100, top: 50, right: 0, backgroundColor: '#333', position: 'absolute' }}></View>
+        <View style={{ height: 200 }}></View>
         <FormGroup first>
           <Form.TextInput
             label="Title"
