@@ -42,9 +42,8 @@ export function ModalScreenContent({ title, children }: Props) {
 
             headerLargeTitleShadowVisible: false,
             headerLargeStyle: {
-              // Seems to work for now.
-              // // There's no way to set the background color of the large title header as transparent, so we need to set it to the same color as the background here
-              // backgroundColor,
+              // There's no way to set the background color of the large title header as transparent, so we need to set it to the same color as the background here
+              backgroundColor,
             },
           }
         : {}),
