@@ -56,7 +56,7 @@ export const HeaderIOS = memo(function HeaderIOS({
 
   useLayoutEffect(() => {
     const processedHeaderSearchBarOptions: RNScreensSearchBarProps | undefined =
-      headerSearchBarOptions
+      headerSearchBarOptions && headerSearchBarOptions.enable
         ? {
             ...headerSearchBarOptions,
             onChangeText: headerSearchBarOptions.onChangeText

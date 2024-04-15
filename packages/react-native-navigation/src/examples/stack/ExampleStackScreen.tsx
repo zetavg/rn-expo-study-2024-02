@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
+import { Alert } from 'react-native';
 
 import {
   Form,
@@ -17,21 +18,27 @@ import {
 } from '../../screen-contents';
 import { StackScreenProps } from '../../types';
 
+const EXAMPLE_ON_PRESS_HANDLER = () => {
+  Alert.alert('Pressed');
+};
+
 const EXAMPLE_MENU_ITEMS: React.ComponentProps<typeof Menu>['items'] = [
-  { title: 'Copy', icon: '_copy' },
-  { title: 'Duplicate', icon: '_duplicate' },
+  { title: 'Copy', icon: '_copy', handler: EXAMPLE_ON_PRESS_HANDLER },
+  { title: 'Duplicate', icon: '_duplicate', handler: EXAMPLE_ON_PRESS_HANDLER },
   {
     inline: true,
-    items: [{ title: 'Select', icon: '_select' }],
+    items: [
+      { title: 'Select', icon: '_select', handler: EXAMPLE_ON_PRESS_HANDLER },
+    ],
   },
   {
     title: 'Sort By',
     icon: '_sort_by',
     subtitle: 'Date Added',
     items: [
-      { title: 'Name' },
-      { title: 'Date Added', checked: true },
-      { title: 'Date Modified' },
+      { title: 'Name', handler: EXAMPLE_ON_PRESS_HANDLER },
+      { title: 'Date Added', checked: true, handler: EXAMPLE_ON_PRESS_HANDLER },
+      { title: 'Date Modified', handler: EXAMPLE_ON_PRESS_HANDLER },
     ],
   },
 ];
@@ -106,7 +113,12 @@ export default function ExampleStackScreen({
       ({
         EditTextButton: {
           name: 'Edit Text Button',
-          content: <StackScreenContent.HeaderControlButton label="Edit" />,
+          content: (
+            <StackScreenContent.HeaderControlButton
+              label="Edit"
+              onPress={EXAMPLE_ON_PRESS_HANDLER}
+            />
+          ),
         },
         ShareButton: {
           name: 'Share Button',
@@ -114,6 +126,7 @@ export default function ExampleStackScreen({
             <StackScreenContent.HeaderControlButton
               label="Share"
               icon="_share"
+              onPress={EXAMPLE_ON_PRESS_HANDLER}
             />
           ),
         },
@@ -123,6 +136,7 @@ export default function ExampleStackScreen({
             <StackScreenContent.HeaderControlButton
               label="Edit"
               icon="_edit.square"
+              onPress={EXAMPLE_ON_PRESS_HANDLER}
             />
           ),
         },

@@ -1,6 +1,7 @@
 import React, { memo, useMemo } from 'react';
 
 import { useUIPlatform } from '@rnstudy/react-native-ui';
+import { useMemoValue } from '@rnstudy/react-utils/src';
 
 import type { Props as StackScreenContentProps } from '../StackScreenContent';
 
@@ -23,15 +24,9 @@ export type Props = Pick<
 >;
 
 export function useHeaderProps(p: StackScreenContentProps): Props {
-  const { headerSearchBarOptions } = p;
-  const memoizedHeaderSearchBarOptions = useMemo(
-    () => {
-      if (headerSearchBarOptions?.enable === false) return undefined;
-
-      return headerSearchBarOptions;
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    Object.values(headerSearchBarOptions || {}),
+  const { headerSearchBarOptions: headerSearchBarOptionsProp } = p;
+  const memoizedHeaderSearchBarOptions = useMemoValue(
+    headerSearchBarOptionsProp,
   );
 
   return {

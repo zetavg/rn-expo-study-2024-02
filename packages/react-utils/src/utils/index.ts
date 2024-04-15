@@ -10,3 +10,4 @@ export { getArgTypes } from './getArgTypes';
 export { getPerformanceEyeAttractorDummyComponent } from './getPerformanceEyeAttractorDummyComponent';
 export { objectMap } from './objectMap';
 export { typedMemo } from './typedMemo';
+export { useMemoValue } from './useMemoValue';
