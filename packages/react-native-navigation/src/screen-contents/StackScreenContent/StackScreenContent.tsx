@@ -149,7 +149,7 @@ export function StackScreenContent({
         return {
           headerLargeTitle,
           // There's no way to set the background color of the large title header as transparent, so we need to set it to the same color as the background here
-          headerLargeStyle: { backgroundColor },
+          headerLargeStyle: { backgroundColor: 'transparent' },
         };
       })(),
 
