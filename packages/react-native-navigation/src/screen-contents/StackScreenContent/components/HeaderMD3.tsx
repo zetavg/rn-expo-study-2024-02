@@ -1,12 +1,15 @@
 import React, {
   memo,
   useCallback,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 import {
   Animated,
+  BackHandler,
   LayoutChangeEvent,
   Platform,
   StyleSheet,
@@ -16,16 +19,23 @@ import {
 import { Appbar } from 'react-native-paper';
 import { DEFAULT_APPBAR_HEIGHT } from 'react-native-paper/src/components/Appbar/utils';
 import { SearchBarProps as RNScreensSearchBarProps } from 'react-native-screens';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 
 import {
   BackgroundColor,
+  RNTextInput,
   SegmentedControlProps,
   SegmentedControlPropsContextProvider,
+  TextInput,
   useBackgroundColor,
   useColorScheme,
   useIOSUIColors,
   useIsElevatedBackground,
+  withLayoutAnimation,
 } from '@rnstudy/react-native-ui';
 
 import {
@@ -55,6 +65,8 @@ export const HeaderMD3 = memo(function HeaderMD3({
 
   const navigation = useNavigation();
   const route = useRoute();
+
+  const focused = useIsFocused();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -94,9 +106,53 @@ export const HeaderMD3 = memo(function HeaderMD3({
     ),
   ).current;
 
+  const searchTextInputRef = useRef<RNTextInput>(null);
+
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const isSearchActiveRef = useRef(isSearchActive);
+  isSearchActiveRef.current = isSearchActive;
+
+  const focusSearchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const openSearch = useCallback(() => {
+    withLayoutAnimation(() => setIsSearchActive(true))();
+    focusSearchTimeoutRef.current = setTimeout(() => {
+      searchTextInputRef.current?.focus();
+    }, 100);
+  }, []);
+
+  const closeSearch = useCallback(() => {
+    if (focusSearchTimeoutRef.current) {
+      clearTimeout(focusSearchTimeoutRef.current);
+    }
+    withLayoutAnimation(() => setIsSearchActive(false))();
+    searchTextInputRef.current?.clear();
+    searchTextInputRef.current?.blur();
+    headerSearchBarOptions?.onChangeText?.('');
+  }, [headerSearchBarOptions]);
+
+  useEffect(() => {
+    if (!focused) return;
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        if (isSearchActiveRef.current) {
+          closeSearch();
+          return true;
+        }
+        return false;
+      },
+    );
+
+    return () => backHandler.remove();
+  }, [focused, closeSearch]);
+
+  const canGoBack = useMemo(() => navigation.canGoBack(), [navigation]);
+
   if (!showHeader) return null;
 
-  const canGoBack = navigation.canGoBack();
   const headerSearchBarEnabled =
     headerSearchBarOptions && headerSearchBarOptions.enable !== false;
 
@@ -134,8 +190,28 @@ export const HeaderMD3 = memo(function HeaderMD3({
           </Animated.View>
         </View>
       )}
+      {headerSearchBarEnabled && (
+        <View
+          style={[
+            styles.searchContainer,
+            { backgroundColor },
+            isSearchActive && styles.searchContainer_active,
+          ]}
+        >
+          <Appbar.Action
+            icon="magnify"
+            onPress={!isSearchActive ? openSearch : undefined}
+          />
+          <TextInput
+            ref={searchTextInputRef}
+            style={styles.searchTextInput}
+            placeholder={headerSearchBarOptions.placeholder || 'Search'}
+            onChangeText={headerSearchBarOptions.onChangeText}
+          />
+          <Appbar.Action icon="close" onPress={closeSearch} />
+        </View>
+      )}
       {headerTrailingContent}
-      <Appbar.Action icon="magnify" onPress={() => {}} />
     </Appbar.Header>
   );
 });
@@ -170,6 +246,19 @@ const styles = StyleSheet.create({
   headerTitleContentInnerContainer: {
     flex: 1,
     flexDirection: 'column',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: 50,
+  },
+  searchContainer_active: {
+    ...StyleSheet.absoluteFillObject,
+    width: 'auto',
+  },
+  searchTextInput: {
+    flex: 1,
   },
   hidden: {
     opacity: 0,
