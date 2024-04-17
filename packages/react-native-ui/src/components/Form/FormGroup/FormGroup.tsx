@@ -36,7 +36,7 @@ export function FormGroup({ vertical = false, children, ...restProps }: Props) {
   );
 }
 
-FormGroup.Header = List.Header;
-FormGroup.Footer = List.Footer;
+FormGroup.Header = List.Header.Memoized;
+FormGroup.Footer = List.Footer.Memoized;
 
 export default FormGroup;

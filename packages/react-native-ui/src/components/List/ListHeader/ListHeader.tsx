@@ -2,6 +2,7 @@ import React from 'react';
 
 import { ListHeader as ListHeaderIOS } from '@rnstudy/react-native-ui-ios';
 import { ListHeader as ListHeaderMD3 } from '@rnstudy/react-native-ui-md3';
+import { reactMemoWithPropsThatCanBeMarkedAsStable } from '@rnstudy/react-utils';
 
 import { useUIPlatform } from '../../../contexts';
 
@@ -32,5 +33,12 @@ export function ListHeader(props: Props) {
     }
   }
 }
+
+/**
+ * `ListHeader` wrapped with `React.memo`.
+ */
+ListHeader.Memoized = reactMemoWithPropsThatCanBeMarkedAsStable(ListHeader, [
+  'title',
+]);
 
 export default ListHeader;

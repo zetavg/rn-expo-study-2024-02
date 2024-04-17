@@ -1,24 +1,22 @@
-import React, { memo } from 'react';
+import React from 'react';
 
-import {
-  arePropsWithOnValueChangeFunctionEqual,
-  OnValueChangeIsDependencyFreeProps,
-} from '@rnstudy/react-utils';
+import { reactMemoWithPropsThatCanBeMarkedAsStable } from '@rnstudy/react-utils';
 
 import Switch, { SwitchProps } from '../../Switch';
 import FormField, { FormFieldProps } from '../FormField';
 
-type Props = Omit<FormFieldProps, 'children' | 'vertical'> &
-  SwitchProps &
-  OnValueChangeIsDependencyFreeProps;
+type Props = Omit<FormFieldProps, 'children' | 'vertical'> & SwitchProps;
 
-export const FormSwitch = memo(function FormSwitch(props: Props) {
-  return (
-    <FormField preserveChildrenSpace={false} {...props} vertical={false}>
-      <Switch {...props} />
-    </FormField>
-  );
-}, arePropsWithOnValueChangeFunctionEqual);
+export const FormSwitch = reactMemoWithPropsThatCanBeMarkedAsStable(
+  function FormSwitch(props: Props) {
+    return (
+      <FormField preserveChildrenSpace={false} {...props} vertical={false}>
+        <Switch {...props} />
+      </FormField>
+    );
+  },
+  ['onValueChange'],
+);
 
 FormSwitch.displayName = 'FormSwitch';
 

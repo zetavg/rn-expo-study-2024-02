@@ -216,7 +216,7 @@ export default function ExampleStackScreen({
             label="Title"
             placeholder="Enter Title"
             value={stackScreenContentProps.title || ''}
-            onValueChangeIsDependencyFree
+            onValueChangeIsStable
             onValueChange={(title) =>
               setStackScreenContentProps((s) => ({ ...s, title }))
             }
@@ -237,7 +237,7 @@ export default function ExampleStackScreen({
                 ? JSON.stringify(stackScreenContentProps.grouped)
                 : 'undefined'
             }
-            onValueChangeIsDependencyFree
+            onValueChangeIsStable
             onValueChange={(value) => {
               setStackScreenContentProps((s) => ({
                 ...s,
@@ -248,18 +248,20 @@ export default function ExampleStackScreen({
         </FormGroup>
 
         <List listStyle="insetGrouped">
-          <List.Item
+          <List.Item.Memoized
             button
             title="Go to Another Screen"
+            onPressIsStable
             onPress={() =>
               navigation.push(route.name, {
                 stackScreenContentProps: stackScreenContentPropsRef.current,
               })
             }
           />
-          <List.Item
+          <List.Item.Memoized
             button
             title="Go Back"
+            onPressIsStable
             onPress={() => navigation.goBack()}
           />
         </List>
@@ -268,7 +270,7 @@ export default function ExampleStackScreen({
           <Form.Switch
             label="Show Header"
             value={stackScreenContentProps.showHeader}
-            onValueChangeIsDependencyFree
+            onValueChangeIsStable
             onValueChange={(showHeader) => {
               // This cannot be changed dynamically, so we need to navigate to a new screen with the value updated.
               navigation.push(route.name, {
@@ -282,7 +284,7 @@ export default function ExampleStackScreen({
           <Form.Switch
             label="Header Background Transparent"
             value={stackScreenContentProps.headerBackgroundTransparent}
-            onValueChangeIsDependencyFree
+            onValueChangeIsStable
             onValueChange={(headerBackgroundTransparent) =>
               setStackScreenContentProps((s) => ({
                 ...s,
@@ -293,7 +295,7 @@ export default function ExampleStackScreen({
           <Form.Switch
             label="Header Title Visible"
             value={stackScreenContentProps.headerTitleVisible}
-            onValueChangeIsDependencyFree
+            onValueChangeIsStable
             onValueChange={(headerTitleVisible) =>
               setStackScreenContentProps((s) => ({ ...s, headerTitleVisible }))
             }
@@ -301,7 +303,7 @@ export default function ExampleStackScreen({
           <Form.Switch
             label="Header Large Title"
             value={stackScreenContentProps.headerLargeTitle}
-            onValueChangeIsDependencyFree
+            onValueChangeIsStable
             onValueChange={(headerLargeTitle) =>
               setStackScreenContentProps((s) => ({ ...s, headerLargeTitle }))
             }
@@ -313,7 +315,7 @@ export default function ExampleStackScreen({
             label="Header Back Title"
             placeholder="Back"
             value={stackScreenContentProps.headerBackTitle || ''}
-            onValueChangeIsDependencyFree
+            onValueChangeIsStable
             onValueChange={(headerBackTitle) => {
               if (headerBackTitle) {
                 setStackScreenContentProps((s) => ({ ...s, headerBackTitle }));
@@ -332,7 +334,7 @@ export default function ExampleStackScreen({
           <Form.Switch
             label="Header Back Title Visible"
             value={stackScreenContentProps.headerBackTitleVisible}
-            onValueChangeIsDependencyFree
+            onValueChangeIsStable
             onValueChange={(headerBackTitleVisible) => {
               if (!headerBackTitleVisible) {
                 setStackScreenContentProps((s) => ({
@@ -365,7 +367,7 @@ export default function ExampleStackScreen({
               [headerTitleContentExamples],
             )}
             value={headerTitleContentExample}
-            onValueChangeIsDependencyFree
+            onValueChangeIsStable
             onValueChange={withLayoutAnimation(setHeaderTitleContentExample)}
           />
           {headerTitleContentExample === 'SegmentedControl' && (
@@ -378,7 +380,7 @@ export default function ExampleStackScreen({
                 }),
               )}
               value={exampleSegmentedControlValue}
-              onValueChangeIsDependencyFree
+              onValueChangeIsStable
               onValueChange={setExampleSegmentedControlValue}
             />
           )}
@@ -394,7 +396,7 @@ export default function ExampleStackScreen({
                 key={key}
                 label={headerTrailingContentExamples[key].name}
                 value={headerTrailingContentExample[key]}
-                onValueChangeIsDependencyFree
+                onValueChangeIsStable
                 onValueChange={(enabled) => {
                   setHeaderTrailingContentExample((s) => ({
                     ...s,
@@ -417,7 +419,7 @@ export default function ExampleStackScreen({
           <Form.Switch
             label="Enable"
             value={stackScreenContentProps.headerSearchBarOptions?.enable}
-            onValueChangeIsDependencyFree
+            onValueChangeIsStable
             onValueChange={(enable) => {
               // The header search bar cannot be enabled or disabled dynamically, so we need to navigate to a new screen with the header search bar enabled or disabled.
               navigation.push(route.name, {
@@ -440,7 +442,7 @@ export default function ExampleStackScreen({
                 stackScreenContentProps.headerSearchBarOptions?.placeholder ||
                 ''
               }
-              onValueChangeIsDependencyFree
+              onValueChangeIsStable
               onValueChange={(value) =>
                 setStackScreenContentProps((s) => ({
                   ...s,
@@ -462,7 +464,7 @@ export default function ExampleStackScreen({
                   ?.cancelButtonText ||
                   '')
               }
-              onValueChangeIsDependencyFree
+              onValueChangeIsStable
               onValueChange={setTmpSearchBarCancelButtonText}
               onBlur={() => {
                 // This cannot be changed dynamically, so we need to navigate to a new screen with the value updated.
@@ -488,7 +490,7 @@ export default function ExampleStackScreen({
                 stackScreenContentProps.headerSearchBarOptions
                   ?.hideWhenScrolling
               }
-              onValueChangeIsDependencyFree
+              onValueChangeIsStable
               onValueChange={(hideWhenScrolling) => {
                 // This cannot be changed dynamically, so we need to navigate to a new screen with the value updated.
                 navigation.push(route.name, {
@@ -509,7 +511,8 @@ export default function ExampleStackScreen({
         <List
           listStyle="insetGrouped"
           footer={
-            <List.Footer
+            <List.Footer.Memoized
+              textIsStable
               text={
                 <>
                   This is used to test re-rendering the contents of the screen
@@ -520,10 +523,11 @@ export default function ExampleStackScreen({
             />
           }
         >
-          <List.Item title="Counter" detail={`${counter}`} />
-          <List.Item
+          <List.Item.Memoized title="Counter" detail={`${counter}`} />
+          <List.Item.Memoized
             button
             title="Increase"
+            onPressIsStable
             onPress={() => setCounter((n) => n + 1)}
           />
         </List>

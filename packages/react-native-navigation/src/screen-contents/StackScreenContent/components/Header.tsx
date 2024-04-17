@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from 'react';
 
 import { useUIPlatform } from '@rnstudy/react-native-ui';
-import { useMemoValue } from '@rnstudy/react-utils/src';
+import { useMemoValue } from '@rnstudy/react-utils';
 
 import type { Props as StackScreenContentProps } from '../StackScreenContent';
 
