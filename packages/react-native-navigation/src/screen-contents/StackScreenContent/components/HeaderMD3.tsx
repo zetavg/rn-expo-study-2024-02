@@ -17,7 +17,7 @@ import {
   View,
 } from 'react-native';
 import { Appbar } from 'react-native-paper';
-import { DEFAULT_APPBAR_HEIGHT } from 'react-native-paper/src/components/Appbar/utils';
+// import { DEFAULT_APPBAR_HEIGHT } from 'react-native-paper/src/components/Appbar/utils';
 import { SearchBarProps as RNScreensSearchBarProps } from 'react-native-screens';
 import {
   useIsFocused,
