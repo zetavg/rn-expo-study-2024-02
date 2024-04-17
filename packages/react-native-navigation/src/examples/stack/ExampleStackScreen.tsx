@@ -37,9 +37,21 @@ const EXAMPLE_MENU_ITEMS: React.ComponentProps<typeof Menu>['items'] = [
     icon: '_sort_by',
     subtitle: 'Date Added',
     items: [
-      { title: 'Name', handler: EXAMPLE_ON_PRESS_HANDLER },
-      { title: 'Date Added', checked: true, handler: EXAMPLE_ON_PRESS_HANDLER },
-      { title: 'Date Modified', handler: EXAMPLE_ON_PRESS_HANDLER },
+      {
+        title: 'Name',
+        checked: false,
+        handler: EXAMPLE_ON_PRESS_HANDLER,
+      },
+      {
+        title: 'Date Added',
+        checked: true,
+        handler: EXAMPLE_ON_PRESS_HANDLER,
+      },
+      {
+        title: 'Date Modified',
+        checked: false,
+        handler: EXAMPLE_ON_PRESS_HANDLER,
+      },
     ],
   },
 ];
@@ -56,6 +68,8 @@ export default function ExampleStackScreen({
 }: StackScreenProps<
   | {
       stackScreenContentProps?: Omit<StackScreenContentProps, 'children'>;
+      headerTitleContentExample?: string;
+      headerTrailingContentExample?: object;
     }
   | undefined
 >) {
@@ -101,13 +115,32 @@ export default function ExampleStackScreen({
             />
           ),
         },
+        CustomText: {
+          name: 'Custom Text',
+          content: (
+            <>
+              <Text callout>Custom Title Text</Text>
+              <Text caption1 secondary>
+                Custom Subtitle Text
+              </Text>
+            </>
+          ),
+        },
       }) as const,
     [exampleSegmentedControlValue],
   );
 
   const [headerTitleContentExample, setHeaderTitleContentExample] = useState<
     keyof typeof headerTitleContentExamples | 'undefined'
-  >('undefined');
+  >(
+    (route.params?.headerTitleContentExample || '') in
+      headerTitleContentExamples
+      ? (route.params
+          ?.headerTitleContentExample as keyof typeof headerTitleContentExamples)
+      : 'undefined',
+  );
+  const headerTitleContentExampleRef = useRef(headerTitleContentExample);
+  headerTitleContentExampleRef.current = headerTitleContentExample;
 
   const headerTrailingContentExamples = useMemo(
     () =>
@@ -148,7 +181,7 @@ export default function ExampleStackScreen({
               {(openMenu) => (
                 <StackScreenContent.HeaderControlButton
                   label="More"
-                  icon="_more"
+                  icon="_header_menu"
                   onPress={openMenu}
                 />
               )}
@@ -158,7 +191,11 @@ export default function ExampleStackScreen({
         DoneButton: {
           name: 'Done Button',
           content: (
-            <StackScreenContent.HeaderControlButton mandatory label="Done" />
+            <StackScreenContent.HeaderControlButton
+              mandatory
+              label="Done"
+              onPress={EXAMPLE_ON_PRESS_HANDLER}
+            />
           ),
         },
       }) as const,
@@ -167,8 +204,10 @@ export default function ExampleStackScreen({
 
   const [headerTrailingContentExample, setHeaderTrailingContentExample] =
     useState<{ [key in keyof typeof headerTrailingContentExamples]?: boolean }>(
-      {},
+      route.params?.headerTrailingContentExample || {},
     );
+  const headerTrailingContentExampleRef = useRef(headerTrailingContentExample);
+  headerTrailingContentExampleRef.current = headerTrailingContentExample;
 
   const [tmpSearchBarCancelButtonText, setTmpSearchBarCancelButtonText] =
     useState<string | null>(null);
@@ -259,6 +298,9 @@ export default function ExampleStackScreen({
             onPress={() =>
               navigation.push(route.name, {
                 stackScreenContentProps: stackScreenContentPropsRef.current,
+                headerTitleContentExample: headerTitleContentExampleRef.current,
+                headerTrailingContentExample:
+                  headerTrailingContentExampleRef.current,
               })
             }
           />
@@ -282,6 +324,9 @@ export default function ExampleStackScreen({
                   ...stackScreenContentPropsRef.current,
                   showHeader,
                 },
+                headerTitleContentExample: headerTitleContentExampleRef.current,
+                headerTrailingContentExample:
+                  headerTrailingContentExampleRef.current,
               });
             }}
           />
@@ -330,6 +375,10 @@ export default function ExampleStackScreen({
                     ...stackScreenContentPropsRef.current,
                     headerBackTitle: undefined,
                   },
+                  headerTitleContentExample:
+                    headerTitleContentExampleRef.current,
+                  headerTrailingContentExample:
+                    headerTrailingContentExampleRef.current,
                 });
               }
             }}
@@ -352,6 +401,10 @@ export default function ExampleStackScreen({
                     ...stackScreenContentPropsRef.current,
                     headerBackTitleVisible: true,
                   },
+                  headerTitleContentExample:
+                    headerTitleContentExampleRef.current,
+                  headerTrailingContentExample:
+                    headerTrailingContentExampleRef.current,
                 });
               }
             }}
@@ -435,6 +488,9 @@ export default function ExampleStackScreen({
                     enable,
                   },
                 },
+                headerTitleContentExample: headerTitleContentExampleRef.current,
+                headerTrailingContentExample:
+                  headerTrailingContentExampleRef.current,
               });
             }}
           />
@@ -482,6 +538,10 @@ export default function ExampleStackScreen({
                         cancelButtonText: tmpSearchBarCancelButtonText,
                       },
                     },
+                    headerTitleContentExample:
+                      headerTitleContentExampleRef.current,
+                    headerTrailingContentExample:
+                      headerTrailingContentExampleRef.current,
                   });
                 setTmpSearchBarCancelButtonText(null);
               }}
@@ -506,6 +566,10 @@ export default function ExampleStackScreen({
                       hideWhenScrolling,
                     },
                   },
+                  headerTitleContentExample:
+                    headerTitleContentExampleRef.current,
+                  headerTrailingContentExample:
+                    headerTrailingContentExampleRef.current,
                 });
               }}
             />

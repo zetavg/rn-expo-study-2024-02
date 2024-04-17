@@ -4201,6 +4201,7 @@ __metadata:
     react-native-gesture-handler: "npm:~2.14"
     react-native-haptic-feedback: "npm:*"
     react-native-ios-utilities: "npm:*"
+    react-native-paper: "npm:^5"
     react-native-reanimated: "npm:*"
     react-native-safe-area-context: "npm:4.8.2"
     react-native-screens: "patch:react-native-screens@npm%3A3.31.0-rc.1#~/.yarn/patches/react-native-screens-npm-3.31.0-rc.1-c13c81e686.patch"

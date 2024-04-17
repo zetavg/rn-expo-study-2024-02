@@ -33,7 +33,8 @@
     "@react-navigation/native-stack": "patch:@react-navigation/native-stack@npm%3A7.0.0-alpha.20#~/.yarn/patches/@react-navigation-native-stack-npm-7.0.0-alpha.20-0585dd4951.patch",
     "@react-navigation/stack": "^7.0.0-alpha.20",
     "@rnstudy/ios-colors": "workspace:^",
-    "@rnstudy/react-utils": "workspace:^"
+    "@rnstudy/react-utils": "workspace:^",
+    "react-native-paper": "^5"
   },
   "devDependencies": {
     "@babel/core": "*",

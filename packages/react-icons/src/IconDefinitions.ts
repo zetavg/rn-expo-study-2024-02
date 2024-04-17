@@ -286,6 +286,19 @@ export const IconDefinitions = makeIconDefinitions({
       },
     ],
   }),
+  _header_menu: makeIconDefinition({
+    materialIconName: 'dots-vertical',
+    sfSymbolDefinitions: [
+      {
+        name: 'ellipsis.circle',
+        availability: {
+          iOS: 13,
+          macOS: 11,
+        },
+        opacityFix: true,
+      },
+    ],
+  }),
   _play: makeIconDefinition({
     materialIconName: 'play',
     materialIconConfig: {

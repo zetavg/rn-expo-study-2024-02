@@ -5,9 +5,14 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedbackProps,
 } from 'react-native';
+import { Appbar, Button as RNPButton } from 'react-native-paper';
 
-import { Icon, IconName } from '@rnstudy/react-icons';
-import { useIOSUIColors } from '@rnstudy/react-native-ui';
+import { Icon, IconDefinitions, IconName } from '@rnstudy/react-icons';
+import {
+  useIOSUIColors,
+  useMD3Colors,
+  useUIPlatform,
+} from '@rnstudy/react-native-ui';
 
 type Props = {
   icon?: IconName;
@@ -24,36 +29,71 @@ export const HeaderControlButton = memo(function HeaderControlButton({
 }: Props) {
   const iosUIColors = useIOSUIColors();
 
-  const color = disabled ? iosUIColors.quaternaryLabel : iosUIColors.tintColor;
+  const iosTintColor = disabled
+    ? iosUIColors.quaternaryLabel
+    : iosUIColors.tintColor;
 
-  return (
-    <TouchableOpacity disabled={disabled} {...restProps}>
-      {icon ? (
-        <Icon name={icon} color={color} size={25} />
-      ) : (
-        <Text
-          allowFontScaling={false}
-          style={[
-            styles.labelText,
-            mandatory && styles.labelText_mandatory,
-            { color },
-          ]}
+  const md3Colors = useMD3Colors();
+
+  const uiPlatform = useUIPlatform();
+
+  switch (uiPlatform) {
+    case 'ios': {
+      return (
+        <TouchableOpacity disabled={disabled} {...restProps}>
+          {icon ? (
+            <Icon name={icon} color={iosTintColor} size={25} />
+          ) : (
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.labelTextIOS,
+                mandatory && styles.labelTextIOS_mandatory,
+                { color: iosTintColor },
+              ]}
+            >
+              {label}
+            </Text>
+          )}
+        </TouchableOpacity>
+      );
+    }
+    case 'android': {
+      if (icon) {
+        return (
+          <Appbar.Action
+            accessibilityLabel={label}
+            // eslint-disable-next-line react/no-unstable-nested-components
+            icon={(props) => <Icon {...props} name={icon} />}
+            disabled={disabled}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            {...(restProps as any)}
+          />
+        );
+      }
+
+      return (
+        <RNPButton
+          textColor={md3Colors.onSurfaceVariant}
+          uppercase
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          {...(restProps as any)}
         >
           {label}
-        </Text>
-      )}
-    </TouchableOpacity>
-  );
+        </RNPButton>
+      );
+    }
+  }
 });
 
 HeaderControlButton.displayName = 'HeaderControlButton';
 
 const styles = StyleSheet.create({
-  labelText: {
+  labelTextIOS: {
     fontSize: 17,
     paddingHorizontal: 2,
   },
-  labelText_mandatory: {
+  labelTextIOS_mandatory: {
     fontWeight: '600',
   },
 });

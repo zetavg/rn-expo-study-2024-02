@@ -28,7 +28,7 @@ export function getListPadding(conditions: ListPaddingConditions): number {
       const padding = conditions.withHeader ? 18 : 24;
 
       if (!conditions.withHeader) {
-        return padding - 16;
+        return padding - (conditions.first ? 10 : 16);
       }
 
       return padding;

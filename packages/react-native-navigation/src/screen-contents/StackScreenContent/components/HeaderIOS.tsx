@@ -4,6 +4,7 @@ import {
   LayoutChangeEvent,
   Platform,
   StyleSheet,
+  View,
 } from 'react-native';
 import { SearchBarProps as RNScreensSearchBarProps } from 'react-native-screens';
 import { useNavigation } from '@react-navigation/native';
@@ -54,9 +55,12 @@ export const HeaderIOS = memo(function HeaderIOS({
   });
   const iosUIColors = useIOSUIColors();
 
+  const headerSearchBarEnabled =
+    headerSearchBarOptions && headerSearchBarOptions.enable !== false;
+
   useLayoutEffect(() => {
     const processedHeaderSearchBarOptions: RNScreensSearchBarProps | undefined =
-      headerSearchBarOptions && headerSearchBarOptions.enable
+      headerSearchBarEnabled
         ? {
             ...headerSearchBarOptions,
             onChangeText: headerSearchBarOptions.onChangeText
@@ -115,11 +119,13 @@ export const HeaderIOS = memo(function HeaderIOS({
 
       headerTitle: headerTitleContent
         ? () => (
-            <SegmentedControlPropsContextProvider
-              value={HEADER_SEGMENTED_CONTROL_PROPS}
-            >
-              {headerTitleContent}
-            </SegmentedControlPropsContextProvider>
+            <View style={styles.headerTitleContentContainer}>
+              <SegmentedControlPropsContextProvider
+                value={HEADER_SEGMENTED_CONTROL_PROPS}
+              >
+                {headerTitleContent}
+              </SegmentedControlPropsContextProvider>
+            </View>
           )
         : undefined,
       headerRight: headerTrailingContent
@@ -139,6 +145,7 @@ export const HeaderIOS = memo(function HeaderIOS({
     headerBackTitleVisible,
     headerBackgroundTransparent,
     headerLargeTitle,
+    headerSearchBarEnabled,
     headerSearchBarOptions,
     headerTitleContent,
     headerTitleVisible,
@@ -197,6 +204,11 @@ const HEADER_SEGMENTED_CONTROL_PROPS: Partial<SegmentedControlProps<string>> = {
 };
 
 const styles = StyleSheet.create({
+  headerTitleContentContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   headerTrailingContentContainerIOS: {
     alignSelf: 'center',
     height: 44,
