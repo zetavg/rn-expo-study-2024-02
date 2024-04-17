@@ -66,6 +66,7 @@ export const HeaderControlButton = memo(function HeaderControlButton({
             // eslint-disable-next-line react/no-unstable-nested-components
             icon={(props) => <Icon {...props} name={icon} />}
             disabled={disabled}
+            color={md3Colors.onSurfaceVariant}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             {...(restProps as any)}
           />

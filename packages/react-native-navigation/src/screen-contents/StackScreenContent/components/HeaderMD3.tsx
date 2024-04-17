@@ -35,6 +35,7 @@ import {
   useColorScheme,
   useIOSUIColors,
   useIsElevatedBackground,
+  useMD3Colors,
   withLayoutAnimation,
 } from '@rnstudy/react-native-ui';
 
@@ -64,9 +65,9 @@ export const HeaderMD3 = memo(function HeaderMD3({
   const windowDimensions = useWindowDimensions();
 
   const navigation = useNavigation();
-  const route = useRoute();
 
-  const focused = useIsFocused();
+  const colorScheme = useColorScheme();
+  const md3Colors = useMD3Colors();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -74,10 +75,12 @@ export const HeaderMD3 = memo(function HeaderMD3({
     });
   }, [navigation, title]);
 
-  const backgroundColor = useBackgroundColor({
-    grouped,
-    elevated: useIsElevatedBackground(),
-  });
+  // const backgroundColor = useBackgroundColor({
+  //   grouped,
+  //   elevated: useIsElevatedBackground(),
+  // });
+
+  const backgroundColor = md3Colors.surfaceContainer;
 
   const headerWidthAnim = useRef(
     new Animated.Value(windowDimensions.width),
@@ -105,6 +108,76 @@ export const HeaderMD3 = memo(function HeaderMD3({
       Animated.multiply(headerTitleContentContainerXAnim, 2),
     ),
   ).current;
+
+  const canGoBack = useMemo(() => navigation.canGoBack(), [navigation]);
+
+  if (!showHeader) return null;
+
+  const headerSearchBarEnabled =
+    headerSearchBarOptions && headerSearchBarOptions.enable !== false;
+
+  return (
+    <Appbar.Header
+      dark={colorScheme === 'dark'}
+      elevated={!headerBackgroundTransparent}
+      style={
+        headerBackgroundTransparent
+          ? styles.transparentHeader
+          : { backgroundColor }
+      }
+      onLayout={handleAppBarLayout}
+    >
+      {canGoBack && (
+        <Appbar.BackAction
+          onPress={navigation.goBack}
+          color={md3Colors.onSurface}
+        />
+      )}
+      {!headerTitleContent ? (
+        <Appbar.Content title={title} color={md3Colors.onSurface} />
+      ) : (
+        <View
+          onLayout={handleHeaderTitleContentContainerLayout}
+          style={styles.headerTitleContentContainer}
+        >
+          <Animated.View
+            style={[
+              styles.headerTitleContentInnerContainer,
+              {
+                maxWidth: headerTitleContentContainerMaxWidthAnim,
+              },
+            ]}
+          >
+            <SegmentedControlPropsContextProvider
+              value={HEADER_SEGMENTED_CONTROL_PROPS}
+            >
+              {headerTitleContent}
+            </SegmentedControlPropsContextProvider>
+          </Animated.View>
+        </View>
+      )}
+      {headerSearchBarEnabled && (
+        <HeaderSearch
+          headerSearchBarOptions={headerSearchBarOptions}
+          backgroundColor={backgroundColor}
+        />
+      )}
+      {headerTrailingContent}
+    </Appbar.Header>
+  );
+});
+
+HeaderMD3.displayName = 'StackScreenContent/Header_MD3';
+
+function HeaderSearch({
+  headerSearchBarOptions,
+  backgroundColor,
+}: {
+  headerSearchBarOptions: Props['headerSearchBarOptions'];
+  backgroundColor: string;
+}) {
+  const md3Colors = useMD3Colors();
+  const focused = useIsFocused();
 
   const searchTextInputRef = useRef<RNTextInput>(null);
 
@@ -149,74 +222,33 @@ export const HeaderMD3 = memo(function HeaderMD3({
     return () => backHandler.remove();
   }, [focused, closeSearch]);
 
-  const canGoBack = useMemo(() => navigation.canGoBack(), [navigation]);
-
-  if (!showHeader) return null;
-
-  const headerSearchBarEnabled =
-    headerSearchBarOptions && headerSearchBarOptions.enable !== false;
-
   return (
-    <Appbar.Header
-      elevated={!headerBackgroundTransparent}
-      style={
-        headerBackgroundTransparent
-          ? styles.transparentHeader
-          : { backgroundColor }
-      }
-      onLayout={handleAppBarLayout}
+    <View
+      style={[
+        styles.searchContainer,
+        { backgroundColor },
+        isSearchActive && styles.searchContainer_active,
+      ]}
     >
-      {canGoBack && <Appbar.BackAction onPress={navigation.goBack} />}
-      {!headerTitleContent ? (
-        <Appbar.Content title={title} />
-      ) : (
-        <View
-          onLayout={handleHeaderTitleContentContainerLayout}
-          style={styles.headerTitleContentContainer}
-        >
-          <Animated.View
-            style={[
-              styles.headerTitleContentInnerContainer,
-              {
-                maxWidth: headerTitleContentContainerMaxWidthAnim,
-              },
-            ]}
-          >
-            <SegmentedControlPropsContextProvider
-              value={HEADER_SEGMENTED_CONTROL_PROPS}
-            >
-              {headerTitleContent}
-            </SegmentedControlPropsContextProvider>
-          </Animated.View>
-        </View>
-      )}
-      {headerSearchBarEnabled && (
-        <View
-          style={[
-            styles.searchContainer,
-            { backgroundColor },
-            isSearchActive && styles.searchContainer_active,
-          ]}
-        >
-          <Appbar.Action
-            icon="magnify"
-            onPress={!isSearchActive ? openSearch : undefined}
-          />
-          <TextInput
-            ref={searchTextInputRef}
-            style={styles.searchTextInput}
-            placeholder={headerSearchBarOptions.placeholder || 'Search'}
-            onChangeText={headerSearchBarOptions.onChangeText}
-          />
-          <Appbar.Action icon="close" onPress={closeSearch} />
-        </View>
-      )}
-      {headerTrailingContent}
-    </Appbar.Header>
+      <Appbar.Action
+        icon="magnify"
+        onPress={!isSearchActive ? openSearch : undefined}
+        color={md3Colors.onSurfaceVariant}
+      />
+      <TextInput
+        ref={searchTextInputRef}
+        style={styles.searchTextInput}
+        placeholder={headerSearchBarOptions?.placeholder || 'Search'}
+        onChangeText={headerSearchBarOptions?.onChangeText}
+      />
+      <Appbar.Action
+        icon="close"
+        onPress={closeSearch}
+        color={md3Colors.onSurfaceVariant}
+      />
+    </View>
   );
-});
-
-HeaderMD3.displayName = 'StackScreenContent/Header_MD3';
+}
 
 const HEADER_SEGMENTED_CONTROL_PROPS: Partial<SegmentedControlProps<string>> = {
   height: 28,
@@ -248,10 +280,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   searchContainer: {
+    zIndex: 10,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
     width: 50,
+    overflow: 'hidden',
   },
   searchContainer_active: {
     ...StyleSheet.absoluteFillObject,
