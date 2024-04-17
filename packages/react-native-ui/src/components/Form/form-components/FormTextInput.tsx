@@ -2,19 +2,22 @@ import React from 'react';
 
 import { reactMemoWithPropsThatCanBeMarkedAsStable } from '@rnstudy/react-utils';
 
-import TextInput, { TextInputProps } from '../../TextInput';
+import TextInput, { RNTextInput, TextInputProps } from '../../TextInput';
 import FormField, { FormFieldProps } from '../FormField';
 
 type Props = Omit<FormFieldProps, 'children'> & TextInputProps;
 
 export const FormTextInput = reactMemoWithPropsThatCanBeMarkedAsStable(
-  function FormTextInput(props: Props) {
+  React.forwardRef<RNTextInput, Props>(function FormTextInput(
+    props: Props,
+    ref,
+  ) {
     return (
       <FormField {...props}>
-        <TextInput {...props} />
+        <TextInput ref={ref} {...props} />
       </FormField>
     );
-  },
+  }),
   ['onValueChange', 'onChangeText'],
 );
 

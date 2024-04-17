@@ -6,6 +6,7 @@ import {
   FormGroup,
   List,
   Menu,
+  RNTextInput,
   SegmentedControl,
   Text,
   withLayoutAnimation,
@@ -174,6 +175,8 @@ export default function ExampleStackScreen({
 
   const [counter, setCounter] = useState(0);
 
+  const titleTextInputRef = useRef<RNTextInput>(null);
+
   return (
     <StackScreenContent
       {...stackScreenContentProps}
@@ -213,6 +216,7 @@ export default function ExampleStackScreen({
       <StackScreenContent.ScrollView>
         <FormGroup first>
           <Form.TextInput
+            ref={titleTextInputRef}
             label="Title"
             placeholder="Enter Title"
             value={stackScreenContentProps.title || ''}

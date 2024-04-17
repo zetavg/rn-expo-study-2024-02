@@ -10,3 +10,4 @@ export * from './Select';
 export { SeparatorColor } from './SeparatorColor';
 export * from './Switch';
 export * from './Text';
+export * from './TextInput';
