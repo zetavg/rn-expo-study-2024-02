@@ -67,49 +67,30 @@ export const HeaderMD3 = memo(function HeaderMD3({
     elevated: useIsElevatedBackground(),
   });
 
-  const headerWidthRef = useRef<number>(windowDimensions.width);
   const headerWidthAnim = useRef(
-    new Animated.Value(headerWidthRef.current),
+    new Animated.Value(windowDimensions.width),
   ).current;
   const handleAppBarLayout = useCallback(
     (event: LayoutChangeEvent) => {
-      console.log('0 89283 handleAppBarLayout');
-      headerWidthRef.current = event.nativeEvent.layout.width;
       headerWidthAnim.setValue(event.nativeEvent.layout.width);
     },
     [headerWidthAnim],
   );
 
-  const headerTitleContentContainerMaxOfLeftRightAnim = useRef(
-    new Animated.Value(0),
-  ).current;
-  const headerTitleContentContainerInnerMarginLeftAnim = useRef(
+  const headerTitleContentContainerXAnim = useRef(
     new Animated.Value(0),
   ).current;
   const handleHeaderTitleContentContainerLayout = useCallback(
     (event: LayoutChangeEvent) => {
-      console.log('0 89283 handleHeaderTitleContentContainerLayout');
-      const left = event.nativeEvent.layout.x;
-      const right =
-        headerWidthRef.current - left - event.nativeEvent.layout.width;
-      headerTitleContentContainerMaxOfLeftRightAnim.setValue(
-        Math.max(left, right),
-      );
-      const rfDiff = right - left;
-      headerTitleContentContainerInnerMarginLeftAnim.setValue(
-        rfDiff > 0 ? rfDiff : 0,
-      );
+      headerTitleContentContainerXAnim.setValue(event.nativeEvent.layout.x);
     },
-    [
-      headerTitleContentContainerInnerMarginLeftAnim,
-      headerTitleContentContainerMaxOfLeftRightAnim,
-    ],
+    [headerTitleContentContainerXAnim],
   );
 
   const headerTitleContentContainerMaxWidthAnim = useRef(
     Animated.subtract(
       headerWidthAnim,
-      Animated.multiply(headerTitleContentContainerMaxOfLeftRightAnim, 2),
+      Animated.multiply(headerTitleContentContainerXAnim, 2),
     ),
   ).current;
 
@@ -142,7 +123,6 @@ export const HeaderMD3 = memo(function HeaderMD3({
               styles.headerTitleContentInnerContainer,
               {
                 maxWidth: headerTitleContentContainerMaxWidthAnim,
-                marginLeft: headerTitleContentContainerInnerMarginLeftAnim,
               },
             ]}
           >

@@ -119,8 +119,10 @@ export default function ExampleStackScreen({
           name: 'Custom Text',
           content: (
             <>
-              <Text callout>Custom Title Text</Text>
-              <Text caption1 secondary>
+              <Text numberOfLines={1} callout>
+                Custom Title Text
+              </Text>
+              <Text numberOfLines={1} caption1 secondary>
                 Custom Subtitle Text
               </Text>
             </>
