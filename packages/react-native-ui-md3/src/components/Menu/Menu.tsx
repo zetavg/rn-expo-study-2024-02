@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Menu as RNMenu } from 'react-native-paper';
 
 import { useColorScheme, useTheme } from '../../contexts';
@@ -25,8 +25,8 @@ export function Menu({ items, children }: Props) {
   const colorScheme = useColorScheme();
   const [visible, setVisible] = React.useState(false);
 
-  const openMenu = () => setVisible(true);
-  const closeMenu = () => setVisible(false);
+  const openMenu = useCallback(() => setVisible(true), []);
+  const closeMenu = useCallback(() => setVisible(false), []);
 
   return (
     <RNMenu

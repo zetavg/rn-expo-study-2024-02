@@ -119,6 +119,7 @@ export const HeaderMD3 = memo(function HeaderMD3({
   return (
     <Appbar.Header
       dark={colorScheme === 'dark'}
+      mode="small"
       elevated={!headerBackgroundTransparent}
       style={
         headerBackgroundTransparent
@@ -185,6 +186,8 @@ function HeaderSearch({
   const isSearchActiveRef = useRef(isSearchActive);
   isSearchActiveRef.current = isSearchActive;
 
+  const [searchInputValue, setSearchInputValue] = useState('');
+
   const focusSearchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
@@ -203,6 +206,7 @@ function HeaderSearch({
     searchTextInputRef.current?.clear();
     searchTextInputRef.current?.blur();
     headerSearchBarOptions?.onChangeText?.('');
+    setSearchInputValue('');
   }, [headerSearchBarOptions]);
 
   useEffect(() => {
@@ -222,30 +226,44 @@ function HeaderSearch({
     return () => backHandler.remove();
   }, [focused, closeSearch]);
 
+  const handleChangeText = useCallback(
+    (text: string) => {
+      setSearchInputValue(text);
+      headerSearchBarOptions?.onChangeText?.(text);
+    },
+    [headerSearchBarOptions],
+  );
+
+  const showSearchInput = isSearchActive || !!headerSearchBarOptions?.mandatory;
+
   return (
     <View
       style={[
         styles.searchContainer,
         { backgroundColor },
-        isSearchActive && styles.searchContainer_active,
+        showSearchInput && styles.searchContainer_show,
       ]}
     >
       <Appbar.Action
         icon="magnify"
-        onPress={!isSearchActive ? openSearch : undefined}
+        onPress={!showSearchInput ? openSearch : undefined}
         color={md3Colors.onSurfaceVariant}
       />
       <TextInput
         ref={searchTextInputRef}
         style={styles.searchTextInput}
         placeholder={headerSearchBarOptions?.placeholder || 'Search'}
-        onChangeText={headerSearchBarOptions?.onChangeText}
+        value={searchInputValue}
+        onChangeText={handleChangeText}
+        autoCapitalize={headerSearchBarOptions?.autoCapitalize}
       />
-      <Appbar.Action
-        icon="close"
-        onPress={closeSearch}
-        color={md3Colors.onSurfaceVariant}
-      />
+      {(!headerSearchBarOptions?.mandatory || !!searchInputValue) && (
+        <Appbar.Action
+          icon="close"
+          onPress={closeSearch}
+          color={md3Colors.onSurfaceVariant}
+        />
+      )}
     </View>
   );
 }
@@ -287,7 +305,7 @@ const styles = StyleSheet.create({
     width: 50,
     overflow: 'hidden',
   },
-  searchContainer_active: {
+  searchContainer_show: {
     ...StyleSheet.absoluteFillObject,
     width: 'auto',
   },

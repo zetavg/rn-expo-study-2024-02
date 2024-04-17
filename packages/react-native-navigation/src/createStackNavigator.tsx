@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
@@ -41,13 +41,14 @@ export function createStackNavigator<
   /** The default initial route name of the navigator. */
   defaultInitialRouteName: keyof S;
 }) {
+  const Stack =
+    Platform.OS === 'ios'
+      ? createNativeStackNavigator<StackParamListOfScreens<S>>()
+      : rnCreateStackNavigator<StackParamListOfScreens<S>>();
+
   const getNavigatorWithInitialRouteName = (initialRouteName: keyof S) =>
     function StackNavigator() {
       const uiPlatform = useUIPlatform();
-      const Stack =
-        uiPlatform === 'ios'
-          ? createNativeStackNavigator<StackParamListOfScreens<S>>()
-          : rnCreateStackNavigator<StackParamListOfScreens<S>>();
 
       const colorScheme = useColorScheme();
       const iosUIColors = useIOSUIColors();
@@ -55,7 +56,7 @@ export function createStackNavigator<
       const screenOptions = useMemo<ScreenOptions>(
         () => ({
           ...(() => {
-            switch (Platform.OS) {
+            switch (uiPlatform) {
               case 'ios': {
                 return {
                   headerTintColor: iosUIColors.tintColor,
@@ -83,8 +84,24 @@ export function createStackNavigator<
             }
           })(),
         }),
-        [colorScheme, iosUIColors],
+        [uiPlatform, colorScheme, iosUIColors],
       );
+
+      // To have a clean reset of screen options when `uiPlatform` changes.
+      const [resettingUIPlatform, setResettingUIPlatform] = useState(false);
+      const prevUIPlatformRef = useRef(uiPlatform);
+      useEffect(() => {
+        if (prevUIPlatformRef.current === uiPlatform) {
+          return;
+        }
+
+        setResettingUIPlatform(true);
+        setTimeout(() => {
+          setResettingUIPlatform(false);
+        }, 500);
+
+        prevUIPlatformRef.current = uiPlatform;
+      }, [uiPlatform]);
 
       return (
         <Stack.Navigator
@@ -93,7 +110,11 @@ export function createStackNavigator<
           id={id as any}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           initialRouteName={initialRouteName as any}
-          screenOptions={screenOptions}
+          screenOptions={
+            resettingUIPlatform ? { headerShown: false } : screenOptions
+          }
+          // We include `uiPlatform` in the key to have a clean reset of screen options when `uiPlatform` changes.
+          key={`stack-navigator-${id}-${uiPlatform}`}
         >
           {useMemo(
             () =>
@@ -119,7 +140,7 @@ export function createStackNavigator<
                   />
                 );
               }),
-            [Stack],
+            [],
           )}
         </Stack.Navigator>
       );

@@ -17,16 +17,22 @@ export const UIContextProvider = ({
   colorScheme,
   platform = AVAILABLE_UI_PLATFORMS[0],
   theme = baselineTheme,
+  dangerouslyBypassPlatformValidation,
   children,
 }: {
   theme?: Theme;
   colorScheme: 'light' | 'dark';
   platform?: UIPlatform;
+  dangerouslyBypassPlatformValidation?: boolean;
   children: ReactNode;
 }) => {
-  const validatedPlatform = AVAILABLE_UI_PLATFORMS.includes(platform)
+  let validatedPlatform = AVAILABLE_UI_PLATFORMS.includes(platform)
     ? platform
     : AVAILABLE_UI_PLATFORMS[0];
+
+  if (dangerouslyBypassPlatformValidation) {
+    validatedPlatform = platform;
+  }
 
   const iconTheme = useMemo<IconTheme>(() => {
     switch (validatedPlatform) {

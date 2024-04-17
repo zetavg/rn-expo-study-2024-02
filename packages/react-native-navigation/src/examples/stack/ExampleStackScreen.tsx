@@ -9,6 +9,7 @@ import {
   RNTextInput,
   SegmentedControl,
   Text,
+  useUIPlatform,
   withLayoutAnimation,
 } from '@rnstudy/react-native-ui';
 import { objectMap } from '@rnstudy/react-utils';
@@ -73,6 +74,10 @@ export default function ExampleStackScreen({
     }
   | undefined
 >) {
+  const uiPlatform = useUIPlatform();
+  const uiPlatformRef = useRef(uiPlatform);
+  uiPlatformRef.current = uiPlatform;
+
   const [searchBarText, setSearchBarText] = React.useState('');
 
   const [stackScreenContentProps, setStackScreenContentProps] = useState<
@@ -91,6 +96,7 @@ export default function ExampleStackScreen({
       enable: false,
       placeholder: undefined,
       cancelButtonText: undefined,
+      mandatory: false,
       hideWhenScrolling: true,
       autoFocus: false,
       ...route.params?.stackScreenContentProps?.headerSearchBarOptions,
@@ -320,16 +326,22 @@ export default function ExampleStackScreen({
             value={stackScreenContentProps.showHeader}
             onValueChangeIsStable
             onValueChange={(showHeader) => {
-              // This cannot be changed dynamically, so we need to navigate to a new screen with the value updated.
-              navigation.push(route.name, {
-                stackScreenContentProps: {
-                  ...stackScreenContentPropsRef.current,
-                  showHeader,
-                },
-                headerTitleContentExample: headerTitleContentExampleRef.current,
-                headerTrailingContentExample:
-                  headerTrailingContentExampleRef.current,
-              });
+              if (uiPlatformRef.current === 'ios') {
+                // This cannot be changed dynamically on iOS, so we need to navigate to a new screen with the value updated.
+                navigation.push(route.name, {
+                  stackScreenContentProps: {
+                    ...stackScreenContentPropsRef.current,
+                    showHeader,
+                  },
+                  headerTitleContentExample:
+                    headerTitleContentExampleRef.current,
+                  headerTrailingContentExample:
+                    headerTrailingContentExampleRef.current,
+                });
+                return;
+              }
+
+              setStackScreenContentProps((s) => ({ ...s, showHeader }));
             }}
           />
           <Form.Switch
@@ -368,10 +380,10 @@ export default function ExampleStackScreen({
             value={stackScreenContentProps.headerBackTitle || ''}
             onValueChangeIsStable
             onValueChange={(headerBackTitle) => {
-              if (headerBackTitle) {
+              if (headerBackTitle || uiPlatformRef.current !== 'ios') {
                 setStackScreenContentProps((s) => ({ ...s, headerBackTitle }));
               } else {
-                // This cannot be reset dynamically, so we need to navigate to a new screen with the value reset.
+                // This cannot be reset dynamically on iOS, so we need to navigate to a new screen with the value reset.
                 navigation.push(route.name, {
                   stackScreenContentProps: {
                     ...stackScreenContentPropsRef.current,
@@ -391,13 +403,13 @@ export default function ExampleStackScreen({
             value={stackScreenContentProps.headerBackTitleVisible}
             onValueChangeIsStable
             onValueChange={(headerBackTitleVisible) => {
-              if (!headerBackTitleVisible) {
+              if (!headerBackTitleVisible || uiPlatformRef.current !== 'ios') {
                 setStackScreenContentProps((s) => ({
                   ...s,
                   headerBackTitleVisible,
                 }));
               } else {
-                // This cannot be reset dynamically, so we need to navigate to a new screen with the value reset.
+                // This cannot be reset dynamically on iOS, so we need to navigate to a new screen with the value reset.
                 navigation.push(route.name, {
                   stackScreenContentProps: {
                     ...stackScreenContentPropsRef.current,
@@ -480,20 +492,32 @@ export default function ExampleStackScreen({
             value={stackScreenContentProps.headerSearchBarOptions?.enable}
             onValueChangeIsStable
             onValueChange={(enable) => {
-              // The header search bar cannot be enabled or disabled dynamically, so we need to navigate to a new screen with the header search bar enabled or disabled.
-              navigation.push(route.name, {
-                stackScreenContentProps: {
-                  ...stackScreenContentPropsRef.current,
-                  headerSearchBarOptions: {
-                    ...stackScreenContentPropsRef.current
-                      .headerSearchBarOptions,
-                    enable,
+              if (uiPlatformRef.current === 'ios') {
+                // The header search bar cannot be enabled or disabled dynamically on iOS, so we need to navigate to a new screen with the header search bar enabled or disabled.
+                navigation.push(route.name, {
+                  stackScreenContentProps: {
+                    ...stackScreenContentPropsRef.current,
+                    headerSearchBarOptions: {
+                      ...stackScreenContentPropsRef.current
+                        .headerSearchBarOptions,
+                      enable,
+                    },
                   },
+                  headerTitleContentExample:
+                    headerTitleContentExampleRef.current,
+                  headerTrailingContentExample:
+                    headerTrailingContentExampleRef.current,
+                });
+                return;
+              }
+
+              setStackScreenContentProps((s) => ({
+                ...s,
+                headerSearchBarOptions: {
+                  ...s.headerSearchBarOptions,
+                  enable,
                 },
-                headerTitleContentExample: headerTitleContentExampleRef.current,
-                headerTrailingContentExample:
-                  headerTrailingContentExampleRef.current,
-              });
+              }));
             }}
           />
           {stackScreenContentProps.headerSearchBarOptions?.enable && (
@@ -529,15 +553,53 @@ export default function ExampleStackScreen({
               onValueChangeIsStable
               onValueChange={setTmpSearchBarCancelButtonText}
               onBlur={() => {
-                // This cannot be changed dynamically, so we need to navigate to a new screen with the value updated.
-                tmpSearchBarCancelButtonText &&
+                if (uiPlatformRef.current === 'ios') {
+                  // This cannot be changed dynamically on iOS, so we need to navigate to a new screen with the value updated.
+                  tmpSearchBarCancelButtonText &&
+                    navigation.push(route.name, {
+                      stackScreenContentProps: {
+                        ...stackScreenContentPropsRef.current,
+                        headerSearchBarOptions: {
+                          ...stackScreenContentPropsRef.current
+                            .headerSearchBarOptions,
+                          cancelButtonText: tmpSearchBarCancelButtonText,
+                        },
+                      },
+                      headerTitleContentExample:
+                        headerTitleContentExampleRef.current,
+                      headerTrailingContentExample:
+                        headerTrailingContentExampleRef.current,
+                    });
+                } else {
+                  setStackScreenContentProps((s) => ({
+                    ...s,
+                    headerSearchBarOptions: {
+                      ...s.headerSearchBarOptions,
+                      cancelButtonText:
+                        tmpSearchBarCancelButtonText || undefined,
+                    },
+                  }));
+                }
+
+                setTmpSearchBarCancelButtonText(null);
+              }}
+            />
+          )}
+          {stackScreenContentProps.headerSearchBarOptions?.enable && (
+            <Form.Switch
+              label="Mandatory"
+              value={stackScreenContentProps.headerSearchBarOptions?.mandatory}
+              onValueChangeIsStable
+              onValueChange={(mandatory) => {
+                if (uiPlatformRef.current === 'ios') {
+                  // This cannot be changed dynamically on iOS, so we need to navigate to a new screen with the value updated.
                   navigation.push(route.name, {
                     stackScreenContentProps: {
                       ...stackScreenContentPropsRef.current,
                       headerSearchBarOptions: {
                         ...stackScreenContentPropsRef.current
                           .headerSearchBarOptions,
-                        cancelButtonText: tmpSearchBarCancelButtonText,
+                        mandatory,
                       },
                     },
                     headerTitleContentExample:
@@ -545,7 +607,16 @@ export default function ExampleStackScreen({
                     headerTrailingContentExample:
                       headerTrailingContentExampleRef.current,
                   });
-                setTmpSearchBarCancelButtonText(null);
+                  return;
+                }
+
+                setStackScreenContentProps((s) => ({
+                  ...s,
+                  headerSearchBarOptions: {
+                    ...s.headerSearchBarOptions,
+                    mandatory,
+                  },
+                }));
               }}
             />
           )}
@@ -558,21 +629,32 @@ export default function ExampleStackScreen({
               }
               onValueChangeIsStable
               onValueChange={(hideWhenScrolling) => {
-                // This cannot be changed dynamically, so we need to navigate to a new screen with the value updated.
-                navigation.push(route.name, {
-                  stackScreenContentProps: {
-                    ...stackScreenContentPropsRef.current,
-                    headerSearchBarOptions: {
-                      ...stackScreenContentPropsRef.current
-                        .headerSearchBarOptions,
-                      hideWhenScrolling,
+                if (uiPlatformRef.current === 'ios') {
+                  // This cannot be changed dynamically, so we need to navigate to a new screen with the value updated.
+                  navigation.push(route.name, {
+                    stackScreenContentProps: {
+                      ...stackScreenContentPropsRef.current,
+                      headerSearchBarOptions: {
+                        ...stackScreenContentPropsRef.current
+                          .headerSearchBarOptions,
+                        hideWhenScrolling,
+                      },
                     },
+                    headerTitleContentExample:
+                      headerTitleContentExampleRef.current,
+                    headerTrailingContentExample:
+                      headerTrailingContentExampleRef.current,
+                  });
+                  return;
+                }
+
+                setStackScreenContentProps((s) => ({
+                  ...s,
+                  headerSearchBarOptions: {
+                    ...s.headerSearchBarOptions,
+                    hideWhenScrolling,
                   },
-                  headerTitleContentExample:
-                    headerTitleContentExampleRef.current,
-                  headerTrailingContentExample:
-                    headerTrailingContentExampleRef.current,
-                });
+                }));
               }}
             />
           )}

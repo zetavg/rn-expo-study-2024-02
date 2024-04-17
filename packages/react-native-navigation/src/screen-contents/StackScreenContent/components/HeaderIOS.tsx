@@ -69,6 +69,9 @@ export const HeaderIOS = memo(function HeaderIOS({
                 }
               : undefined,
             tintColor: iosUIColors.tintColor,
+            hideWhenScrolling: headerSearchBarOptions.mandatory
+              ? false
+              : headerSearchBarOptions.hideWhenScrolling ?? true,
           }
         : undefined;
 

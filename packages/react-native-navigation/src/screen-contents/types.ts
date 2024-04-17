@@ -2,6 +2,8 @@
 export type HeaderSearchBarOptions = {
   /** Whether to enable the search bar. Defaults to `true` if `headerSearchBarOptions` is provided. */
   enable?: boolean;
+  /** Whether to treat the search bar as mandatory. If set to true, `hideWhenScrolling` will be treated as `false` on iOS, and the search text input will always be visible on Android. */
+  mandatory?: boolean;
   /** A callback that gets called when the text changes. It receives the current text value of the search bar. */
   onChangeText?: (text: string) => void;
   /** A callback that gets called when the cancel button is pressed. */
@@ -14,7 +16,7 @@ export type HeaderSearchBarOptions = {
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   /** Whether to automatically focus search bar when it's shown. */
   autoFocus?: boolean;
-  /** Boolean indicating whether to hide the search bar when scrolling. Defaults to `true`. */
+  /** Boolean indicating whether to hide the search bar when scrolling on iOS. Defaults to `true`. */
   hideWhenScrolling?: boolean;
   /** The text to be used instead of default Cancel button text. Only supported on iOS. */
   cancelButtonText?: string;
