@@ -64,8 +64,7 @@ export const HeaderIOS = memo(function HeaderIOS({
                   headerSearchBarOptions?.onChangeText?.(e.nativeEvent.text);
                 }
               : undefined,
-            // TODO[theme]: define me with dynamic theme
-            tintColor: undefined,
+            tintColor: iosUIColors.tintColor,
           }
         : undefined;
 

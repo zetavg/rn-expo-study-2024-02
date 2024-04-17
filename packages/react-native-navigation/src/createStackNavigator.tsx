@@ -49,6 +49,7 @@ export function createStackNavigator<
             switch (Platform.OS) {
               case 'ios': {
                 return {
+                  headerTintColor: iosUIColors.tintColor,
                   headerTitleStyle: getHeaderTitleStyleIOS({ iosUIColors }),
                   ...getScreenOptionsForHeaderBackgroundAndBorderIOS({
                     colorScheme,
