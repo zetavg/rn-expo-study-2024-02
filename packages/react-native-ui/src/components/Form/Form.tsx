@@ -1,7 +1,7 @@
-import FormRadioButtons from './components/FormRadioButtons';
-import FormSelect from './components/FormSelect';
-import FormSwitch from './components/FormSwitch';
-import FormTextInput from './components/FormTextInput';
+import FormRadioButtons from './form-components/FormRadioButtons';
+import FormSelect from './form-components/FormSelect';
+import FormSwitch from './form-components/FormSwitch';
+import FormTextInput from './form-components/FormTextInput';
 import FormGroup from './FormGroup';
 
 export function Form() {}

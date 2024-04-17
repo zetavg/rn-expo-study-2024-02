@@ -2,6 +2,7 @@ import React from 'react';
 
 import { ListFooter as ListFooterIOS } from '@rnstudy/react-native-ui-ios';
 import { ListFooter as ListFooterMD3 } from '@rnstudy/react-native-ui-md3';
+import { reactMemoWithPropsThatCanBeMarkedAsStable } from '@rnstudy/react-utils';
 
 import { useUIPlatform } from '../../../contexts';
 
@@ -24,5 +25,12 @@ export function ListFooter(props: Props) {
     }
   }
 }
+
+/**
+ * `ListFooter` wrapped with `React.memo`.
+ */
+ListFooter.Memoized = reactMemoWithPropsThatCanBeMarkedAsStable(ListFooter, [
+  'text',
+]);
 
 export default ListFooter;

@@ -1,11 +1,16 @@
 import React, { useMemo } from 'react';
 import { Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createStackNavigator as rnCreateStackNavigator,
+  TransitionPresets,
+} from '@react-navigation/stack';
 
 import {
   useColorScheme,
   useIOSColors,
   useIOSUIColors,
+  useUIPlatform,
 } from '@rnstudy/react-native-ui';
 
 import {
@@ -36,10 +41,14 @@ export function createStackNavigator<
   /** The default initial route name of the navigator. */
   defaultInitialRouteName: keyof S;
 }) {
-  const Stack = createNativeStackNavigator<StackParamListOfScreens<S>>();
-
   const getNavigatorWithInitialRouteName = (initialRouteName: keyof S) =>
     function StackNavigator() {
+      const uiPlatform = useUIPlatform();
+      const Stack =
+        uiPlatform === 'ios'
+          ? createNativeStackNavigator<StackParamListOfScreens<S>>()
+          : rnCreateStackNavigator<StackParamListOfScreens<S>>();
+
       const colorScheme = useColorScheme();
       const iosUIColors = useIOSUIColors();
 
@@ -49,6 +58,7 @@ export function createStackNavigator<
             switch (Platform.OS) {
               case 'ios': {
                 return {
+                  headerTintColor: iosUIColors.tintColor,
                   headerTitleStyle: getHeaderTitleStyleIOS({ iosUIColors }),
                   ...getScreenOptionsForHeaderBackgroundAndBorderIOS({
                     colorScheme,
@@ -62,7 +72,14 @@ export function createStackNavigator<
               }
 
               default:
-                return {};
+                return {
+                  headerShown: false, // We use our own header component in screens.
+                  gestureEnabled: true,
+                  cardShadowEnabled: false, // `cardShadowEnabled: true` is not working as expected, `cardStyle: { elevation: 5 }` is used instead.
+                  cardOverlayEnabled: true,
+                  cardStyle: { elevation: 5 },
+                  ...TransitionPresets.SlideFromRightIOS,
+                };
             }
           })(),
         }),
@@ -102,7 +119,7 @@ export function createStackNavigator<
                   />
                 );
               }),
-            [],
+            [Stack],
           )}
         </Stack.Navigator>
       );

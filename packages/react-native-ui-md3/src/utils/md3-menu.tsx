@@ -53,10 +53,11 @@ export function buildMenuItems(
     if ((item as SubMenu).items) {
       const subMenu = item as SubMenu;
       return [
-        <Divider />,
+        <Divider key={`${keyPrefix}${index}-divider`} />,
         ...(subMenu.title
           ? [
               <Text
+                key={`${keyPrefix}${index}-title`}
                 variant="labelSmall"
                 color="outline"
                 numberOfLines={1}

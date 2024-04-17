@@ -10,7 +10,10 @@ import {
   ListItem as ListItemMD3,
   listItemChildrenPaddingCancelingStyle as listItemChildrenPaddingCancelingStyleMD3,
 } from '@rnstudy/react-native-ui-md3';
-import { type ReactNodePropWithPropDefaultValuesContext } from '@rnstudy/react-utils';
+import {
+  reactMemoWithPropsThatCanBeMarkedAsStable,
+  type ReactNodePropWithPropDefaultValuesContext,
+} from '@rnstudy/react-utils';
 
 import { useUIPlatform } from '../../../contexts';
 
@@ -153,5 +156,15 @@ ListItem.ChildrenPaddingCancelingContainer =
       </View>
     );
   };
+
+/**
+ * `ListItem` wrapped with `React.memo`.
+ */
+ListItem.Memoized = reactMemoWithPropsThatCanBeMarkedAsStable(ListItem, [
+  'title',
+  'subtitle',
+  'onPress',
+  'onLongPress',
+]);
 
 export default ListItem;

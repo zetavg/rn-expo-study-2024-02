@@ -55,6 +55,7 @@ export default function bottomTabPressReactive<
     const bottomTabNavigation = useContext(BottomTabNavigationContext);
 
     const isScrolledToTopRef = useRef(true);
+    /** For scroll views with top inset, the initial scroll offset may be a negative value, so we'll need to log it for determining whether the scroll view is scrolled to top. */
     const initialScrollOffsetRef = useRef<undefined | number>(undefined);
     const handleScroll = useCallback(
       (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -62,7 +63,7 @@ export default function bottomTabPressReactive<
 
         const offset = event.nativeEvent.contentOffset.y;
         if (typeof initialScrollOffsetRef.current !== 'number') {
-          initialScrollOffsetRef.current = offset;
+          initialScrollOffsetRef.current = Math.min(offset, 0);
         }
         const shouldBeScrolledToTop =
           offset <= (initialScrollOffsetRef.current || 0);
