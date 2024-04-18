@@ -31,6 +31,7 @@ export default ({ config }: ConfigContext): ExpoConfig =>
           foregroundImage: './assets/adaptive-icon.png',
           backgroundColor: '#ffffff',
         },
+        softwareKeyboardLayoutMode: 'pan',
       },
       extra: {
         ...config.extra,
