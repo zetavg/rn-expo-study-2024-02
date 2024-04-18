@@ -17,56 +17,34 @@ export const StackScreenContentScrollView = forwardRef<
   const contentInset = useContentInset(props.contentInset);
   const focused = useIsFocused();
 
-  // `automaticallyAdjustKeyboardInsets` is not supported on Android, so we need to handle it manually.
-  const [isKeyboardVisible, setKeyboardVisible] = useState(
-    Keyboard.isVisible(),
-  );
-  useEffect(() => {
-    if (Platform.OS === 'ios') return;
-
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      },
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
-
   return (
     <BottomTabPressReactiveScrollView
       ref={ref}
-      {...props}
-      contentContainerStyle={[
-        props.contentContainerStyle,
-        Platform.OS !== 'ios' &&
-          // `automaticallyAdjustKeyboardInsets` is not supported on Android, so we need to handle it manually.
-          isKeyboardVisible && {
-            paddingBottom: Keyboard.metrics()?.height,
-          },
-      ]}
       keyboardDismissMode="interactive"
       keyboardShouldPersistTaps="handled"
-      // Make `automaticallyAdjustKeyboardInsets` defaults to `true` when focused. Disabling it when not focused can prevent the scroll position from changing for unfocused screens when the keyboard has been shown.
+      // On iOS, make `automaticallyAdjustKeyboardInsets` defaults to `true` when focused. Disabling it when not focused can prevent the scroll position from changing for unfocused screens when the keyboard has been shown.
       automaticallyAdjustKeyboardInsets={
-        Platform.OS === 'ios' ? focused : false
+        Platform.OS === 'ios'
+          ? focused
+          : false /* On Android, KeyboardAvoidingView in ScreenContent is used instead. */
       }
       // For `headerLargeTitle` to work. See: https://reactnavigation.org/docs/7.x/native-stack-navigator#headerlargetitle
+      // This also handles insets for safe area and bottom tab bar automatically on iOS.
       contentInsetAdjustmentBehavior={
         Platform.OS === 'ios' ? 'automatic' : undefined
       }
-      contentInset={contentInset}
-      scrollIndicatorInsets={contentInset}
+      {...props}
+      // Seems that `contentInset` and `scrollIndicatorInsets` are not working on Android. Fallback to padding instead.
+      // https://github.com/facebook/react-native/issues/30533
+      contentInset={Platform.OS === 'ios' ? contentInset : undefined}
+      scrollIndicatorInsets={Platform.OS === 'ios' ? contentInset : undefined}
+      contentContainerStyle={[
+        props.contentContainerStyle,
+        Platform.OS === 'android' && {
+          paddingTop: contentInset?.top,
+          paddingBottom: contentInset?.bottom,
+        },
+      ]}
     />
   );
 });

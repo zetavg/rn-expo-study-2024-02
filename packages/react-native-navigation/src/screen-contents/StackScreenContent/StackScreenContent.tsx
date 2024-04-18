@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 
 import { BackgroundColor } from '@rnstudy/react-native-ui';
 
@@ -47,7 +47,23 @@ export type Props = {
 export function StackScreenContent(props: Props) {
   const headerProps = useHeaderProps(props);
 
-  const { grouped, children } = props;
+  const { grouped } = props;
+
+  let children = props.children;
+
+  if (Platform.OS === 'android') {
+    children = (
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={
+          // TODO: Set this dynamically based on the height of the bottom tab bar and the bottom safe area inset
+          80
+        }
+      >
+        {children}
+      </KeyboardAvoidingView>
+    );
+  }
 
   return (
     <>
