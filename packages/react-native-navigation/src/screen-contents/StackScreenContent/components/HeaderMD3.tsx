@@ -61,6 +61,7 @@ export const HeaderMD3 = memo(function HeaderMD3({
   headerTrailingContent,
   headerSearchBarOptions,
   grouped,
+  onLayout,
 }: Props) {
   const windowDimensions = useWindowDimensions();
 
@@ -88,8 +89,9 @@ export const HeaderMD3 = memo(function HeaderMD3({
   const handleAppBarLayout = useCallback(
     (event: LayoutChangeEvent) => {
       headerWidthAnim.setValue(event.nativeEvent.layout.width);
+      onLayout?.(event);
     },
-    [headerWidthAnim],
+    [headerWidthAnim, onLayout],
   );
 
   const headerTitleContentContainerXAnim = useRef(

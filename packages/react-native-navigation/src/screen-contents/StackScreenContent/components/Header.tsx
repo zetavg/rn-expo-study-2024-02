@@ -1,4 +1,5 @@
 import React, { memo, useMemo } from 'react';
+import { LayoutChangeEvent } from 'react-native';
 
 import { useUIPlatform } from '@rnstudy/react-native-ui';
 import { useMemoValue } from '@rnstudy/react-utils';
@@ -21,7 +22,9 @@ export type Props = Pick<
   | 'headerTrailingContent'
   | 'headerSearchBarOptions'
   | 'grouped'
->;
+> & {
+  onLayout?: (event: LayoutChangeEvent) => void;
+};
 
 export function useHeaderProps(p: StackScreenContentProps): Props {
   const { headerSearchBarOptions: headerSearchBarOptionsProp } = p;

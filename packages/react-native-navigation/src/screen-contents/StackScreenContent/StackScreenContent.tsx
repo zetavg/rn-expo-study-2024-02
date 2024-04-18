@@ -1,8 +1,9 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { BackgroundColor } from '@rnstudy/react-native-ui';
+import { BackgroundColor, useUIPlatform } from '@rnstudy/react-native-ui';
 
+import { HeaderHeightContext } from '../../contexts/HeaderHeightContext';
 import HeaderControlButton from '../HeaderControlButton';
 import { HeaderSearchBarOptions } from '../types';
 
@@ -13,7 +14,9 @@ export type Props = {
   title?: string;
   /** Whether to show the header or not. Defaults to `true`. */
   showHeader?: boolean;
+  /** @deprecated */
   headerBackgroundTransparent?: boolean;
+  /** @deprecated */
   headerTitleVisible?: boolean;
   /**
    * Whether to enable header with large title which collapses to regular header on scroll.
@@ -45,28 +48,23 @@ export type Props = {
 };
 
 export function StackScreenContent(props: Props) {
+  const uiPlatform = useUIPlatform();
   const headerProps = useHeaderProps(props);
 
-  const { grouped } = props;
+  const [headerHeight, _] = React.useState<number | undefined>(
+    (() => {
+      if (uiPlatform === 'android') {
+        return props.showHeader ?? true
+          ? 0 /* Since the header will only be position-static with the current implementation */
+          : undefined;
+      }
+    })(),
+  );
 
-  let children = props.children;
-
-  if (Platform.OS === 'android') {
-    children = (
-      <KeyboardAvoidingView
-        behavior="padding"
-        keyboardVerticalOffset={
-          // TODO: Set this dynamically based on the height of the bottom tab bar and the bottom safe area inset
-          80
-        }
-      >
-        {children}
-      </KeyboardAvoidingView>
-    );
-  }
+  const { grouped, children } = props;
 
   return (
-    <>
+    <HeaderHeightContext.Provider value={headerHeight}>
       <Header {...headerProps} />
 
       <BackgroundColor root grouped={grouped}>
@@ -76,7 +74,7 @@ export function StackScreenContent(props: Props) {
           </View>
         )}
       </BackgroundColor>
-    </>
+    </HeaderHeightContext.Provider>
   );
 }
 

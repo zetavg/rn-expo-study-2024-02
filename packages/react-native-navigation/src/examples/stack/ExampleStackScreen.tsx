@@ -86,8 +86,8 @@ export default function ExampleStackScreen({
     title: 'Title of Screen',
     grouped: true,
     showHeader: true,
-    headerBackgroundTransparent: false,
-    headerTitleVisible: true,
+    // headerBackgroundTransparent: false,
+    // headerTitleVisible: true,
     headerLargeTitle: true,
     headerBackTitle: undefined,
     headerBackTitleVisible: true,
@@ -326,25 +326,19 @@ export default function ExampleStackScreen({
             value={stackScreenContentProps.showHeader}
             onValueChangeIsStable
             onValueChange={(showHeader) => {
-              if (uiPlatformRef.current === 'ios') {
-                // This cannot be changed dynamically on iOS, so we need to navigate to a new screen with the value updated.
-                navigation.push(route.name, {
-                  stackScreenContentProps: {
-                    ...stackScreenContentPropsRef.current,
-                    showHeader,
-                  },
-                  headerTitleContentExample:
-                    headerTitleContentExampleRef.current,
-                  headerTrailingContentExample:
-                    headerTrailingContentExampleRef.current,
-                });
-                return;
-              }
-
-              setStackScreenContentProps((s) => ({ ...s, showHeader }));
+              // This cannot be changed dynamically, so we need to navigate to a new screen with the value updated.
+              navigation.push(route.name, {
+                stackScreenContentProps: {
+                  ...stackScreenContentPropsRef.current,
+                  showHeader,
+                },
+                headerTitleContentExample: headerTitleContentExampleRef.current,
+                headerTrailingContentExample:
+                  headerTrailingContentExampleRef.current,
+              });
             }}
           />
-          <Form.Switch
+          {/* <Form.Switch
             label="Header Background Transparent"
             value={stackScreenContentProps.headerBackgroundTransparent}
             onValueChangeIsStable
@@ -354,15 +348,15 @@ export default function ExampleStackScreen({
                 headerBackgroundTransparent,
               }))
             }
-          />
-          <Form.Switch
+          /> */}
+          {/* <Form.Switch
             label="Header Title Visible"
             value={stackScreenContentProps.headerTitleVisible}
             onValueChangeIsStable
             onValueChange={(headerTitleVisible) =>
               setStackScreenContentProps((s) => ({ ...s, headerTitleVisible }))
             }
-          />
+          /> */}
           <Form.Switch
             label="Header Large Title"
             value={stackScreenContentProps.headerLargeTitle}

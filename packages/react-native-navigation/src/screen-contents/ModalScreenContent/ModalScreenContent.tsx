@@ -4,7 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import bottomTabPressReactive from '../bottomTabPressReactive';
-import { useContentInset } from '../hooks';
+import { useScrollViewContentInset } from '../hooks';
 
 import dismissible from './dismissible';
 
@@ -82,7 +82,7 @@ ModalScreenContent.ScrollView = forwardRef<
   props: React.ComponentProps<typeof DismissibleScrollView>,
   ref,
 ) {
-  const contentInset = useContentInset(props.contentInset);
+  const contentInset = useScrollViewContentInset(props.contentInset);
 
   return (
     <BottomTabPressReactiveAndDismissibleScrollView
