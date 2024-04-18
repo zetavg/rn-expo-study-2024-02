@@ -82,7 +82,9 @@ ModalScreenContent.ScrollView = forwardRef<
   props: React.ComponentProps<typeof DismissibleScrollView>,
   ref,
 ) {
-  const contentInset = useScrollViewContentInset(props.contentInset);
+  const contentInset = useScrollViewContentInset(props.contentInset, {
+    contentInsetAdjustmentBehavior: 'automatic', // TODO
+  });
 
   return (
     <BottomTabPressReactiveAndDismissibleScrollView
