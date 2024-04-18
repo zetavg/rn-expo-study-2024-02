@@ -52,10 +52,6 @@ TextInput.displayName = 'TextInputMD3';
 const styles = StyleSheet.create({
   text: {
     fontFamily: 'Roboto',
-
-    // A hack to make auto scrolling scroll to a better position while the opening software keyboard will cover the text input.
-    paddingVertical: 16,
-    marginVertical: -16,
   },
 });
 
