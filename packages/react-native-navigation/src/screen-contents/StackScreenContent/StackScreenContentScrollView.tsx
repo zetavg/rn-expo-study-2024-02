@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 import { Platform, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 
@@ -29,6 +29,23 @@ export const StackScreenContentScrollView = forwardRef<
     contentInsetAdjustmentBehavior,
   });
 
+  // On iOS, changing `contentInset` after the initial render may cause the content in the scroll view to shift (users may encounter this when they rotate the device, which changes the screen width and makes the bottom tab bar to be moved to the side). To prevent this, we will log and use the initial content inset and always use it for the scroll view, and calculate the difference between the initial and the new content insets and apply the diff as `contentContainerStyle` padding.
+  const [initialContentInset] = useState(contentInset);
+  const contentInsetDiff = useMemo(() => {
+    if (contentInset === initialContentInset) return null;
+
+    const diff: typeof contentInset = {};
+
+    for (const key of ['top', 'bottom', 'left', 'right'] as const) {
+      if (contentInset?.[key] !== initialContentInset?.[key]) {
+        diff[key] =
+          (contentInset?.[key] || 0) - (initialContentInset?.[key] || 0);
+      }
+    }
+
+    return diff;
+  }, [contentInset, initialContentInset]);
+
   const view = (
     <BottomTabPressReactiveScrollView
       ref={ref}
@@ -48,12 +65,21 @@ export const StackScreenContentScrollView = forwardRef<
       // Content insets.
       // Seems that `contentInset` and `scrollIndicatorInsets` are not working on Android. Fallback to `contentContainerStyle` padding instead.
       // https://github.com/facebook/react-native/issues/30533
-      contentInset={Platform.OS === 'ios' ? contentInset : undefined}
+      contentInset={Platform.OS === 'ios' ? initialContentInset : undefined}
+      scrollIndicatorInsets={
+        Platform.OS === 'ios' ? contentInsetDiff || undefined : undefined
+      }
       contentContainerStyle={[
         restProps.contentContainerStyle,
         Platform.OS === 'android' && {
           paddingTop: contentInset?.top,
           paddingBottom: contentInset?.bottom,
+        },
+        Platform.OS === 'ios' && {
+          paddingTop: contentInsetDiff?.top,
+          paddingBottom: contentInsetDiff?.bottom,
+          paddingLeft: contentInsetDiff?.left,
+          paddingRight: contentInsetDiff?.right,
         },
       ]}
     />
