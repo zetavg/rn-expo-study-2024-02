@@ -25,7 +25,7 @@ export const FormTextInput = reactMemoWithPropsThatCanBeMarkedAsStable(
 FormTextInput.displayName = 'FormTextInput';
 
 /**
- * A hack to make text inputs in a scroll view be scrolled to a better position when focused and needs to be avoid being covered by the software keyboard.
+ * HACK: A hack to make text inputs in a scroll view be scrolled to a better position when focused and needs to be avoid being covered by the software keyboard.
  */
 const VERTICAL_PADDING_HACK = 16;
 

@@ -9,8 +9,20 @@ export type Props = {
   first?: boolean;
   /** The footer of the list. Should be an `FormGroup.Header` element. */
   header?: React.ReactNode;
+  /** Shorthand of
+   * ```jsx
+   * header={headerTitle ? <FormGroup.Header title={headerTitle} /> : undefined}
+   * ```
+   * . */
+  headerTitle?: string | React.ReactElement;
   /** The footer of the list. Should be an `FormGroup.Footer` element. */
   footer?: React.ReactNode;
+  /** Shorthand of
+   * ```jsx
+   * footer={footerText ? <FormGroup.Footer text={footerText} /> : undefined}
+   * ```
+   * . */
+  footerText?: string | React.ReactElement;
   /** Set this to true to make the field vertical. Fields are horizontal (i.e. the label is on the left and the input is on the right) by default. */
   vertical?: boolean;
   /** The items in the list. */

@@ -43,7 +43,7 @@ export function Menu({ items, style, children }: Props) {
   );
 
   if (style) {
-    // This is not ideal, but the `Menu` component from `react-native-paper` does not support setting the style of the anchor wrapper view.
+    // HACK: This is not ideal, but the `Menu` component from `react-native-paper` does not support setting the style of the anchor wrapper view.
     return <View style={[styles.container, style]}>{element}</View>;
   }
 

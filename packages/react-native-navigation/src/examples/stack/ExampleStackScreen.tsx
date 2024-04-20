@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
 
 import {
   Form,
@@ -69,8 +69,9 @@ export default function ExampleStackScreen({
 }: StackScreenProps<
   | {
       stackScreenContentProps?: Omit<StackScreenContentProps, 'children'>;
-      headerTitleContentExample?: string;
-      headerTrailingContentExample?: object;
+      headerTitleContentExampleToShow?: string;
+      headerLeadingContentExamplesToShow?: object;
+      headerTrailingContentExamplesToShow?: object;
     }
   | undefined
 >) {
@@ -94,7 +95,7 @@ export default function ExampleStackScreen({
     headerBackTitleVisible: true,
     ...route.params?.stackScreenContentProps,
     headerSearchBarOptions: {
-      enable: false,
+      enable: true,
       placeholder: undefined,
       cancelButtonText: undefined,
       mandatory: false,
@@ -139,17 +140,79 @@ export default function ExampleStackScreen({
     [exampleSegmentedControlValue],
   );
 
-  const [headerTitleContentExample, setHeaderTitleContentExample] = useState<
-    keyof typeof headerTitleContentExamples | 'undefined'
-  >(
-    (route.params?.headerTitleContentExample || '') in
-      headerTitleContentExamples
-      ? (route.params
-          ?.headerTitleContentExample as keyof typeof headerTitleContentExamples)
-      : 'undefined',
+  const [headerTitleContentExampleToShow, setHeaderTitleContentExampleToShow] =
+    useState<keyof typeof headerTitleContentExamples | 'undefined'>(
+      (route.params?.headerTitleContentExampleToShow || '') in
+        headerTitleContentExamples
+        ? (route.params
+            ?.headerTitleContentExampleToShow as keyof typeof headerTitleContentExamples)
+        : 'undefined',
+    );
+  const headerTitleContentExampleToShowRef = useRef(
+    headerTitleContentExampleToShow,
   );
-  const headerTitleContentExampleRef = useRef(headerTitleContentExample);
-  headerTitleContentExampleRef.current = headerTitleContentExample;
+  headerTitleContentExampleToShowRef.current = headerTitleContentExampleToShow;
+
+  const headerLeadingContentExamples = useMemo(
+    () =>
+      ({
+        CancelTextButton: {
+          name: 'Cancel Text Button',
+          content: (
+            <StackScreenContent.HeaderControlButton
+              label="Cancel"
+              onPress={EXAMPLE_ON_PRESS_HANDLER}
+            />
+          ),
+        },
+        ExitTextButton: {
+          name: 'Exit Text Button',
+          content: (
+            <StackScreenContent.HeaderControlButton
+              label="Exit"
+              onPress={EXAMPLE_ON_PRESS_HANDLER}
+            />
+          ),
+        },
+        ShareButton: {
+          name: 'Share Button',
+          content: (
+            <StackScreenContent.HeaderControlButton
+              label="Share"
+              icon="_share"
+              onPress={EXAMPLE_ON_PRESS_HANDLER}
+            />
+          ),
+        },
+        MenuButton: {
+          name: 'Menu Button',
+          content: (
+            <Menu items={EXAMPLE_MENU_ITEMS}>
+              {(openMenu) => (
+                <StackScreenContent.HeaderControlButton
+                  label="More"
+                  icon="_header_menu"
+                  onPress={openMenu}
+                />
+              )}
+            </Menu>
+          ),
+        },
+      }) as const,
+    [],
+  );
+
+  const [
+    headerLeadingContentExamplesToShow,
+    setHeaderLeadingContentExamplesToShow,
+  ] = useState<{
+    [key in keyof typeof headerLeadingContentExamples]?: boolean;
+  }>(route.params?.headerLeadingContentExamplesToShow || {});
+  const headerLeadingContentExamplesToShowRef = useRef(
+    headerLeadingContentExamplesToShow,
+  );
+  headerLeadingContentExamplesToShowRef.current =
+    headerLeadingContentExamplesToShow;
 
   const headerTrailingContentExamples = useMemo(
     () =>
@@ -211,12 +274,17 @@ export default function ExampleStackScreen({
     [],
   );
 
-  const [headerTrailingContentExample, setHeaderTrailingContentExample] =
-    useState<{ [key in keyof typeof headerTrailingContentExamples]?: boolean }>(
-      route.params?.headerTrailingContentExample || {},
-    );
-  const headerTrailingContentExampleRef = useRef(headerTrailingContentExample);
-  headerTrailingContentExampleRef.current = headerTrailingContentExample;
+  const [
+    headerTrailingContentExamplesToShow,
+    setHeaderTrailingContentExamplesToShow,
+  ] = useState<{
+    [key in keyof typeof headerTrailingContentExamples]?: boolean;
+  }>(route.params?.headerTrailingContentExamplesToShow || {});
+  const headerTrailingContentExamplesToShowRef = useRef(
+    headerTrailingContentExamplesToShow,
+  );
+  headerTrailingContentExamplesToShowRef.current =
+    headerTrailingContentExamplesToShow;
 
   const [tmpSearchBarCancelButtonText, setTmpSearchBarCancelButtonText] =
     useState<string | null>(null);
@@ -235,10 +303,40 @@ export default function ExampleStackScreen({
         onBlur: () => setSearchBarFocused(false),
       }}
       headerTitleContent={
-        headerTitleContentExample === 'undefined'
+        headerTitleContentExampleToShow === 'undefined'
           ? undefined
-          : headerTitleContentExamples[headerTitleContentExample].content
+          : headerTitleContentExamples[headerTitleContentExampleToShow].content
       }
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerLeadingContent={useMemo(() => {
+        if (
+          !Object.values(headerLeadingContentExamplesToShow).some(
+            (show) => show,
+          )
+        ) {
+          return undefined;
+        }
+        return (
+          <>
+            {Object.keys(headerLeadingContentExamples)
+              .filter(
+                (key) =>
+                  headerLeadingContentExamplesToShow[
+                    key as keyof typeof headerLeadingContentExamples
+                  ],
+              )
+              .map((key) => (
+                <React.Fragment key={key}>
+                  {
+                    headerLeadingContentExamples[
+                      key as keyof typeof headerLeadingContentExamples
+                    ].content
+                  }
+                </React.Fragment>
+              ))}
+          </>
+        );
+      }, [headerLeadingContentExamplesToShow, headerLeadingContentExamples])}
       // eslint-disable-next-line react/no-unstable-nested-components
       headerTrailingContent={useMemo(() => {
         return (
@@ -246,7 +344,7 @@ export default function ExampleStackScreen({
             {Object.keys(headerTrailingContentExamples)
               .filter(
                 (key) =>
-                  headerTrailingContentExample[
+                  headerTrailingContentExamplesToShow[
                     key as keyof typeof headerTrailingContentExamples
                   ],
               )
@@ -261,7 +359,7 @@ export default function ExampleStackScreen({
               ))}
           </>
         );
-      }, [headerTrailingContentExample, headerTrailingContentExamples])}
+      }, [headerTrailingContentExamplesToShow, headerTrailingContentExamples])}
     >
       <StackScreenContent.ScrollView>
         <FormGroup first>
@@ -278,6 +376,22 @@ export default function ExampleStackScreen({
           />
           <Form.RadioButtons
             label="Grouped"
+            // description={
+            //   <>
+            //     The set of background colors to be used. See:{' '}
+            //     <Text
+            //       link
+            //       onPress={() =>
+            //         Linking.openURL(
+            //           'https://developer.apple.com/design/human-interface-guidelines/color#iOS-iPadOS',
+            //         )
+            //       }
+            //     >
+            //       here
+            //     </Text>
+            //     .
+            //   </>
+            // }
             options={useMemo(
               () => ({
                 undefined: { label: 'Default' },
@@ -309,9 +423,12 @@ export default function ExampleStackScreen({
             onPress={() =>
               navigation.push(route.name, {
                 stackScreenContentProps: stackScreenContentPropsRef.current,
-                headerTitleContentExample: headerTitleContentExampleRef.current,
-                headerTrailingContentExample:
-                  headerTrailingContentExampleRef.current,
+                headerTitleContentExampleToShow:
+                  headerTitleContentExampleToShowRef.current,
+                headerTrailingContentExamplesToShow:
+                  headerTrailingContentExamplesToShowRef.current,
+                headerLeadingContentExamplesToShow:
+                  headerLeadingContentExamplesToShowRef.current,
               })
             }
           />
@@ -335,9 +452,12 @@ export default function ExampleStackScreen({
                   ...stackScreenContentPropsRef.current,
                   showHeader,
                 },
-                headerTitleContentExample: headerTitleContentExampleRef.current,
-                headerTrailingContentExample:
-                  headerTrailingContentExampleRef.current,
+                headerTitleContentExampleToShow:
+                  headerTitleContentExampleToShowRef.current,
+                headerTrailingContentExamplesToShow:
+                  headerTrailingContentExamplesToShowRef.current,
+                headerLeadingContentExamplesToShow:
+                  headerLeadingContentExamplesToShowRef.current,
               });
             }}
           />
@@ -370,7 +490,11 @@ export default function ExampleStackScreen({
           />
         </FormGroup>
 
-        <FormGroup footer={<FormGroup.Footer text="Only works on iOS." />}>
+        <FormGroup
+          footerText={
+            'Only works on iOS. On Android, the back icon "←" will always be shown without a title.'
+          }
+        >
           <Form.TextInput
             label="Header Back Title"
             placeholder="Back"
@@ -386,10 +510,12 @@ export default function ExampleStackScreen({
                     ...stackScreenContentPropsRef.current,
                     headerBackTitle: undefined,
                   },
-                  headerTitleContentExample:
-                    headerTitleContentExampleRef.current,
-                  headerTrailingContentExample:
-                    headerTrailingContentExampleRef.current,
+                  headerTitleContentExampleToShow:
+                    headerTitleContentExampleToShowRef.current,
+                  headerTrailingContentExamplesToShow:
+                    headerTrailingContentExamplesToShowRef.current,
+                  headerLeadingContentExamplesToShow:
+                    headerLeadingContentExamplesToShowRef.current,
                 });
               }
             }}
@@ -412,17 +538,19 @@ export default function ExampleStackScreen({
                     ...stackScreenContentPropsRef.current,
                     headerBackTitleVisible: true,
                   },
-                  headerTitleContentExample:
-                    headerTitleContentExampleRef.current,
-                  headerTrailingContentExample:
-                    headerTrailingContentExampleRef.current,
+                  headerTitleContentExampleToShow:
+                    headerTitleContentExampleToShowRef.current,
+                  headerTrailingContentExamplesToShow:
+                    headerTrailingContentExamplesToShowRef.current,
+                  headerLeadingContentExamplesToShow:
+                    headerLeadingContentExamplesToShowRef.current,
                 });
               }
             }}
           />
         </FormGroup>
 
-        <FormGroup>
+        <FormGroup footerText="Choose from a set of predefined examples. In a real app, you can use any arbitrary element.">
           <Form.Select
             label="Header Title Content"
             options={useMemo(
@@ -434,11 +562,13 @@ export default function ExampleStackScreen({
               }),
               [headerTitleContentExamples],
             )}
-            value={headerTitleContentExample}
+            value={headerTitleContentExampleToShow}
             onValueChangeIsStable
-            onValueChange={withLayoutAnimation(setHeaderTitleContentExample)}
+            onValueChange={withLayoutAnimation(
+              setHeaderTitleContentExampleToShow,
+            )}
           />
-          {headerTitleContentExample === 'SegmentedControl' && (
+          {headerTitleContentExampleToShow === 'SegmentedControl' && (
             <Form.Select
               label="SegmentedControl Value"
               options={objectMap(
@@ -455,7 +585,8 @@ export default function ExampleStackScreen({
         </FormGroup>
 
         <FormGroup
-          header={<FormGroup.Header title="Header Trailing Contents" />}
+          headerTitle="Header Trailing Contents"
+          footerText="Choose from a set of predefined examples. In a real app, you can use any arbitrary element."
         >
           {Object.keys(headerTrailingContentExamples).map((key_) => {
             const key = key_ as keyof typeof headerTrailingContentExamples;
@@ -463,10 +594,10 @@ export default function ExampleStackScreen({
               <Form.Switch
                 key={key}
                 label={headerTrailingContentExamples[key].name}
-                value={headerTrailingContentExample[key]}
+                value={headerTrailingContentExamplesToShow[key]}
                 onValueChangeIsStable
                 onValueChange={(enabled) => {
-                  setHeaderTrailingContentExample((s) => ({
+                  setHeaderTrailingContentExamplesToShow((s) => ({
                     ...s,
                     [key]: enabled,
                   }));
@@ -477,22 +608,44 @@ export default function ExampleStackScreen({
         </FormGroup>
 
         <FormGroup
-          header={<FormGroup.Header title="Header Search Bar" />}
-          // eslint-disable-next-line react/no-unstable-nested-components
-          footer={(() => {
-            const searchBarInfo = [
-              searchBarFocused && 'Search bar focused.',
-              searchBarText && `Search bar text: "${searchBarText}".`,
-            ]
-              .filter((s) => !!s)
-              .join(' ');
-            return searchBarInfo ? (
-              <FormGroup.Footer text={searchBarInfo} />
-            ) : undefined;
-          })()}
+          headerTitle="Header Leading Contents"
+          footerText="Choose from a set of predefined examples. In a real app, you can use any arbitrary element."
+        >
+          {Object.keys(headerLeadingContentExamples).map((key_) => {
+            const key = key_ as keyof typeof headerLeadingContentExamples;
+            return (
+              <Form.Switch
+                key={key}
+                label={headerLeadingContentExamples[key].name}
+                value={headerLeadingContentExamplesToShow[key]}
+                onValueChangeIsStable
+                onValueChange={(enabled) => {
+                  setHeaderLeadingContentExamplesToShow((s) => ({
+                    ...s,
+                    [key]: enabled,
+                  }));
+                }}
+              />
+            );
+          })}
+        </FormGroup>
+
+        <FormGroup
+          headerTitle="Header Search Bar"
+          footerText={[
+            searchBarFocused && 'Search bar focused.',
+            searchBarText && `Search bar text: "${searchBarText}".`,
+          ]
+            .filter((s) => !!s)
+            .join(' ')}
         >
           <Form.Switch
             label="Enable"
+            description={
+              <>
+                Defaults to <Text monospaced>false</Text>.
+              </>
+            }
             value={stackScreenContentProps.headerSearchBarOptions?.enable}
             onValueChangeIsStable
             onValueChange={(enable) => {
@@ -507,10 +660,12 @@ export default function ExampleStackScreen({
                       enable,
                     },
                   },
-                  headerTitleContentExample:
-                    headerTitleContentExampleRef.current,
-                  headerTrailingContentExample:
-                    headerTrailingContentExampleRef.current,
+                  headerTitleContentExampleToShow:
+                    headerTitleContentExampleToShowRef.current,
+                  headerTrailingContentExamplesToShow:
+                    headerTrailingContentExamplesToShowRef.current,
+                  headerLeadingContentExamplesToShow:
+                    headerLeadingContentExamplesToShowRef.current,
                 });
                 return;
               }
@@ -547,6 +702,9 @@ export default function ExampleStackScreen({
           {stackScreenContentProps.headerSearchBarOptions?.enable && (
             <Form.TextInput
               label="Cancel Button Text"
+              description={
+                'Only for iOS. On Android, the "×" icon will be shown.'
+              }
               placeholder="Cancel"
               value={
                 tmpSearchBarCancelButtonText ??
@@ -569,10 +727,12 @@ export default function ExampleStackScreen({
                           cancelButtonText: tmpSearchBarCancelButtonText,
                         },
                       },
-                      headerTitleContentExample:
-                        headerTitleContentExampleRef.current,
-                      headerTrailingContentExample:
-                        headerTrailingContentExampleRef.current,
+                      headerTitleContentExampleToShow:
+                        headerTitleContentExampleToShowRef.current,
+                      headerTrailingContentExamplesToShow:
+                        headerTrailingContentExamplesToShowRef.current,
+                      headerLeadingContentExamplesToShow:
+                        headerLeadingContentExamplesToShowRef.current,
                     });
                 } else {
                   setStackScreenContentProps((s) => ({
@@ -606,10 +766,12 @@ export default function ExampleStackScreen({
                         mandatory,
                       },
                     },
-                    headerTitleContentExample:
-                      headerTitleContentExampleRef.current,
-                    headerTrailingContentExample:
-                      headerTrailingContentExampleRef.current,
+                    headerTitleContentExampleToShow:
+                      headerTitleContentExampleToShowRef.current,
+                    headerTrailingContentExamplesToShow:
+                      headerTrailingContentExamplesToShowRef.current,
+                    headerLeadingContentExamplesToShow:
+                      headerLeadingContentExamplesToShowRef.current,
                   });
                   return;
                 }
@@ -626,10 +788,26 @@ export default function ExampleStackScreen({
           )}
           {stackScreenContentProps.headerSearchBarOptions?.enable && (
             <Form.Switch
+              disabled={
+                stackScreenContentProps.headerSearchBarOptions?.mandatory
+              }
               label="Hide When Scrolling"
+              description={
+                stackScreenContentProps.headerSearchBarOptions?.mandatory ? (
+                  <>
+                    Will be <Text monospaced>false</Text> if mandatory is set to{' '}
+                    <Text monospaced>true</Text>.
+                  </>
+                ) : (
+                  'Only works on iOS.'
+                )
+              }
               value={
-                stackScreenContentProps.headerSearchBarOptions
-                  ?.hideWhenScrolling
+                stackScreenContentProps.headerSearchBarOptions?.mandatory ===
+                true
+                  ? false
+                  : stackScreenContentProps.headerSearchBarOptions
+                      ?.hideWhenScrolling
               }
               onValueChangeIsStable
               onValueChange={(hideWhenScrolling) => {
@@ -644,10 +822,12 @@ export default function ExampleStackScreen({
                         hideWhenScrolling,
                       },
                     },
-                    headerTitleContentExample:
-                      headerTitleContentExampleRef.current,
-                    headerTrailingContentExample:
-                      headerTrailingContentExampleRef.current,
+                    headerTitleContentExampleToShow:
+                      headerTitleContentExampleToShowRef.current,
+                    headerTrailingContentExamplesToShow:
+                      headerTrailingContentExamplesToShowRef.current,
+                    headerLeadingContentExamplesToShow:
+                      headerLeadingContentExamplesToShowRef.current,
                   });
                   return;
                 }

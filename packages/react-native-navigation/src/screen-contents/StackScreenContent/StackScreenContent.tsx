@@ -42,7 +42,7 @@ export type Props = {
   /** The content to take place of the header's title. */
   headerTitleContent?: React.ReactNode;
   /** The content to display on the header's leading side, taking place of the back button. */
-  headerHeadingContent?: React.ReactNode;
+  headerLeadingContent?: React.ReactNode;
   /** The content to display on the header's trailing side. */
   headerTrailingContent?: React.ReactNode;
 

@@ -151,7 +151,7 @@ export function Select<T extends string>(rawProps: Props<T>) {
             />
           ))}
         {!value && (
-          // [TODO] A hack to allow the value to be undefined. This is not meant to be selected.
+          // HACK: [TODO] A hack to allow the value to be undefined. This is not meant to be selected.
           <Picker.Item key="__undefined__" value="__undefined__" label="" />
         )}
       </Picker>

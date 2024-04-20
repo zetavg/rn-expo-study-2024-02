@@ -17,7 +17,11 @@ import {
 } from 'react-native';
 import { Appbar } from 'react-native-paper';
 // import { DEFAULT_APPBAR_HEIGHT } from 'react-native-paper/src/components/Appbar/utils';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import {
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 
 import {
   RNTextInput,
@@ -36,7 +40,7 @@ export const HeaderMD3 = memo(function HeaderMD3({
   showHeader = true,
   headerBackgroundTransparent,
   headerTitleContent,
-  headerHeadingContent,
+  headerLeadingContent,
   headerTrailingContent,
   headerSearchBarOptions,
   onLayout,
@@ -89,7 +93,12 @@ export const HeaderMD3 = memo(function HeaderMD3({
     ),
   ).current;
 
-  const canGoBack = useMemo(() => navigation.canGoBack(), [navigation]);
+  const route = useRoute();
+  const firstRoute = navigation.getState()?.routes[0];
+  const canGoBack = useMemo(
+    () => route.key !== firstRoute?.key,
+    [firstRoute?.key, route.key],
+  );
 
   if (!showHeader) return null;
 
@@ -109,8 +118,8 @@ export const HeaderMD3 = memo(function HeaderMD3({
       onLayout={handleAppBarLayout}
     >
       {(() => {
-        if (headerHeadingContent) {
-          return headerHeadingContent;
+        if (headerLeadingContent) {
+          return headerLeadingContent;
         }
 
         if (canGoBack) {

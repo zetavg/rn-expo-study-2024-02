@@ -84,7 +84,7 @@ export default function MessagesListScreen({ ..._ }: StackScreenProps) {
           onValueChange={changeFilter}
         />
       }
-      headerHeadingContent={
+      headerLeadingContent={
         exit ? <HeaderControlButton label="Exit" onPress={exit} /> : undefined
       }
     >

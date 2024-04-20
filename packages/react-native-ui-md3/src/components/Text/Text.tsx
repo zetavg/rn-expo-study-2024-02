@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { Text as PaperText } from 'react-native-paper';
 import Color from 'color';
 
@@ -29,14 +29,15 @@ export type Props = Partial<React.ComponentProps<typeof PaperText>> & {
 };
 
 export function Text(rawProps: Props) {
+  const { children, ...propsWithoutChildren } =
+    usePropsWithContextualDefaultValues(rawProps, TextPropsContext);
   const {
     variant = 'bodyLarge',
     color,
     style,
     monospaced,
-    children,
     ...restProps
-  } = usePropsWithContextualDefaultValues(rawProps, TextPropsContext);
+  } = propsWithoutChildren;
 
   const theme = useTheme();
   const colorScheme = useColorScheme();
@@ -76,25 +77,31 @@ export function Text(rawProps: Props) {
   });
 
   return (
-    <PaperText
-      variant={variant}
-      style={[
-        { color: textColor },
-        styles.text,
-        monospaced && styles.monospaced,
-        style,
-      ]}
-      {...restProps}
-    >
-      {wrappedChildren}
-    </PaperText>
+    <TextPropsContext.Provider value={propsWithoutChildren}>
+      <PaperText
+        variant={variant}
+        style={[
+          { color: textColor },
+          styles.text,
+          monospaced && styles.monospaced,
+          style,
+        ]}
+        {...restProps}
+      >
+        {wrappedChildren}
+      </PaperText>
+    </TextPropsContext.Provider>
   );
 }
 
 const styles = StyleSheet.create({
   text: { fontFamily: 'Roboto' },
   monospaced: {
-    fontFamily: 'monospace',
+    fontFamily: Platform.select({
+      ios: 'Courier',
+      android: 'monospace',
+      default: 'monospace',
+    }),
   },
 });
 

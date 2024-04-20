@@ -47,15 +47,16 @@ export const Text = forwardRef<RNText, Props>(function Text(
   rawProps: Props,
   ref,
 ) {
+  const { children, ...propsWithoutChildren } =
+    usePropsWithContextualDefaultValues(rawProps, TextPropsContext);
   const {
     style,
     textStyle = 'body',
     color: colorProp,
     emphasized,
     monospaced,
-    children,
     ...restProps
-  } = usePropsWithContextualDefaultValues(rawProps, TextPropsContext);
+  } = propsWithoutChildren;
 
   const colors = useColors();
   const uiColors = useUIColors();
@@ -88,19 +89,21 @@ export const Text = forwardRef<RNText, Props>(function Text(
   });
 
   return (
-    <RNText
-      ref={ref}
-      {...restProps}
-      style={[
-        textStyles[textStyle],
-        emphasized && textStyles[`${textStyle}_emphasized`],
-        monospaced && styles.monospaced,
-        { color },
-        style,
-      ]}
-    >
-      {wrappedChildren}
-    </RNText>
+    <TextPropsContext.Provider value={propsWithoutChildren}>
+      <RNText
+        ref={ref}
+        {...restProps}
+        style={[
+          textStyles[textStyle],
+          emphasized && textStyles[`${textStyle}_emphasized`],
+          monospaced && styles.monospaced,
+          { color },
+          style,
+        ]}
+      >
+        {wrappedChildren}
+      </RNText>
+    </TextPropsContext.Provider>
   );
 });
 

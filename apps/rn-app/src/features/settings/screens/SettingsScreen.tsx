@@ -1,9 +1,7 @@
-import React, { useCallback } from 'react';
-import { Alert } from 'react-native';
+import React from 'react';
+import { Platform } from 'react-native';
 
 import { useSettings } from '@/contexts/SettingsContext';
-import EXAMPLE_APPS from '@/example-apps';
-import { useSetExampleApp } from '@/example-apps/contexts';
 import {
   useMainStackNavigation,
   useModalStackNavigation,
@@ -27,7 +25,15 @@ export default function SettingsScreen({ ..._ }: StackScreenProps) {
   return (
     <StackScreenContent title="Settings" headerLargeTitle>
       <StackScreenContent.ScrollView>
-        <List first>
+        <List
+          first
+          footerText={[
+            Platform.OS === 'ios' &&
+              'On iOS, setting a color scheme that is different from the system color scheme may cause some inconsistencies as some of the native components may still use the system color scheme.',
+          ]
+            .filter((t) => !!t)
+            .join('\n\n')}
+        >
           {AVAILABLE_UI_PLATFORMS.length > 1 && (
             <List.Item
               title="UI Platform"

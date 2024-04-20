@@ -42,7 +42,7 @@ export const HeaderIOS = memo(function HeaderIOS({
   headerBackTitle,
   headerBackTitleVisible,
   headerTitleContent,
-  headerHeadingContent,
+  headerLeadingContent,
   headerTrailingContent,
   headerSearchBarOptions,
   grouped,
@@ -132,18 +132,18 @@ export const HeaderIOS = memo(function HeaderIOS({
             </View>
           )
         : undefined,
-      headerLeft: headerHeadingContent
+      headerLeft: headerLeadingContent
         ? () => (
-            <HeaderTrailingContentContainerIOS>
-              {headerHeadingContent}
-            </HeaderTrailingContentContainerIOS>
+            <HeaderLeadingContentContainer>
+              {headerLeadingContent}
+            </HeaderLeadingContentContainer>
           )
         : undefined,
       headerRight: headerTrailingContent
         ? () => (
-            <HeaderTrailingContentContainerIOS>
+            <HeaderTrailingContentContainer>
               {headerTrailingContent}
-            </HeaderTrailingContentContainerIOS>
+            </HeaderTrailingContentContainer>
           )
         : undefined,
 
@@ -160,7 +160,7 @@ export const HeaderIOS = memo(function HeaderIOS({
     headerSearchBarOptions,
     headerTitleContent,
     headerTitleVisible,
-    headerHeadingContent,
+    headerLeadingContent,
     headerTrailingContent,
     iosUIColors,
     navigation,
@@ -174,7 +174,7 @@ export const HeaderIOS = memo(function HeaderIOS({
 
 HeaderIOS.displayName = 'StackScreenContent/Header_IOS';
 
-function HeaderTrailingContentContainerIOS({
+function HeaderTrailingContentContainer({
   children,
 }: {
   children: React.ReactNode;
@@ -199,7 +199,8 @@ function HeaderTrailingContentContainerIOS({
     <Animated.View
       onLayout={handleLayout}
       style={[
-        styles.headerTrailingContentContainerIOS,
+        styles.headerLeadingAndTrailingContentContainer,
+        styles.headerTrailingContentContainer,
         {
           minWidth: minWidthAnim,
         },
@@ -207,6 +208,23 @@ function HeaderTrailingContentContainerIOS({
     >
       {children}
     </Animated.View>
+  );
+}
+
+function HeaderLeadingContentContainer({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <View
+      style={[
+        styles.headerLeadingAndTrailingContentContainer,
+        styles.headerLeadingContentContainer,
+      ]}
+    >
+      {children}
+    </View>
   );
 }
 
@@ -221,14 +239,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  headerTrailingContentContainerIOS: {
+  headerLeadingAndTrailingContentContainer: {
     alignSelf: 'center',
     height: 44,
     flexDirection: 'row',
-    justifyContent: 'flex-end', // Should change to 'flex-start' if flexDirection is set to 'row-reverse'.
     alignItems: 'center',
     gap: 16,
   },
+  headerTrailingContentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end', // Should change to 'flex-start' if flexDirection is set to 'row-reverse'.
+  },
+  headerLeadingContentContainer: {},
 });
 
 export default HeaderIOS;

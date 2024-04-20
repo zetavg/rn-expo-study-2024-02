@@ -11,8 +11,8 @@ import FormFieldPropsContext from './FormFieldPropsContext';
 
 export type Props = {
   label: string;
-  description?: string;
-  errorMessage?: string;
+  description?: string | React.ReactElement;
+  errorMessage?: string | React.ReactElement;
   /** Set this to true to make the field vertical. Fields are horizontal (i.e. the label is on the left and the input is on the right) by default. */
   vertical?: boolean;
   /** Preserves a wider space for the children. Defaults to `true`. */
