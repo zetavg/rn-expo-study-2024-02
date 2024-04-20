@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import BackgroundColor from './BackgroundColor';
+import { useBackgroundColor } from '../hooks';
 
 /**
  * This component can be used to provide a background color to the root of the app.
@@ -11,12 +11,12 @@ export function AppRootBackgroundColor({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
+  const backgroundColor = useBackgroundColor({
+    grouped: undefined,
+  });
+
   return (
-    <BackgroundColor root>
-      {(backgroundColor) => (
-        <View style={[styles.container, { backgroundColor }]}>{children}</View>
-      )}
-    </BackgroundColor>
+    <View style={[styles.container, { backgroundColor }]}>{children}</View>
   );
 }
 
