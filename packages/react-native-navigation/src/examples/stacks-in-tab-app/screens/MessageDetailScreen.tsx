@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 
 import { List } from '@rnstudy/react-native-ui';
 
-import { useTabContentEventHandler } from '../../..';
+import { useTabContentEventHandler } from '../../../contexts';
 import { StackScreenContent } from '../../../screen-contents';
 import { StackScreenProps } from '../../../types';
 

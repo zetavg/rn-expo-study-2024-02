@@ -1,9 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 
 import Navigation from '@/navigation/Navigation';
 import { UIContextProvider } from '@rnstudy/react-native-ui';
 
 import useColorScheme from './hooks/useColorScheme';
+import { WithExampleApps } from './example-apps';
 import StatusAndNavigationBar from './StatusAndNavigationBar';
 
 export default function App() {
@@ -11,7 +12,9 @@ export default function App() {
   return (
     <UIContextProvider colorScheme={colorScheme}>
       <StatusAndNavigationBar />
-      <Navigation />
+      <WithExampleApps>
+        <Navigation />
+      </WithExampleApps>
     </UIContextProvider>
   );
 }

@@ -16,6 +16,7 @@ import { stackNavigatorScreens } from '../../types';
 import MessageDetailScreen from './screens/MessageDetailScreen';
 import MessagesListScreen from './screens/MessagesListScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import { ExitContext } from './contexts';
 import { registerStackNavigation, registerTabNavigation } from './hooks';
 
 export const stackScreens = stackNavigatorScreens({
@@ -83,71 +84,82 @@ export type TabNavigationType = typeof TabNavigation;
 
 registerTabNavigation(TabNavigation);
 
-export function ExampleStacksInTabNavigationApp() {
+export function ExampleStacksInTabNavigationApp({
+  exit,
+}: {
+  exit?: () => void;
+}) {
   const navigationRef = useNavigationContainerRef();
 
   const [accounts, setAccounts] = React.useState<string[]>(['Account 1']);
 
   return (
-    <NavigationContainer ref={navigationRef}>
-      <TabNavigation
-        tabButtonMenus={{
-          MessagesTab: ({ eventSenderRef }) => [
-            {
-              title: 'Unread',
-              handler: () => {
-                navigationRef.current?.dispatch(
-                  TabActions.jumpTo('MessagesTab'),
-                );
-                navigationRef.current?.dispatch(
-                  StackActions.popTo('MessagesList'),
-                );
-                setImmediate(() => {
-                  eventSenderRef.current?.({
-                    type: 'messages-filter',
-                    filter: 'unread',
-                  });
-                });
-              },
-            },
-            {
-              title: 'All',
-              handler: () => {
-                navigationRef.current?.dispatch(
-                  TabActions.jumpTo('MessagesTab'),
-                );
-                navigationRef.current?.dispatch(
-                  StackActions.popTo('MessagesList'),
-                );
-                setImmediate(() => {
-                  eventSenderRef.current?.({
-                    type: 'messages-filter',
-                    filter: 'all',
-                  });
-                });
-              },
-            },
-          ],
-          SettingsTab: [
-            {
-              inline: true,
-              items: accounts.map((account) => ({
-                title: account,
+    <ExitContext.Provider value={exit}>
+      <NavigationContainer ref={navigationRef}>
+        <TabNavigation
+          tabButtonMenus={{
+            MessagesTab: ({ eventSenderRef }) => [
+              {
+                title: 'Unread',
                 handler: () => {
-                  Alert.alert('Account Selected', account);
+                  navigationRef.current?.dispatch(
+                    TabActions.jumpTo('MessagesTab'),
+                  );
+                  navigationRef.current?.dispatch(
+                    StackActions.popTo('MessagesList'),
+                  );
+                  setImmediate(() => {
+                    eventSenderRef.current?.({
+                      type: 'messages-filter',
+                      filter: 'unread',
+                    });
+                  });
                 },
-              })),
-            },
-            {
-              title: 'Add Account',
-              icon: '_plus',
-              handler: () => {
-                setAccounts((prev) => [...prev, `Account ${prev.length + 1}`]);
               },
-            },
-          ],
-        }}
-      />
-    </NavigationContainer>
+              {
+                title: 'All',
+                handler: () => {
+                  navigationRef.current?.dispatch(
+                    TabActions.jumpTo('MessagesTab'),
+                  );
+                  navigationRef.current?.dispatch(
+                    StackActions.popTo('MessagesList'),
+                  );
+                  setImmediate(() => {
+                    eventSenderRef.current?.({
+                      type: 'messages-filter',
+                      filter: 'all',
+                    });
+                  });
+                },
+              },
+            ],
+            SettingsTab: [
+              {
+                inline: true,
+                items: accounts.map((account) => ({
+                  title: account,
+                  handler: () => {
+                    Alert.alert('Account Selected', account);
+                  },
+                })),
+              },
+              {
+                title: 'Add Account',
+                icon: '_plus',
+                handler: () => {
+                  setAccounts((prev) => [
+                    ...prev,
+                    `Account ${prev.length + 1}`,
+                  ]);
+                },
+              },
+            ],
+          }}
+        />
+      </NavigationContainer>
+    </ExitContext.Provider>
   );
 }
+
+export default ExampleStacksInTabNavigationApp;

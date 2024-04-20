@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { Meta, StoryObj } from '@rnstudy/storybook-rn-types';
 
-import { ExampleStacksInTabNavigationApp } from './ExampleStacksInTabNavigationApp';
+import ExampleStacksInTabNavigationApp from './ExampleStacksInTabNavigationApp';
 
 const meta: Meta<typeof ExampleStacksInTabNavigationApp> = {
   title: 'Navigation/ExampleStacksInTabNavigationApp',

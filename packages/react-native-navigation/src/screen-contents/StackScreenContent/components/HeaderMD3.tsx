@@ -36,6 +36,7 @@ export const HeaderMD3 = memo(function HeaderMD3({
   showHeader = true,
   headerBackgroundTransparent,
   headerTitleContent,
+  headerHeadingContent,
   headerTrailingContent,
   headerSearchBarOptions,
   onLayout,
@@ -107,12 +108,20 @@ export const HeaderMD3 = memo(function HeaderMD3({
       }
       onLayout={handleAppBarLayout}
     >
-      {canGoBack && (
-        <Appbar.BackAction
-          onPress={navigation.goBack}
-          color={md3Colors.onSurface}
-        />
-      )}
+      {(() => {
+        if (headerHeadingContent) {
+          return headerHeadingContent;
+        }
+
+        if (canGoBack) {
+          return (
+            <Appbar.BackAction
+              onPress={navigation.goBack}
+              color={md3Colors.onSurface}
+            />
+          );
+        }
+      })()}
       {!headerTitleContent ? (
         <Appbar.Content title={title} color={md3Colors.onSurface} />
       ) : (

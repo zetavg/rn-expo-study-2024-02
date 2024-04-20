@@ -19,6 +19,7 @@ export type Props = Pick<
   | 'headerBackTitle'
   | 'headerBackTitleVisible'
   | 'headerTitleContent'
+  | 'headerHeadingContent'
   | 'headerTrailingContent'
   | 'headerSearchBarOptions'
   | 'grouped'
@@ -42,6 +43,7 @@ export function useHeaderProps(p: StackScreenContentProps): Props {
     headerBackTitleVisible: p.headerBackTitleVisible,
     headerSearchBarOptions: memoizedHeaderSearchBarOptions,
     headerTitleContent: p.headerTitleContent,
+    headerHeadingContent: p.headerHeadingContent,
     headerTrailingContent: p.headerTrailingContent,
     grouped: p.grouped,
   };

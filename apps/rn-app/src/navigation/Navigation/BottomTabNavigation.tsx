@@ -12,7 +12,7 @@ import { ModalStackNavigation } from './ModalStackNavigation';
 export const BottomTabNavigation = createBottomTabNavigator({
   id: 'bottom-tab',
   screens: {
-    Home: {
+    HomeTab: {
       title: 'Overview',
       icon: ({ uiPlatform, focused, ...props }) => {
         switch (uiPlatform) {
@@ -32,7 +32,31 @@ export const BottomTabNavigation = createBottomTabNavigator({
         MainStackNavigation.withInitialRouteName('ExampleScreensList'),
       ),
     },
-    Details: {
+    ExampleAppsTab: {
+      title: 'Example Apps',
+      icon: ({ uiPlatform, focused, ...props }) => {
+        switch (uiPlatform) {
+          case 'ios':
+            return <SFSymbol name="arrow.up.forward.app.fill" {...props} />;
+
+          case 'android':
+            return (
+              <MaterialIcon
+                name={
+                  focused
+                    ? 'arrow-top-right-bold-box'
+                    : 'arrow-top-right-bold-box-outline'
+                }
+                {...props}
+              />
+            );
+        }
+      },
+      screen: ModalStackNavigation.withMainScreen(
+        MainStackNavigation.withInitialRouteName('ExampleAppsList'),
+      ),
+    },
+    DetailsTab: {
       title: 'Details',
       icon: 'star',
       screen: ModalStackNavigation.withMainScreen(

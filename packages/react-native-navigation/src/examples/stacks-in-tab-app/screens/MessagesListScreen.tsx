@@ -6,9 +6,11 @@ import {
   withLayoutAnimation,
 } from '@rnstudy/react-native-ui';
 
-import { useTabContentEventHandler } from '../../..';
+import { useTabContentEventHandler } from '../../../contexts';
 import { StackScreenContent } from '../../../screen-contents';
+import HeaderControlButton from '../../../screen-contents/HeaderControlButton';
 import { StackScreenProps } from '../../../types';
+import { useExit } from '../contexts';
 import { useStackNavigation } from '../hooks';
 
 type Message = {
@@ -18,6 +20,8 @@ type Message = {
 };
 
 export default function MessagesListScreen({ ..._ }: StackScreenProps) {
+  const exit = useExit();
+
   const stackNavigation = useStackNavigation();
 
   const [filter, setFilter] = useState<'unread' | 'all'>('all');
@@ -79,6 +83,9 @@ export default function MessagesListScreen({ ..._ }: StackScreenProps) {
           value={filter}
           onValueChange={changeFilter}
         />
+      }
+      headerHeadingContent={
+        exit ? <HeaderControlButton label="Exit" onPress={exit} /> : undefined
       }
     >
       <StackScreenContent.ScrollView>

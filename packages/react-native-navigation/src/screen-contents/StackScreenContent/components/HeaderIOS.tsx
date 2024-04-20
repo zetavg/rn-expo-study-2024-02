@@ -42,6 +42,7 @@ export const HeaderIOS = memo(function HeaderIOS({
   headerBackTitle,
   headerBackTitleVisible,
   headerTitleContent,
+  headerHeadingContent,
   headerTrailingContent,
   headerSearchBarOptions,
   grouped,
@@ -131,6 +132,13 @@ export const HeaderIOS = memo(function HeaderIOS({
             </View>
           )
         : undefined,
+      headerLeft: headerHeadingContent
+        ? () => (
+            <HeaderTrailingContentContainerIOS>
+              {headerHeadingContent}
+            </HeaderTrailingContentContainerIOS>
+          )
+        : undefined,
       headerRight: headerTrailingContent
         ? () => (
             <HeaderTrailingContentContainerIOS>
@@ -152,6 +160,7 @@ export const HeaderIOS = memo(function HeaderIOS({
     headerSearchBarOptions,
     headerTitleContent,
     headerTitleVisible,
+    headerHeadingContent,
     headerTrailingContent,
     iosUIColors,
     navigation,
