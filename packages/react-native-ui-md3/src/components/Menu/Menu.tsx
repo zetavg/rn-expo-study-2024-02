@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { Menu as RNMenu } from 'react-native-paper';
 
 import { useColorScheme, useTheme } from '../../contexts';
@@ -18,9 +19,11 @@ export type Props = {
   items: readonly (MenuAction | SubMenu)[];
   /** [TODO: not implemented] An optional title that will be displayed on top of the opened menu. */
   title?: string;
+
+  style?: StyleProp<ViewStyle>;
 };
 
-export function Menu({ items, children }: Props) {
+export function Menu({ items, style, children }: Props) {
   const theme = useTheme();
   const colorScheme = useColorScheme();
   const [visible, setVisible] = React.useState(false);
@@ -28,7 +31,7 @@ export function Menu({ items, children }: Props) {
   const openMenu = useCallback(() => setVisible(true), []);
   const closeMenu = useCallback(() => setVisible(false), []);
 
-  return (
+  const element = (
     <RNMenu
       visible={visible}
       onDismiss={closeMenu}
@@ -38,6 +41,21 @@ export function Menu({ items, children }: Props) {
       {buildMenuItems(items, { theme, colorScheme, closeMenu })}
     </RNMenu>
   );
+
+  if (style) {
+    // This is not ideal, but the `Menu` component from `react-native-paper` does not support setting the style of the anchor wrapper view.
+    return <View style={[styles.container, style]}>{element}</View>;
+  }
+
+  return element;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'stretch',
+  },
+});
 
 export default Menu;

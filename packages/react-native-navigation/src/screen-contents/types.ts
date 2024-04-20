@@ -6,10 +6,12 @@ export type HeaderSearchBarOptions = {
   mandatory?: boolean;
   /** A callback that gets called when the text changes. It receives the current text value of the search bar. */
   onChangeText?: (text: string) => void;
-  /** A callback that gets called when the cancel button is pressed. */
   onCancelButtonPress?: () => void;
+  /** A callback that gets called when search bar has got focus. */
+  onFocus?: () => void;
   /** A callback that gets called when search bar has lost focus. */
   onBlur?: () => void;
+  /** A callback that gets called when the cancel (or "×") button on the search bar is pressed. */
   /** Text displayed when search field is empty. */
   placeholder?: string;
   /** Controls whether the text is automatically auto-capitalized as it is entered by the user. */

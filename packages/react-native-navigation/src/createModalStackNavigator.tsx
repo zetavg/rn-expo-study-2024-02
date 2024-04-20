@@ -1,10 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Platform, Text } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useMemo } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-
-import * as iosColors from '@rnstudy/ios-colors';
-import { useColorScheme } from '@rnstudy/react-native-ui';
 
 import {
   AnyStackNavigatorScreens,
@@ -28,13 +23,15 @@ export function createModalStackNavigator<
   /** The ID of the navigator. It should be unique within the app. */
   id: ID;
   /** A component to be rendered as the base screen. */
-  mainScreen: () => JSX.Element;
+  mainScreen: React.ComponentType;
   /** Screens in the navigator. */
   screens: S;
 }) {
   const Stack = createStackNavigator<StackParamListOfScreens<S>>();
 
-  const getNavigatorWithMainScreen = (MainScreenComponent: () => JSX.Element) =>
+  const getNavigatorWithMainScreen = (
+    MainScreenComponent: React.ComponentType,
+  ) =>
     function StackNavigator() {
       const screenOptions = useMemo<
         React.ComponentProps<
@@ -95,7 +92,7 @@ export function createModalStackNavigator<
     };
 
   type Navigator = GeneratedStackNavigator<ID, S> & {
-    withMainScreen: (mainScreen: () => JSX.Element) => () => JSX.Element;
+    withMainScreen: (mainScreen: React.ComponentType) => () => JSX.Element;
   };
 
   const navigator: Partial<Navigator> = getNavigatorWithMainScreen(

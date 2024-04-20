@@ -1,4 +1,4 @@
-import { LayoutAnimation, LayoutAnimationConfig } from 'react-native';
+import { LayoutAnimation, LayoutAnimationConfig, Platform } from 'react-native';
 
 const DEFAULT_LAYOUT_ANIMATION_CONFIG: LayoutAnimationConfig = {
   ...LayoutAnimation.Presets.easeInEaseOut,
@@ -6,8 +6,16 @@ const DEFAULT_LAYOUT_ANIMATION_CONFIG: LayoutAnimationConfig = {
 };
 
 export function configureNextLayoutAnimation(
-  config?: Partial<LayoutAnimationConfig>,
+  config?: Partial<LayoutAnimationConfig> & {
+    onlyOnNativePlatforms?: readonly (typeof Platform.OS)[];
+  },
 ) {
+  if (config?.onlyOnNativePlatforms) {
+    if (!config?.onlyOnNativePlatforms.includes(Platform.OS)) {
+      return;
+    }
+  }
+
   LayoutAnimation.configureNext(
     config
       ? {

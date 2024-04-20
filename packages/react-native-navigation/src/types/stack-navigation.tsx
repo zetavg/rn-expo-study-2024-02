@@ -70,13 +70,17 @@ export type StackParamListOfScreens<S extends AnyStackNavigatorScreens> = {
     : undefined;
 };
 
+export type GeneratedStackNavigatorProps<S extends AnyStackNavigatorScreens> = {
+  initialRouteName?: Extract<keyof S, string>;
+};
+
 /**
  * A generated stack navigator.
  */
 export type GeneratedStackNavigator<
   ID extends string,
   S extends AnyStackNavigatorScreens,
-> = (() => JSX.Element) & {
+> = ((props: GeneratedStackNavigatorProps<S>) => JSX.Element) & {
   _screens: S;
   _id: ID;
 };

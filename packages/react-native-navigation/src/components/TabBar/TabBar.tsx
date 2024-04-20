@@ -1,0 +1,22 @@
+import React from 'react';
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+
+import { useUIPlatform } from '@rnstudy/react-native-ui';
+
+import TabBarIOS from './TabBarIOS';
+
+export type Props = BottomTabBarProps;
+
+export function TabBar(props: Props) {
+  const uiPlatform = useUIPlatform();
+
+  switch (uiPlatform) {
+    case 'ios':
+      return <TabBarIOS {...props} />;
+
+    case 'android':
+      return <TabBarIOS {...props} />;
+  }
+}
+
+export default TabBar;

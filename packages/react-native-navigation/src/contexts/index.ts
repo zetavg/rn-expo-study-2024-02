@@ -1,0 +1,1 @@
+export { useTabContentEventHandler } from './TabContentEventContext';

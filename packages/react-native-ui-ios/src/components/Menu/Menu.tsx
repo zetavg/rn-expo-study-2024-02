@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { Platform, StyleSheet, Text } from 'react-native';
+import { Platform, StyleProp, StyleSheet, Text, ViewStyle } from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import type {
   ContextMenuButtonProps as NativeContextMenuButtonProps,
   MenuConfig as NativeMenuConfig,
@@ -38,11 +39,25 @@ export type Props = {
   items: Readonly<MenuItems>;
   /** An optional title that will be displayed on top of the opened menu. */
   title?: string;
+  /** Should the menu open on long press instead of press. This is required for things to work correctly on iOS. */
+  openOnLongPress?: boolean;
+
+  style?: StyleProp<ViewStyle>;
 };
 
 const noop = () => {};
 
-export function Menu({ title, items, children, ...restProps }: Props) {
+const triggerLongPressMenuOpenFeedback = () => {
+  ReactNativeHapticFeedback.trigger('impactMedium');
+};
+
+export function Menu({
+  title,
+  items,
+  openOnLongPress,
+  children,
+  ...restProps
+}: Props) {
   const menuConfig = useMemo<NativeMenuConfig>(
     () => ({
       menuTitle: title || '',
@@ -59,14 +74,15 @@ export function Menu({ title, items, children, ...restProps }: Props) {
   return (
     <>
       <NativeContextMenuButton
+        {...restProps}
         menuConfig={menuConfig}
         onPressMenuItem={handlePressMenuItem}
-        {...restProps}
+        isMenuPrimaryAction={!openOnLongPress}
       >
-        {
+        {children(
           // With the current implementation, pressing any content that is wrapped by the NativeContextMenuButton will open the menu, so the openMenu callback is not actually needed.
-          children(noop)
-        }
+          openOnLongPress ? triggerLongPressMenuOpenFeedback : noop,
+        )}
       </NativeContextMenuButton>
     </>
   );

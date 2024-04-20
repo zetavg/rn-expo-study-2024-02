@@ -78,6 +78,7 @@ export default function ExampleStackScreen({
   const uiPlatformRef = useRef(uiPlatform);
   uiPlatformRef.current = uiPlatform;
 
+  const [searchBarFocused, setSearchBarFocused] = React.useState(false);
   const [searchBarText, setSearchBarText] = React.useState('');
 
   const [stackScreenContentProps, setStackScreenContentProps] = useState<
@@ -230,6 +231,8 @@ export default function ExampleStackScreen({
       headerSearchBarOptions={{
         ...stackScreenContentProps.headerSearchBarOptions,
         onChangeText: setSearchBarText,
+        onFocus: () => setSearchBarFocused(true),
+        onBlur: () => setSearchBarFocused(false),
       }}
       headerTitleContent={
         headerTitleContentExample === 'undefined'
@@ -475,11 +478,18 @@ export default function ExampleStackScreen({
 
         <FormGroup
           header={<FormGroup.Header title="Header Search Bar" />}
-          footer={
-            searchBarText ? (
-              <FormGroup.Footer text={`Search bar text: "${searchBarText}".`} />
-            ) : undefined
-          }
+          // eslint-disable-next-line react/no-unstable-nested-components
+          footer={(() => {
+            const searchBarInfo = [
+              searchBarFocused && 'Search bar focused.',
+              searchBarText && `Search bar text: "${searchBarText}".`,
+            ]
+              .filter((s) => !!s)
+              .join(' ');
+            return searchBarInfo ? (
+              <FormGroup.Footer text={searchBarInfo} />
+            ) : undefined;
+          })()}
         >
           <Form.Switch
             label="Enable"

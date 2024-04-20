@@ -8,7 +8,6 @@ import {
 
 import {
   useColorScheme,
-  useIOSColors,
   useIOSUIColors,
   useUIPlatform,
 } from '@rnstudy/react-native-ui';
@@ -16,6 +15,7 @@ import {
 import {
   AnyStackNavigatorScreens,
   GeneratedStackNavigator,
+  GeneratedStackNavigatorProps,
   StackParamListOfScreens,
 } from './types';
 
@@ -39,15 +39,42 @@ export function createStackNavigator<
   /** Screens in the navigator. */
   screens: S;
   /** The default initial route name of the navigator. */
-  defaultInitialRouteName: keyof S;
+  defaultInitialRouteName: Extract<keyof S, string>;
 }) {
   const Stack =
     Platform.OS === 'ios'
       ? createNativeStackNavigator<StackParamListOfScreens<S>>()
       : rnCreateStackNavigator<StackParamListOfScreens<S>>();
 
-  const getNavigatorWithInitialRouteName = (initialRouteName: keyof S) =>
-    function StackNavigator() {
+  const generateNavigator = () => {
+    const stackScreens = Object.entries(screens).map(
+      ([name, screenDefinition]) => {
+        const screen =
+          'screen' in screenDefinition
+            ? screenDefinition.screen
+            : screenDefinition;
+
+        const options =
+          'options' in screenDefinition ? screenDefinition.options : undefined;
+
+        return (
+          <Stack.Screen
+            key={name}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            name={name as any}
+            component={screen}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            options={options as any}
+          />
+        );
+      },
+    );
+
+    function StackNavigator({
+      initialRouteName,
+    }: {
+      initialRouteName?: Extract<keyof S, string>;
+    }) {
       const uiPlatform = useUIPlatform();
 
       const colorScheme = useColorScheme();
@@ -108,57 +135,37 @@ export function createStackNavigator<
           // FIXME
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           id={id as any}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          initialRouteName={initialRouteName as any}
+          initialRouteName={initialRouteName || defaultInitialRouteName}
           screenOptions={
             resettingUIPlatform ? { headerShown: false } : screenOptions
           }
           // We include `uiPlatform` in the key to have a clean reset of screen options when `uiPlatform` changes.
           key={`stack-navigator-${id}-${uiPlatform}`}
         >
-          {useMemo(
-            () =>
-              Object.entries(screens).map(([name, screenDefinition]) => {
-                const screen =
-                  'screen' in screenDefinition
-                    ? screenDefinition.screen
-                    : screenDefinition;
-
-                const options =
-                  'options' in screenDefinition
-                    ? screenDefinition.options
-                    : undefined;
-
-                return (
-                  <Stack.Screen
-                    key={name}
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    name={name as any}
-                    component={screen}
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    options={options as any}
-                  />
-                );
-              }),
-            [],
-          )}
+          {stackScreens}
         </Stack.Navigator>
       );
-    };
+    }
 
-  type Navigator = GeneratedStackNavigator<ID, S> & {
-    withInitialRouteName: (initialRouteName: keyof S) => () => JSX.Element;
+    return StackNavigator;
   };
 
-  const navigator: Partial<Navigator> = getNavigatorWithInitialRouteName(
-    defaultInitialRouteName,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ) as any;
-  navigator._id = id;
-  navigator._screens = screens;
-  navigator.withInitialRouteName = getNavigatorWithInitialRouteName;
+  type Navigator = GeneratedStackNavigator<ID, S> & {
+    withInitialRouteName: (
+      initialRouteName: Extract<keyof S, string>,
+    ) => (props: GeneratedStackNavigatorProps<S>) => JSX.Element;
+  };
 
-  return navigator as Navigator;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const GeneratedNavigator: Navigator = generateNavigator() as any;
+
+  GeneratedNavigator._id = id;
+  GeneratedNavigator._screens = screens;
+  GeneratedNavigator.withInitialRouteName = (initialRouteName) => (props) => (
+    <GeneratedNavigator {...props} initialRouteName={initialRouteName} />
+  );
+
+  return GeneratedNavigator as Navigator;
 }
 
 export function getHeaderTitleStyleIOS({

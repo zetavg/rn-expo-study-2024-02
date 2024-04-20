@@ -11,41 +11,23 @@ import {
   Animated,
   BackHandler,
   LayoutChangeEvent,
-  Platform,
   StyleSheet,
   useWindowDimensions,
   View,
 } from 'react-native';
 import { Appbar } from 'react-native-paper';
 // import { DEFAULT_APPBAR_HEIGHT } from 'react-native-paper/src/components/Appbar/utils';
-import { SearchBarProps as RNScreensSearchBarProps } from 'react-native-screens';
-import {
-  useIsFocused,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 
 import {
-  BackgroundColor,
   RNTextInput,
   SegmentedControlProps,
   SegmentedControlPropsContextProvider,
   TextInput,
-  useBackgroundColor,
   useColorScheme,
-  useIOSUIColors,
-  useIsElevatedBackground,
   useMD3Colors,
   withLayoutAnimation,
 } from '@rnstudy/react-native-ui';
-
-import {
-  getHeaderTitleStyleIOS,
-  getScreenOptionsForHeaderBackgroundAndBorderIOS,
-} from '../../../createStackNavigator';
-import HeaderControlButton from '../../HeaderControlButton';
-import { HeaderSearchBarOptions } from '../../types';
-import StackScreenContentScrollView from '../StackScreenContentScrollView';
 
 import { Props } from './Header';
 
@@ -53,14 +35,9 @@ export const HeaderMD3 = memo(function HeaderMD3({
   title,
   showHeader = true,
   headerBackgroundTransparent,
-  headerTitleVisible,
-  headerLargeTitle,
-  headerBackTitle,
-  headerBackTitleVisible,
   headerTitleContent,
   headerTrailingContent,
   headerSearchBarOptions,
-  grouped,
   onLayout,
 }: Props) {
   const windowDimensions = useWindowDimensions();
@@ -208,6 +185,7 @@ function HeaderSearch({
     searchTextInputRef.current?.clear();
     searchTextInputRef.current?.blur();
     headerSearchBarOptions?.onChangeText?.('');
+    headerSearchBarOptions?.onCancelButtonPress?.();
     setSearchInputValue('');
   }, [headerSearchBarOptions]);
 
@@ -258,6 +236,8 @@ function HeaderSearch({
         value={searchInputValue}
         onChangeText={handleChangeText}
         autoCapitalize={headerSearchBarOptions?.autoCapitalize}
+        onFocus={headerSearchBarOptions?.onFocus}
+        onBlur={headerSearchBarOptions?.onBlur}
       />
       {(!headerSearchBarOptions?.mandatory || !!searchInputValue) && (
         <Appbar.Action

@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleProp, ViewStyle } from 'react-native';
 
 import { IconName } from '@rnstudy/react-icons';
 import { Menu as MenuIOS } from '@rnstudy/react-native-ui-ios';
@@ -43,21 +44,39 @@ export type Props = {
   items: Readonly<MenuItems>;
   /** [TODO: Android not implemented, iOS only] An optional title that will be displayed on top of the opened menu. */
   title?: string;
+  /** Should the menu open on long press instead of press. This is required for things to work correctly on iOS. */
+  openOnLongPress?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
-export function Menu({ title, items, children }: Props): JSX.Element {
+export function Menu({
+  title,
+  items,
+  openOnLongPress,
+  style,
+  children,
+}: Props): JSX.Element {
   const uiPlatform = useUIPlatform();
 
   switch (uiPlatform) {
     case 'ios': {
       return (
-        <MenuIOS title={title} items={items}>
+        <MenuIOS
+          title={title}
+          items={items}
+          openOnLongPress={openOnLongPress}
+          style={style}
+        >
           {children}
         </MenuIOS>
       );
     }
     case 'android': {
-      return <MenuMD3 items={items}>{children}</MenuMD3>;
+      return (
+        <MenuMD3 title={title} items={items} style={style}>
+          {children}
+        </MenuMD3>
+      );
     }
   }
 }

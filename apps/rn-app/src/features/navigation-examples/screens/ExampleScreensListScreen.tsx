@@ -4,10 +4,13 @@ import {
   useMainStackNavigation,
   useModalStackNavigation,
 } from '@/navigation/hooks';
-import { StackScreenContent } from '@rnstudy/react-native-navigation';
+import {
+  StackScreenContent,
+  StackScreenProps,
+} from '@rnstudy/react-native-navigation';
 import { List } from '@rnstudy/react-native-ui';
 
-export default function ExampleScreensListScreen() {
+export default function ExampleScreensListScreen({ ..._ }: StackScreenProps) {
   const mainStackNavigation = useMainStackNavigation();
   const modalStackNavigation = useModalStackNavigation();
 

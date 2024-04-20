@@ -161,8 +161,10 @@ export function List(rawProps: Props) {
                   containerStyles[listStyle],
                   containerBorderRadiusStyles[listStyle],
                   {
-                    backgroundColor,
                     borderColor: uiColors.opaqueSeparator,
+                  },
+                  listStyle !== 'plain' && {
+                    backgroundColor,
                   },
                 ],
               ]}

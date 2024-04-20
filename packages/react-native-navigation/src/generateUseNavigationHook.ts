@@ -1,9 +1,19 @@
-import { StackActionHelpers, useNavigation } from '@react-navigation/native';
+import { useMemo } from 'react';
+import {
+  NavigationHelpers,
+  ParamListBase,
+  StackActionHelpers,
+  TabActionHelpers,
+  useNavigation,
+} from '@react-navigation/native';
 
 import {
+  AnyBottomTabNavigatorScreens,
   AnyStackNavigatorScreens,
+  GeneratedBottomTabNavigator,
   GeneratedStackNavigator,
   StackParamListOfScreens,
+  TabParamListOfScreens,
 } from './types';
 
 /**
@@ -74,14 +84,12 @@ import {
  *
  * By using a register function, the file that defines the hook doesn't need to import the navigator (the file that defines the navigator imports the registration function instead), which breaks the circular dependency:
  *
- *     hooks.ts → MyNavigation.ts
+ *     hooks.ts ← MyNavigation.ts
  *       ↑                    │
  *     MyScreen.tsx ←─────────╯
  *
  */
-export function generateUseNavigationHook<
-  N extends GeneratedStackNavigator<string, AnyStackNavigatorScreens>,
->(): [
+export function generateUseNavigationHook<N extends AnyGeneratedNavigator>(): [
   /**
    * A register function that should be called with the navigator instance to register it.
    */
@@ -89,9 +97,20 @@ export function generateUseNavigationHook<
   /**
    * A hook that returns a navigation object for the navigator.
    */
-  () => StackActionHelpers<StackParamListOfScreens<N['_screens']>>,
+  () => ReturnedNavigation<N>,
+  /**
+   * A getter function that returns the navigation object for the navigator from a child navigation.
+   */
+  GetNavigationFn<N>,
 ] {
   let navigatorId: string | undefined;
+
+  const getNavigation: GetNavigationFn<N> = (rootNavigation) => {
+    const matchedNavigation = rootNavigation?.getParent(navigatorId);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return matchedNavigation as unknown as any;
+  };
 
   return [
     (navigator: N) => {
@@ -103,22 +122,40 @@ export function generateUseNavigationHook<
           'You need to call the registerNavigator function before using the useNavigation hook returned by generateUseNavigationHook.',
         );
       }
-      const navigation = useNavigation();
+      const rootNavigation = useNavigation();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const matchedNavigation = navigation.getParent(navigatorId as any);
+      return useMemo(() => {
+        const navigation = getNavigation(rootNavigation);
 
-      if (!matchedNavigation) {
-        throw new Error(
-          `Expected to find a navigator with ID "${navigatorId}" in the navigator tree. Please make sure that this hook is used within a screen that is under the "${navigatorId}" navigator.`,
-        );
-      }
+        if (!navigation) {
+          throw new Error(
+            `Expected to find a navigator with ID "${navigatorId}" in the navigator tree. Please make sure that this hook is used within a screen that is under the "${navigatorId}" navigator.`,
+          );
+        }
 
-      return matchedNavigation as unknown as StackActionHelpers<
-        StackActionHelpers<StackParamListOfScreens<N['_screens']>>
-      >;
+        return navigation;
+      }, [rootNavigation]);
     },
+    getNavigation,
   ];
 }
+
+type AnyGeneratedNavigator =
+  | GeneratedStackNavigator<string, AnyStackNavigatorScreens>
+  | GeneratedBottomTabNavigator<string, AnyBottomTabNavigatorScreens>;
+
+type ReturnedNavigation<N extends AnyGeneratedNavigator> =
+  N extends GeneratedStackNavigator<string, AnyStackNavigatorScreens>
+    ? StackActionHelpers<StackParamListOfScreens<N['_screens']>>
+    : N extends GeneratedBottomTabNavigator<
+          string,
+          AnyBottomTabNavigatorScreens
+        >
+      ? TabActionHelpers<TabParamListOfScreens<N['_screens']>>
+      : never;
+
+type GetNavigationFn<N extends AnyGeneratedNavigator> = (
+  rootNavigation?: null | Pick<NavigationHelpers<ParamListBase>, 'getParent'>,
+) => ReturnedNavigation<N> | undefined;
 
 export default generateUseNavigationHook;
