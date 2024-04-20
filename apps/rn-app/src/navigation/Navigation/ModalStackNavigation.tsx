@@ -1,6 +1,7 @@
 import { modalStackScreens as exampleAppsModalStackScreens } from '@/features/example-apps/screens';
 import { modalStackScreens as feature1ModalStackScreens } from '@/features/example1/screens';
 import { modalStackScreens as exampleModalStackScreens } from '@/features/navigation-examples/screens';
+import { modalStackScreens as settingsModalStackScreens } from '@/features/settings/screens';
 import { createModalStackNavigator } from '@rnstudy/react-native-navigation';
 
 import { registerModalStackNavigation } from '../hooks';
@@ -15,6 +16,7 @@ export const ModalStackNavigation = createModalStackNavigator({
     ...feature1ModalStackScreens,
     ...exampleModalStackScreens,
     ...exampleAppsModalStackScreens,
+    ...settingsModalStackScreens,
   },
 });
 

@@ -56,11 +56,21 @@ export const BottomTabNavigation = createBottomTabNavigator({
         MainStackNavigation.withInitialRouteName('ExampleAppsList'),
       ),
     },
-    DetailsTab: {
-      title: 'Details',
-      icon: 'star',
+    SettingsTab: {
+      title: 'Settings',
+      icon: ({ uiPlatform, focused, ...props }) => {
+        switch (uiPlatform) {
+          case 'ios':
+            return <SFSymbol name="gearshape.fill" {...props} />;
+
+          case 'android':
+            return (
+              <MaterialIcon name={focused ? 'cog' : 'cog-outline'} {...props} />
+            );
+        }
+      },
       screen: ModalStackNavigation.withMainScreen(
-        MainStackNavigation.withInitialRouteName('Example1Details'),
+        MainStackNavigation.withInitialRouteName('Settings'),
       ),
     },
   },
