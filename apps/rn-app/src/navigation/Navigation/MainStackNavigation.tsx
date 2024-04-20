@@ -14,7 +14,7 @@ export const MainStackNavigation = createStackNavigator({
     ...exampleAppsMainStackScreens,
     ...settingsMainStackScreens,
   },
-  defaultInitialRouteName: 'Example1List',
+  defaultInitialRouteName: 'ExampleScreensList',
 });
 
 export type MainStackNavigationType = typeof MainStackNavigation;
