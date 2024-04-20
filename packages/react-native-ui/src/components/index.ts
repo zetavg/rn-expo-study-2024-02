@@ -1,4 +1,5 @@
 export * from './ActivityIndicator';
+export { AppRootBackgroundColor } from './AppRootBackgroundColor';
 export { BackgroundColor } from './BackgroundColor';
 export * from './Button';
 export * from './Form';

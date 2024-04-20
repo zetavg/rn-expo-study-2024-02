@@ -5,6 +5,7 @@ import { createBottomTabNavigator as rnCreateBottomTabNavigator } from '@react-n
 import { Icon, IconName } from '@rnstudy/react-icons';
 import {
   configureNextLayoutAnimation,
+  useBackgroundColor,
   useUIPlatform,
 } from '@rnstudy/react-native-ui';
 
@@ -23,7 +24,7 @@ const LARGE_SCREEN_WIDTH = 747;
 const SIDE_TAB_BAR_POSITION = 'left' as const;
 
 export type BottomTabNavigatorScreenDefinition = {
-  screen: (props: object) => JSX.Element;
+  screen: React.ComponentType;
   title: string;
   icon:
     | IconName
@@ -69,6 +70,9 @@ export function createBottomTabNavigator<
     function BottomTabNavigator({
       tabButtonMenus,
     }: GeneratedBottomTabNavigatorProps<S>) {
+      const backgroundColor = useBackgroundColor({
+        grouped: undefined,
+      });
       const windowDimensions = useWindowDimensions();
       const windowWidth = windowDimensions.width;
       const windowWidthRef = React.useRef(windowWidth);
@@ -119,6 +123,8 @@ export function createBottomTabNavigator<
             tabBar={(props) => <TabBar {...props} />}
             // Do not let the tab navigator handle `goBack` events and back button press.
             backBehavior="none"
+            // Although the scene will be filled with opaque elements and this background color will not be visible in most cases, setting a background color here will prevent flashes of the default light background color when switching to a lazy-loaded screen.
+            sceneContainerStyle={{ backgroundColor }}
           >
             {useMemo(
               () =>

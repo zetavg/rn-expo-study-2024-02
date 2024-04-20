@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import { ScrollView as RNScrollView } from 'react-native';
 
 import {
   List,
@@ -24,6 +25,8 @@ export default function MessagesListScreen({ ..._ }: StackScreenProps) {
 
   const stackNavigation = useStackNavigation();
 
+  const scrollViewRef = React.useRef<RNScrollView | null>(null);
+
   const [filter, setFilter] = useState<'unread' | 'all'>('all');
   const changeFilter = useMemo(
     () =>
@@ -47,6 +50,7 @@ export default function MessagesListScreen({ ..._ }: StackScreenProps) {
 
         if (filterFromEvent === 'unread' || filterFromEvent === 'all') {
           changeFilter(filterFromEvent);
+          scrollViewRef.current?.scrollTo({ y: -100 });
         }
       },
       [changeFilter],
@@ -88,7 +92,7 @@ export default function MessagesListScreen({ ..._ }: StackScreenProps) {
         exit ? <HeaderControlButton label="Exit" onPress={exit} /> : undefined
       }
     >
-      <StackScreenContent.ScrollView>
+      <StackScreenContent.ScrollView ref={scrollViewRef}>
         <List first listStyle="plain">
           {filteredMessages.map((message) => (
             <List.Item

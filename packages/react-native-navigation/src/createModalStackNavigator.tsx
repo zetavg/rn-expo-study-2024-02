@@ -2,6 +2,10 @@ import React, { useMemo } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import {
+  useBackgroundColor,
+} from '@rnstudy/react-native-ui';
+
+import {
   AnyStackNavigatorScreens,
   GeneratedStackNavigator,
   StackParamListOfScreens,
@@ -33,6 +37,10 @@ export function createModalStackNavigator<
     MainScreenComponent: React.ComponentType,
   ) =>
     function StackNavigator() {
+      const backgroundColor = useBackgroundColor({
+        grouped: undefined,
+      });
+
       const screenOptions = useMemo<
         React.ComponentProps<
           ReturnType<typeof createStackNavigator>['Navigator']
@@ -44,8 +52,12 @@ export function createModalStackNavigator<
           detachPreviousScreen: false, // This also fixes the "navigation header stuck outside of safe area when re-mounted" issue on iOS
           gestureEnabled: true,
           gestureResponseDistance: 4000, // Let the dismissible(ScrollView) determine if it should capture the scroll event, or let the navigator handle it and use the gesture to close the modal.
+          contentStyle: {
+            // Although the scene will be filled with opaque elements and this background color will not be visible in most cases, setting a background color here will prevent flashes of the default light background color when switching to a lazy-loaded screen.
+            backgroundColor,
+          },
         }),
-        [],
+        [backgroundColor],
       );
 
       return (

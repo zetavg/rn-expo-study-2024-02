@@ -2,6 +2,7 @@ import React from 'react';
 
 import Navigation from '@/navigation/Navigation';
 import {
+  AppRootBackgroundColor,
   AVAILABLE_UI_PLATFORMS,
   UIContextProvider,
 } from '@rnstudy/react-native-ui';
@@ -26,14 +27,16 @@ export default function App() {
       platform={uiPlatform}
       colorScheme={colorScheme === 'system' ? systemColorScheme : colorScheme}
     >
-      <SettingsContext.Provider
-        value={{ colorScheme, setColorScheme, uiPlatform, setUIPlatform }}
-      >
-        <StatusAndNavigationBar />
-        <WithExampleApps>
-          <Navigation />
-        </WithExampleApps>
-      </SettingsContext.Provider>
+      <AppRootBackgroundColor>
+        <SettingsContext.Provider
+          value={{ colorScheme, setColorScheme, uiPlatform, setUIPlatform }}
+        >
+          <StatusAndNavigationBar />
+          <WithExampleApps>
+            <Navigation />
+          </WithExampleApps>
+        </SettingsContext.Provider>
+      </AppRootBackgroundColor>
     </UIContextProvider>
   );
 }

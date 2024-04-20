@@ -7,10 +7,12 @@ import {
 } from '@react-navigation/stack';
 
 import {
+  useBackgroundColor,
   useColorScheme,
   useIOSUIColors,
   useUIPlatform,
 } from '@rnstudy/react-native-ui';
+import { typedMemo } from '@rnstudy/react-utils';
 
 import {
   AnyStackNavigatorScreens,
@@ -80,8 +82,16 @@ export function createStackNavigator<
       const colorScheme = useColorScheme();
       const iosUIColors = useIOSUIColors();
 
+      const backgroundColor = useBackgroundColor({
+        grouped: undefined,
+      });
+
       const screenOptions = useMemo<ScreenOptions>(
         () => ({
+          contentStyle: {
+            // Although the scene will be filled with opaque elements and this background color will not be visible in most cases, setting a background color here will prevent flashes of the default light background color when switching to a lazy-loaded screen.
+            backgroundColor,
+          },
           ...(() => {
             switch (uiPlatform) {
               case 'ios': {
@@ -111,7 +121,7 @@ export function createStackNavigator<
             }
           })(),
         }),
-        [uiPlatform, colorScheme, iosUIColors],
+        [uiPlatform, colorScheme, backgroundColor, iosUIColors],
       );
 
       // To have a clean reset of screen options when `uiPlatform` changes.
@@ -157,13 +167,14 @@ export function createStackNavigator<
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const GeneratedNavigator: Navigator = generateNavigator() as any;
+  const GeneratedNavigator: Navigator = typedMemo(generateNavigator()) as any;
 
   GeneratedNavigator._id = id;
   GeneratedNavigator._screens = screens;
-  GeneratedNavigator.withInitialRouteName = (initialRouteName) => (props) => (
-    <GeneratedNavigator {...props} initialRouteName={initialRouteName} />
-  );
+  GeneratedNavigator.withInitialRouteName = (initialRouteName) =>
+    typedMemo((props) => (
+      <GeneratedNavigator {...props} initialRouteName={initialRouteName} />
+    ));
 
   return GeneratedNavigator as Navigator;
 }
