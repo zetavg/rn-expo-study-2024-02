@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { Appbar, Button as RNPButton } from 'react-native-paper';
 
-import { Icon, IconDefinitions, IconName } from '@rnstudy/react-icons';
+import { Icon, IconName } from '@rnstudy/react-icons';
 import {
   useIOSUIColors,
   useMD3Colors,
@@ -17,13 +17,14 @@ import {
 type Props = {
   icon?: IconName;
   label: string;
-  mandatory?: boolean;
+  /** Whether the button should be the primary action in the header. */
+  primary?: boolean;
 } & TouchableWithoutFeedbackProps;
 
 export const HeaderControlButton = memo(function HeaderControlButton({
   icon,
   label,
-  mandatory,
+  primary,
   disabled,
   ...restProps
 }: Props) {
@@ -48,7 +49,7 @@ export const HeaderControlButton = memo(function HeaderControlButton({
               allowFontScaling={false}
               style={[
                 styles.labelTextIOS,
-                mandatory && styles.labelTextIOS_mandatory,
+                primary && styles.labelTextIOS_mandatory,
                 { color: iosTintColor },
               ]}
             >

@@ -158,6 +158,7 @@ export const HeaderMD3 = memo(function HeaderMD3({
         <HeaderSearch
           headerSearchBarOptions={headerSearchBarOptions}
           backgroundColor={backgroundColor}
+          headerTrailingContent={headerTrailingContent}
         />
       )}
       {headerTrailingContent}
@@ -170,9 +171,11 @@ HeaderMD3.displayName = 'StackScreenContent/Header_MD3';
 function HeaderSearch({
   headerSearchBarOptions,
   backgroundColor,
+  headerTrailingContent,
 }: {
   headerSearchBarOptions: Props['headerSearchBarOptions'];
   backgroundColor: string;
+  headerTrailingContent: Props['headerTrailingContent'];
 }) {
   const md3Colors = useMD3Colors();
   const focused = useIsFocused();
@@ -232,7 +235,7 @@ function HeaderSearch({
     [headerSearchBarOptions],
   );
 
-  const showSearchInput = isSearchActive || !!headerSearchBarOptions?.mandatory;
+  const showSearchInput = isSearchActive || !!headerSearchBarOptions?.primary;
 
   return (
     <View
@@ -257,12 +260,17 @@ function HeaderSearch({
         onFocus={headerSearchBarOptions?.onFocus}
         onBlur={headerSearchBarOptions?.onBlur}
       />
-      {(!headerSearchBarOptions?.mandatory || !!searchInputValue) && (
+      {(!headerSearchBarOptions?.primary || !!searchInputValue) && (
         <Appbar.Action
           icon="close"
           onPress={closeSearch}
           color={md3Colors.onSurfaceVariant}
         />
+      )}
+      {headerSearchBarOptions?.primary && (
+        <View style={styles.searchBarTrailingContentContainer}>
+          {headerTrailingContent}
+        </View>
       )}
     </View>
   );
@@ -312,8 +320,11 @@ const styles = StyleSheet.create({
   searchTextInput: {
     flex: 1,
   },
-  hidden: {
-    opacity: 0,
+  searchBarTrailingContentContainer: {
+    paddingEnd: 4,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
 });
 

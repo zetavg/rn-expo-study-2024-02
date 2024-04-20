@@ -2,8 +2,8 @@
 export type HeaderSearchBarOptions = {
   /** Whether to enable the search bar. Defaults to `true` if `headerSearchBarOptions` is provided. */
   enable?: boolean;
-  /** Whether to treat the search bar as mandatory. If set to true, `hideWhenScrolling` will be treated as `false` on iOS, and the search text input will always be visible on Android. */
-  mandatory?: boolean;
+  /** Whether to treat the search bar as a primary feature on the screen. If set to true, `hideWhenScrolling` will be treated as `false` on iOS, and the search text input will always be visible on Android. */
+  primary?: boolean;
   /** A callback that gets called when the text changes. It receives the current text value of the search bar. */
   onChangeText?: (text: string) => void;
   onCancelButtonPress?: () => void;

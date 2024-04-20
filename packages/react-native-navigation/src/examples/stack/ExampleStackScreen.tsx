@@ -98,7 +98,7 @@ export default function ExampleStackScreen({
       enable: true,
       placeholder: undefined,
       cancelButtonText: undefined,
-      mandatory: false,
+      primary: false,
       hideWhenScrolling: true,
       autoFocus: false,
       ...route.params?.stackScreenContentProps?.headerSearchBarOptions,
@@ -264,7 +264,7 @@ export default function ExampleStackScreen({
           name: 'Done Button',
           content: (
             <StackScreenContent.HeaderControlButton
-              mandatory
+              primary
               label="Done"
               onPress={EXAMPLE_ON_PRESS_HANDLER}
             />
@@ -367,12 +367,12 @@ export default function ExampleStackScreen({
             ref={titleTextInputRef}
             label="Title"
             placeholder="Enter Title"
+            clearButtonMode="while-editing"
             value={stackScreenContentProps.title || ''}
             onValueChangeIsStable
             onValueChange={(title) =>
               setStackScreenContentProps((s) => ({ ...s, title }))
             }
-            clearButtonMode="while-editing"
           />
           <Form.RadioButtons
             label="Grouped"
@@ -498,6 +498,7 @@ export default function ExampleStackScreen({
           <Form.TextInput
             label="Header Back Title"
             placeholder="Back"
+            clearButtonMode="while-editing"
             value={stackScreenContentProps.headerBackTitle || ''}
             onValueChangeIsStable
             onValueChange={(headerBackTitle) => {
@@ -519,7 +520,6 @@ export default function ExampleStackScreen({
                 });
               }
             }}
-            clearButtonMode="while-editing"
           />
           <Form.Switch
             label="Header Back Title Visible"
@@ -683,6 +683,7 @@ export default function ExampleStackScreen({
             <Form.TextInput
               label="Placeholder"
               placeholder="Search"
+              clearButtonMode="while-editing"
               value={
                 stackScreenContentProps.headerSearchBarOptions?.placeholder ||
                 ''
@@ -706,6 +707,7 @@ export default function ExampleStackScreen({
                 'Only for iOS. On Android, the "×" icon will be shown.'
               }
               placeholder="Cancel"
+              clearButtonMode="while-editing"
               value={
                 tmpSearchBarCancelButtonText ??
                 (stackScreenContentProps.headerSearchBarOptions
@@ -751,10 +753,11 @@ export default function ExampleStackScreen({
           )}
           {stackScreenContentProps.headerSearchBarOptions?.enable && (
             <Form.Switch
-              label="Mandatory"
-              value={stackScreenContentProps.headerSearchBarOptions?.mandatory}
+              label="Primary"
+              description="Let the search bar be a primary feature of the screen."
+              value={stackScreenContentProps.headerSearchBarOptions?.primary}
               onValueChangeIsStable
-              onValueChange={(mandatory) => {
+              onValueChange={(primary) => {
                 if (uiPlatformRef.current === 'ios') {
                   // This cannot be changed dynamically on iOS, so we need to navigate to a new screen with the value updated.
                   navigation.push(route.name, {
@@ -763,7 +766,7 @@ export default function ExampleStackScreen({
                       headerSearchBarOptions: {
                         ...stackScreenContentPropsRef.current
                           .headerSearchBarOptions,
-                        mandatory,
+                        primary,
                       },
                     },
                     headerTitleContentExampleToShow:
@@ -780,7 +783,7 @@ export default function ExampleStackScreen({
                   ...s,
                   headerSearchBarOptions: {
                     ...s.headerSearchBarOptions,
-                    mandatory,
+                    primary,
                   },
                 }));
               }}
@@ -788,14 +791,13 @@ export default function ExampleStackScreen({
           )}
           {stackScreenContentProps.headerSearchBarOptions?.enable && (
             <Form.Switch
-              disabled={
-                stackScreenContentProps.headerSearchBarOptions?.mandatory
-              }
+              disabled={stackScreenContentProps.headerSearchBarOptions?.primary}
               label="Hide When Scrolling"
               description={
-                stackScreenContentProps.headerSearchBarOptions?.mandatory ? (
+                stackScreenContentProps.headerSearchBarOptions?.primary ? (
                   <>
-                    Will be <Text monospaced>false</Text> if mandatory is set to{' '}
+                    Will be <Text monospaced>false</Text> if{' '}
+                    <Text monospaced>primary</Text> is set to{' '}
                     <Text monospaced>true</Text>.
                   </>
                 ) : (
@@ -803,8 +805,7 @@ export default function ExampleStackScreen({
                 )
               }
               value={
-                stackScreenContentProps.headerSearchBarOptions?.mandatory ===
-                true
+                stackScreenContentProps.headerSearchBarOptions?.primary === true
                   ? false
                   : stackScreenContentProps.headerSearchBarOptions
                       ?.hideWhenScrolling
