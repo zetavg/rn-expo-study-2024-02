@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react';
-import { Platform, useWindowDimensions } from 'react-native';
+import { Platform } from 'react-native';
 import { createBottomTabNavigator as rnCreateBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { Icon, IconName } from '@rnstudy/react-icons';
 import {
   configureNextLayoutAnimation,
   useBackgroundColor,
+  useDebouncedWindowDimensions,
   useUIPlatform,
 } from '@rnstudy/react-native-ui';
 
@@ -73,7 +74,7 @@ export function createBottomTabNavigator<
       const backgroundColor = useBackgroundColor({
         grouped: undefined,
       });
-      const windowDimensions = useWindowDimensions();
+      const windowDimensions = useDebouncedWindowDimensions(200);
       const windowWidth = windowDimensions.width;
       const windowWidthRef = React.useRef(windowWidth);
       if (windowWidthRef.current !== windowWidth) {

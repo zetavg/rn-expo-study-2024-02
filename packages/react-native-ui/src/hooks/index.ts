@@ -1,4 +1,5 @@
 export { useBackgroundColor } from './useBackgroundColor';
+export { useDebouncedWindowDimensions } from './useDebouncedWindowDimensions';
 export { useIsElevatedBackground } from './useIsElevatedBackground';
 export { useSeparatorColor } from './useSeparatorColor';
 export {
