@@ -43,6 +43,7 @@
     "expo-constants": "~15.4.5",
     "expo-dev-client": "~3.3.8",
     "expo-navigation-bar": "~2.8.1",
+    "expo-screen-orientation": "~6.4",
     "expo-status-bar": "~1.11.1",
     "expo-system-ui": "~2.9.3",
     "react": "18.2.0",

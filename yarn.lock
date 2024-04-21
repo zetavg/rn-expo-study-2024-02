@@ -9540,6 +9540,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-screen-orientation@npm:~6.4":
+  version: 6.4.1
+  resolution: "expo-screen-orientation@npm:6.4.1"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/d9e56944278b76a98098f808aa17a3db62fafe949091d450f7d1903752f2a60e70c41c87ec9c0ee3c827f70ff2a5c27b246013805c2d1753d86e53915daa5cb7
+  languageName: node
+  linkType: hard
+
 "expo-status-bar@npm:~1.11.1":
   version: 1.11.1
   resolution: "expo-status-bar@npm:1.11.1"
@@ -15523,6 +15532,7 @@ __metadata:
     expo-constants: "npm:~15.4.5"
     expo-dev-client: "npm:~3.3.8"
     expo-navigation-bar: "npm:~2.8.1"
+    expo-screen-orientation: "npm:~6.4"
     expo-status-bar: "npm:~1.11.1"
     expo-system-ui: "npm:~2.9.3"
     jest: "npm:^29"
