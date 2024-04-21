@@ -14678,6 +14678,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-device-info@npm:^10":
+  version: 10.13.1
+  resolution: "react-native-device-info@npm:10.13.1"
+  peerDependencies:
+    react-native: "*"
+  checksum: 10c0/a81083266cefec7d4dd9e32838ac8b67b19446b8b8d14e7d3dae3ce93a4ddfb84c1e8afc0046f99122246bcd35c4ab8fa76ecdd22643153f2a772bf4913e461b
+  languageName: node
+  linkType: hard
+
 "react-native-draggable-flatlist@npm:^4":
   version: 4.0.1
   resolution: "react-native-draggable-flatlist@npm:4.0.1"
@@ -15541,6 +15550,7 @@ __metadata:
     pod-install: "npm:^0.2.0"
     react: "npm:18.2.0"
     react-native: "npm:0.73.4"
+    react-native-device-info: "npm:^10"
     react-native-gesture-handler: "npm:~2.14"
     react-native-haptic-feedback: "npm:^2"
     react-native-ios-utilities: "npm:4.4.x"
