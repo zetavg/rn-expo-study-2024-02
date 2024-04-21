@@ -72,7 +72,7 @@ const shouldUseHorizontalLabels = ({
     }
   }
 
-  if (layout.width >= 768) {
+  if (layout.width >= 740) {
     // Screen size matches a tablet
     const maxTabWidth = state.routes.reduce((acc, route) => {
       const { tabBarItemStyle } = descriptors[route.key]?.options || {};

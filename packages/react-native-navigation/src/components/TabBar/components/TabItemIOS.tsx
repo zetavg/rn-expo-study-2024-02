@@ -315,6 +315,7 @@ const styles = StyleSheet.create({
   },
   labelBeneath: {
     fontSize: 10,
+    marginTop: 6,
   },
   labelBeside: {
     fontSize: 13,

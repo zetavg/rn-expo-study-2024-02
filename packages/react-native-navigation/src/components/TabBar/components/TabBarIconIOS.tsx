@@ -27,7 +27,7 @@ type Props = {
   style: StyleProp<ViewStyle>;
 };
 
-const ICON_SIZE = 25;
+const ICON_SIZE = 23;
 
 export function TabBarIconIOS({
   route: _,
