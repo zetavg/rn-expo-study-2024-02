@@ -43,6 +43,12 @@ export default ({ config }: ConfigContext): ExpoConfig =>
         { dirname: __dirname, environment: process.env.ENVIRONMENT },
       ],
       [
+        'expo-screen-orientation',
+        {
+          initialOrientation: 'PORTRAIT',
+        },
+      ],
+      [
         'expo-build-properties',
         {
           ios: {

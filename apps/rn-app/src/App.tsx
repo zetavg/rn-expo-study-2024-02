@@ -10,6 +10,7 @@ import {
 import { SettingsContext } from './contexts/SettingsContext';
 import useColorScheme from './hooks/useColorScheme';
 import { WithExampleApps } from './example-apps';
+import ScreenOrientation from './ScreenOrientation';
 import StatusAndNavigationBar from './StatusAndNavigationBar';
 
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
         <SettingsContext.Provider
           value={{ colorScheme, setColorScheme, uiPlatform, setUIPlatform }}
         >
+          <ScreenOrientation />
           <StatusAndNavigationBar />
           <WithExampleApps>
             <Navigation />
