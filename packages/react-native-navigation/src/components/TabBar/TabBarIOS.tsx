@@ -72,7 +72,7 @@ const shouldUseHorizontalLabels = ({
     }
   }
 
-  if (layout.width >= 740) {
+  if (layout.width >= 745) {
     // Screen size matches a tablet
     const maxTabWidth = state.routes.reduce((acc, route) => {
       const { tabBarItemStyle } = descriptors[route.key]?.options || {};
@@ -96,7 +96,10 @@ const shouldUseHorizontalLabels = ({
 };
 
 const getPaddingBottom = (insets: EdgeInsets) =>
-  Math.max(insets.bottom - Platform.select({ ios: 4, default: 0 }), 0);
+  Math.max(
+    insets.bottom - (Platform.OS === 'ios' && Platform.isPad ? 4 : 0),
+    0,
+  );
 
 export const getTabBarHeight = ({
   state,
@@ -368,6 +371,7 @@ export function TabBarIOS({ state, navigation, descriptors, insets }: Props) {
               options.tabBarItemStyle,
             ]}
             longPressMenuItems={tabButtonMenu}
+            insets={insets}
           />
         </NavigationRouteContext.Provider>
       </NavigationContext.Provider>

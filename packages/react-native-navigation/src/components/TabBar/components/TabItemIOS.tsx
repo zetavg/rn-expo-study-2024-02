@@ -7,6 +7,7 @@ import {
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
+import { EdgeInsets } from 'react-native-safe-area-context';
 import {
   BottomTabBarButtonProps,
   BottomTabBarProps,
@@ -130,6 +131,7 @@ type Props = {
   containerStyle?: StyleProp<ViewStyle>;
 
   longPressMenuItems?: MenuItems;
+  insets: EdgeInsets;
 };
 
 export function BottomTabItemIOS({
@@ -173,12 +175,13 @@ export function BottomTabItemIOS({
   activeBackgroundColor = 'transparent',
   inactiveBackgroundColor = 'transparent',
   showLabel = true,
-  allowFontScaling,
+  allowFontScaling = false,
   labelStyle,
   iconStyle,
   style,
   containerStyle,
   longPressMenuItems,
+  insets,
 }: Props) {
   const { colors } = useTheme();
 
@@ -223,7 +226,12 @@ export function BottomTabItemIOS({
     return (
       <Label
         style={[
-          horizontal ? styles.labelBeside : styles.labelBeneath,
+          horizontal
+            ? styles.labelBeside
+            : [
+                styles.labelBeneath,
+                insets.bottom === 0 && styles.labelBeneath_noBottomInset,
+              ],
           labelStyle,
         ]}
         allowFontScaling={allowFontScaling}
@@ -316,6 +324,11 @@ const styles = StyleSheet.create({
   labelBeneath: {
     fontSize: 10,
     marginTop: 6,
+    marginBottom: 1,
+  },
+  labelBeneath_noBottomInset: {
+    marginTop: 4,
+    marginBottom: 2,
   },
   labelBeside: {
     fontSize: 13,
