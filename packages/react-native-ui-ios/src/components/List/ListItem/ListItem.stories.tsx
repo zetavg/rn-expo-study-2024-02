@@ -13,9 +13,9 @@ import {
 
 import { Icon } from '@rnstudy/react-icons';
 import {
-  DragEndParams,
   FlatList as AppFlatList,
-  RenderItem,
+  FlatListDragEndParams,
+  FlatListRenderItem,
 } from '@rnstudy/react-native-lists';
 import { calculateListPosition } from '@rnstudy/react-utils/src';
 import type { Meta } from '@rnstudy/storybook-rn-types';
@@ -414,7 +414,7 @@ function DemoAppFlatListComponent(
     [],
   );
 
-  const renderItem = useCallback<RenderItem<(typeof data)[number]>>(
+  const renderItem = useCallback<FlatListRenderItem<(typeof data)[number]>>(
     ({ item, getIndex, drag, isActive, listPosition }) => (
       <ListItem
         {...args}
@@ -474,7 +474,7 @@ function DemoAppFlatListComponent(
   );
 
   const handleDragEnd = useCallback(
-    ({ data: reorderedData }: DragEndParams<(typeof data)[number]>) => {
+    ({ data: reorderedData }: FlatListDragEndParams<(typeof data)[number]>) => {
       setData(reorderedData);
     },
     [],

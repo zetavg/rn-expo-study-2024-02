@@ -1,2 +1,10 @@
-export { FlatList } from './FlatList';
-export type { DragEndParams, RenderItem, RenderItemParams } from './types';
+export {
+  FlatList,
+  type Props as FlatListProps,
+  type FlatListType,
+} from './FlatList';
+export type {
+  DragEndParams as FlatListDragEndParams,
+  RenderItem as FlatListRenderItem,
+  RenderItemParams as FlatListRenderItemParams,
+} from './types';

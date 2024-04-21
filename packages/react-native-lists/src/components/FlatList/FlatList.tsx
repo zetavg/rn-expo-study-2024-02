@@ -529,18 +529,20 @@ const MemoizedInner = typedMemo(DraggableFlatListInner);
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 
-type Props<T> = Modify<
+export type Props<T> = Modify<
   DraggableFlatListProps<T>,
   { renderItem: RenderItem<T> }
 >;
 
-// Generic forwarded ref type assertion taken from:
-// https://fettblog.eu/typescript-react-generic-forward-refs/#option-1%3A-type-assertion
-export const FlatList = React.forwardRef(DraggableFlatList) as <T>(
+export type FlatListType = <T>(
   props: Props<T> & {
     ref?: React.ForwardedRef<RNGHFlatList<T>>;
   },
 ) => ReturnType<typeof DraggableFlatList>;
+
+// Generic forwarded ref type assertion taken from:
+// https://fettblog.eu/typescript-react-generic-forward-refs/#option-1%3A-type-assertion
+export const FlatList = React.forwardRef(DraggableFlatList) as FlatListType;
 
 const styles = StyleSheet.create({
   flatList: {

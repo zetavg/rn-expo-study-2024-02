@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, useWindowDimensions } from 'react-native';
 
 import {
-  DragEndParams,
   FlatList,
-  RenderItem,
+  FlatListDragEndParams,
+  FlatListRenderItem,
   SectionList,
 } from '@rnstudy/react-native-lists';
 import { argTypesFrom, collectPropsFromArgs } from '@rnstudy/react-utils';
@@ -24,7 +24,6 @@ import { EXAMPLE_IMAGES } from './ListItem/examples';
 import ListItemMeta from './ListItem/ListItem.stories';
 import {
   getListItemHeight,
-  getListPadding,
   List,
   ListFooter,
   ListFooterProps,
@@ -958,7 +957,7 @@ function WithFlatListEditableDemoComponent({
     [],
   );
 
-  const renderItem = useCallback<RenderItem<(typeof data)[number]>>(
+  const renderItem = useCallback<FlatListRenderItem<(typeof data)[number]>>(
     ({ item, listPosition, drag, isDragActive }) => (
       <ListItem
         listStyle={listProps.listStyle}
@@ -1014,30 +1013,13 @@ function WithFlatListEditableDemoComponent({
   );
 
   const handleDragEnd = useCallback(
-    ({ data: reorderedData }: DragEndParams<(typeof data)[number]>) => {
+    ({ data: reorderedData }: FlatListDragEndParams<(typeof data)[number]>) => {
       setData(reorderedData);
     },
     [],
   );
 
-  const contentContainerStyle = useMemo<
-    React.ComponentProps<typeof FlatList>['containerStyle']
-  >(
-    () => ({
-      paddingTop: getListPadding(uiPlatform, {
-        listStyle: listProps.listStyle,
-        position: 'top',
-        withHeader: true,
-        first: true,
-      }),
-      paddingBottom: getListPadding(uiPlatform, {
-        listStyle: listProps.listStyle,
-        position: 'bottom',
-        withFooter: useListFooter,
-      }),
-    }),
-    [uiPlatform, listProps.listStyle, useListFooter],
-  );
+  const isFirst = true;
 
   return (
     <ListItemPropsContextProvider
@@ -1052,21 +1034,41 @@ function WithFlatListEditableDemoComponent({
       )}
     >
       <FlatList
-        contentContainerStyle={contentContainerStyle}
         ListHeaderComponent={
-          <ListHeader
-            title="Items"
-            titleStyle="prominent"
-            accessories={
-              <Button
-                label={editing ? 'Done' : 'Edit'}
-                onPress={() => setEditing((v) => !v)}
-              />
-            }
-          />
+          <>
+            <ListPadding
+              listStyle={listProps.listStyle}
+              position="top"
+              first={isFirst}
+              withHeader
+            />
+            <ListHeader
+              listStyle={listProps.listStyle}
+              title="Items"
+              titleStyle="prominent"
+              accessories={
+                <Button
+                  label={editing ? 'Done' : 'Edit'}
+                  onPress={() => setEditing((v) => !v)}
+                />
+              }
+            />
+          </>
         }
         ListFooterComponent={
-          useListFooter ? <ListFooter {...listFooterProps} /> : undefined
+          <>
+            {useListFooter && (
+              <ListFooter
+                listStyle={listProps.listStyle}
+                {...listFooterProps}
+              />
+            )}
+            <ListPadding
+              listStyle={listProps.listStyle}
+              position="bottom"
+              withFooter={useListFooter}
+            />
+          </>
         }
         data={data}
         keyExtractor={keyExtractor}
