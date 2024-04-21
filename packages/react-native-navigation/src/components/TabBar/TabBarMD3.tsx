@@ -1,5 +1,6 @@
-import React, { useCallback, useRef } from 'react';
-import { View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { LayoutChangeEvent, Platform, StyleSheet, View } from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import { BottomNavigation, Menu } from 'react-native-paper';
 import { CommonActions } from '@react-navigation/native';
 
@@ -21,114 +22,152 @@ export function TabBarMD3({ navigation, descriptors, state, insets }: Props) {
     {},
   );
 
-  const containerRef = useRef<View>(null);
-  const containerLayoutInWindowRef = useRef<
-    | {
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-      }
-    | undefined
-  >(undefined);
-  const handleContainerLayout = useCallback(() => {
-    containerRef.current?.measureInWindow((x, y, width, height) => {
-      containerLayoutInWindowRef.current = { x, y, width, height };
-    });
-  }, []);
+  const [
+    longPressMenusContainerLayoutHeight,
+    setLongPressMenusContainerLayoutHeight,
+  ] = useState(0);
+  const handleLongPressMenusContainerLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      setLongPressMenusContainerLayoutHeight(event.nativeEvent.layout.height);
+    },
+    [],
+  );
 
   return (
     <>
-      <View ref={containerRef} onLayout={handleContainerLayout}>
-        <BottomNavigation.Bar
-          navigationState={state}
-          safeAreaInsets={insets}
-          onTabPress={({ route, preventDefault }) => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
+      <View>
+        <View
+          onLayout={handleLongPressMenusContainerLayout}
+          style={styles.longPressMenusContainer}
+        >
+          {Object.entries(descriptors).map(([key, descriptor]) => {
+            const anchor = (
+              <View key={key} style={styles.longPressMenuAnchor} />
+            );
 
-            if (event.defaultPrevented) {
-              preventDefault();
-            } else {
-              navigation.dispatch({
-                ...CommonActions.navigate(route.name, route.params),
-                target: state.key,
+            const options = descriptor.options as BottomTabNavigationOptions;
+
+            if (!options.tabButtonMenu) {
+              // Return a placeholder anchor without a menu
+              return anchor;
+            }
+
+            const closeMenu = () =>
+              setMenuVisible((v) => ({ ...v, [key]: false }));
+
+            const tabButtonMenuItems = [...options.tabButtonMenu];
+            // Reverse the menu items to let it be consistent with the iOS implementation, which the menu items are laid out from bottom to top - the same direction as the menu will open.
+            tabButtonMenuItems.reverse();
+
+            return (
+              <Menu
+                key={key}
+                visible={menuVisible[key] || false}
+                onDismiss={closeMenu}
+                anchor={anchor}
+                anchorPosition="top"
+                contentStyle={[
+                  styles.longPressMenuContent,
+                  {
+                    // HACK: Magic formula to position the menu just above the bottom navigation bar.
+                    marginBottom:
+                      longPressMenusContainerLayoutHeight -
+                      (Platform.OS === 'android' ? insets.bottom : 0),
+                  },
+                ]}
+              >
+                {buildMenuItems(tabButtonMenuItems, {
+                  theme,
+                  colorScheme,
+                  closeMenu,
+                })}
+              </Menu>
+            );
+          })}
+        </View>
+        <View style={styles.navigationBarContainer}>
+          <BottomNavigation.Bar
+            navigationState={state}
+            safeAreaInsets={insets}
+            onTabPress={({ route, preventDefault }) => {
+              const event = navigation.emit({
+                type: 'tabPress',
+                target: route.key,
+                canPreventDefault: true,
               });
-            }
-          }}
-          onTabLongPress={({ route }) => {
-            const key = route.key;
-            const descriptor = descriptors[key];
-            const options = (descriptor?.options ||
-              {}) as BottomTabNavigationOptions;
 
-            if (options.tabButtonMenu) {
-              setMenuVisible((v) => ({ ...v, [key]: true }));
-              return;
-            }
-
-            navigation.emit({
-              type: 'tabLongPress',
-              target: route.key,
-            });
-          }}
-          renderIcon={({ route, focused, color }) => {
-            const { options } = descriptors[route.key] || {};
-            if (options?.tabBarIcon) {
-              return options.tabBarIcon({ focused, color, size: 24 });
-            }
-
-            return null;
-          }}
-          getLabelText={({ route }) => {
-            const { options } = descriptors[route.key] || {};
-            const label = options?.title;
-
-            return label;
-          }}
-        />
-      </View>
-      {Object.entries(descriptors).map(([key, descriptor], i, arr) => {
-        const options = descriptor.options as BottomTabNavigationOptions;
-        if (!options.tabButtonMenu) return null;
-
-        const closeMenu = () => setMenuVisible((v) => ({ ...v, [key]: false }));
-
-        const tabButtonMenuItems = [...options.tabButtonMenu];
-        tabButtonMenuItems.reverse();
-
-        const cX = containerLayoutInWindowRef.current?.x || 0;
-        const cY = containerLayoutInWindowRef.current?.y || 0;
-        const cW = containerLayoutInWindowRef.current?.width || 0;
-
-        const tabButtonX = cX + (cW / arr.length) * i;
-        const tabButtonWidth = cW / arr.length;
-        const distanceToTabButtonCenter = tabButtonWidth / 2;
-        const menuAnchorX = tabButtonX + distanceToTabButtonCenter - 32;
-
-        return (
-          <Menu
-            key={key}
-            visible={menuVisible[key] || false}
-            onDismiss={closeMenu}
-            anchor={{
-              x: menuAnchorX,
-              y: cY + 16,
+              if (event.defaultPrevented) {
+                preventDefault();
+              } else {
+                navigation.dispatch({
+                  ...CommonActions.navigate(route.name, route.params),
+                  target: state.key,
+                });
+              }
             }}
-          >
-            {buildMenuItems(tabButtonMenuItems, {
-              theme,
-              colorScheme,
-              closeMenu,
-            })}
-          </Menu>
-        );
-      })}
+            onTabLongPress={({ route }) => {
+              const key = route.key;
+              const descriptor = descriptors[key];
+              const options = (descriptor?.options ||
+                {}) as BottomTabNavigationOptions;
+
+              if (options.tabButtonMenu) {
+                ReactNativeHapticFeedback.trigger('impactMedium');
+                setMenuVisible((v) => ({ ...v, [key]: true }));
+                return;
+              }
+
+              navigation.emit({
+                type: 'tabLongPress',
+                target: route.key,
+              });
+            }}
+            renderIcon={({ route, focused, color }) => {
+              const { options } = descriptors[route.key] || {};
+              if (options?.tabBarIcon) {
+                return options.tabBarIcon({ focused, color, size: 24 });
+              }
+
+              return null;
+            }}
+            getLabelText={({ route }) => {
+              const { options } = descriptors[route.key] || {};
+              const label = options?.title;
+
+              return label;
+            }}
+          />
+        </View>
+      </View>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  longPressMenusContainer: {
+    ...StyleSheet.absoluteFillObject,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  longPressMenuAnchor: {
+    height: 1,
+    width: 80,
+  },
+  longPressMenuContent: {},
+  navigationBarContainer: {
+    backgroundColor: '#777', // For shadow, not actually visible.
+    ...Platform.select({
+      android: {
+        elevation: 7,
+      },
+      ios: {
+        shadowColor: 'black',
+        shadowOpacity: 0.12,
+        shadowOffset: { width: 0, height: 0 },
+        shadowRadius: 2,
+      },
+    }),
+  },
+});
 
 export default TabBarMD3;
