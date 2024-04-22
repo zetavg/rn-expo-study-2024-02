@@ -1,13 +1,14 @@
 import React, {
   useCallback,
   useEffect,
+  useImperativeHandle,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
 import {
-  FlatListProps,
+  FlatListProps as RNFlatListProps,
   LayoutChangeEvent,
   ListRenderItem,
   StyleSheet,
@@ -40,13 +41,19 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
+import useScrollToStartHelpers, {
+  IsScrolledToStart,
+  ScrollToStart,
+  ScrollToTopImperativeHandle,
+} from '../../hooks/useScrollToStartHelpers';
+
 import CellRendererComponent from './CellRendererComponent';
 import RowItem from './RowItem';
 import { RenderItem, SetItemTmpListPositionFunction } from './types';
 import { useAutoScroll } from './useAutoScroll';
 
 type RNGHFlatListProps<T> = Animated.AnimateProps<
-  FlatListProps<T> & {
+  RNFlatListProps<T> & {
     ref: React.Ref<RNGHFlatList<T>>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     simultaneousHandlers?: React.Ref<any> | React.Ref<any>[];
@@ -54,7 +61,7 @@ type RNGHFlatListProps<T> = Animated.AnimateProps<
 >;
 
 type OnViewableItemsChangedCallback<T> = Exclude<
-  FlatListProps<T>['onViewableItemsChanged'],
+  RNFlatListProps<T>['onViewableItemsChanged'],
   undefined | null
 >;
 
@@ -512,13 +519,55 @@ function DraggableFlatListInner<T>(props: Props<T>) {
 function DraggableFlatList<T>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: any,
-  ref?: React.ForwardedRef<RNGHFlatList<T>> | null,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ref: any,
 ) {
+  const originalRef = React.useRef<typeof ref>(null);
+
+  const {
+    stsScrollViewProps,
+    getCurrentScrollOffset,
+    getScrollOffsetForScrollToTop,
+  } = useScrollToStartHelpers({ scrollViewProps: props });
+
+  useImperativeHandle(
+    ref,
+    () => {
+      return new Proxy<RefObject<T>>({} as RefObject<T>, {
+        get(_, p: keyof RefObject<T>) {
+          if (p === 'scrollToStart') {
+            const scrollToStart: ScrollToStart = (options) => {
+              originalRef.current?.scrollToOffset({
+                offset: getScrollOffsetForScrollToTop(),
+                ...options,
+              });
+            };
+
+            return scrollToStart;
+          }
+
+          if (p === 'isScrolledToStart') {
+            const isScrolledToStart: IsScrolledToStart = () => {
+              return (
+                getCurrentScrollOffset() - 1 <= getScrollOffsetForScrollToTop()
+              );
+            };
+
+            return isScrolledToStart;
+          }
+
+          return originalRef.current?.[p] || (() => {});
+        },
+      });
+    },
+    [getCurrentScrollOffset, getScrollOffsetForScrollToTop],
+  );
+
   return (
-    <PropsProvider {...props}>
+    <PropsProvider {...props} {...stsScrollViewProps}>
       <AnimatedValueProvider>
-        <RefProvider flatListRef={ref}>
-          <MemoizedInner {...props} />
+        <RefProvider flatListRef={originalRef}>
+          <MemoizedInner {...props} {...stsScrollViewProps} />
         </RefProvider>
       </AnimatedValueProvider>
     </PropsProvider>
@@ -534,9 +583,11 @@ export type Props<T> = Modify<
   { renderItem: RenderItem<T> }
 >;
 
+export type RefObject<T> = RNGHFlatList<T> & ScrollToTopImperativeHandle;
+
 export type FlatListType = <T>(
   props: Props<T> & {
-    ref?: React.ForwardedRef<RNGHFlatList<T>>;
+    ref?: React.ForwardedRef<RefObject<T>>;
   },
 ) => ReturnType<typeof DraggableFlatList>;
 

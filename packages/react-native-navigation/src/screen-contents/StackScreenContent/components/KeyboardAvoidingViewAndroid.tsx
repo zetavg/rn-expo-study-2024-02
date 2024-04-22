@@ -2,6 +2,12 @@ import React, { useContext } from 'react';
 import { KeyboardAvoidingView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
+
+/**
+ * KeyboardAvoidingView with defaults set for Android.
+ *
+ * Should only be used on Android.
+ */
 export function KeyboardAvoidingViewAndroid({
   children,
 }: {

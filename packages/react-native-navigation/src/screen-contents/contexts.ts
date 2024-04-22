@@ -1,5 +1,9 @@
-import { createContext } from 'react';
-import { ScrollViewProps } from 'react-native';
+import { createContext, useMemo } from 'react';
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollViewProps,
+} from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
 export type IsScrolledToStart = () => boolean;
@@ -28,6 +32,47 @@ export type ScrollViewContextValue = {
 export const ScrollViewContext = createContext<ScrollViewContextValue | null>(
   null,
 );
+
+export function useScrollViewPropsWithValuesFromContextMerged<
+  P extends ScrollViewProps,
+>({
+  props: {
+    onScroll: onScrollProp,
+    onScrollBeginDrag: onScrollBeginDragProp,
+    ...restProps
+  },
+  contextValue: {
+    onScroll: onScrollFromContext,
+    onScrollBeginDrag: onScrollBeginDragFromContext,
+  },
+}: {
+  props: P;
+  contextValue: Omit<ScrollViewContextValue, 'scrollViewRefRef'>;
+}): P {
+  const handleScroll = useMemo(() => {
+    if (!onScrollFromContext) return onScrollProp;
+
+    return (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (onScrollProp) onScrollProp(event);
+      onScrollFromContext(event);
+    };
+  }, [onScrollFromContext, onScrollProp]);
+
+  const handleScrollBeginDrag = useMemo(() => {
+    if (!onScrollBeginDragFromContext) return onScrollBeginDragProp;
+
+    return (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (onScrollBeginDragProp) onScrollBeginDragProp(event);
+      onScrollBeginDragFromContext(event);
+    };
+  }, [onScrollBeginDragFromContext, onScrollBeginDragProp]);
+
+  return {
+    ...restProps,
+    onScroll: handleScroll,
+    onScrollBeginDrag: handleScrollBeginDrag,
+  } as P;
+}
 
 export const BottomTabNavigationContext = createContext<
   BottomTabScreenProps<{ [name: string]: undefined }>['navigation'] | null

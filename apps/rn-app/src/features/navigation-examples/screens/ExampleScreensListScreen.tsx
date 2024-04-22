@@ -23,6 +23,13 @@ export default function ExampleScreensListScreen({ ..._ }: StackScreenProps) {
             navigationLink
             onPress={() => mainStackNavigation.push('ExampleStackScreen')}
           />
+          <List.Item
+            title="Stack Screen with FlatList"
+            navigationLink
+            onPress={() =>
+              mainStackNavigation.push('ExampleStackScreenWithFlatList')
+            }
+          />
         </List>
         <List>
           <List.Item title="Modal Screen" navigationLink />

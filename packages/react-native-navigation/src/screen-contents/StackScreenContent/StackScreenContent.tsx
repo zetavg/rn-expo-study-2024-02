@@ -14,6 +14,7 @@ import { useBottomTabPressHandling } from '../hooks';
 import { HeaderSearchBarOptions } from '../types';
 
 import Header, { useHeaderProps } from './components/Header';
+import StackScreenContentFlatList from './StackScreenContentFlatList';
 import StackScreenContentScrollView from './StackScreenContentScrollView';
 
 export type Props = {
@@ -115,6 +116,7 @@ const styles = StyleSheet.create({
 });
 
 StackScreenContent.ScrollView = StackScreenContentScrollView;
+StackScreenContent.FlatList = StackScreenContentFlatList;
 StackScreenContent.HeaderControlButton = HeaderControlButton;
 
 export default StackScreenContent;
