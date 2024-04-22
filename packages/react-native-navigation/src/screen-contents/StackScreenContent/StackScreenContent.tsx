@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useMemo, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { BackgroundColor, useUIPlatform } from '@rnstudy/react-native-ui';
 
 import { HeaderHeightContext } from '../../contexts/HeaderHeightContext';
+import {
+  ScrollViewContext,
+  ScrollViewContextValue,
+  ScrollViewRef,
+} from '../contexts';
 import HeaderControlButton from '../HeaderControlButton';
+import { useBottomTabPressHandling } from '../hooks';
 import { HeaderSearchBarOptions } from '../types';
 
 import Header, { useHeaderProps } from './components/Header';
@@ -51,9 +57,27 @@ export type Props = {
   children: React.ReactNode;
 };
 
+/**
+ * The content of a screen in a stack navigator.
+ */
 export function StackScreenContent(props: Props) {
   const uiPlatform = useUIPlatform();
+
   const headerProps = useHeaderProps(props);
+
+  const scrollViewRefRef = useRef<null | ScrollViewRef>(null);
+
+  const { handleScrollBeginDrag } = useBottomTabPressHandling({
+    scrollViewRefRef,
+  });
+
+  const scrollViewContextValue = useMemo<ScrollViewContextValue>(
+    () => ({
+      scrollViewRefRef,
+      onScrollBeginDrag: handleScrollBeginDrag,
+    }),
+    [handleScrollBeginDrag],
+  );
 
   const [headerHeight, _] = React.useState<number | undefined>(
     (() => {
@@ -74,7 +98,9 @@ export function StackScreenContent(props: Props) {
       <BackgroundColor root grouped={grouped}>
         {(bg) => (
           <View style={[styles.stackScreenContent, { backgroundColor: bg }]}>
-            {children}
+            <ScrollViewContext.Provider value={scrollViewContextValue}>
+              {children}
+            </ScrollViewContext.Provider>
           </View>
         )}
       </BackgroundColor>
@@ -82,13 +108,13 @@ export function StackScreenContent(props: Props) {
   );
 }
 
-StackScreenContent.ScrollView = StackScreenContentScrollView;
-StackScreenContent.HeaderControlButton = HeaderControlButton;
-
 const styles = StyleSheet.create({
   stackScreenContent: {
     flex: 1,
   },
 });
+
+StackScreenContent.ScrollView = StackScreenContentScrollView;
+StackScreenContent.HeaderControlButton = HeaderControlButton;
 
 export default StackScreenContent;

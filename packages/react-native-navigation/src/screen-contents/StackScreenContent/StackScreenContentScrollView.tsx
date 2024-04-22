@@ -1,19 +1,33 @@
-import React, { forwardRef, useMemo, useState } from 'react';
-import { Platform, ScrollView } from 'react-native';
+import React, { forwardRef, useContext, useMemo, useState } from 'react';
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Platform,
+} from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 
-import bottomTabPressReactive from '../bottomTabPressReactive';
+import {
+  ScrollView,
+  ScrollViewProps,
+  ScrollViewRef,
+} from '@rnstudy/react-native-lists';
+import { useInterceptedRef } from '@rnstudy/react-utils';
+
+import { ScrollViewContext } from '../contexts';
 import { useScrollViewContentInset } from '../hooks';
 
 import { KeyboardAvoidingViewAndroid } from './components/KeyboardAvoidingViewAndroid';
 
-const BottomTabPressReactiveScrollView = bottomTabPressReactive(ScrollView);
+export type Props = ScrollViewProps;
+export type RefObject = ScrollViewRef;
 
 export const StackScreenContentScrollView = forwardRef<
-  ScrollView,
-  React.ComponentProps<typeof ScrollView>
+  RefObject,
+  ScrollViewProps
 >(function StackScreenContentScrollView(
   {
+    onScroll: onScrollProp,
+    onScrollBeginDrag: onScrollBeginDragProp,
     contentInset: contentInsetProp,
     // On iOS, defaults `contentInsetAdjustmentBehavior` to `"automatic"` for `headerLargeTitle` to work. See: https://reactnavigation.org/docs/7.x/native-stack-navigator#headerlargetitle
     // This also handles insets for safe area and bottom tab bar automatically on iOS.
@@ -24,6 +38,34 @@ export const StackScreenContentScrollView = forwardRef<
   }: React.ComponentProps<typeof ScrollView>,
   ref,
 ) {
+  const [scrollViewRef, scrollViewRefObject] = useInterceptedRef(ref);
+
+  const {
+    scrollViewRefRef,
+    onScroll: onScrollFromContext,
+    onScrollBeginDrag: onScrollBeginDragFromContext,
+  } = useContext(ScrollViewContext) || {};
+
+  if (scrollViewRefRef) scrollViewRefRef.current = scrollViewRefObject;
+
+  const handleScroll = useMemo(() => {
+    if (!onScrollFromContext) return onScrollProp;
+
+    return (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (onScrollProp) onScrollProp(event);
+      onScrollFromContext(event);
+    };
+  }, [onScrollFromContext, onScrollProp]);
+
+  const handleScrollBeginDrag = useMemo(() => {
+    if (!onScrollBeginDragFromContext) return onScrollBeginDragProp;
+
+    return (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (onScrollBeginDragProp) onScrollBeginDragProp(event);
+      onScrollBeginDragFromContext(event);
+    };
+  }, [onScrollBeginDragFromContext, onScrollBeginDragProp]);
+
   const focused = useIsFocused();
   const contentInset = useScrollViewContentInset(contentInsetProp, {
     contentInsetAdjustmentBehavior,
@@ -47,8 +89,10 @@ export const StackScreenContentScrollView = forwardRef<
   }, [contentInset, initialContentInset]);
 
   const view = (
-    <BottomTabPressReactiveScrollView
-      ref={ref}
+    <ScrollView
+      ref={scrollViewRef}
+      onScroll={handleScroll}
+      onScrollBeginDrag={handleScrollBeginDrag}
       keyboardDismissMode="interactive"
       keyboardShouldPersistTaps="handled"
       //

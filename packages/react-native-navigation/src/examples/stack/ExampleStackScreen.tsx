@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { Alert, Linking } from 'react-native';
+import { Alert } from 'react-native';
 
+import { ScrollViewRef } from '@rnstudy/react-native-lists/src';
 import {
   Form,
   FormGroup,
@@ -75,6 +76,8 @@ export default function ExampleStackScreen({
     }
   | undefined
 >) {
+  const scrollViewRef = useRef<ScrollViewRef>(null);
+
   const uiPlatform = useUIPlatform();
   const uiPlatformRef = useRef(uiPlatform);
   uiPlatformRef.current = uiPlatform;
@@ -361,7 +364,7 @@ export default function ExampleStackScreen({
         );
       }, [headerTrailingContentExamplesToShow, headerTrailingContentExamples])}
     >
-      <StackScreenContent.ScrollView>
+      <StackScreenContent.ScrollView ref={scrollViewRef}>
         <FormGroup first>
           <Form.TextInput
             ref={titleTextInputRef}
@@ -844,6 +847,33 @@ export default function ExampleStackScreen({
             />
           )}
         </FormGroup>
+
+        <List listStyle="insetGrouped">
+          <List.Item.Memoized
+            button
+            title="Scroll to Start"
+            onPressIsStable
+            onPress={() => scrollViewRef.current?.scrollToStart()}
+          />
+          <List.Item.Memoized
+            button
+            title="Scroll to End"
+            onPressIsStable
+            onPress={() => scrollViewRef.current?.scrollToEnd()}
+          />
+          <List.Item.Memoized
+            button
+            title="Scroll to y=200"
+            onPressIsStable
+            onPress={() => scrollViewRef.current?.scrollTo({ y: 200 })}
+          />
+          <List.Item.Memoized
+            button
+            title="Scroll to y=-300"
+            onPressIsStable
+            onPress={() => scrollViewRef.current?.scrollTo({ y: -300 })}
+          />
+        </List>
 
         <List
           listStyle="insetGrouped"
