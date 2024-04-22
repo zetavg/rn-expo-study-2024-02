@@ -4187,6 +4187,7 @@ __metadata:
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/react-native-lists": "workspace:^"
     "@rnstudy/react-native-ui": "workspace:^"
     "@rnstudy/react-utils": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
@@ -4208,6 +4209,7 @@ __metadata:
     sweet-sfsymbols: "npm:*"
     typescript: "npm:^5"
   peerDependencies:
+    "@rnstudy/react-native-lists": "workspace:^"
     "@rnstudy/react-native-ui": "workspace:^"
     expo-blur: ~12.9.2
     react: ^18.2
