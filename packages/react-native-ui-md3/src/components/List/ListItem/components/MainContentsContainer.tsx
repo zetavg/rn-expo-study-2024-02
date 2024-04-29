@@ -1,11 +1,10 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Animated, StyleSheet } from 'react-native';
 
 import {
   COMPACT_CONTAINER_PADDING_VERTICAL,
   CONTAINER_PADDING_END,
   CONTAINER_PADDING_VERTICAL,
-  GRABBER_CONTAINER_WIDTH,
 } from '../consts';
 import type { Props as ListItemProps } from '../ListItem';
 import { useListItemAnimationContext } from '../ListItemAnimationContext';
@@ -25,25 +24,24 @@ export const MainContentsContainer = ({
   listPosition,
   compact,
 }: Props): JSX.Element => {
-  // const colors = useColors();
-  const { isGrabberShown } = useListItemAnimationContext();
+  const { mainContentsContainerStyle } = useListItemAnimationContext();
 
   return (
-    <View
+    <Animated.View
       style={[
         styles.container,
         compact && styles.container_compact,
-        isGrabberShown && styles.container_grabberShown,
         mainContentContainerStyles[
           `${listStyle}_${listPosition}` as keyof typeof mainContentContainerStyles
         ],
         React.Children.count(children) === 1 && styles.container_onlyOneChild,
         // Border is now set in OuterContainer
         // { borderColor: colors.outlineVariant },
+        mainContentsContainerStyle,
       ]}
     >
       {children}
-    </View>
+    </Animated.View>
   );
 };
 
@@ -64,9 +62,6 @@ const styles = StyleSheet.create({
   },
   container_compact: {
     paddingVertical: COMPACT_CONTAINER_PADDING_VERTICAL,
-  },
-  container_grabberShown: {
-    paddingEnd: 8 + GRABBER_CONTAINER_WIDTH,
   },
 });
 

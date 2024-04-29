@@ -9,10 +9,9 @@ import {
 } from '../consts';
 import { useBackgroundColor } from '../hooks';
 import type { Props as ListItemProps } from '../ListItem';
-import {
-  editButtonHiddenTranslateXValue,
-  useListItemAnimationContext,
-} from '../ListItemAnimationContext';
+import { useListItemAnimationContext } from '../ListItemAnimationContext';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export type Props = {
   children: React.ReactNode;
@@ -73,27 +72,28 @@ export const ContentContainer = ({
     }, 1);
   }, [onPress]);
 
-  const { editButtonTranslateXAnim, isEditButtonAnimationPlaying } =
+  const { contentContainerWrapperStyle, contentContainerStyle } =
     useListItemAnimationContext();
 
   const containerStyle = [
     styles.container,
     { minHeight },
     !!height && { height },
-    isEditButtonAnimationPlaying && {
-      transform: [{ translateX: editButtonTranslateXAnim }],
-      marginRight: editButtonHiddenTranslateXValue,
-    },
+    loading && styles.loadingContent,
+    !dragActive && { backgroundColor: bgc },
+    contentContainerStyle,
   ];
+
+  const wrapperStyle = [styles.wrapper, contentContainerWrapperStyle];
 
   if ((onPress || onLongPress) && !dragActive) {
     const rippleColor = Color(colors.onSurface).alpha(0.08).hexa();
     return (
-      <Pressable
+      <AnimatedPressable
         unstable_pressDelay={75}
         onPress={handlePress}
         onLongPress={onLongPress}
-        style={styles.wrapper}
+        style={wrapperStyle}
         disabled={disabled || disableOnPress}
         android_ripple={{
           color: rippleColor,
@@ -101,13 +101,7 @@ export const ContentContainer = ({
         }}
       >
         {({ pressed }) => (
-          <Animated.View
-            style={[
-              ...containerStyle,
-              loading && styles.loadingContent,
-              { backgroundColor: bgc },
-            ]}
-          >
+          <Animated.View style={containerStyle}>
             {children}
             {pressed && Platform.OS !== 'android' && (
               <View
@@ -119,20 +113,13 @@ export const ContentContainer = ({
             )}
           </Animated.View>
         )}
-      </Pressable>
+      </AnimatedPressable>
     );
   }
 
   return (
-    <Animated.View
-      style={[
-        styles.wrapper,
-        ...containerStyle,
-        loading && styles.loadingContent,
-        !dragActive && { backgroundColor: bgc },
-      ]}
-    >
-      {children}
+    <Animated.View style={wrapperStyle}>
+      <Animated.View style={containerStyle}>{children}</Animated.View>
     </Animated.View>
   );
 };

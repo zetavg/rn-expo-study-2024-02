@@ -2,15 +2,9 @@ import React from 'react';
 import { Animated, Pressable, StyleSheet } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Color from 'color';
 
 import { useColors } from '../../../../contexts';
-// import { useColors, useUIColors } from '../../../../contexts';
 import { EDIT_BUTTON_CONTAINER_WIDTH } from '../consts';
-// import AddButton from '../icons/AddButton';
-// import RemoveButton from '../icons/RemoveButton';
-// import SelectedButton from '../icons/SelectedButton';
-// import UnselectedButton from '../icons/UnselectedButton';
 import type { Props as ListItemProps } from '../ListItem';
 import { useListItemAnimationContext } from '../ListItemAnimationContext';
 
@@ -32,21 +26,16 @@ export const EditButton = React.memo(
   ({ editButton, onEditButtonPress }: Props): JSX.Element | null => {
     const colors = useColors();
 
-    const { editButtonOpacityAnim, renderEditButtonForAnim } =
+    const { shouldRenderEditButton, editButtonStyle } =
       useListItemAnimationContext();
 
-    const editButtonToRender = editButton || renderEditButtonForAnim;
+    const editButtonToRender = editButton || shouldRenderEditButton;
 
     if (!editButtonToRender) return null;
 
     return (
       <AnimatedPressable
-        style={[
-          styles.editButtonContainer,
-          {
-            opacity: editButtonOpacityAnim,
-          },
-        ]}
+        style={[styles.editButtonContainer, editButtonStyle]}
         onPress={() => {
           onEditButtonPress?.();
         }}

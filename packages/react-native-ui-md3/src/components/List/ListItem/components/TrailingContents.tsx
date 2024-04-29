@@ -14,7 +14,6 @@ import { type SelectProps, SelectPropsContext } from '../../../Select';
 import Text, { type TextProps, TextPropsContext } from '../../../Text';
 import { type TextInputProps, TextInputPropsContext } from '../../../TextInput';
 import type { Props as ListItemProps } from '../ListItem';
-import { useListItemAnimationContext } from '../ListItemAnimationContext';
 export type Props = {
   accessories: ListItemProps['accessories'];
   detail: ListItemProps['detail'];
@@ -52,7 +51,6 @@ export const TrailingContents = React.memo(
     hasSubtitle,
     hide,
   }: Props): JSX.Element | null => {
-    const { delayedHideTrailingContents } = useListItemAnimationContext();
     const theme = useTheme();
     const colors = useColors();
 
@@ -114,7 +112,7 @@ export const TrailingContents = React.memo(
             !!accessories && styles.trailingContentsContainer_withAccessories,
             accessoriesContainsTextInput &&
               styles.trailingContentsContainer_withTextInput,
-            (hide || delayedHideTrailingContents) && styles.hidden,
+            hide && styles.hidden,
             !accessoriesVerticalAlignCenter &&
               !singleLine &&
               hasSubtitle &&
