@@ -30,21 +30,16 @@ export const EditButton = React.memo(
     const colors = useColors();
     const uiColors = useUIColors();
 
-    const { editButtonOpacityAnim, renderEditButtonForAnim } =
+    const { shouldRenderEditButton, editButtonStyle } =
       useListItemAnimationContext();
 
-    const editButtonToRender = editButton || renderEditButtonForAnim;
+    const editButtonToRender = editButton || shouldRenderEditButton;
 
     if (!editButtonToRender) return null;
 
     return (
       <AnimatedPressable
-        style={[
-          styles.editButtonContainer,
-          {
-            opacity: editButtonOpacityAnim,
-          },
-        ]}
+        style={[styles.editButtonContainer, editButtonStyle]}
         onPress={() => {
           onEditButtonPress?.();
         }}

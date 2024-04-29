@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Animated, Pressable, StyleSheet } from 'react-native';
 
 import { useUIColors } from '../../../../contexts';
-import { GRABBER_CONTAINER_WIDTH, LAYOUT_ANIMATION_DURATION } from '../consts';
+import { GRABBER_CONTAINER_WIDTH } from '../consts';
 import { useBackgroundColor } from '../hooks';
 import GrabberIcon from '../icons/GrabberIcon';
 import type { Props as ListItemProps } from '../ListItem';
 import {
-  editButtonHiddenTranslateXValue,
+  hasTrailingContents,
   useListItemAnimationContext,
 } from '../ListItemAnimationContext';
 
@@ -18,10 +18,8 @@ export type Props = {
   showGrabber: ListItemProps['showGrabber'];
   onGrabberHold: ListItemProps['onGrabberHold'];
   dragActive: ListItemProps['dragActive'];
-  navigationLink: ListItemProps['navigationLink'];
-  hideTrailingContents: ListItemProps['hideTrailingContents'];
   _isNested: ListItemProps['_isNested'];
-  hasAccessories: boolean;
+  _htc: boolean;
   backgroundColor: string;
 };
 
@@ -33,10 +31,8 @@ export function propsSelector(
     showGrabber: p.showGrabber,
     onGrabberHold: p.onGrabberHold,
     dragActive: p.dragActive,
-    navigationLink: p.navigationLink,
-    hideTrailingContents: p.hideTrailingContents,
     _isNested: p._isNested,
-    hasAccessories: !!p.accessories,
+    _htc: hasTrailingContents(p),
   };
 }
 
@@ -46,10 +42,8 @@ export const Grabber = React.memo(
     showGrabber,
     onGrabberHold,
     dragActive,
-    navigationLink,
-    hideTrailingContents,
     _isNested,
-    hasAccessories,
+    _htc,
     backgroundColor,
   }: Props): JSX.Element | null => {
     const uiColors = useUIColors();
@@ -60,61 +54,29 @@ export const Grabber = React.memo(
       _isNested,
     });
 
-    const [delayedHideTrailingContents, setDelayedHideTrailingContents] =
-      useState(hideTrailingContents);
-    useEffect(() => {
-      const timer = setTimeout(
-        () => {
-          setDelayedHideTrailingContents(hideTrailingContents);
-        },
-        hideTrailingContents ? 0 : LAYOUT_ANIMATION_DURATION + 10,
-      );
-      return () => clearTimeout(timer);
-    }, [hideTrailingContents]);
+    const { shouldRenderGrabber, grabberStyle, grabberWrapperStyle } =
+      useListItemAnimationContext();
 
-    const {
-      grabberTranslateXAnim,
-      renderGrabberForAnim,
-      isEditButtonAnimationPlaying,
-      editButtonTranslateXAnim,
-    } = useListItemAnimationContext();
-
-    if (!showGrabber && !renderGrabberForAnim) return null;
+    if (!showGrabber && !shouldRenderGrabber) return null;
 
     return (
-      <AnimatedPressable
-        delayLongPress={80}
-        onLongPress={onGrabberHold}
-        style={[
-          styles.grabberContainer,
-          !!(navigationLink || hasAccessories) &&
-            !(hideTrailingContents || delayedHideTrailingContents) &&
-            styles.grabberContainer_withAccessories,
-          {
-            borderLeftColor: uiColors.opaqueSeparator,
-          },
-          isEditButtonAnimationPlaying
-            ? {
-                transform: [
-                  {
-                    translateX: Animated.add(
-                      Animated.subtract(
-                        grabberTranslateXAnim,
-                        editButtonTranslateXAnim,
-                      ),
-                      editButtonHiddenTranslateXValue,
-                    ),
-                  },
-                ],
-              }
-            : {
-                transform: [{ translateX: grabberTranslateXAnim }],
-              },
-          !dragActive && { backgroundColor: bgc },
-        ]}
-      >
-        <GrabberIcon fill={uiColors.tertiaryLabel} />
-      </AnimatedPressable>
+      <Animated.View style={[styles.grabberWrapper, grabberWrapperStyle]}>
+        <AnimatedPressable
+          delayLongPress={80}
+          onLongPress={onGrabberHold}
+          style={[
+            styles.grabberContainer,
+            _htc && styles.grabberContainer_withTrailingContents,
+            {
+              borderLeftColor: uiColors.opaqueSeparator,
+            },
+            grabberStyle,
+            !dragActive && { backgroundColor: bgc },
+          ]}
+        >
+          <GrabberIcon fill={uiColors.tertiaryLabel} />
+        </AnimatedPressable>
+      </Animated.View>
     );
   },
 );
@@ -122,17 +84,20 @@ export const Grabber = React.memo(
 Grabber.displayName = 'ListItem_Grabber';
 
 const styles = StyleSheet.create({
-  grabberContainer: {
+  grabberWrapper: {
     position: 'absolute',
     top: StyleSheet.hairlineWidth,
     bottom: StyleSheet.hairlineWidth,
-    right: 0,
+    end: 0,
+  },
+  grabberContainer: {
+    flex: 1,
     width: GRABBER_CONTAINER_WIDTH,
     justifyContent: 'center',
     alignItems: 'center',
     transformOrigin: 'right',
   },
-  grabberContainer_withAccessories: {
+  grabberContainer_withTrailingContents: {
     borderLeftWidth: StyleSheet.hairlineWidth,
   },
 });

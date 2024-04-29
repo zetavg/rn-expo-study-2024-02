@@ -1,195 +1,97 @@
 import React, {
   createContext,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
-  useState,
 } from 'react';
-import { Animated } from 'react-native';
+import { Animated, StyleProp, ViewStyle } from 'react-native';
 
 import {
   CONTENT_CONTAINER_GAP,
   EDIT_BUTTON_CONTAINER_WIDTH,
   GRABBER_CONTAINER_WIDTH,
   LAYOUT_ANIMATION_DURATION,
+  MAIN_CONTENTS_CONTAINER_PADDING_END,
 } from './consts';
 import type { Props as ListItemProps } from './ListItem';
 
 type ListItemAnimationContextValue = {
-  editButtonTranslateXAnim: Animated.Value;
-  editButtonOpacityAnim: Animated.Value;
-  renderEditButtonForAnim: ListItemProps['editButton'];
-  isEditButtonAnimationPlaying: boolean;
-  grabberTranslateXAnim: Animated.Value;
-  isGrabberShown: boolean;
-  renderGrabberForAnim: boolean;
-  delayedHideTrailingContents: boolean;
+  /** Whether the edit button should be rendered. Sometimes the edit button should be rendered for the animation. */
+  shouldRenderEditButton: ListItemProps['editButton'];
+  editButtonStyle: ViewStyle;
+  /** Whether the grabber should be rendered. Sometimes the grabber should be rendered for the animation. */
+  shouldRenderGrabber: ListItemProps['showGrabber'];
+  grabberStyle: ViewStyle;
+  grabberWrapperStyle: ViewStyle;
+  contentContainerWrapperStyle: StyleProp<ViewStyle>;
+  contentContainerStyle: StyleProp<ViewStyle>;
+  mainContentsContainerStyle: StyleProp<ViewStyle>;
 };
 
 export const ListItemAnimationContext =
   createContext<ListItemAnimationContextValue | null>(null);
 
-function grabberTranslateXAnimValue({
-  showGrabber,
-}: {
-  showGrabber: ListItemProps['showGrabber'];
-}) {
-  return showGrabber ? 0 : GRABBER_CONTAINER_WIDTH;
-}
+export function ListItemAnimationContextProvider(
+  props: ListItemProps,
+): JSX.Element {
+  const { editButton, children } = props;
 
-export function ListItemAnimationContextProvider({
-  editButton,
-  showGrabber,
-  hideTrailingContents,
-  children,
-}: {
-  editButton?: ListItemProps['editButton'];
-  showGrabber?: ListItemProps['showGrabber'];
-  hideTrailingContents?: ListItemProps['hideTrailingContents'];
-  children: React.ReactNode;
-}): JSX.Element {
-  // Edit button
+  const {
+    shouldRenderEditButton,
+    editButtonStyle,
+    contentContainerWrapperStyleForEditButtonAnimation,
+    contentContainerStyleForEditButtonAnimation,
 
-  const [isEditButtonAnimationPlaying, setIsEditButtonAnimationPlaying] =
-    useState(false);
-  const editButtonTranslateXAnim = useRef(
-    new Animated.Value(editButton ? 0 : editButtonHiddenTranslateXValue),
-  ).current;
-  const editButtonOpacityAnim = useRef(
-    new Animated.Value(editButton ? 1 : 0),
-  ).current;
-  const prevEditButton = useRef(editButton);
-  const [renderEditButtonForAnim, setRenderEditButtonForAnim] =
-    useState(editButton);
-  useEffect(() => {
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    let needToResetIsEditButtonAnimationPlaying = false;
-    if (!!editButton !== !!prevEditButton.current) {
-      setIsEditButtonAnimationPlaying(true);
-      needToResetIsEditButtonAnimationPlaying = true;
-      Animated.timing(editButtonTranslateXAnim, {
-        toValue: editButton ? 0 : editButtonHiddenTranslateXValue,
-        duration: LAYOUT_ANIMATION_DURATION,
-        useNativeDriver: true,
-      }).start();
-      Animated.timing(editButtonOpacityAnim, {
-        toValue: editButton ? 1 : 0,
-        duration: LAYOUT_ANIMATION_DURATION,
-        useNativeDriver: true,
-      }).start();
-    }
+    editButtonTranslateXAnim,
+    contentContainerMarginEndToCounterEditButtonAnim,
+  } = useEditButtonAnimation({ editButton });
 
-    if (editButton !== prevEditButton.current) {
-      if (editButton) {
-        setRenderEditButtonForAnim(editButton);
-      } else {
-        // Wait for the animation to finish before setting renderEditButtonForAnim to undefined
-        timers.push(
-          setTimeout(() => {
-            setRenderEditButtonForAnim(editButton);
-            setIsEditButtonAnimationPlaying(false);
-          }, LAYOUT_ANIMATION_DURATION),
-        );
-        needToResetIsEditButtonAnimationPlaying = false;
-      }
-    }
+  const {
+    shouldRenderGrabber,
+    grabberStyle,
+    grabberWrapperStyle,
+    mainContentsContainerStyleForGrabber,
+  } = useGrabberAnimation({
+    props,
+    shouldRenderEditButton: !!shouldRenderEditButton,
+    editButtonTranslateXAnim,
+    contentContainerMarginEndToCounterEditButtonAnim,
+  });
 
-    if (needToResetIsEditButtonAnimationPlaying) {
-      timers.push(
-        setTimeout(() => {
-          setIsEditButtonAnimationPlaying(false);
-        }, LAYOUT_ANIMATION_DURATION),
-      );
-    }
-
-    prevEditButton.current = editButton;
-
-    return () => {
-      for (const t of timers) clearTimeout(t);
-    };
-  }, [editButton, editButtonOpacityAnim, editButtonTranslateXAnim]);
-
-  // Grabber
-
-  const prevShowGrabber = useRef(showGrabber);
-
-  const [isGrabberShown, setIsGrabberShown] = useState(!!showGrabber);
-  const isGrabberShownTimer = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
+  const contentContainerWrapperStyle = useMemo(
+    () => [contentContainerWrapperStyleForEditButtonAnimation],
+    [contentContainerWrapperStyleForEditButtonAnimation],
   );
-
-  const [renderGrabberForAnim, setRenderGrabberForAnim] =
-    useState(!!showGrabber);
-  const renderGrabberForAnimTimer = useRef<ReturnType<
-    typeof setTimeout
-  > | null>(null);
-
-  const grabberTranslateXAnim = useRef(
-    new Animated.Value(grabberTranslateXAnimValue({ showGrabber })),
-  ).current;
-
-  useEffect(() => {
-    if (showGrabber === prevShowGrabber.current) return;
-
-    Animated.timing(grabberTranslateXAnim, {
-      toValue: grabberTranslateXAnimValue({ showGrabber }),
-      duration: LAYOUT_ANIMATION_DURATION,
-      useNativeDriver: true,
-    }).start();
-
-    if (renderGrabberForAnimTimer.current)
-      clearTimeout(renderGrabberForAnimTimer.current);
-    renderGrabberForAnimTimer.current = setTimeout(
-      () => {
-        setRenderGrabberForAnim(!!showGrabber);
-      },
-      showGrabber ? 0 : LAYOUT_ANIMATION_DURATION,
-    );
-
-    if (isGrabberShownTimer.current) clearTimeout(isGrabberShownTimer.current);
-    isGrabberShownTimer.current = setTimeout(
-      () => {
-        setIsGrabberShown(!!showGrabber);
-      },
-      showGrabber ? LAYOUT_ANIMATION_DURATION : 0,
-    );
-
-    prevShowGrabber.current = showGrabber;
-  }, [grabberTranslateXAnim, showGrabber]);
-
-  // Hide trailing contents
-
-  const [delayedHideTrailingContents, setDelayedHideTrailingContents] =
-    useState(!!hideTrailingContents);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDelayedHideTrailingContents(!!hideTrailingContents);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [hideTrailingContents]);
-
-  // Context value
+  const contentContainerStyle = useMemo(
+    () => [contentContainerStyleForEditButtonAnimation],
+    [contentContainerStyleForEditButtonAnimation],
+  );
+  const mainContentsContainerStyle = useMemo(
+    () => [mainContentsContainerStyleForGrabber],
+    [mainContentsContainerStyleForGrabber],
+  );
 
   const listItemAnimationContextValue = useMemo<ListItemAnimationContextValue>(
     () => ({
-      editButtonTranslateXAnim,
-      editButtonOpacityAnim,
-      renderEditButtonForAnim,
-      isEditButtonAnimationPlaying,
-      grabberTranslateXAnim,
-      isGrabberShown,
-      renderGrabberForAnim,
-      delayedHideTrailingContents,
+      shouldRenderEditButton,
+      editButtonStyle,
+      shouldRenderGrabber,
+      grabberStyle,
+      grabberWrapperStyle,
+      contentContainerWrapperStyle,
+      contentContainerStyle,
+      mainContentsContainerStyle,
     }),
     [
-      editButtonTranslateXAnim,
-      editButtonOpacityAnim,
-      renderEditButtonForAnim,
-      isEditButtonAnimationPlaying,
-      grabberTranslateXAnim,
-      isGrabberShown,
-      renderGrabberForAnim,
-      delayedHideTrailingContents,
+      shouldRenderEditButton,
+      editButtonStyle,
+      shouldRenderGrabber,
+      grabberStyle,
+      grabberWrapperStyle,
+      contentContainerWrapperStyle,
+      contentContainerStyle,
+      mainContentsContainerStyle,
     ],
   );
 
@@ -210,6 +112,306 @@ export function useListItemAnimationContext() {
   return context;
 }
 
-export const editButtonHiddenTranslateXValue = -(
+function useEditButtonAnimation({
+  editButton,
+}: {
+  editButton: ListItemProps['editButton'];
+}) {
+  const editButtonRef = useRef(editButton);
+  editButtonRef.current = editButton;
+
+  /** This ref is updated when the animation ends. */
+  const showedEditButton = useRef(editButton);
+
+  /** Should the edit button be rendered? Sometimes the edit button should be rendered for the animation. */
+  const renderEditButton = useRef(editButton);
+  if (editButton) {
+    renderEditButton.current = editButton;
+  } // Do not set `renderEditButton.current` to a falsy value here, since once it's rendered, it should stay rendered until the fade out animation is finished.
+
+  const shouldRenderEditButton = renderEditButton.current;
+
+  const editButtonTranslateXAnimValue = editButton
+    ? 0
+    : EDIT_BUTTON_HIDDEN_TRANSLATE_X_VALUE;
+  const editButtonTranslateXAnim = useRef(
+    new Animated.Value(editButtonTranslateXAnimValue),
+  ).current;
+
+  const editButtonOpacityAnimValue = editButton ? 1 : 0;
+  const editButtonOpacityAnim = useRef(
+    new Animated.Value(editButtonOpacityAnimValue),
+  ).current;
+
+  const shouldShowEditButton = !!editButton;
+
+  const getContentContainerMarginEndToCounterEditButtonAnimValue = useCallback(
+    () =>
+      // Edit button rendered but hidden (or going to be hidden by animation)
+      (renderEditButton.current && !shouldShowEditButton) ||
+      // Edit button is transitioning from hidden to shown (should be shown but not completely shown yet)
+      (!showedEditButton.current && shouldShowEditButton)
+        ? EDIT_BUTTON_HIDDEN_TRANSLATE_X_VALUE
+        : 0,
+    [shouldShowEditButton],
+  );
+  /** If the edit button is rendered but hidden by translateX or going to be shown, we need to apply a negative marginEnd to the content container so that the content container can fill the space left by the hidden edit button. */
+  const contentContainerMarginEndToCounterEditButtonAnim = useRef(
+    new Animated.Value(
+      getContentContainerMarginEndToCounterEditButtonAnimValue(),
+      {
+        useNativeDriver: false,
+      },
+    ),
+  ).current;
+
+  const editButtonStyle = useMemo<ViewStyle>(
+    () => ({
+      opacity: editButtonOpacityAnim,
+    }),
+    [editButtonOpacityAnim],
+  );
+
+  /** Animated values which uses native driver and those that don't cannot be used together in the same view. So we need to separate them to two different views - the content container wrapper and the content container. */
+  const contentContainerWrapperStyleForEditButtonAnimation =
+    useMemo<ViewStyle | null>(
+      () =>
+        shouldRenderEditButton
+          ? {
+              marginEnd: contentContainerMarginEndToCounterEditButtonAnim,
+            }
+          : null,
+      [
+        contentContainerMarginEndToCounterEditButtonAnim,
+        shouldRenderEditButton,
+      ],
+    );
+
+  const contentContainerStyleForEditButtonAnimation = useMemo<ViewStyle | null>(
+    () =>
+      shouldRenderEditButton
+        ? {
+            transform: [{ translateX: editButtonTranslateXAnim }],
+          }
+        : null,
+    [editButtonTranslateXAnim, shouldRenderEditButton],
+  );
+
+  useEffect(() => {
+    const setContentContainerMarginEndToCounterEditButtonAnimValue = () => {
+      contentContainerMarginEndToCounterEditButtonAnim.setValue(
+        getContentContainerMarginEndToCounterEditButtonAnimValue(),
+      );
+    };
+
+    setContentContainerMarginEndToCounterEditButtonAnimValue();
+
+    Animated.parallel(
+      [
+        Animated.timing(editButtonTranslateXAnim, {
+          toValue: editButtonTranslateXAnimValue,
+          duration: LAYOUT_ANIMATION_DURATION,
+          useNativeDriver: true,
+        }),
+        Animated.timing(editButtonOpacityAnim, {
+          toValue: editButtonOpacityAnimValue,
+          duration: LAYOUT_ANIMATION_DURATION,
+          useNativeDriver: true,
+        }),
+      ],
+      {},
+    ).start(({ finished }) => {
+      if (!finished) return;
+
+      showedEditButton.current = editButtonRef.current;
+      setContentContainerMarginEndToCounterEditButtonAnimValue();
+
+      // Reset `renderEditButton.current` so that it will not be rendered on the next re-render if unnecessary.
+      // Note that we are not using a set state here because we don't want to trigger a re-render when the animation is finished - proactively doing a re-render to remove the hidden (by animation) element is unnecessary and can be a performance hit.
+      renderEditButton.current = editButtonRef.current;
+    });
+  }, [
+    contentContainerMarginEndToCounterEditButtonAnim,
+    editButtonOpacityAnim,
+    editButtonOpacityAnimValue,
+    editButtonTranslateXAnim,
+    editButtonTranslateXAnimValue,
+    getContentContainerMarginEndToCounterEditButtonAnimValue,
+    shouldShowEditButton,
+  ]);
+
+  return {
+    editButtonTranslateXAnim,
+    contentContainerMarginEndToCounterEditButtonAnim,
+
+    shouldRenderEditButton,
+    editButtonStyle,
+    contentContainerWrapperStyleForEditButtonAnimation,
+    contentContainerStyleForEditButtonAnimation,
+  };
+}
+
+function useGrabberAnimation({
+  props,
+  shouldRenderEditButton,
+  editButtonTranslateXAnim,
+  contentContainerMarginEndToCounterEditButtonAnim,
+}: {
+  props: ListItemProps;
+  shouldRenderEditButton: boolean;
+  editButtonTranslateXAnim: Animated.AnimatedNode;
+  contentContainerMarginEndToCounterEditButtonAnim: Animated.AnimatedNode;
+}) {
+  const { showGrabber } = props;
+  const htc = hasTrailingContents(props);
+
+  const showGrabberRef = useRef(showGrabber);
+  showGrabberRef.current = showGrabber;
+
+  /** This ref is updated when the animation ends. */
+  const grabberShowed = useRef(showGrabber);
+
+  /** Should the grabber be rendered? Sometimes the grabber should be rendered for the animation. */
+  const renderGrabber = useRef(showGrabber);
+  if (showGrabber) {
+    renderGrabber.current = true;
+  } // Do not set `renderEditButton.current` to a falsy value here, since once it's rendered, it should stay rendered until the fade out animation is finished.
+
+  const shouldRenderGrabber = renderGrabber.current;
+
+  const grabberTranslateXAnimValue = showGrabber
+    ? 0
+    : GRABBER_HIDDEN_TRANSLATE_X_VALUE;
+  const grabberTranslateXAnim = useRef(
+    new Animated.Value(grabberTranslateXAnimValue),
+  ).current;
+
+  const getMainContentsContainerPaddingEndAnimValue = useCallback(() => {
+    const paddingEndWhenGrabberShown =
+      GRABBER_CONTAINER_WIDTH + (htc ? MAIN_CONTENTS_CONTAINER_PADDING_END : 4);
+
+    if (showGrabberRef.current && grabberShowed.current) {
+      return paddingEndWhenGrabberShown;
+    }
+
+    // Either the animation is in progress or the grabber is hidden.
+    return MAIN_CONTENTS_CONTAINER_PADDING_END;
+  }, [htc]);
+  const mainContentsContainerPaddingEndAnim = useRef(
+    new Animated.Value(getMainContentsContainerPaddingEndAnimValue()),
+  ).current;
+
+  const grabberStyle = useMemo<ViewStyle>(
+    () =>
+      shouldRenderEditButton
+        ? {
+            transform: [
+              {
+                translateX: Animated.subtract(
+                  grabberTranslateXAnim,
+
+                  // Counter the translateX value of the edit button.
+                  Animated.add(
+                    -EDIT_BUTTON_HIDDEN_TRANSLATE_X_VALUE,
+                    editButtonTranslateXAnim,
+                  ),
+                ),
+              },
+            ],
+          }
+        : {
+            transform: [
+              {
+                translateX: grabberTranslateXAnim,
+              },
+            ],
+          },
+    [editButtonTranslateXAnim, grabberTranslateXAnim, shouldRenderEditButton],
+  );
+
+  /** Animated values which uses native driver and those that don't cannot be used together in the same view. So we need to separate the styles which uses them to two different views. */
+  const grabberWrapperStyle = useMemo<ViewStyle>(
+    () =>
+      shouldRenderEditButton
+        ? {
+            transform: [
+              {
+                translateX: Animated.add(
+                  -EDIT_BUTTON_HIDDEN_TRANSLATE_X_VALUE,
+                  contentContainerMarginEndToCounterEditButtonAnim,
+                ),
+              },
+            ],
+          }
+        : {},
+    [contentContainerMarginEndToCounterEditButtonAnim, shouldRenderEditButton],
+  );
+
+  const mainContentsContainerStyleForGrabber = useMemo<ViewStyle | null>(
+    () =>
+      shouldRenderGrabber
+        ? {
+            paddingEnd: mainContentsContainerPaddingEndAnim,
+          }
+        : null,
+    [shouldRenderGrabber, mainContentsContainerPaddingEndAnim],
+  );
+
+  useEffect(() => {
+    const setMainContentsContainerPaddingEndAnimValue = () => {
+      mainContentsContainerPaddingEndAnim.setValue(
+        getMainContentsContainerPaddingEndAnimValue(),
+      );
+    };
+
+    setMainContentsContainerPaddingEndAnimValue();
+
+    Animated.parallel(
+      [
+        Animated.timing(grabberTranslateXAnim, {
+          toValue: grabberTranslateXAnimValue,
+          duration: LAYOUT_ANIMATION_DURATION,
+          useNativeDriver: true,
+        }),
+      ],
+      {},
+    ).start(({ finished }) => {
+      if (!finished) return;
+
+      grabberShowed.current = showGrabberRef.current;
+      setMainContentsContainerPaddingEndAnimValue();
+
+      // Reset `renderGrabber.current` so that it will not be rendered on the next re-render if unnecessary.
+      // Note that we are not using a set state here because we don't want to trigger a re-render when the animation is finished - proactively doing a re-render to remove the hidden (by animation) element is unnecessary and can be a performance hit.
+      renderGrabber.current = showGrabberRef.current;
+    });
+  }, [
+    getMainContentsContainerPaddingEndAnimValue,
+    grabberTranslateXAnim,
+    grabberTranslateXAnimValue,
+    mainContentsContainerPaddingEndAnim,
+  ]);
+
+  return {
+    shouldRenderGrabber,
+    grabberStyle,
+    grabberWrapperStyle,
+    mainContentsContainerStyleForGrabber,
+  };
+}
+
+/** The translateX value to apply for hiding the edit button with animation. Should be a negative number. */
+export const EDIT_BUTTON_HIDDEN_TRANSLATE_X_VALUE = -(
   EDIT_BUTTON_CONTAINER_WIDTH + CONTENT_CONTAINER_GAP
 );
+
+/** The translateX value to apply for hiding the edit button with animation. */
+const GRABBER_HIDDEN_TRANSLATE_X_VALUE = GRABBER_CONTAINER_WIDTH;
+
+export function hasTrailingContents(props: ListItemProps): boolean {
+  const { detail, accessories, navigationLink, hideTrailingContents } = props;
+
+  if (hideTrailingContents) return false;
+
+  return !!(detail || accessories || navigationLink);
+}

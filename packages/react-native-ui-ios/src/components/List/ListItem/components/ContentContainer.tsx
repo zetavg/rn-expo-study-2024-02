@@ -5,10 +5,9 @@ import { useUIColors } from '../../../../contexts';
 import { CONTENT_CONTAINER_GAP } from '../consts';
 import { useBackgroundColor } from '../hooks';
 import type { Props as ListItemProps } from '../ListItem';
-import {
-  editButtonHiddenTranslateXValue,
-  useListItemAnimationContext,
-} from '../ListItemAnimationContext';
+import { useListItemAnimationContext } from '../ListItemAnimationContext';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export type Props = {
   children: React.ReactNode;
@@ -69,26 +68,23 @@ export const ContentContainer = ({
     }, 1);
   }, [onPress]);
 
-  const { editButtonTranslateXAnim, isEditButtonAnimationPlaying } =
+  const { contentContainerWrapperStyle, contentContainerStyle } =
     useListItemAnimationContext();
 
   const containerStyle = [
     styles.container,
     { minHeight },
     !!height && { height },
-    isEditButtonAnimationPlaying && {
-      transform: [{ translateX: editButtonTranslateXAnim }],
-      marginRight: editButtonHiddenTranslateXValue,
-    },
+    contentContainerStyle,
   ];
 
   if ((onPress || onLongPress) && !dragActive) {
     return (
-      <Pressable
+      <AnimatedPressable
         unstable_pressDelay={75}
         onPress={handlePress}
         onLongPress={onLongPress}
-        style={styles.wrapper}
+        style={[styles.wrapper, contentContainerWrapperStyle]}
         disabled={disabled || disableOnPress}
       >
         {({ pressed }) => (
@@ -102,20 +98,21 @@ export const ContentContainer = ({
             {children}
           </Animated.View>
         )}
-      </Pressable>
+      </AnimatedPressable>
     );
   }
 
   return (
-    <Animated.View
-      style={[
-        styles.wrapper,
-        ...containerStyle,
-        loading && styles.loadingContent,
-        !dragActive && { backgroundColor: bgc },
-      ]}
-    >
-      {children}
+    <Animated.View style={[styles.wrapper, contentContainerWrapperStyle]}>
+      <Animated.View
+        style={[
+          ...containerStyle,
+          loading && styles.loadingContent,
+          !dragActive && { backgroundColor: bgc },
+        ]}
+      >
+        {children}
+      </Animated.View>
     </Animated.View>
   );
 };
@@ -128,7 +125,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: 'row',
-    paddingLeft: 16,
+    paddingStart: 16,
     gap: CONTENT_CONTAINER_GAP,
   },
   loadingContent: {

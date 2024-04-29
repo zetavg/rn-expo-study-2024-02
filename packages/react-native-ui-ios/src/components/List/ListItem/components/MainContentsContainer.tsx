@@ -1,9 +1,8 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Animated, StyleSheet } from 'react-native';
 
 import { useUIColors } from '../../../../contexts';
 import {
-  GRABBER_CONTAINER_WIDTH,
   MAIN_CONTENTS_CONTAINER_PADDING_END,
   SEPARATOR_COLOR_NAME,
 } from '../consts';
@@ -26,24 +25,24 @@ export const MainContentsContainer = ({
 }: Props): JSX.Element => {
   const uiColors = useUIColors();
 
-  const { isGrabberShown } = useListItemAnimationContext();
+  const { mainContentsContainerStyle } = useListItemAnimationContext();
 
   const borderColor = uiColors[SEPARATOR_COLOR_NAME];
 
   return (
-    <View
+    <Animated.View
       style={[
         styles.container,
-        isGrabberShown && styles.container_grabberShown,
         (listStyle === 'plain'
           ? mainContentContainerStyles_plain
           : mainContentContainerStyles)[listPosition],
         dragActive && mainContentContainerStyles.dragActive,
         { borderColor },
+        mainContentsContainerStyle,
       ]}
     >
       {children}
-    </View>
+    </Animated.View>
   );
 };
 
@@ -53,10 +52,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingEnd: MAIN_CONTENTS_CONTAINER_PADDING_END,
+    flexDirection: 'row',
     justifyContent: 'center',
-  },
-  container_grabberShown: {
-    paddingEnd: 8 + GRABBER_CONTAINER_WIDTH,
+    alignItems: 'center',
   },
 });
 

@@ -14,7 +14,6 @@ import Text, { type TextProps, TextPropsContext } from '../../../Text';
 import { type TextInputProps, TextInputPropsContext } from '../../../TextInput';
 import CheckmarkIcon from '../icons/CheckmarkIcon';
 import type { Props as ListItemProps } from '../ListItem';
-import { useListItemAnimationContext } from '../ListItemAnimationContext';
 
 export type Props = {
   accessories: ListItemProps['accessories'];
@@ -45,8 +44,6 @@ export const TrailingContents = React.memo(
     hide,
   }: Props): JSX.Element | null => {
     const uiColors = useUIColors();
-
-    const { delayedHideTrailingContents } = useListItemAnimationContext();
 
     const trailingContents = (() => {
       if (accessories) {
@@ -94,7 +91,7 @@ export const TrailingContents = React.memo(
             styles.trailingContentsContainer,
             accessoriesContainsTextInput &&
               styles.trailingContentsContainer_withTextInput,
-            (hide || delayedHideTrailingContents) && styles.hidden,
+            hide && styles.hidden,
           ]}
         >
           {trailingContents}

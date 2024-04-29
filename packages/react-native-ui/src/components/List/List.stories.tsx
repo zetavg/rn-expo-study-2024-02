@@ -20,7 +20,7 @@ import { Text } from '../Text';
 import ListFooterMeta from './ListFooter/ListFooter.stories';
 import { ACCESSORIES_EXAMPLES as LIST_HEADER_ACCESSORIES_EXAMPLES } from './ListHeader/examples';
 import ListHeaderMeta from './ListHeader/ListHeader.stories';
-import { EXAMPLE_IMAGES } from './ListItem/examples';
+import { EMPTY_FUNCTION, EXAMPLE_IMAGES } from './ListItem/examples';
 import ListItemMeta from './ListItem/ListItem.stories';
 import {
   getListItemHeight,
@@ -593,13 +593,18 @@ export const LA2_WithFlatListEditable: Story = {
       ]),
     ),
     __itemsCount: { control: { type: 'number' } },
+    __hideTrailingContentsWhenEditing: { control: 'boolean' },
+    __disableOnPressWhenEditing: { control: 'boolean' },
   },
   args: {
     __itemsCount: 100,
+    __hideTrailingContentsWhenEditing: true,
+    __disableOnPressWhenEditing: true,
     '__props:children:ListItem.subtitle':
       'This is the subtitle. This is the subtitle. This is the subtitle.',
     '__props:children:ListItem.compact': true,
     '__props:children:ListItem.fixedHeight': true,
+    '__props:children:ListItem.onPress': EMPTY_FUNCTION,
   },
   render: (args) => {
     const useListFooter = args['__props:footer'] === 'ListFooter';
@@ -620,6 +625,8 @@ export const LA2_WithFlatListEditable: Story = {
         useListFooter={useListFooter}
         listFooterProps={listFooterProps}
         listItemProps={listItemProps}
+        hideTrailingContentsWhenEditing={args.__hideTrailingContentsWhenEditing}
+        disableOnPressWhenEditing={args.__disableOnPressWhenEditing}
       />
     );
   },
@@ -927,12 +934,16 @@ function WithFlatListEditableDemoComponent({
   useListFooter,
   listFooterProps,
   listItemProps,
+  hideTrailingContentsWhenEditing,
+  disableOnPressWhenEditing,
 }: {
   listProps: ListProps;
   itemCount: number;
   useListFooter: boolean;
   listFooterProps: Partial<ListFooterProps>;
   listItemProps: Partial<ListItemProps>;
+  hideTrailingContentsWhenEditing: boolean;
+  disableOnPressWhenEditing: boolean;
 }) {
   const uiPlatform = useUIPlatform();
   const windowDimensions = useWindowDimensions();
@@ -1026,11 +1037,13 @@ function WithFlatListEditableDemoComponent({
       value={useMemo(
         () => ({
           showGrabber: editing,
-          disableOnPress: editing,
-          hideTrailingContents: editing,
+          disableOnPress: disableOnPressWhenEditing ? editing : false,
+          hideTrailingContents: hideTrailingContentsWhenEditing
+            ? editing
+            : false,
           editButton: editing ? 'remove' : undefined,
         }),
-        [editing],
+        [editing, hideTrailingContentsWhenEditing],
       )}
     >
       <FlatList
