@@ -1043,10 +1043,11 @@ function WithFlatListEditableDemoComponent({
             : false,
           editButton: editing ? 'remove' : undefined,
         }),
-        [editing, hideTrailingContentsWhenEditing],
+        [disableOnPressWhenEditing, editing, hideTrailingContentsWhenEditing],
       )}
     >
       <FlatList
+        dragEnabled={editing}
         ListHeaderComponent={
           <>
             <ListPadding

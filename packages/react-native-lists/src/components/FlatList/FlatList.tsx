@@ -97,6 +97,9 @@ function DraggableFlatListInner<T>(props: Props<T>) {
     disabled,
   } = useAnimatedValues();
 
+  const dragEnabledRef = useRef(props.dragEnabled);
+  dragEnabledRef.current = props.dragEnabled;
+
   /** Used to log the timestamp of the time that the drag was activated. */
   const activeAtTimestampAnim = useSharedValue(0);
 
@@ -230,6 +233,7 @@ function DraggableFlatListInner<T>(props: Props<T>) {
 
       return (
         <RowItem
+          dragEnabledRef={dragEnabledRef}
           item={item}
           itemKey={key}
           originalIndex={index}
@@ -373,6 +377,7 @@ function DraggableFlatListInner<T>(props: Props<T>) {
   const gestureDisabled = useSharedValue(false);
 
   const panGesture = Gesture.Pan()
+    .enabled(!!props.dragEnabled)
     .onBegin((evt) => {
       gestureDisabled.value = disabled.value;
       if (gestureDisabled.value) return;
@@ -581,7 +586,7 @@ type Modify<T, R> = Omit<T, keyof R> & R;
 export type Props<T> = Modify<
   DraggableFlatListProps<T>,
   { renderItem: RenderItem<T> }
->;
+> & { dragEnabled?: boolean };
 
 export type RefObject<T> = RNGHFlatList<T> & ScrollToTopImperativeHandle;
 

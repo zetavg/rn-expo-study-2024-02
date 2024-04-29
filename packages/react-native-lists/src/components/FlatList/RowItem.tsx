@@ -23,6 +23,7 @@ type Props<T> = {
   setSecondItemTmpListPositionFunctionRef: React.MutableRefObject<SetItemTmpListPositionFunction | null>;
   setPenultimateItemTmpListPositionFunctionRef: React.MutableRefObject<SetItemTmpListPositionFunction | null>;
   setLastItemTmpListPositionFunctionRef: React.MutableRefObject<SetItemTmpListPositionFunction | null>;
+  dragEnabledRef: React.MutableRefObject<boolean | undefined>;
 };
 
 function RowItem<T>(props: Props<T>) {
@@ -35,7 +36,9 @@ function RowItem<T>(props: Props<T>) {
   const { keyToIndexRef } = useRefs();
 
   const drag = useStableCallback(() => {
-    const { drag, itemKey, debug } = propsRef.current;
+    const { drag: d, itemKey, debug, dragEnabledRef } = propsRef.current;
+    if (!dragEnabledRef.current) return;
+
     if (activeKeyRef.current) {
       // already dragging an item, noop
       if (debug)
@@ -43,7 +46,7 @@ function RowItem<T>(props: Props<T>) {
           '## attempt to drag item while another item is already active, noop',
         );
     }
-    drag(itemKey);
+    d(itemKey);
   });
 
   const { renderItem, item, itemKey, extraData } = props;

@@ -8,6 +8,11 @@ import React, {
 import { Alert, FlatList, Linking } from 'react-native';
 
 import {
+  FlatListDragEndParams,
+  FlatListRef,
+  FlatListRenderItem,
+} from '@rnstudy/react-native-lists';
+import {
   Form,
   FormGroup,
   getListItemHeight,
@@ -20,28 +25,26 @@ import {
   RNTextInput,
   SegmentedControl,
   Text,
+  useListItemHeight,
   useUIPlatform,
   withLayoutAnimation,
 } from '@rnstudy/react-native-ui';
 import { objectMap } from '@rnstudy/react-utils';
 
-import {
-  FlatListDragEndParams,
-  FlatListProps,
-  FlatListRenderItem,
-  StackScreenContent,
-  StackScreenContentProps,
-} from '../../screen-contents';
+import { StackScreenContent } from '../../screen-contents';
 import { StackScreenProps } from '../../types';
+
+type Data = { key: string; title: string };
 
 export default function ExampleStackScreenWithFlatList({
   route,
   navigation,
 }: StackScreenProps) {
-  const listStyle = 'insetGrouped' as const;
+  const [listStyle, setListStyle] =
+    useState<React.ComponentProps<typeof List>['listStyle']>('plain');
   const itemCount = 100;
 
-  const [data, setData] = useState<{ key: string; title: string }[]>([]);
+  const [data, setData] = useState<Data[]>([]);
 
   useEffect(() => {
     setData(
@@ -61,10 +64,10 @@ export default function ExampleStackScreenWithFlatList({
     [],
   );
 
-  const renderItem = useCallback<FlatListRenderItem<(typeof data)[number]>>(
+  const renderItem = useCallback<FlatListRenderItem<Data>>(
     ({ item, listPosition, drag, isDragActive }) => (
       <ListItem
-        listStyle={listStyle}
+        fixedHeight
         listPosition={listPosition}
         title={item.title}
         dragActive={isDragActive}
@@ -89,29 +92,20 @@ export default function ExampleStackScreenWithFlatList({
             },
           ]);
         }}
-        // {...listItemProps}
       />
     ),
-    [listStyle],
+    [],
   );
 
-  // const getItemLayout = useCallback(
-  //   (_: unknown, index: number) => {
-  //     const height = getListItemHeight(uiPlatform, {
-  //       subtitle: listItemProps.subtitle,
-  //       compact: listItemProps.compact,
-  //       fontScale: windowDimensions.fontScale,
-  //     });
+  const listItemHeight = useListItemHeight({});
+  const getItemLayout = useCallback(
+    (_: unknown, index: number) => {
+      const height = listItemHeight;
 
-  //     return { length: height, offset: height * index, index };
-  //   },
-  //   [
-  //     uiPlatform,
-  //     listItemProps.compact,
-  //     listItemProps.subtitle,
-  //     windowDimensions.fontScale,
-  //   ],
-  // );
+      return { length: height, offset: height * index, index };
+    },
+    [listItemHeight],
+  );
 
   const handleDragEnd = useCallback(
     ({ data: reorderedData }: FlatListDragEndParams<(typeof data)[number]>) => {
@@ -120,47 +114,94 @@ export default function ExampleStackScreenWithFlatList({
     [],
   );
 
-  const scrollViewRef = useRef<FlatList<(typeof data)[number]>>(null);
+  const scrollViewRef = useRef<FlatListRef<Data>>(null);
 
   return (
     <StackScreenContent
+      title="Stack Screen with FlatList"
       headerLargeTitle
-      headerSearchBarOptions={{}}
+      grouped={listStyle !== 'plain'}
       headerTrailingContent={
-        <>
-          <Menu
-            items={[
-              {
-                title: 'Scroll to Top',
-                handler: () =>
-                  scrollViewRef?.current?.scrollToIndex({ index: 0 }),
-              },
-            ]}
-          >
-            {(openMenu) => (
-              <StackScreenContent.HeaderControlButton
-                label="More"
-                icon="_header_menu"
-                onPress={openMenu}
-              />
-            )}
-          </Menu>
-        </>
+        editing ? (
+          <StackScreenContent.HeaderControlButton
+            label="Done"
+            primary
+            onPress={() => setEditing(false)}
+          />
+        ) : (
+          <>
+            <StackScreenContent.HeaderControlButton
+              label="Edit"
+              onPress={() => setEditing(true)}
+            />
+            <Menu
+              items={[
+                {
+                  title: 'Scroll to Top',
+                  handler: () => scrollViewRef?.current?.scrollToStart(),
+                },
+                {
+                  title: 'Scroll to Bottom',
+                  handler: () => scrollViewRef?.current?.scrollToEnd(),
+                },
+                {
+                  title: 'List Style',
+                  items: [
+                    {
+                      title: 'Plain',
+                      checked: listStyle === 'plain',
+                      handler: () =>
+                        withLayoutAnimation(setListStyle, {
+                          onlyOnNativePlatforms: ['ios'],
+                        })('plain'),
+                    },
+                    {
+                      title: 'Grouped',
+                      checked: listStyle === 'grouped',
+                      handler: () =>
+                        withLayoutAnimation(setListStyle, {
+                          onlyOnNativePlatforms: ['ios'],
+                        })('grouped'),
+                    },
+                    {
+                      title: 'Inset Grouped',
+                      checked: listStyle === 'insetGrouped',
+                      handler: () =>
+                        withLayoutAnimation(setListStyle, {
+                          onlyOnNativePlatforms: ['ios'],
+                        })('insetGrouped'),
+                    },
+                  ],
+                },
+              ]}
+            >
+              {(openMenu) => (
+                <StackScreenContent.HeaderControlButton
+                  label="More"
+                  icon="_header_menu"
+                  onPress={openMenu}
+                />
+              )}
+            </Menu>
+          </>
+        )
       }
     >
       <ListItemPropsContextProvider
         value={useMemo(
           () => ({
+            listStyle,
             showGrabber: editing,
             disableOnPress: editing,
             hideTrailingContents: editing,
             editButton: editing ? 'remove' : undefined,
           }),
-          [editing],
+          [listStyle, editing],
         )}
       >
-        <StackScreenContent.FlatList
+        <StackScreenContent.FlatList<Data>
           ref={scrollViewRef}
+          dragEnabled={editing}
           ListHeaderComponent={
             <>
               <ListPadding
@@ -200,7 +241,7 @@ export default function ExampleStackScreenWithFlatList({
           data={data}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
-          // getItemLayout={listItemProps.fixedHeight ? getItemLayout : undefined}
+          getItemLayout={getItemLayout}
           onDragEnd={handleDragEnd}
         />
       </ListItemPropsContextProvider>
