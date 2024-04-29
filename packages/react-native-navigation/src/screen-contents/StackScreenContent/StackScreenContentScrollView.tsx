@@ -19,10 +19,7 @@ export type RefObject = ScrollViewRef;
 export const StackScreenContentScrollView = forwardRef<
   RefObject,
   ScrollViewProps
->(function StackScreenContentScrollView(
-  rawProps: React.ComponentProps<typeof ScrollView>,
-  ref,
-) {
+>(function StackScreenContentScrollView(rawProps, ref) {
   const [scrollViewRef, scrollViewRefObject] = useInterceptedRef(ref);
 
   const { scrollViewRefRef, ...restOfScrollViewContextValue } =

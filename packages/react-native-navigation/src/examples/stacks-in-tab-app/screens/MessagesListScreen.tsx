@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { ScrollView as RNScrollView } from 'react-native';
 
+import { ScrollViewRef } from '@rnstudy/react-native-lists/src';
 import {
   List,
   SegmentedControl,
@@ -25,7 +26,7 @@ export default function MessagesListScreen({ ..._ }: StackScreenProps) {
 
   const stackNavigation = useStackNavigation();
 
-  const scrollViewRef = React.useRef<RNScrollView | null>(null);
+  const scrollViewRef = React.useRef<ScrollViewRef>(null);
 
   const [filter, setFilter] = useState<'unread' | 'all'>('all');
   const changeFilter = useMemo(
