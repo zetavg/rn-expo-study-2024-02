@@ -16,6 +16,7 @@ export type Props = {
   compact: ListItemProps['compact'];
   subtitleOnTop: ListItemProps['subtitleOnTop'];
   fixedHeight: ListItemProps['fixedHeight'];
+  shrinkTitleVertical: ListItemProps['shrinkTitleVertical'];
   minHeight: number | undefined;
 };
 
@@ -30,6 +31,7 @@ export function propsSelector(p: ListItemProps): Omit<Props, 'minHeight'> {
     compact: p.compact,
     subtitleOnTop: p.subtitleOnTop,
     fixedHeight: p.fixedHeight,
+    shrinkTitleVertical: p.shrinkTitleVertical,
   };
 }
 
@@ -44,6 +46,7 @@ export const TitleAndSubtitle = React.memo(
     compact,
     subtitleOnTop,
     fixedHeight,
+    shrinkTitleVertical,
     minHeight,
   }: Props): JSX.Element | null => {
     if (!title && !subtitle) return null;
@@ -52,7 +55,7 @@ export const TitleAndSubtitle = React.memo(
       <View
         style={[
           styles.container,
-          !!minHeight && { minHeight },
+          !shrinkTitleVertical && !!minHeight && { minHeight },
           compact && styles.container_compact,
         ]}
       >

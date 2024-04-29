@@ -1,5 +1,11 @@
-import React, { useRef } from 'react';
-import { Animated, StyleSheet, useWindowDimensions, View } from 'react-native';
+import React, { useCallback, useRef } from 'react';
+import {
+  Animated,
+  LayoutChangeEvent,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 
 import { Icon } from '@rnstudy/react-icons';
 import {
@@ -179,6 +185,19 @@ export function ListItem(rawProps: Props) {
     new Animated.Value(0),
   ).current;
 
+  const handleTitleAndTrailingContentsContainerLayout = useCallback(
+    (e: LayoutChangeEvent) => {
+      titleAndTrailingContentsContainerYAnim.setValue(e.nativeEvent.layout.y);
+      titleAndTrailingContentsContainerHeightAnim.setValue(
+        e.nativeEvent.layout.height,
+      );
+    },
+    [
+      titleAndTrailingContentsContainerHeightAnim,
+      titleAndTrailingContentsContainerYAnim,
+    ],
+  );
+
   return (
     <ListItemAnimationContextProvider {...props}>
       <BackgroundColor>
@@ -206,27 +225,13 @@ export function ListItem(rawProps: Props) {
               )}
 
               <MainContentsContainer {...props}>
-                {!!(
-                  props.title ||
-                  props.subtitle ||
-                  props.accessories ||
-                  props.detail
-                ) && (
+                {!!props.title && (
                   <TitleAndTrailingContentsContainer
-                    onLayout={(e) => {
-                      titleAndTrailingContentsContainerYAnim.setValue(
-                        e.nativeEvent.layout.y,
-                      );
-                      titleAndTrailingContentsContainerHeightAnim.setValue(
-                        e.nativeEvent.layout.height,
-                      );
-                    }}
+                    onLayout={handleTitleAndTrailingContentsContainerLayout}
                   >
                     <TitleAndSubtitle
                       {...tasPropsSelector(props)}
-                      minHeight={
-                        props.shrinkTitleVertical ? undefined : minHeight
-                      }
+                      minHeight={minHeight}
                     />
 
                     {!props.hideTrailingContents && (
@@ -245,9 +250,6 @@ export function ListItem(rawProps: Props) {
                       styles.childrenContainer,
                       !!props.title && styles.childrenContainer_withTitle,
                     ]}
-                    // onLayout={(e) => {
-                    //   childrenHeightAnim.setValue(e.nativeEvent.layout.height);
-                    // }}
                   >
                     <ListPropsContext.Provider value={NESTED_LIST_PROPS}>
                       {props.children}
@@ -257,7 +259,6 @@ export function ListItem(rawProps: Props) {
               </MainContentsContainer>
 
               <Grabber
-                key="grabber"
                 {...grabberPropsSelector(props)}
                 backgroundColor={backgroundColor}
               />
