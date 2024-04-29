@@ -75,8 +75,12 @@ export const ContentContainer = ({
     styles.container,
     { minHeight },
     !!height && { height },
+    loading && styles.loadingContent,
+    !dragActive && { backgroundColor: bgc },
     contentContainerStyle,
   ];
+
+  const wrapperStyle = [styles.wrapper, contentContainerWrapperStyle];
 
   if ((onPress || onLongPress) && !dragActive) {
     return (
@@ -84,14 +88,13 @@ export const ContentContainer = ({
         unstable_pressDelay={75}
         onPress={handlePress}
         onLongPress={onLongPress}
-        style={[styles.wrapper, contentContainerWrapperStyle]}
+        style={wrapperStyle}
         disabled={disabled || disableOnPress}
       >
         {({ pressed }) => (
           <Animated.View
             style={[
-              ...containerStyle,
-              loading && styles.loadingContent,
+              containerStyle,
               { backgroundColor: pressed ? uiColors.systemGray5 : bgc },
             ]}
           >
@@ -103,16 +106,8 @@ export const ContentContainer = ({
   }
 
   return (
-    <Animated.View style={[styles.wrapper, contentContainerWrapperStyle]}>
-      <Animated.View
-        style={[
-          ...containerStyle,
-          loading && styles.loadingContent,
-          !dragActive && { backgroundColor: bgc },
-        ]}
-      >
-        {children}
-      </Animated.View>
+    <Animated.View style={wrapperStyle}>
+      <Animated.View style={containerStyle}>{children}</Animated.View>
     </Animated.View>
   );
 };
