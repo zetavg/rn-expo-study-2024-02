@@ -30,6 +30,15 @@ export default function ExampleScreensListScreen({ ..._ }: StackScreenProps) {
               mainStackNavigation.push('ExampleStackScreenWithFlatList')
             }
           />
+          <List.Item
+            title="Stack Screen with FlatList Inverted"
+            navigationLink
+            onPress={() =>
+              mainStackNavigation.push('ExampleStackScreenWithFlatList', {
+                inverted: true,
+              })
+            }
+          />
         </List>
         <List>
           <List.Item title="Modal Screen" navigationLink />

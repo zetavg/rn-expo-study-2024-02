@@ -16,8 +16,10 @@ export function useScrollViewContentInset(
   contentInsetFromProps: Insets | undefined,
   {
     contentInsetAdjustmentBehavior,
+    inverted,
   }: {
     contentInsetAdjustmentBehavior: ScrollViewPropsIOS['contentInsetAdjustmentBehavior'];
+    inverted?: boolean;
   },
 ): Insets | undefined {
   const uiPlatform = useUIPlatform();
@@ -69,6 +71,20 @@ export function useScrollViewContentInset(
       };
     }
 
+    if (inverted) {
+      calculatedContentInset = {
+        ...calculatedContentInset,
+        top: calculatedContentInset?.bottom || 0,
+        bottom: calculatedContentInset?.top || 0,
+      };
+
+      if (Platform.OS === 'ios') {
+        // HACK: Magic number
+        calculatedContentInset.bottom =
+          (calculatedContentInset.bottom || 0) + 20;
+      }
+    }
+
     return calculatedContentInset;
   }, [
     bottomTabBarHeight,
@@ -78,6 +94,7 @@ export function useScrollViewContentInset(
     safeAreaInsets.bottom,
     safeAreaInsets.top,
     uiPlatform,
+    inverted,
   ]);
 
   return contentInset;

@@ -111,6 +111,8 @@ export type Props = {
   /** Whether to shrink the vertical space of the title when the children has enough height to reach the minimum height of the list item. */
   shrinkTitleVertical?: boolean;
 
+  inverted?: boolean;
+
   /** Additional content to render inside the list item. This will be rendered below of the title, subtitle and accessories. */
   children?: React.ReactNode;
 };

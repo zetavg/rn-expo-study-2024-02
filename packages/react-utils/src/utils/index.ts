@@ -5,6 +5,7 @@ export { collectPropsFromArgs } from './collectPropsFromArgs';
 export { comparePropsWithPropsThatCanBeMarkedAsStable } from './comparePropsWithPropsThatCanBeMarkedAsStable';
 export { getArgTypes } from './getArgTypes';
 export { getPerformanceEyeAttractorDummyComponent } from './getPerformanceEyeAttractorDummyComponent';
+export { invertedListPosition } from './invertedListPosition';
 export { objectMap } from './objectMap';
 export { reactMemoWithPropsThatCanBeMarkedAsStable } from './reactMemoWithPropsThatCanBeMarkedAsStable';
 export { typedMemo } from './typedMemo';

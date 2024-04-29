@@ -147,6 +147,8 @@ function CellRendererComponent<T>(props: Props<T>) {
     })(tag, layoutAnimationDisabled);
   }, [propsRef, layoutAnimationDisabled]);
 
+  const flattenedStyleProp = StyleSheet.flatten(props.style) || {};
+
   return (
     <Animated.View
       {...rest}
@@ -163,6 +165,9 @@ function CellRendererComponent<T>(props: Props<T>) {
         props.style,
         baseStyle,
         activeKey ? animStyle : styles.zeroTranslate,
+        Array.isArray(flattenedStyleProp.transform) && {
+          transform: flattenedStyleProp.transform,
+        },
       ]}
       pointerEvents={activeKey ? 'none' : 'auto'}
     >

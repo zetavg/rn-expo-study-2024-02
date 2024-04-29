@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 
+import { invertedListPosition } from '@rnstudy/react-utils';
+
 import { useUIColors } from '../../../../contexts';
 import { useColorSchemeType } from '../../../../contexts/tokens/ColorSchemeTypeContext';
 import { SEPARATOR_COLOR_NAME } from '../consts';
@@ -16,6 +18,8 @@ export type Props = {
 
   dragActive?: ListItemProps['dragActive'];
 
+  inverted?: ListItemProps['inverted'];
+
   _isInListComponent?: ListItemProps['_isInListComponent'];
   _isNested?: ListItemProps['_isNested'];
 
@@ -25,8 +29,9 @@ export type Props = {
 export const OuterContainer = ({
   children,
   listStyle,
-  listPosition,
+  listPosition: listPositionProp,
   dragActive,
+  inverted,
   backgroundColor,
   _isInListComponent,
   _isNested,
@@ -40,6 +45,10 @@ export const OuterContainer = ({
     dragActive,
     _isNested,
   });
+
+  const listPosition = inverted
+    ? invertedListPosition(listPositionProp)
+    : listPositionProp;
 
   return (
     <View

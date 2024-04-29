@@ -8,11 +8,13 @@ import { useScrollViewContentInset } from './useScrollViewContentInset';
  * Takes the props passed to a scrollable component and returns the props that should be passed to the scrollable component with common defaults and adjustments.
  */
 export function useScrollViewProps<P extends ScrollViewProps>(props: P) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const inverted = (props as any).inverted;
   const {
     contentInset: contentInsetProp,
     // On iOS, defaults `contentInsetAdjustmentBehavior` to `"automatic"` for `headerLargeTitle` to work. See: https://reactnavigation.org/docs/7.x/native-stack-navigator#headerlargetitle
     // This also handles insets for safe area and bottom tab bar automatically on iOS.
-    contentInsetAdjustmentBehavior = Platform.OS === 'ios'
+    contentInsetAdjustmentBehavior = Platform.OS === 'ios' && !inverted
       ? 'automatic'
       : 'never',
     ...restProps
@@ -21,6 +23,7 @@ export function useScrollViewProps<P extends ScrollViewProps>(props: P) {
   const focused = useIsFocused();
   const contentInset = useScrollViewContentInset(contentInsetProp, {
     contentInsetAdjustmentBehavior,
+    inverted,
   });
 
   // On iOS, changing `contentInset` after the initial render may cause the content in the scroll view to shift (users may encounter this when they rotate the device, which changes the screen width and makes the bottom tab bar to be moved to the side). To prevent this, we will log and use the initial content inset and always use it for the scroll view, and calculate the difference between the initial and the new content insets and apply the diff as `contentContainerStyle` padding.
@@ -62,7 +65,15 @@ export function useScrollViewProps<P extends ScrollViewProps>(props: P) {
     // https://github.com/facebook/react-native/issues/30533
     contentInset: Platform.OS === 'ios' ? initialContentInset : undefined,
     scrollIndicatorInsets:
-      Platform.OS === 'ios' ? contentInsetDiff || undefined : undefined,
+      Platform.OS === 'ios'
+        ? inverted
+          ? // HACK: Magic numbers
+            {
+              top: -10,
+              bottom: (contentInset?.bottom || 0) - 10,
+            }
+          : contentInsetDiff || undefined
+        : undefined,
     contentContainerStyle: [
       restProps.contentContainerStyle,
       Platform.OS === 'android' && {

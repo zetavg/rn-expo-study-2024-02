@@ -39,7 +39,9 @@ type Data = { key: string; title: string };
 export default function ExampleStackScreenWithFlatList({
   route,
   navigation,
-}: StackScreenProps) {
+}: StackScreenProps<{ inverted?: boolean } | undefined>) {
+  const inverted = route.params?.inverted ?? false;
+
   const [listStyle, setListStyle] =
     useState<React.ComponentProps<typeof List>['listStyle']>('plain');
   const itemCount = 100;
@@ -119,7 +121,7 @@ export default function ExampleStackScreenWithFlatList({
   return (
     <StackScreenContent
       title="Stack Screen with FlatList"
-      headerLargeTitle
+      headerLargeTitle={!inverted}
       grouped={listStyle !== 'plain'}
       headerTrailingContent={
         editing ? (
@@ -190,17 +192,19 @@ export default function ExampleStackScreenWithFlatList({
       <ListItemPropsContextProvider
         value={useMemo(
           () => ({
+            inverted,
             listStyle,
             showGrabber: editing,
             disableOnPress: editing,
             hideTrailingContents: editing,
             editButton: editing ? 'remove' : undefined,
           }),
-          [listStyle, editing],
+          [inverted, listStyle, editing],
         )}
       >
         <StackScreenContent.FlatList<Data>
           ref={scrollViewRef}
+          inverted={inverted}
           dragEnabled={editing}
           ListHeaderComponent={
             <>

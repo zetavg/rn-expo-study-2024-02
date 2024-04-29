@@ -152,6 +152,8 @@ export type Props = {
   /** Whether to shrink the vertical space of the title when the children has enough height to reach the minimum height of the list item. */
   shrinkTitleVertical?: boolean;
 
+  inverted?: boolean;
+
   /** A private prop to indicate that the list item is being used inside a `List` component, which will remove the margin, background color, outer border radius, top border of the first item and bottom border of the last item as they will be handled by the `List` component. */
   _isInListComponent?: boolean;
 

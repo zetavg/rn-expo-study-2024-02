@@ -1,6 +1,8 @@
 import React from 'react';
 import { Animated, StyleSheet } from 'react-native';
 
+import { invertedListPosition } from '@rnstudy/react-utils';
+
 import { useUIColors } from '../../../../contexts';
 import {
   MAIN_CONTENTS_CONTAINER_PADDING_END,
@@ -14,15 +16,21 @@ export type Props = {
 
   listStyle: NonNullable<ListItemProps['listStyle']>;
   listPosition: NonNullable<ListItemProps['listPosition']>;
+  inverted?: ListItemProps['inverted'];
   dragActive?: ListItemProps['dragActive'];
 };
 
 export const MainContentsContainer = ({
   children,
   listStyle,
-  listPosition,
+  listPosition: listPositionProp,
+  inverted,
   dragActive,
 }: Props): JSX.Element => {
+  const listPosition = inverted
+    ? invertedListPosition(listPositionProp)
+    : listPositionProp;
+
   const uiColors = useUIColors();
 
   const { mainContentsContainerStyle } = useListItemAnimationContext();

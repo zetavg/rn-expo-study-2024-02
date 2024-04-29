@@ -376,6 +376,8 @@ function DraggableFlatListInner<T>(props: Props<T>) {
 
   const gestureDisabled = useSharedValue(false);
 
+  const { inverted } = props;
+
   const panGesture = Gesture.Pan()
     .enabled(!!props.dragEnabled)
     .onBegin((evt) => {
@@ -386,18 +388,18 @@ function DraggableFlatListInner<T>(props: Props<T>) {
     .onUpdate((evt) => {
       if (gestureDisabled.value) return;
       panGestureState.value = evt.state;
-      const translation = horizontalAnim.value
-        ? evt.translationX
-        : evt.translationY;
+      const translation =
+        (horizontalAnim.value ? evt.translationX : evt.translationY) *
+        (inverted ? -1 : 1);
       touchTranslate.value = translation;
     })
     .onEnd((evt) => {
       if (gestureDisabled.value) return;
       // Set touch val to current translate val
       isTouchActiveNative.value = false;
-      const translation = horizontalAnim.value
-        ? evt.translationX
-        : evt.translationY;
+      const translation =
+        (horizontalAnim.value ? evt.translationX : evt.translationY) *
+        (inverted ? -1 : 1);
 
       touchTranslate.value = translation + autoScrollDistance.value;
       panGestureState.value = evt.state;
