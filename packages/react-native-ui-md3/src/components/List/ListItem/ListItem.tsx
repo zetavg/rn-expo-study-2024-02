@@ -82,7 +82,7 @@ export type Props = {
         textProps: Partial<React.ComponentProps<typeof Text>>;
       }>;
 
-  /** Display the title and subtitle as a single line. Defaults to `true`. */
+  /** Display the title and subtitle as a single line. Defaults to `false`. */
   singleLine?: boolean;
 
   /** The text to display on the right side of the list item. Will be ignored if `accessories` is provided. */
@@ -161,7 +161,7 @@ export type Props = {
 const DEFAULT_PROPS = {
   listStyle: DEFAULT_LIST_STYLE,
   listPosition: 'only' as PositionInList,
-  singleLine: true,
+  singleLine: false,
 };
 
 export function ListItem(rawProps: Props) {
@@ -244,12 +244,7 @@ export function ListItem(rawProps: Props) {
                 {
                   // Using an array here since `React.Children.count(children)` is used in MainContentsContainer
                   [
-                    !!(
-                      props.title ||
-                      props.subtitle ||
-                      props.accessories ||
-                      props.detail
-                    ) && (
+                    !!props.title && (
                       <TitleAndTrailingContentsContainer
                         key="TitleAndTrailingContentsContainer"
                         onLayout={handleTitleParentContainerLayout}
@@ -285,7 +280,6 @@ export function ListItem(rawProps: Props) {
               </MainContentsContainer>
 
               <Grabber
-                key="grabber"
                 {...grabberPropsSelector(props)}
                 backgroundColor={backgroundColor}
               />
