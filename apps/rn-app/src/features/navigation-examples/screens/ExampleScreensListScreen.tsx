@@ -31,7 +31,7 @@ export default function ExampleScreensListScreen({ ..._ }: StackScreenProps) {
             }
           />
           <List.Item
-            title="Stack Screen with FlatList Inverted"
+            title="Stack Screen with FlatList (Inverted)"
             navigationLink
             onPress={() =>
               mainStackNavigation.push('ExampleStackScreenWithFlatList', {

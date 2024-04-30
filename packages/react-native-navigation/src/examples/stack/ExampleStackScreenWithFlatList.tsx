@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Alert, FlatList, Linking } from 'react-native';
+import { Alert } from 'react-native';
 
 import {
   FlatListDragEndParams,
@@ -13,23 +13,14 @@ import {
   FlatListRenderItem,
 } from '@rnstudy/react-native-lists';
 import {
-  Form,
-  FormGroup,
-  getListItemHeight,
   List,
-  ListHeader,
   ListItem,
   ListItemPropsContextProvider,
   ListPadding,
   Menu,
-  RNTextInput,
-  SegmentedControl,
-  Text,
   useListItemHeight,
-  useUIPlatform,
   withLayoutAnimation,
 } from '@rnstudy/react-native-ui';
-import { objectMap } from '@rnstudy/react-utils';
 
 import { StackScreenContent } from '../../screen-contents';
 import { StackScreenProps } from '../../types';
@@ -38,7 +29,6 @@ type Data = { key: string; title: string };
 
 export default function ExampleStackScreenWithFlatList({
   route,
-  navigation,
 }: StackScreenProps<{ inverted?: boolean } | undefined>) {
   const inverted = route.params?.inverted ?? false;
 
@@ -120,7 +110,11 @@ export default function ExampleStackScreenWithFlatList({
 
   return (
     <StackScreenContent
-      title="Stack Screen with FlatList"
+      title={
+        inverted
+          ? 'Stack Screen with FlatList (Inverted)'
+          : 'Stack Screen with FlatList'
+      }
       headerLargeTitle={!inverted}
       grouped={listStyle !== 'plain'}
       headerTrailingContent={
@@ -132,19 +126,44 @@ export default function ExampleStackScreenWithFlatList({
           />
         ) : (
           <>
-            <StackScreenContent.HeaderControlButton
-              label="Edit"
-              onPress={() => setEditing(true)}
-            />
+            {!inverted && (
+              <StackScreenContent.HeaderControlButton
+                label="Edit"
+                onPress={() => setEditing(true)}
+              />
+            )}
             <Menu
               items={[
                 {
-                  title: 'Scroll to Top',
+                  title: 'Scroll to Start',
                   handler: () => scrollViewRef?.current?.scrollToStart(),
                 },
                 {
-                  title: 'Scroll to Bottom',
+                  title: 'Scroll to End',
                   handler: () => scrollViewRef?.current?.scrollToEnd(),
+                },
+                {
+                  title: 'Scroll to Index 20',
+                  handler: () =>
+                    scrollViewRef?.current?.scrollToIndex({ index: 20 }),
+                },
+                {
+                  title: 'Scroll to Index 20',
+                  subtitle: 'View Position: 0.5',
+                  handler: () =>
+                    scrollViewRef?.current?.scrollToIndex({
+                      index: 20,
+                      viewPosition: 0.5,
+                    }),
+                },
+                {
+                  title: 'Scroll to Index 20',
+                  subtitle: 'View Position: 1',
+                  handler: () =>
+                    scrollViewRef?.current?.scrollToIndex({
+                      index: 20,
+                      viewPosition: 1,
+                    }),
                 },
                 {
                   title: 'List Style',

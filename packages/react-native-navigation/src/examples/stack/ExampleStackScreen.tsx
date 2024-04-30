@@ -296,7 +296,6 @@ export default function ExampleStackScreen({
 
   const handleGroup2Layout = useCallback((event: LayoutChangeEvent) => {
     group2Y.current = event.nativeEvent.layout.y;
-    console.log(`Group 2 layout: ${JSON.stringify(event.nativeEvent.layout)}`);
   }, []);
 
   const [counter, setCounter] = useState(0);

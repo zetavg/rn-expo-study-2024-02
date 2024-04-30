@@ -131,6 +131,13 @@ export function useScrollViewProps<
           ? 49 /* The height of the large title on iOS. */
           : 0
         : undefined,
+    topInsetForScrolling:
+      uiPlatform === 'ios'
+        ? inverted
+          ? safeAreaInsets.top +
+            44 /* The height of the navigation bar on iOS. */
+          : undefined /* Using `scrollToTopAndScrollToOffset` instead. */
+        : undefined,
     bottomInsetForScrolling:
       uiPlatform === 'ios'
         ? contentInsetAdjustmentBehavior !== 'never'

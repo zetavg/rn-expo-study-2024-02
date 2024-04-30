@@ -34,7 +34,6 @@ export const ScrollView = React.forwardRef<RefObject, Props>(
 
     const {
       stsScrollViewProps,
-      getCurrentScrollOffset,
       getScrollToStartOffset,
       getScrollToOffset,
       getScrollToEndOffset,

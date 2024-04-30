@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 import {
+  FlatList as RNFlatList,
   FlatListProps as RNFlatListProps,
   LayoutChangeEvent,
   ListRenderItem,
@@ -42,9 +43,9 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import useScrollToHelpers, {
-  IsScrolledToStart,
-  ScrollToStart,
+  ScrollToEnd,
   ScrollToImperativeHandle,
+  ScrollToStart,
 } from '../../hooks/useScrollToHelpers';
 
 import CellRendererComponent from './CellRendererComponent';
@@ -533,8 +534,12 @@ function DraggableFlatList<T>(
 
   const {
     stsScrollViewProps,
-    getCurrentScrollOffset,
-    getScrollToStartOffset: getScrollOffsetForScrollToTop,
+    getScrollToStartOffset,
+    getScrollToOffset,
+    getScrollToEndOffset,
+    getScrollToEndPosition,
+    isScrolledToStart,
+    isScrolledToEnd,
   } = useScrollToHelpers({ scrollViewProps: props });
 
   useImperativeHandle(
@@ -542,10 +547,20 @@ function DraggableFlatList<T>(
     () => {
       return new Proxy<RefObject<T>>({} as RefObject<T>, {
         get(_, p: keyof RefObject<T>) {
+          if (!originalRef.current) {
+            console.warn(
+              'Accessing FlatList ref before it is ready. This may cause issues.',
+            );
+          }
+
+          if (p === 'getScrollToStartOffset') {
+            return getScrollToStartOffset;
+          }
+
           if (p === 'scrollToStart') {
             const scrollToStart: ScrollToStart = (options) => {
               originalRef.current?.scrollToOffset({
-                offset: getScrollOffsetForScrollToTop(),
+                offset: getScrollToStartOffset(),
                 ...options,
               });
             };
@@ -554,20 +569,39 @@ function DraggableFlatList<T>(
           }
 
           if (p === 'isScrolledToStart') {
-            const isScrolledToStart: IsScrolledToStart = () => {
-              return (
-                getCurrentScrollOffset() - 1 <= getScrollOffsetForScrollToTop()
-              );
-            };
-
             return isScrolledToStart;
           }
 
+          if (p === 'getScrollToOffset') {
+            return getScrollToOffset;
+          }
+
+          if (p === 'scrollToIndex') {
+            const scrollToIndex: RNFlatList['scrollToIndex'] = (params) => {
+              const viewPosition = params.viewPosition || 0;
+              const viewOffset =
+                -getScrollToOffset() * (1 - viewPosition) +
+                -getScrollToEndOffset() * viewPosition;
+              params.viewOffset = (params.viewOffset || 0) + viewOffset;
+
+              originalRef.current?.scrollToIndex(params);
+            };
+
+            return scrollToIndex;
+          }
+
+          if (p === 'getScrollToEndOffset') {
+            return getScrollToEndOffset;
+          }
+
+          if (p === 'getScrollToEndPosition') {
+            return getScrollToEndPosition;
+          }
 
           if (p === 'scrollToEnd') {
             const scrollToEnd: ScrollToEnd = (options) => {
-              originalRef.current?.scrollToEnd({
-                offset: getScrollOffsetForScrollToTop(),
+              originalRef.current?.scrollToOffset({
+                offset: getScrollToEndPosition(),
                 ...options,
               });
             };
@@ -575,11 +609,22 @@ function DraggableFlatList<T>(
             return scrollToEnd;
           }
 
+          if (p === 'isScrolledToEnd') {
+            return isScrolledToEnd;
+          }
+
           return originalRef.current?.[p] || (() => {});
         },
       });
     },
-    [getCurrentScrollOffset, getScrollOffsetForScrollToTop],
+    [
+      getScrollToEndOffset,
+      getScrollToEndPosition,
+      getScrollToOffset,
+      getScrollToStartOffset,
+      isScrolledToEnd,
+      isScrolledToStart,
+    ],
   );
 
   return (
@@ -600,7 +645,10 @@ type Modify<T, R> = Omit<T, keyof R> & R;
 export type Props<T> = Modify<
   DraggableFlatListProps<T>,
   { renderItem: RenderItem<T> }
-> & { dragEnabled?: boolean };
+> & {
+  /** Enable drag-and-drop reordering features on this list. */
+  dragEnabled?: boolean;
+};
 
 export type RefObject<T> = RNGHFlatList<T> & ScrollToImperativeHandle;
 

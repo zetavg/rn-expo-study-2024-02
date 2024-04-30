@@ -1,6 +1,8 @@
 import React from 'react';
 import { Animated, StyleSheet } from 'react-native';
 
+import { invertedListPosition } from '@rnstudy/react-utils';
+
 import {
   COMPACT_CONTAINER_PADDING_VERTICAL,
   CONTAINER_PADDING_END,
@@ -16,15 +18,22 @@ export type Props = {
   listPosition: NonNullable<ListItemProps['listPosition']>;
 
   compact?: ListItemProps['compact'];
+
+  inverted?: ListItemProps['inverted'];
 };
 
 export const MainContentsContainer = ({
   children,
   listStyle,
-  listPosition,
+  listPosition: listPositionProp,
   compact,
+  inverted,
 }: Props): JSX.Element => {
   const { mainContentsContainerStyle } = useListItemAnimationContext();
+
+  const listPosition = inverted
+    ? invertedListPosition(listPositionProp)
+    : listPositionProp;
 
   return (
     <Animated.View

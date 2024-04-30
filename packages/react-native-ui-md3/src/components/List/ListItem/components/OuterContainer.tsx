@@ -1,6 +1,8 @@
 import React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
+import { invertedListPosition } from '@rnstudy/react-utils';
+
 import { useColors, useColorScheme } from '../../../../contexts';
 import { SEPARATOR_COLOR_NAME } from '../consts';
 import { useBackgroundColor } from '../hooks';
@@ -14,6 +16,8 @@ export type Props = {
 
   dragActive?: ListItemProps['dragActive'];
 
+  inverted?: ListItemProps['inverted'];
+
   _isInListComponent?: ListItemProps['_isInListComponent'];
   _isNested?: ListItemProps['_isNested'];
 
@@ -23,8 +27,9 @@ export type Props = {
 export const OuterContainer = ({
   children,
   listStyle,
-  listPosition,
+  listPosition: listPositionProp,
   dragActive,
+  inverted,
   backgroundColor,
   _isInListComponent,
   _isNested,
@@ -38,6 +43,10 @@ export const OuterContainer = ({
     dragActive,
     _isNested,
   });
+
+  const listPosition = inverted
+    ? invertedListPosition(listPositionProp)
+    : listPositionProp;
 
   return (
     <View
