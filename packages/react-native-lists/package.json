@@ -24,6 +24,7 @@
     "react-native-reanimated": "^3"
   },
   "dependencies": {
+    "@rnstudy/react-utils": "workspace:^",
     "react-native-draggable-flatlist": "^4"
   },
   "devDependencies": {

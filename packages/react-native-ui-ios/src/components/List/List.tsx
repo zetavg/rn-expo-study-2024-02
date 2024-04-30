@@ -4,6 +4,7 @@ import {
   StyleProp,
   StyleSheet,
   View,
+  ViewProps,
   ViewStyle,
 } from 'react-native';
 
@@ -48,6 +49,8 @@ export type Props = {
   /** The placeholder to display when children is empty. */
   placeholder?: Readonly<React.JSX.Element> | string;
 
+  onLayout?: ViewProps['onLayout'];
+
   /** Private prop indicating that the list is nested inside a list item. */
   _isNested?: boolean;
 };
@@ -61,6 +64,7 @@ export function List(rawProps: Props) {
     children,
     loading,
     placeholder,
+    onLayout,
     _isNested,
   } = usePropsWithContextualDefaultValues(rawProps, ListPropsContext);
 
@@ -146,7 +150,7 @@ export function List(rawProps: Props) {
 
   return (
     <ListItemPropsContext.Provider value={listItemPropsContextValue}>
-      <View style={containerStyle}>
+      <View style={containerStyle} onLayout={onLayout}>
         {!!header && (
           <ListHeaderPropsContext.Provider value={listHeaderPropsContextValue}>
             {header}

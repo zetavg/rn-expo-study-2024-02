@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { Alert } from 'react-native';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { Alert, LayoutChangeEvent } from 'react-native';
 
 import { ScrollViewRef } from '@rnstudy/react-native-lists/src';
 import {
@@ -292,6 +292,13 @@ export default function ExampleStackScreen({
   const [tmpSearchBarCancelButtonText, setTmpSearchBarCancelButtonText] =
     useState<string | null>(null);
 
+  const group2Y = useRef<number | null>(null);
+
+  const handleGroup2Layout = useCallback((event: LayoutChangeEvent) => {
+    group2Y.current = event.nativeEvent.layout.y;
+    console.log(`Group 2 layout: ${JSON.stringify(event.nativeEvent.layout)}`);
+  }, []);
+
   const [counter, setCounter] = useState(0);
 
   const titleTextInputRef = useRef<RNTextInput>(null);
@@ -418,7 +425,7 @@ export default function ExampleStackScreen({
           />
         </FormGroup>
 
-        <List listStyle="insetGrouped">
+        <List listStyle="insetGrouped" onLayout={handleGroup2Layout}>
           <List.Item.Memoized
             button
             title="Go to Another Screen"
@@ -863,15 +870,12 @@ export default function ExampleStackScreen({
           />
           <List.Item.Memoized
             button
-            title="Scroll to y=200"
+            title="Scroll to Group 2"
             onPressIsStable
-            onPress={() => scrollViewRef.current?.scrollTo({ y: 200 })}
-          />
-          <List.Item.Memoized
-            button
-            title="Scroll to y=-300"
-            onPressIsStable
-            onPress={() => scrollViewRef.current?.scrollTo({ y: -300 })}
+            onPress={() =>
+              typeof group2Y.current === 'number' &&
+              scrollViewRef.current?.scrollTo({ y: group2Y.current })
+            }
           />
         </List>
 

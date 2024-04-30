@@ -4152,6 +4152,7 @@ __metadata:
     "@babel/core": "npm:*"
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
+    "@rnstudy/react-utils": "workspace:^"
     "@rnstudy/tsconfig": "workspace:^"
     "@types/eslint": "npm:^8"
     "@types/jest": "npm:^29"

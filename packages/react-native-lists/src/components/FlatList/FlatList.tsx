@@ -41,11 +41,11 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import useScrollToStartHelpers, {
+import useScrollToHelpers, {
   IsScrolledToStart,
   ScrollToStart,
-  ScrollToTopImperativeHandle,
-} from '../../hooks/useScrollToStartHelpers';
+  ScrollToImperativeHandle,
+} from '../../hooks/useScrollToHelpers';
 
 import CellRendererComponent from './CellRendererComponent';
 import RowItem from './RowItem';
@@ -534,8 +534,8 @@ function DraggableFlatList<T>(
   const {
     stsScrollViewProps,
     getCurrentScrollOffset,
-    getScrollOffsetForScrollToTop,
-  } = useScrollToStartHelpers({ scrollViewProps: props });
+    getScrollToStartOffset: getScrollOffsetForScrollToTop,
+  } = useScrollToHelpers({ scrollViewProps: props });
 
   useImperativeHandle(
     ref,
@@ -561,6 +561,18 @@ function DraggableFlatList<T>(
             };
 
             return isScrolledToStart;
+          }
+
+
+          if (p === 'scrollToEnd') {
+            const scrollToEnd: ScrollToEnd = (options) => {
+              originalRef.current?.scrollToEnd({
+                offset: getScrollOffsetForScrollToTop(),
+                ...options,
+              });
+            };
+
+            return scrollToEnd;
           }
 
           return originalRef.current?.[p] || (() => {});
@@ -590,7 +602,7 @@ export type Props<T> = Modify<
   { renderItem: RenderItem<T> }
 > & { dragEnabled?: boolean };
 
-export type RefObject<T> = RNGHFlatList<T> & ScrollToTopImperativeHandle;
+export type RefObject<T> = RNGHFlatList<T> & ScrollToImperativeHandle;
 
 export type FlatListType = <T>(
   props: Props<T> & {

@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { ViewProps } from 'react-native';
 
 import { List } from '../../List';
 import { FormFieldProps } from '../FormField';
@@ -31,6 +32,8 @@ export type Props = {
   loading?: boolean;
   /** The placeholder to display when children is empty. */
   placeholder?: Readonly<React.JSX.Element> | string;
+
+  onLayout?: ViewProps['onLayout'];
 };
 
 export function FormGroup({ vertical = false, children, ...restProps }: Props) {

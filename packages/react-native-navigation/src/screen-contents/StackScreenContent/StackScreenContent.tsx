@@ -5,6 +5,10 @@ import { BackgroundColor, useUIPlatform } from '@rnstudy/react-native-ui';
 
 import { HeaderHeightContext } from '../../contexts/HeaderHeightContext';
 import {
+  HeaderLargeTitleContext,
+  HeaderLargeTitleContextValue,
+} from '../../contexts/HeaderLargeTitleContext';
+import {
   ScrollViewContext,
   ScrollViewContextValue,
   ScrollViewRef,
@@ -90,21 +94,30 @@ export function StackScreenContent(props: Props) {
     })(),
   );
 
+  const headerLargeTitleContextValue = useMemo<HeaderLargeTitleContextValue>(
+    () => ({
+      headerLargeTitle: props.headerLargeTitle,
+    }),
+    [props.headerLargeTitle],
+  );
+
   const { grouped, children } = props;
 
   return (
     <HeaderHeightContext.Provider value={headerHeight}>
-      <Header {...headerProps} />
+      <HeaderLargeTitleContext.Provider value={headerLargeTitleContextValue}>
+        <Header {...headerProps} />
 
-      <BackgroundColor root grouped={grouped}>
-        {(bg) => (
-          <View style={[styles.stackScreenContent, { backgroundColor: bg }]}>
-            <ScrollViewContext.Provider value={scrollViewContextValue}>
-              {children}
-            </ScrollViewContext.Provider>
-          </View>
-        )}
-      </BackgroundColor>
+        <BackgroundColor root grouped={grouped}>
+          {(bg) => (
+            <View style={[styles.stackScreenContent, { backgroundColor: bg }]}>
+              <ScrollViewContext.Provider value={scrollViewContextValue}>
+                {children}
+              </ScrollViewContext.Provider>
+            </View>
+          )}
+        </BackgroundColor>
+      </HeaderLargeTitleContext.Provider>
     </HeaderHeightContext.Provider>
   );
 }

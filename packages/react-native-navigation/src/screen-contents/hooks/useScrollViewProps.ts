@@ -1,13 +1,25 @@
 import { useMemo, useState } from 'react';
 import { Animated, Platform, ScrollViewProps, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useIsFocused } from '@react-navigation/native';
+
+import { ScrollablePropsContextValue } from '@rnstudy/react-native-lists';
+import { useUIPlatform } from '@rnstudy/react-native-ui';
+
+import { useHeaderLargeTitleContext } from '../../contexts/HeaderLargeTitleContext';
 
 import { useScrollViewContentInset } from './useScrollViewContentInset';
 
 /**
  * Takes the props passed to a scrollable component and returns the props that should be passed to the scrollable component with common defaults and adjustments.
  */
-export function useScrollViewProps<P extends ScrollViewProps>(props: P) {
+export function useScrollViewProps<
+  P extends ScrollViewProps & ScrollablePropsContextValue,
+>(props: P) {
+  const uiPlatform = useUIPlatform();
+
+  const safeAreaInsets = useSafeAreaInsets();
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const inverted = (props as any).inverted;
   const {
@@ -46,6 +58,8 @@ export function useScrollViewProps<P extends ScrollViewProps>(props: P) {
   const flattenedContentContainerStyle = StyleSheet.flatten(
     props.contentContainerStyle,
   );
+
+  const headerLargeTitleContextValue = useHeaderLargeTitleContext();
 
   return {
     keyboardDismissMode: 'interactive',
@@ -111,6 +125,18 @@ export function useScrollViewProps<P extends ScrollViewProps>(props: P) {
         ),
       },
     ],
+    scrollToTopAndScrollToOffset:
+      uiPlatform === 'ios'
+        ? headerLargeTitleContextValue.headerLargeTitle
+          ? 49 /* The height of the large title on iOS. */
+          : 0
+        : undefined,
+    bottomInsetForScrolling:
+      uiPlatform === 'ios'
+        ? contentInsetAdjustmentBehavior !== 'never'
+          ? (contentInset?.bottom || 0) + safeAreaInsets.bottom
+          : contentInset?.bottom
+        : undefined,
   };
 }
 

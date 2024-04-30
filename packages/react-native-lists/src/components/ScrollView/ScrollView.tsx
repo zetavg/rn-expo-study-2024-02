@@ -5,36 +5,63 @@ import {
   ScrollViewProps,
 } from 'react-native';
 
-import useScrollToStartHelpers, {
-  IsScrolledToStart,
-  ScrollToStart,
-  ScrollToTopImperativeHandle,
-} from '../../hooks/useScrollToStartHelpers';
+import { usePropsWithContextualDefaultValues } from '@rnstudy/react-utils';
 
-export type Props = ScrollViewProps;
+import useScrollToHelpers, {
+  IsScrolledToEnd,
+  IsScrolledToStart,
+  ScrollToEnd,
+  ScrollToImperativeHandle,
+  ScrollToStart,
+} from '../../hooks/useScrollToHelpers';
+import ScrollablePropsContext, {
+  ScrollablePropsContextValue,
+} from '../ScrollablePropsContext';
+
+export type Props = ScrollViewProps & ScrollablePropsContextValue;
 
 export type RefObject = Exclude<RNScrollView, typeof ScrollViewBase> &
-  ScrollToTopImperativeHandle;
+  ScrollToImperativeHandle;
 
 export const ScrollView = React.forwardRef<RefObject, Props>(
-  function ScrollView(props, ref) {
+  function ScrollView(rawProps, ref) {
+    const props = usePropsWithContextualDefaultValues(
+      rawProps,
+      ScrollablePropsContext,
+    );
+
     const originalRef = React.useRef<RNScrollView>(null);
 
     const {
       stsScrollViewProps,
       getCurrentScrollOffset,
-      getScrollOffsetForScrollToTop,
-    } = useScrollToStartHelpers({ scrollViewProps: props });
+      getScrollToStartOffset,
+      getScrollToOffset,
+      getScrollToEndOffset,
+      getScrollToEndPosition,
+      isScrolledToStart,
+      isScrolledToEnd,
+    } = useScrollToHelpers({ scrollViewProps: props });
 
     useImperativeHandle(
       ref,
       () => {
         return new Proxy<RefObject>({} as RefObject, {
           get(_, p: keyof RefObject) {
+            if (!originalRef.current) {
+              console.warn(
+                'Accessing ScrollView ref before it is ready. This may cause issues.',
+              );
+            }
+
+            if (p === 'getScrollToStartOffset') {
+              return getScrollToStartOffset;
+            }
+
             if (p === 'scrollToStart') {
               const scrollToStart: ScrollToStart = (options) => {
                 originalRef.current?.scrollTo({
-                  y: getScrollOffsetForScrollToTop(),
+                  y: getScrollToStartOffset(),
                   ...options,
                 });
               };
@@ -43,21 +70,66 @@ export const ScrollView = React.forwardRef<RefObject, Props>(
             }
 
             if (p === 'isScrolledToStart') {
-              const isScrolledToStart: IsScrolledToStart = () => {
-                return (
-                  getCurrentScrollOffset() - 1 <=
-                  getScrollOffsetForScrollToTop()
-                );
+              return isScrolledToStart;
+            }
+
+            if (p === 'getScrollToOffset') {
+              return getScrollToOffset;
+            }
+
+            if (p === 'scrollTo') {
+              const scrollTo: RNScrollView['scrollTo'] = (
+                options,
+                ...restArgs
+              ) => {
+                if (
+                  typeof options === 'object' &&
+                  typeof options.y === 'number'
+                ) {
+                  options.y = options.y + getScrollToOffset();
+                }
+
+                originalRef.current?.scrollTo(options, ...restArgs);
               };
 
-              return isScrolledToStart;
+              return scrollTo;
+            }
+
+            if (p === 'getScrollToEndOffset') {
+              return getScrollToEndOffset;
+            }
+
+            if (p === 'getScrollToEndPosition') {
+              return getScrollToEndPosition;
+            }
+
+            if (p === 'scrollToEnd') {
+              const scrollToEnd: ScrollToEnd = (options) => {
+                originalRef.current?.scrollTo({
+                  y: getScrollToEndPosition(),
+                  ...options,
+                });
+              };
+
+              return scrollToEnd;
+            }
+
+            if (p === 'isScrolledToEnd') {
+              return isScrolledToEnd;
             }
 
             return originalRef.current?.[p] || (() => {});
           },
         });
       },
-      [getCurrentScrollOffset, getScrollOffsetForScrollToTop],
+      [
+        getScrollToEndOffset,
+        getScrollToEndPosition,
+        getScrollToOffset,
+        getScrollToStartOffset,
+        isScrolledToEnd,
+        isScrolledToStart,
+      ],
     );
 
     return (

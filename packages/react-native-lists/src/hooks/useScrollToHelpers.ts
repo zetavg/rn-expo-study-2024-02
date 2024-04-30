@@ -1,15 +1,22 @@
-import { useCallback, useImperativeHandle, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import {
+  LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
   Platform,
   ScrollViewProps,
 } from 'react-native';
 
+import { ScrollablePropsContextValue } from '../components';
+
 export type ScrollToStart = (options?: { animated?: boolean }) => void;
 export type IsScrolledToStart = () => boolean;
+export type ScrollToEnd = (options?: { animated?: boolean }) => void;
+export type IsScrolledToEnd = () => boolean;
 
-export type ScrollToTopImperativeHandle = {
+export type ScrollToImperativeHandle = {
+  /** Get the offset that should be used for scrolling to the start of the scroll view. */
+  getScrollToStartOffset: () => number;
   /**
    * Scrolls to the top of the scroll view.
    *
@@ -17,36 +24,73 @@ export type ScrollToTopImperativeHandle = {
    */
   scrollToStart: ScrollToStart;
   isScrolledToStart: IsScrolledToStart;
+  /** Get the offset that should be used for scrolling to a specific position of the scroll view. */
+  getScrollToOffset: () => number;
+  /** Get the offset that should be used for scrolling to the end of the scroll view. */
+  getScrollToEndOffset: () => number;
+  /** Get the position that should be used for scrolling to the end of the scroll view. */
+  getScrollToEndPosition: () => number;
+  scrollToEnd: ScrollToEnd;
+  isScrolledToEnd: IsScrolledToEnd;
 };
 
 /**
  * Get helpers for implementing the `scrollToStart` method for a scrollable component.
  */
-export function useScrollToStartHelpers({
+export function useScrollToHelpers({
   scrollViewProps: {
+    onLayout: onLayoutProp,
+    onContentSizeChange: onContentSizeChangeProp,
     onScroll: onScrollProp,
     scrollEventThrottle: scrollEventThrottleProp,
     contentInset: contentInsetProp,
     contentInsetAdjustmentBehavior: contentInsetAdjustmentBehaviorProp,
     handleScrollOffsetChange: handleScrollOffsetChangeProp,
+    scrollToTopAndScrollToOffset,
+    topInsetForScrolling,
+    bottomInsetForScrolling,
+    inverted,
   },
 }: {
-  scrollViewProps: {
-    onScroll?: ScrollViewProps['onScroll'];
-    scrollEventThrottle?: ScrollViewProps['scrollEventThrottle'];
-    contentInset?: ScrollViewProps['contentInset'];
-    contentInsetAdjustmentBehavior?: ScrollViewProps['contentInsetAdjustmentBehavior'];
-    handleScrollOffsetChange?: (offset: number) => void;
-  };
+  scrollViewProps: ScrollViewProps &
+    ScrollablePropsContextValue & {
+      handleScrollOffsetChange?: (offset: number) => void;
+      inverted?: boolean;
+    };
 }): {
   /** Props that should be passed to the scrollable component. */
   stsScrollViewProps: Partial<ScrollViewProps>;
   /** A helper function that returns the current scroll offset of the scrollable component. */
   getCurrentScrollOffset(): number;
-  /** A helper function that returns the scroll offset that should be used for scrolling to top. */
-  getScrollOffsetForScrollToTop(): number;
+  /** A helper function that returns the scroll offset that should be used for scrolling to start. */
+  getScrollToStartOffset(): number;
+  isScrolledToStart: IsScrolledToStart;
+  /** A helper function that returns the scroll offset that should be used for scrolling to a specific point. */
+  getScrollToOffset: () => number;
+  /** A helper function that returns the scroll offset that should be used for scrolling to end. */
+  getScrollToEndOffset: () => number;
+  getScrollToEndPosition: () => number;
+  isScrolledToEnd: IsScrolledToEnd;
 } {
   const currentScrollOffsetRef = useRef(0);
+  const sizeRef = useRef(0);
+  const contentSizeRef = useRef(0);
+
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      sizeRef.current = event.nativeEvent.layout.height;
+      if (onLayoutProp) onLayoutProp(event);
+    },
+    [onLayoutProp],
+  );
+
+  const handleContentSizeChange = useCallback(
+    (w: number, h: number) => {
+      contentSizeRef.current = h;
+      if (onContentSizeChangeProp) onContentSizeChangeProp(w, h);
+    },
+    [onContentSizeChangeProp],
+  );
 
   /**
    * For scroll views with top inset on iOS, the initial scroll offset may be a negative value, so we'll need to log it for determining whether the scroll view is scrolled to top or use it for scrolling to top.
@@ -104,7 +148,7 @@ export function useScrollToStartHelpers({
     [],
   );
 
-  const getScrollOffsetForScrollToTop = useCallback(() => {
+  const getScrollToStartOffset = useCallback(() => {
     if (Platform.OS !== 'ios') return 0;
 
     const candidates = [0];
@@ -123,10 +167,48 @@ export function useScrollToStartHelpers({
     return Math.min(...candidates);
   }, [contentInsetProp?.top]);
 
+  const getScrollToOffset = useCallback(() => {
+    const insetForScrolling = inverted
+      ? bottomInsetForScrolling
+      : topInsetForScrolling;
+    return typeof insetForScrolling === 'number'
+      ? -insetForScrolling
+      : getScrollToStartOffset() + (scrollToTopAndScrollToOffset || 0);
+  }, [
+    bottomInsetForScrolling,
+    getScrollToStartOffset,
+    inverted,
+    topInsetForScrolling,
+    scrollToTopAndScrollToOffset,
+  ]);
+
+  const getScrollToEndOffset = useCallback(() => {
+    return (inverted ? topInsetForScrolling : bottomInsetForScrolling) || 0;
+  }, [bottomInsetForScrolling, inverted, topInsetForScrolling]);
+
+  const getScrollToEndPosition = useCallback(() => {
+    return contentSizeRef.current - sizeRef.current + getScrollToEndOffset();
+  }, [getScrollToEndOffset]);
+
+  const isScrolledToStart = useCallback<IsScrolledToStart>(() => {
+    return getCurrentScrollOffset() - 1 <= getScrollToStartOffset();
+  }, [getCurrentScrollOffset, getScrollToStartOffset]);
+
+  const isScrolledToEnd = useCallback<IsScrolledToEnd>(() => {
+    return getCurrentScrollOffset() + 1 >= getScrollToEndPosition();
+  }, [getCurrentScrollOffset, getScrollToEndPosition]);
+
   return {
     getCurrentScrollOffset,
-    getScrollOffsetForScrollToTop,
+    getScrollToStartOffset,
+    getScrollToOffset,
+    getScrollToEndOffset,
+    getScrollToEndPosition,
+    isScrolledToStart,
+    isScrolledToEnd,
     stsScrollViewProps: {
+      onLayout: handleLayout,
+      onContentSizeChange: handleContentSizeChange,
       onScroll: handleScroll,
       ...({ onScrollOffsetChange: handleScrollOffsetChange } as object),
       scrollEventThrottle: scrollEventThrottleProp || 32,
@@ -136,4 +218,4 @@ export function useScrollToStartHelpers({
   };
 }
 
-export default useScrollToStartHelpers;
+export default useScrollToHelpers;
