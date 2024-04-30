@@ -142,8 +142,9 @@ const PROMINENT_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
 };
 
 const PLAIN_TITLE_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {
-  variant: 'labelLarge',
+  variant: 'labelMedium',
   color: 'secondary',
+  style: { fontSize: 12.8, fontWeight: '600' },
 };
 
 const DESCRIPTION_TEXT_PROPS: Partial<React.ComponentProps<typeof Text>> = {};
