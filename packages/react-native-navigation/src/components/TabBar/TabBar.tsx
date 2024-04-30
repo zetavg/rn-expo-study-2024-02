@@ -6,7 +6,7 @@ import { useUIPlatform } from '@rnstudy/react-native-ui';
 import TabBarIOS from './TabBarIOS';
 import TabBarMD3 from './TabBarMD3';
 
-export type Props = BottomTabBarProps;
+export type Props = BottomTabBarProps & { shifting?: boolean };
 
 export function TabBar(props: Props) {
   const uiPlatform = useUIPlatform();

@@ -52,12 +52,15 @@ export function createBottomTabNavigator<
 >({
   id,
   screens,
+  shiftingTabBar = false,
   responsive = false,
 }: {
   /** The ID of the navigator. It should be unique within the app. */
   id: ID;
   /** Screens in the navigator. */
   screens: S;
+  /* Whether the shifting style is used on the tab bar: the active tab icon shifts up to show the label and the inactive tabs won't have a label. Only works on MD3. */
+  shiftingTabBar?: boolean;
   /**
    * Position the tab bar at the left side of the screen on large screens on iOS.
    *
@@ -121,7 +124,7 @@ export function createBottomTabNavigator<
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             id={id as any}
             screenOptions={screenOptions}
-            tabBar={(props) => <TabBar {...props} />}
+            tabBar={(props) => <TabBar {...props} shifting={shiftingTabBar} />}
             // Do not let the tab navigator handle `goBack` events and back button press.
             backBehavior="none"
             // Although the scene will be filled with opaque elements and this background color will not be visible in most cases, setting a background color here will prevent flashes of the default light background color when switching to a lazy-loaded screen.

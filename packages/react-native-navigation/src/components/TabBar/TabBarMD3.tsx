@@ -14,7 +14,13 @@ import { BottomTabNavigationOptions } from '../../types';
 
 import type { Props } from './TabBar';
 
-export function TabBarMD3({ navigation, descriptors, state, insets }: Props) {
+export function TabBarMD3({
+  navigation,
+  descriptors,
+  state,
+  insets,
+  shifting,
+}: Props) {
   const theme = useTheme();
   const colorScheme = useColorScheme();
 
@@ -87,6 +93,7 @@ export function TabBarMD3({ navigation, descriptors, state, insets }: Props) {
         </View>
         <View style={styles.navigationBarContainer}>
           <BottomNavigation.Bar
+            shifting={shifting}
             navigationState={state}
             safeAreaInsets={insets}
             onTabPress={({ route, preventDefault }) => {
