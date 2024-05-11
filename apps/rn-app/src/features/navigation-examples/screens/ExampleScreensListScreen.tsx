@@ -63,7 +63,8 @@ export default function ExampleScreensListScreen({ ..._ }: StackScreenProps) {
                   headerLargeTitle: false,
                   headerSearchBarOptions: {
                     enable: false,
-                    primary: true,
+                    primary: false,
+                    hideWhenScrolling: false,
                   },
                 },
               })

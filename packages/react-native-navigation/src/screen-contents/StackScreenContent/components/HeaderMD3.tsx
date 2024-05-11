@@ -12,9 +12,10 @@ import {
   Animated,
   BackHandler,
   LayoutChangeEvent,
+  StyleProp,
   StyleSheet,
-  useWindowDimensions,
   View,
+  ViewStyle,
 } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -49,8 +50,6 @@ export const HeaderMD3 = memo(function HeaderMD3({
   headerSearchBarOptions,
   onLayout,
 }: Props) {
-  const windowDimensions = useWindowDimensions();
-
   const navigation = useNavigation();
 
   const colorScheme = useColorScheme();
@@ -69,33 +68,51 @@ export const HeaderMD3 = memo(function HeaderMD3({
 
   const backgroundColor = md3Colors.surfaceContainer;
 
-  const headerWidthAnim = useRef(
-    new Animated.Value(windowDimensions.width),
+  const headerWidthRef = useRef(1024);
+  const headerTitleContentContainerXRef = useRef(0);
+  const headerTitleContentContainerWidthRef = useRef(1024);
+
+  const headerCenterAlignedTitleContentMaxWidthAnim = useRef(
+    new Animated.Value(1024),
   ).current;
+
+  const updateHeaderCenterAlignedTitleContentMaxWidthAnim = useCallback(() => {
+    const leadingSpace = headerTitleContentContainerXRef.current;
+    const trailingSpace =
+      headerWidthRef.current -
+      headerTitleContentContainerWidthRef.current -
+      leadingSpace;
+    const maxSpace = Math.max(leadingSpace, trailingSpace);
+    headerCenterAlignedTitleContentMaxWidthAnim.setValue(
+      headerWidthRef.current - (maxSpace + 16) * 2,
+    );
+  }, [headerCenterAlignedTitleContentMaxWidthAnim]);
+
   const handleAppBarLayout = useCallback(
     (event: LayoutChangeEvent) => {
-      headerWidthAnim.setValue(event.nativeEvent.layout.width);
+      headerWidthRef.current = event.nativeEvent.layout.width;
+      updateHeaderCenterAlignedTitleContentMaxWidthAnim();
       onLayout?.(event);
     },
-    [headerWidthAnim, onLayout],
+    [onLayout, updateHeaderCenterAlignedTitleContentMaxWidthAnim],
   );
 
-  const headerTitleContentContainerXAnim = useRef(
-    new Animated.Value(0),
-  ).current;
   const handleHeaderTitleContentContainerLayout = useCallback(
     (event: LayoutChangeEvent) => {
-      headerTitleContentContainerXAnim.setValue(event.nativeEvent.layout.x);
+      headerTitleContentContainerXRef.current = event.nativeEvent.layout.x;
+      headerTitleContentContainerWidthRef.current =
+        event.nativeEvent.layout.width;
+      updateHeaderCenterAlignedTitleContentMaxWidthAnim();
     },
-    [headerTitleContentContainerXAnim],
+    [updateHeaderCenterAlignedTitleContentMaxWidthAnim],
   );
 
-  const headerTitleContentContainerMaxWidthAnim = useRef(
-    Animated.subtract(
-      headerWidthAnim,
-      Animated.multiply(headerTitleContentContainerXAnim, 2),
-    ),
-  ).current;
+  // const headerTitleContentContainerMaxWidthAnim = useRef(
+  //   Animated.subtract(
+  //     headerWidthAnim,
+  //     Animated.multiply(headerTitleContentContainerXAnim, 2),
+  //   ),
+  // ).current;
 
   const route = useRoute();
   const firstRoute = navigation.getState()?.routes[0];
@@ -112,10 +129,58 @@ export const HeaderMD3 = memo(function HeaderMD3({
   const headerSearchBarEnabled =
     headerSearchBarOptions && headerSearchBarOptions.enable !== false;
 
+  if (!headerLeadingContent) {
+    if (canGoBack) {
+      headerLeadingContent = (
+        <Appbar.BackAction
+          onPress={navigation.goBack}
+          color={md3Colors.onSurface}
+        />
+      );
+    } else if (modalContentContextValue) {
+      headerLeadingContent = (
+        <Appbar.Action
+          icon="close"
+          onPress={navigation.goBack}
+          color={md3Colors.onSurface}
+        />
+      );
+    }
+  }
+
+  const centerAligned = !!modalContentContextValue;
+
+  function getHeaderTitleContent({
+    style,
+    onLayout: ol,
+  }: {
+    style?: StyleProp<ViewStyle>;
+    onLayout?: ((event: LayoutChangeEvent) => void) | undefined;
+  }) {
+    return !headerTitleContent ? (
+      <Appbar.Content
+        title={title}
+        color={md3Colors.onSurface}
+        style={[style]}
+        onLayout={ol}
+      />
+    ) : (
+      <View style={[styles.headerTitleContentContainer, style]} onLayout={ol}>
+        <Animated.View style={[styles.headerTitleContentInnerContainer, style]}>
+          <SegmentedControlPropsContextProvider
+            value={HEADER_SEGMENTED_CONTROL_PROPS}
+          >
+            {headerTitleContent}
+          </SegmentedControlPropsContextProvider>
+        </Animated.View>
+      </View>
+    );
+  }
+
   return (
     <Appbar.Header
       dark={colorScheme === 'dark'}
-      mode={modalContentContextValue ? 'center-aligned' : 'small'}
+      mode={centerAligned ? 'center-aligned' : 'small'}
       elevated={!headerBackgroundTransparent}
       style={[
         headerBackgroundTransparent
@@ -125,40 +190,26 @@ export const HeaderMD3 = memo(function HeaderMD3({
       ]}
       onLayout={handleAppBarLayout}
     >
-      {(() => {
-        if (headerLeadingContent) {
-          return headerLeadingContent;
-        }
-
-        if (canGoBack) {
-          return (
-            <Appbar.BackAction
-              onPress={navigation.goBack}
-              color={md3Colors.onSurface}
-            />
-          );
-        }
-      })()}
-      {!headerTitleContent ? (
-        <Appbar.Content title={title} color={md3Colors.onSurface} />
-      ) : (
+      {headerLeadingContent}
+      {getHeaderTitleContent({
+        onLayout: handleHeaderTitleContentContainerLayout,
+        style: centerAligned
+          ? styles.headerTitleContentContainer_centerAlignedPlaceholder
+          : undefined,
+      })}
+      {centerAligned && (
         <View
-          onLayout={handleHeaderTitleContentContainerLayout}
-          style={styles.headerTitleContentContainer}
+          style={styles.headerTitleContentContainer_centerAligned_outerWrapper}
         >
           <Animated.View
             style={[
-              styles.headerTitleContentInnerContainer,
-              {
-                maxWidth: headerTitleContentContainerMaxWidthAnim,
-              },
+              styles.headerTitleContentContainer_centerAligned_innerWrapper,
+              { maxWidth: headerCenterAlignedTitleContentMaxWidthAnim },
             ]}
           >
-            <SegmentedControlPropsContextProvider
-              value={HEADER_SEGMENTED_CONTROL_PROPS}
-            >
-              {headerTitleContent}
-            </SegmentedControlPropsContextProvider>
+            {getHeaderTitleContent({
+              style: styles.headerTitleContentContainer_centerAligned,
+            })}
           </Animated.View>
         </View>
       )}
@@ -302,12 +353,35 @@ const styles = StyleSheet.create({
     height: 100,
     zIndex: 100,
   },
+  headerLeadingAndTrailingContentContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerLeadingContentContainer: {
+    justifyContent: 'flex-start',
+  },
+  headerTrailingContentContainer: {
+    justifyContent: 'flex-end',
+  },
   headerTitleContentContainer: {
     flex: 1,
-    // ...StyleSheet.absoluteFillObject,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     flexDirection: 'row',
+  },
+  headerTitleContentContainer_centerAlignedPlaceholder: {
+    opacity: 0,
+  },
+  headerTitleContentContainer_centerAligned: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitleContentContainer_centerAligned_outerWrapper: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitleContentContainer_centerAligned_innerWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitleContentInnerContainer: {
     flex: 1,
