@@ -41,7 +41,35 @@ export default function ExampleScreensListScreen({ ..._ }: StackScreenProps) {
           />
         </List>
         <List>
-          <List.Item title="Modal Screen" navigationLink />
+          <List.Item
+            title="Modal"
+            navigationLink
+            onPress={() =>
+              modalStackNavigation.push('ExampleStackScreen', {
+                stackScreenContentProps: {
+                  headerLargeTitle: false,
+                  headerSearchBarOptions: {
+                    enable: false,
+                    primary: true,
+                  },
+                },
+              })
+            }
+          />
+          <List.Item
+            title="Modal with FlatList"
+            navigationLink
+            onPress={() =>
+              modalStackNavigation.push('ExampleStackScreenWithFlatList')
+            }
+          />
+          <List.Item
+            title="Example Screens List in Main Stack in Modal"
+            navigationLink
+            onPress={() =>
+              modalStackNavigation.push('MainStackExampleScreensList')
+            }
+          />
         </List>
       </StackScreenContent.ScrollView>
     </StackScreenContent>

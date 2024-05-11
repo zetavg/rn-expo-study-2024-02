@@ -18,7 +18,7 @@ import { ModalStackNavigation } from './ModalStackNavigation';
 export default function Navigation() {
   return (
     <NavigationContainer ref={navigationRef}>
-      <BottomTabNavigation />
+      <ModalStackNavigation />
     </NavigationContainer>
   );
 }

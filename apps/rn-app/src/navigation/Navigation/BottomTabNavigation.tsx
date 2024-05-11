@@ -28,9 +28,7 @@ export const BottomTabNavigation = createBottomTabNavigator({
             );
         }
       },
-      screen: ModalStackNavigation.withMainScreen(
-        MainStackNavigation.withInitialRouteName('ExampleScreensList'),
-      ),
+      screen: MainStackNavigation.withInitialRouteName('ExampleScreensList'),
     },
     ExampleAppsTab: {
       title: 'Example Apps',
@@ -52,9 +50,7 @@ export const BottomTabNavigation = createBottomTabNavigator({
             );
         }
       },
-      screen: ModalStackNavigation.withMainScreen(
-        MainStackNavigation.withInitialRouteName('ExampleAppsList'),
-      ),
+      screen: MainStackNavigation.withInitialRouteName('ExampleAppsList'),
     },
     SettingsTab: {
       title: 'Settings',
@@ -69,9 +65,7 @@ export const BottomTabNavigation = createBottomTabNavigator({
             );
         }
       },
-      screen: ModalStackNavigation.withMainScreen(
-        MainStackNavigation.withInitialRouteName('Settings'),
-      ),
+      screen: MainStackNavigation.withInitialRouteName('Settings'),
     },
   },
 });

@@ -24,6 +24,9 @@ export type ScrollViewContextValue = {
   onScroll?: ScrollViewProps['onScroll'];
   /** If provided, this function should be merged with the `onScrollBeginDrag` prop of the scroll view. */
   onScrollBeginDrag?: ScrollViewProps['onScrollBeginDrag'];
+
+  scrollToDismissEnabled?: boolean;
+  scrollToDismissOffset?: number;
 };
 
 /**
@@ -73,6 +76,8 @@ export function useScrollViewPropsWithValuesFromContextMerged<
     onScrollBeginDrag: handleScrollBeginDrag,
   } as P;
 }
+
+export const ModalContentContext = createContext<object | null>(null);
 
 export const BottomTabNavigationContext = createContext<
   BottomTabScreenProps<{ [name: string]: undefined }>['navigation'] | null

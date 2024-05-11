@@ -11,12 +11,15 @@ import { MainStackNavigation } from './MainStackNavigation';
 
 export const ModalStackNavigation = createModalStackNavigator({
   id: 'modal-stack',
-  mainScreen: MainStackNavigation,
+  mainScreen: BottomTabNavigation,
+  // mainScreen: MainStackNavigation,
   screens: {
     ...feature1ModalStackScreens,
     ...exampleModalStackScreens,
     ...exampleAppsModalStackScreens,
     ...settingsModalStackScreens,
+    MainStackExampleScreensList:
+      MainStackNavigation.withInitialRouteName('ExampleScreensList'),
   },
 });
 

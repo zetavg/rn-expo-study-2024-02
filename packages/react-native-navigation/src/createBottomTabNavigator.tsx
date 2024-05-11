@@ -70,7 +70,7 @@ export function createBottomTabNavigator<
 }): GeneratedBottomTabNavigator<ID, S> {
   const BottomTab = rnCreateBottomTabNavigator();
 
-  const navigator: Partial<GeneratedBottomTabNavigator<ID, S>> =
+  const BottomTabNavigator: Partial<GeneratedBottomTabNavigator<ID, S>> =
     function BottomTabNavigator({
       tabButtonMenus,
     }: GeneratedBottomTabNavigatorProps<S>) {
@@ -190,10 +190,10 @@ export function createBottomTabNavigator<
       );
     };
 
-  navigator._id = id;
-  navigator._screens = screens;
+  BottomTabNavigator._id = id;
+  BottomTabNavigator._screens = screens;
 
-  return navigator as GeneratedBottomTabNavigator<ID, S>;
+  return BottomTabNavigator as GeneratedBottomTabNavigator<ID, S>;
 }
 
 function WithUIPlatform({

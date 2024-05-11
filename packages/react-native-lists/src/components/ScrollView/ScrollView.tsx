@@ -1,9 +1,6 @@
 import React, { useImperativeHandle } from 'react';
-import {
-  ScrollView as RNScrollView,
-  ScrollViewBase,
-  ScrollViewProps,
-} from 'react-native';
+import { ScrollViewBase, ScrollViewProps } from 'react-native';
+import { ScrollView as RNScrollView } from 'react-native-gesture-handler';
 
 import { usePropsWithContextualDefaultValues } from '@rnstudy/react-utils';
 

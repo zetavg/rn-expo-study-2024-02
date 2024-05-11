@@ -43,6 +43,8 @@ export type StackScreenParams<S extends AnyStackScreen> =
 export type StackNavigatorScreenDefinition<
   Params extends object | undefined = undefined,
 > =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | GeneratedStackNavigator<any, any>
   | StackScreen<Params>
   | { screen: StackScreen<Params>; options: StackNavigationOptions };
 
@@ -83,4 +85,5 @@ export type GeneratedStackNavigator<
 > = ((props: GeneratedStackNavigatorProps<S>) => JSX.Element) & {
   _screens: S;
   _id: ID;
+  _type: 'stack-navigator';
 };

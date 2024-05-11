@@ -18,10 +18,20 @@
   },
   "peerDependencies": {
     "react": "^18",
+    "react-dom": "^18",
     "react-native": ">=0.71",
     "react-native-gesture-handler": "^2",
     "react-native-haptic-feedback": "^2",
-    "react-native-reanimated": "^3"
+    "react-native-reanimated": "^3",
+    "typescript": ">= 4.2.x"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "typescript": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@rnstudy/react-utils": "workspace:^",

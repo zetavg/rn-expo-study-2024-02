@@ -12,4 +12,8 @@ export const mainStackScreens = stackNavigatorScreens({
     NAVIGATION_EXAMPLES.ExampleStackScreenWithFlatList,
 });
 
-export const modalStackScreens = stackNavigatorScreens({});
+export const modalStackScreens = stackNavigatorScreens({
+  ExampleStackScreen: NAVIGATION_EXAMPLES.ExampleStackScreen,
+  ExampleStackScreenWithFlatList:
+    NAVIGATION_EXAMPLES.ExampleStackScreenWithFlatList,
+});

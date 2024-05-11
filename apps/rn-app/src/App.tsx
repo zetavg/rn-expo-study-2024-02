@@ -1,4 +1,6 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import Navigation from '@/navigation/Navigation';
 import {
@@ -34,11 +36,19 @@ export default function App() {
         >
           <ScreenOrientation />
           <StatusAndNavigationBar />
-          <WithExampleApps>
-            <Navigation />
-          </WithExampleApps>
+          <GestureHandlerRootView style={styles.rootView}>
+            <WithExampleApps>
+              <Navigation />
+            </WithExampleApps>
+          </GestureHandlerRootView>
         </SettingsContext.Provider>
       </AppRootBackgroundColor>
     </UIContextProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  rootView: {
+    flex: 1,
+  },
+});

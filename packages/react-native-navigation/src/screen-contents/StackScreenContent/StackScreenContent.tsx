@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useContext, useMemo, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { BackgroundColor, useUIPlatform } from '@rnstudy/react-native-ui';
@@ -9,6 +9,7 @@ import {
   HeaderLargeTitleContextValue,
 } from '../../contexts/HeaderLargeTitleContext';
 import {
+  ModalContentContext,
   ScrollViewContext,
   ScrollViewContextValue,
   ScrollViewRef,
@@ -66,7 +67,11 @@ export type Props = {
  * The content of a screen in a stack navigator.
  */
 export function StackScreenContent(props: Props) {
+  const modalContentContextValue = useContext(ModalContentContext);
+
   const uiPlatform = useUIPlatform();
+
+  const elevatedBg = !!modalContentContextValue;
 
   const headerProps = useHeaderProps(props);
 
@@ -80,8 +85,22 @@ export function StackScreenContent(props: Props) {
     () => ({
       scrollViewRefRef,
       onScrollBeginDrag: handleScrollBeginDrag,
+      scrollToDismissEnabled: !!modalContentContextValue,
+      scrollToDismissOffset:
+        props.headerSearchBarOptions &&
+        props.headerSearchBarOptions.enable !== false &&
+        !props.headerSearchBarOptions.primary &&
+        props.headerSearchBarOptions.hideWhenScrolling !== false &&
+        uiPlatform === 'ios'
+          ? -55 // HACK: Magic number of the search bar's height
+          : 0,
     }),
-    [handleScrollBeginDrag],
+    [
+      handleScrollBeginDrag,
+      modalContentContextValue,
+      props.headerSearchBarOptions,
+      uiPlatform,
+    ],
   );
 
   const [headerHeight, _] = React.useState<number | undefined>(
@@ -106,9 +125,9 @@ export function StackScreenContent(props: Props) {
   return (
     <HeaderHeightContext.Provider value={headerHeight}>
       <HeaderLargeTitleContext.Provider value={headerLargeTitleContextValue}>
-        <Header {...headerProps} />
+        <Header {...headerProps} elevatedBg={elevatedBg} />
 
-        <BackgroundColor root grouped={grouped}>
+        <BackgroundColor root grouped={grouped} elevated={elevatedBg}>
           {(bg) => (
             <View style={[styles.stackScreenContent, { backgroundColor: bg }]}>
               <ScrollViewContext.Provider value={scrollViewContextValue}>

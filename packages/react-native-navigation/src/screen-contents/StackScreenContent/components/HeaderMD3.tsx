@@ -1,6 +1,7 @@
 import React, {
   memo,
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -16,6 +17,7 @@ import {
   View,
 } from 'react-native';
 import { Appbar } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // import { DEFAULT_APPBAR_HEIGHT } from 'react-native-paper/src/components/Appbar/utils';
 import {
   useIsFocused,
@@ -32,6 +34,8 @@ import {
   useMD3Colors,
   withLayoutAnimation,
 } from '@rnstudy/react-native-ui';
+
+import { ModalContentContext } from '../../contexts';
 
 import { Props } from './Header';
 
@@ -100,6 +104,9 @@ export const HeaderMD3 = memo(function HeaderMD3({
     [firstRoute?.key, route.key],
   );
 
+  const modalContentContextValue = useContext(ModalContentContext);
+  const safeAreaInsets = useSafeAreaInsets();
+
   if (!showHeader) return null;
 
   const headerSearchBarEnabled =
@@ -110,11 +117,12 @@ export const HeaderMD3 = memo(function HeaderMD3({
       dark={colorScheme === 'dark'}
       mode="small"
       elevated={!headerBackgroundTransparent}
-      style={
+      style={[
         headerBackgroundTransparent
           ? styles.transparentHeader
-          : { backgroundColor }
-      }
+          : { backgroundColor },
+        !!modalContentContextValue && { marginTop: -safeAreaInsets.top },
+      ]}
       onLayout={handleAppBarLayout}
     >
       {(() => {

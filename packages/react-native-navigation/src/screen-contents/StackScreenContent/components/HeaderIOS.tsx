@@ -22,7 +22,7 @@ import { getPerformanceEyeAttractorDummyComponent } from '@rnstudy/react-utils';
 import {
   getHeaderTitleStyleIOS,
   getScreenOptionsForHeaderBackgroundAndBorderIOS,
-} from '../../../createStackNavigator';
+} from '../../../hooks/useStackNavigatorScreenOptions';
 
 import type { Props } from './Header';
 
@@ -46,13 +46,14 @@ export const HeaderIOS = memo(function HeaderIOS({
   headerTrailingContent,
   headerSearchBarOptions,
   grouped,
+  elevatedBg,
 }: Props) {
   const navigation = useNavigation();
 
   const colorScheme = useColorScheme();
   const backgroundColor = useBackgroundColor({
     grouped,
-    elevated: useIsElevatedBackground(),
+    elevated: useIsElevatedBackground() || elevatedBg,
   });
   const iosUIColors = useIOSUIColors();
 

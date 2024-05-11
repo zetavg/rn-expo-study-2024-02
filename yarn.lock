@@ -4167,10 +4167,17 @@ __metadata:
     typescript: "npm:^5"
   peerDependencies:
     react: ^18
+    react-dom: ^18
     react-native: ">=0.71"
     react-native-gesture-handler: ^2
     react-native-haptic-feedback: ^2
     react-native-reanimated: ^3
+    typescript: ">= 4.2.x"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    typescript:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -4198,6 +4205,8 @@ __metadata:
     eslint: "npm:^8.10"
     expo: "npm:~50.0.6"
     expo-blur: "npm:~12.9.2"
+    expo-navigation-bar: "npm:^2"
+    expo-status-bar: "npm:^1"
     jest: "npm:^29"
     react-native: "npm:0.72"
     react-native-gesture-handler: "npm:~2.14"
@@ -4213,6 +4222,8 @@ __metadata:
     "@rnstudy/react-native-lists": "workspace:^"
     "@rnstudy/react-native-ui": "workspace:^"
     expo-blur: ~12.9.2
+    expo-navigation-bar: ^2
+    expo-status-bar: ^1
     react: ^18.2
     react-dom: ^18
     react-native: ">= 0.72.0"
@@ -9531,7 +9542,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-navigation-bar@npm:~2.8.1":
+"expo-navigation-bar@npm:^2, expo-navigation-bar@npm:~2.8.1":
   version: 2.8.1
   resolution: "expo-navigation-bar@npm:2.8.1"
   dependencies:
@@ -9549,6 +9560,13 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: 10c0/d9e56944278b76a98098f808aa17a3db62fafe949091d450f7d1903752f2a60e70c41c87ec9c0ee3c827f70ff2a5c27b246013805c2d1753d86e53915daa5cb7
+  languageName: node
+  linkType: hard
+
+"expo-status-bar@npm:^1":
+  version: 1.12.1
+  resolution: "expo-status-bar@npm:1.12.1"
+  checksum: 10c0/fecd1c1843ef1fadf3007f54e1c778d06cbbe396c9ba7cbbfde88a1eb215847ab39e68b1f32d0d46a906a1abcb8821aa33eefed66d0c4a858a5faf6b6e556416
   languageName: node
   linkType: hard
 

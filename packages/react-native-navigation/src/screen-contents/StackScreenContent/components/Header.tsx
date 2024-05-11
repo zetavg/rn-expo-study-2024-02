@@ -24,6 +24,7 @@ export type Props = Pick<
   | 'headerSearchBarOptions'
   | 'grouped'
 > & {
+  elevatedBg?: boolean;
   onLayout?: (event: LayoutChangeEvent) => void;
 };
 
