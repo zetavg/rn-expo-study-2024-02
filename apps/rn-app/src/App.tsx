@@ -4,6 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import Navigation from '@/navigation/Navigation';
 import {
+  ActionSheetProvider,
   AppRootBackgroundColor,
   AVAILABLE_UI_PLATFORMS,
   UIContextProvider,
@@ -31,17 +32,19 @@ export default function App() {
       colorScheme={colorScheme === 'system' ? systemColorScheme : colorScheme}
     >
       <AppRootBackgroundColor>
-        <SettingsContext.Provider
-          value={{ colorScheme, setColorScheme, uiPlatform, setUIPlatform }}
-        >
-          <ScreenOrientation />
-          <StatusAndNavigationBar />
-          <GestureHandlerRootView style={styles.rootView}>
-            <WithExampleApps>
-              <Navigation />
-            </WithExampleApps>
-          </GestureHandlerRootView>
-        </SettingsContext.Provider>
+        <ActionSheetProvider>
+          <SettingsContext.Provider
+            value={{ colorScheme, setColorScheme, uiPlatform, setUIPlatform }}
+          >
+            <ScreenOrientation />
+            <StatusAndNavigationBar />
+            <GestureHandlerRootView style={styles.rootView}>
+              <WithExampleApps>
+                <Navigation />
+              </WithExampleApps>
+            </GestureHandlerRootView>
+          </SettingsContext.Provider>
+        </ActionSheetProvider>
       </AppRootBackgroundColor>
     </UIContextProvider>
   );

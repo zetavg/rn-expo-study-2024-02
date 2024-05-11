@@ -2528,6 +2528,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@expo/react-native-action-sheet@npm:^4":
+  version: 4.0.1
+  resolution: "@expo/react-native-action-sheet@npm:4.0.1"
+  dependencies:
+    "@types/hoist-non-react-statics": "npm:^3.3.1"
+    hoist-non-react-statics: "npm:^3.3.0"
+  peerDependencies:
+    react: ">=16.3.0"
+  checksum: 10c0/e26146045f0e5d33c62f00a83651b6ce7af3511d90f7956c324763d481e6503a744d0faba52db6959b573e00221dd2a87a2d936a313208478ef4d5bc6300f437
+  languageName: node
+  linkType: hard
+
 "@expo/rudder-sdk-node@npm:1.1.1":
   version: 1.1.1
   resolution: "@expo/rudder-sdk-node@npm:1.1.1"
@@ -4334,6 +4346,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@rnstudy/react-native-ui@workspace:packages/react-native-ui"
   dependencies:
+    "@expo/react-native-action-sheet": "npm:^4"
     "@rnstudy/eslint-config": "workspace:^"
     "@rnstudy/ios-colors": "workspace:^"
     "@rnstudy/jest-config": "workspace:^"
@@ -5447,6 +5460,16 @@ __metadata:
   version: 2.0.45
   resolution: "@types/hammerjs@npm:2.0.45"
   checksum: 10c0/1f01e3d0260e3cb824fd0ae32c9a8e1b3727e53ef31682612a0a282c4a84bb758dd30b04749b2ae91e621443c80bfe541b38e91e33308f9dea5d9ac92bd0e854
+  languageName: node
+  linkType: hard
+
+"@types/hoist-non-react-statics@npm:^3.3.1":
+  version: 3.3.5
+  resolution: "@types/hoist-non-react-statics@npm:3.3.5"
+  dependencies:
+    "@types/react": "npm:*"
+    hoist-non-react-statics: "npm:^3.3.0"
+  checksum: 10c0/2a3b64bf3d9817d7830afa60ee314493c475fb09570a64e7737084cd482d2177ebdddf888ce837350bac51741278b077683facc9541f052d4bbe8487b4e3e618
   languageName: node
   linkType: hard
 

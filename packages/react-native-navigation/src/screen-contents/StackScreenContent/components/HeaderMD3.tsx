@@ -115,7 +115,7 @@ export const HeaderMD3 = memo(function HeaderMD3({
   return (
     <Appbar.Header
       dark={colorScheme === 'dark'}
-      mode="small"
+      mode={modalContentContextValue ? 'center-aligned' : 'small'}
       elevated={!headerBackgroundTransparent}
       style={[
         headerBackgroundTransparent

@@ -11,11 +11,15 @@ export const mainStackScreens = stackNavigatorScreens({
   ExampleStackScreen: NAVIGATION_EXAMPLES.ExampleStackScreen,
   ExampleStackScreenWithFlatList:
     NAVIGATION_EXAMPLES.ExampleStackScreenWithFlatList,
+  ExamplePreventCloseStackScreen:
+    NAVIGATION_EXAMPLES.ExamplePreventCloseStackScreen,
 });
 
 export const modalStackScreens = stackNavigatorScreens({
   EmptyStackScreen: NAVIGATION_EXAMPLES.EmptyStackScreen,
   ExampleStackScreen: NAVIGATION_EXAMPLES.ExampleStackScreen,
+  ExamplePreventCloseStackScreen:
+    NAVIGATION_EXAMPLES.ExamplePreventCloseStackScreen,
   ExampleStackScreenWithFlatList:
     NAVIGATION_EXAMPLES.ExampleStackScreenWithFlatList,
 });

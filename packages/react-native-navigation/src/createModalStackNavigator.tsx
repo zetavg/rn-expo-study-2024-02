@@ -45,6 +45,12 @@ export function createModalStackNavigator<
 }) {
   const Stack = createStackNavigator<StackParamListOfScreens<S>>();
 
+  // TODO: Use the native stack navigator on iOS for a better UX once `usePreventRemove` works well with the native stack navigator (check `preventNativeDismiss`, `onNativeDismissCancelled` in react-native-screens).
+  // const Stack =
+  //   Platform.OS === 'ios'
+  //     ? createNativeStackNavigator<StackParamListOfScreens<S>>()
+  //     : rnCreateStackNavigator<StackParamListOfScreens<S>>();
+
   const getNavigatorWithMainScreen = (
     MainScreenComponent: React.ComponentType,
   ) =>
@@ -63,6 +69,7 @@ export function createModalStackNavigator<
         () => ({
           headerShown: false,
           presentation: 'modal',
+
           ...TransitionPresets.ModalPresentationIOS,
           cardShadowEnabled: true,
           cardStyleInterpolator: getCardStyleInterpolator({
@@ -72,6 +79,7 @@ export function createModalStackNavigator<
                 : '#FFFFFF11'
               : 'transparent',
           }),
+
           detachPreviousScreen: false, // This also fixes the "navigation header stuck outside of safe area when re-mounted" issue on iOS
           gestureEnabled: true,
           gestureResponseDistance: 4000, // Let the dismissible(ScrollView) determine if it should capture the scroll event, or let the navigator handle it and use the gesture to close the modal.

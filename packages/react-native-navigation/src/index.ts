@@ -4,6 +4,7 @@ export { createModalStackNavigator } from './createModalStackNavigator';
 export { createStackNavigator } from './createStackNavigator';
 export * from './examples';
 export { generateUseNavigationHook } from './generateUseNavigationHook';
+export * from './hooks';
 export * from './NavigationContainer';
 export * from './screen-contents';
 export * from './types';

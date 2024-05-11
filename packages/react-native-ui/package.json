@@ -36,6 +36,7 @@
     "typescript": ">= 4.2.x"
   },
   "dependencies": {
+    "@expo/react-native-action-sheet": "^4",
     "@rnstudy/ios-colors": "workspace:^",
     "@rnstudy/react-native-ui-ios": "workspace:^",
     "@rnstudy/react-native-ui-md3": "workspace:^",

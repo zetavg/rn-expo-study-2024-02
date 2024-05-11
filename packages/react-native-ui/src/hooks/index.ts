@@ -1,3 +1,4 @@
+export { useActionSheet } from './useActionSheet';
 export { useBackgroundColor } from './useBackgroundColor';
 export { useDebouncedWindowDimensions } from './useDebouncedWindowDimensions';
 export { useIsElevatedBackground } from './useIsElevatedBackground';

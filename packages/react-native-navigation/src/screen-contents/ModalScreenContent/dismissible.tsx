@@ -43,6 +43,9 @@ type DismissibleScrollableComponentProps<T extends ScrollViewComponentType> = {
 export default function dismissible<S extends ScrollViewComponentType>(
   ScrollViewComponent: S,
 ) {
+  // TODO: Once we switch to the native stack navigator for modals on iOS, the hack will no longer be needed.
+  // return ScrollViewComponent;
+
   return forwardRef<
     S extends React.ForwardRefExoticComponent<React.RefAttributes<infer C>>
       ? C

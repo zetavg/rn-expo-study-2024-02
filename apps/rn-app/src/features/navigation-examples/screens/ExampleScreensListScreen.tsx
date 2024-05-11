@@ -39,6 +39,18 @@ export default function ExampleScreensListScreen({ ..._ }: StackScreenProps) {
               })
             }
           />
+          <List.Item
+            title="Screen with Prevent Close"
+            navigationLink
+            onPress={() =>
+              mainStackNavigation.push('ExamplePreventCloseStackScreen')
+            }
+          />
+          <List.Item
+            title="Empty Screen"
+            navigationLink
+            onPress={() => mainStackNavigation.push('EmptyStackScreen')}
+          />
         </List>
 
         <List>
@@ -58,11 +70,23 @@ export default function ExampleScreensListScreen({ ..._ }: StackScreenProps) {
             }
           />
           <List.Item
+            title="Modal with Prevent Close"
+            navigationLink
+            onPress={() =>
+              modalStackNavigation.push('ExamplePreventCloseStackScreen')
+            }
+          />
+          <List.Item
             title="Modal with FlatList"
             navigationLink
             onPress={() =>
               modalStackNavigation.push('ExampleStackScreenWithFlatList')
             }
+          />
+          <List.Item
+            title="Empty Modal"
+            navigationLink
+            onPress={() => modalStackNavigation.push('EmptyStackScreen')}
           />
         </List>
 
