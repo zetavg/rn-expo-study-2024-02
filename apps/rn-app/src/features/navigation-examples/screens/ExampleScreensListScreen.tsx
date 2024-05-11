@@ -40,6 +40,7 @@ export default function ExampleScreensListScreen({ ..._ }: StackScreenProps) {
             }
           />
         </List>
+
         <List>
           <List.Item
             title="Modal"
@@ -63,8 +64,11 @@ export default function ExampleScreensListScreen({ ..._ }: StackScreenProps) {
               modalStackNavigation.push('ExampleStackScreenWithFlatList')
             }
           />
+        </List>
+
+        <List>
           <List.Item
-            title="Example Screens List in Main Stack in Modal"
+            title="Example Screens List in Stack in Modal"
             navigationLink
             onPress={() =>
               modalStackNavigation.push('MainStackExampleScreensList')
