@@ -129,7 +129,14 @@ export function StackScreenContent(props: Props) {
 
         <BackgroundColor root grouped={grouped} elevated={elevatedBg}>
           {(bg) => (
-            <View style={[styles.stackScreenContent, { backgroundColor: bg }]}>
+            <View
+              style={[
+                styles.stackScreenContent,
+                {
+                  backgroundColor: bg,
+                },
+              ]}
+            >
               <ScrollViewContext.Provider value={scrollViewContextValue}>
                 {children}
               </ScrollViewContext.Provider>
