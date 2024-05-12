@@ -85,22 +85,8 @@ export function StackScreenContent(props: Props) {
     () => ({
       scrollViewRefRef,
       onScrollBeginDrag: handleScrollBeginDrag,
-      scrollToDismissEnabled: !!modalContentContextValue,
-      scrollToDismissOffset:
-        props.headerSearchBarOptions &&
-        props.headerSearchBarOptions.enable !== false &&
-        !props.headerSearchBarOptions.primary &&
-        props.headerSearchBarOptions.hideWhenScrolling !== false &&
-        uiPlatform === 'ios'
-          ? -55 // HACK: Magic number of the search bar's height
-          : 0,
     }),
-    [
-      handleScrollBeginDrag,
-      modalContentContextValue,
-      props.headerSearchBarOptions,
-      uiPlatform,
-    ],
+    [handleScrollBeginDrag],
   );
 
   const [headerHeight, _] = React.useState<number | undefined>(

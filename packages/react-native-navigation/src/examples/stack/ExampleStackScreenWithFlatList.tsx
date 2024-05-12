@@ -148,8 +148,7 @@ export default function ExampleStackScreenWithFlatList({
                     scrollViewRef?.current?.scrollToIndex({ index: 20 }),
                 },
                 {
-                  title: 'Scroll to Index 20',
-                  subtitle: 'View Position: 0.5',
+                  title: 'Scroll to Index 20 (View Position: 0.5)',
                   handler: () =>
                     scrollViewRef?.current?.scrollToIndex({
                       index: 20,
@@ -157,8 +156,7 @@ export default function ExampleStackScreenWithFlatList({
                     }),
                 },
                 {
-                  title: 'Scroll to Index 20',
-                  subtitle: 'View Position: 1',
+                  title: 'Scroll to Index 20 (View Position: 1)',
                   handler: () =>
                     scrollViewRef?.current?.scrollToIndex({
                       index: 20,

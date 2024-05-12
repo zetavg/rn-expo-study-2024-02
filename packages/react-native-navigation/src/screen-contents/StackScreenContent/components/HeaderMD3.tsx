@@ -376,6 +376,7 @@ const styles = StyleSheet.create({
   },
   headerTitleContentContainer_centerAligned_outerWrapper: {
     ...StyleSheet.absoluteFillObject,
+    zIndex: -1,
     justifyContent: 'center',
     alignItems: 'center',
   },

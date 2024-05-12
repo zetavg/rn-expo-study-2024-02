@@ -25,7 +25,11 @@ export type MenuAction = {
 export type SubMenu = {
   /** The title of the submenu. */
   title?: string;
-  /** [TODO: Android not implemented, iOS only] An optional subtitle that will be displayed below the title. Note that this may not be shown if `inline` is set to true. */
+  /**
+   * An optional subtitle that will be displayed below the title.
+   *
+   * Note that this may not be shown on some of the platforms (Android, macOS) or if `inline` is set to true. **Be sure to only use this to show supporting information and not critical ones.**
+   */
   subtitle?: string;
   /** The name of the icon to display on the item. **Note that on iOS, this will only use the SF Symbol version of the icon, and will not fallback to Material Icon nor use the SVG icon, and on Android, this will only use the Material Icon version of the icon, ignoring the SVG icon.** */
   icon?: IconName;

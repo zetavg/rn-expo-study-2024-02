@@ -24,9 +24,6 @@ export type ScrollViewContextValue = {
   onScroll?: ScrollViewProps['onScroll'];
   /** If provided, this function should be merged with the `onScrollBeginDrag` prop of the scroll view. */
   onScrollBeginDrag?: ScrollViewProps['onScrollBeginDrag'];
-
-  scrollToDismissEnabled?: boolean;
-  scrollToDismissOffset?: number;
 };
 
 /**

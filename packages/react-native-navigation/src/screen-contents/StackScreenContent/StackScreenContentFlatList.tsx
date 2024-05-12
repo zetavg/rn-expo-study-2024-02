@@ -34,11 +34,8 @@ import {
   useScrollViewProps,
   useWrappedScrollableElement,
 } from '../hooks';
-import dismissible from '../ModalScreenContent/dismissible';
 
 import { KeyboardAvoidingViewAndroid } from './components/KeyboardAvoidingViewAndroid';
-
-const DismissibleFlatList = dismissible(FlatList);
 
 export type Props<T> = FlatListProps<T>;
 export type RefObject<T> = FlatListRef<T>;
@@ -49,12 +46,8 @@ export const StackScreenContentFlatList: FlatListType = forwardRef<
 >(function StackScreenContentFlatList(rawProps, ref) {
   const [scrollViewRef, scrollViewRefObject] = useInterceptedRef(ref);
 
-  const {
-    scrollViewRefRef,
-    scrollToDismissEnabled,
-    // scrollToDismissOffset,
-    ...restOfScrollViewContextValue
-  } = useContext(ScrollViewContext) || {};
+  const { scrollViewRefRef, ...restOfScrollViewContextValue } =
+    useContext(ScrollViewContext) || {};
 
   if (scrollViewRefRef) scrollViewRefRef.current = scrollViewRefObject;
 
@@ -80,12 +73,6 @@ export const StackScreenContentFlatList: FlatListType = forwardRef<
     }
   }, [inverted, scrollViewRefObject]);
 
-  // TODO: Not supported for now.
-  // const FlatListComponent = scrollToDismissEnabled
-  //   ? DismissibleFlatList
-  //   : FlatList;
-  const FlatListComponent = FlatList;
-
   return useWrappedScrollableElement(
     inverted && Platform.OS === 'ios' ? (
       <>
@@ -96,18 +83,10 @@ export const StackScreenContentFlatList: FlatListType = forwardRef<
           contentContainerStyle={styles.height100}
           scrollsToTop={false}
         />
-        <FlatListComponent
-          ref={scrollViewRef}
-          {...props}
-          // scrollToDismissOffset={scrollToDismissOffset}
-        />
+        <FlatList ref={scrollViewRef} {...props} />
       </>
     ) : (
-      <FlatListComponent
-        ref={scrollViewRef}
-        {...props}
-        // scrollToDismissOffset={scrollToDismissOffset}
-      />
+      <FlatList ref={scrollViewRef} {...props} />
     ),
   );
 }) as FlatListType;
