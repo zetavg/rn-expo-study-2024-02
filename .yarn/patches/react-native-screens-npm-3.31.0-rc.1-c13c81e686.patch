@@ -1,23 +1,54 @@
+diff --git a/ios/RNSScreen.mm b/ios/RNSScreen.mm
+index ac6479feaf95a84682cb5048c6fa9e9c1dbd7f38..7824d83e0028d3f6d40852077d9dbdacbb0c5c28 100644
+--- a/ios/RNSScreen.mm
++++ b/ios/RNSScreen.mm
+@@ -545,12 +545,20 @@ namespace react = facebook::react;
+ - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
+ {
+   if (_preventNativeDismiss) {
+-    [self notifyDismissCancelledWithDismissCount:1];
++    // See: https://github.com/software-mansion/react-native-screens/pull/2129
+     return NO;
+   }
+   return _gestureEnabled;
+ }
+ 
++// See: https://github.com/software-mansion/react-native-screens/pull/2129
++- (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
++{
++  if (_preventNativeDismiss) {
++    [self notifyDismissCancelledWithDismissCount:1];
++  }
++}
++
+ - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
+ {
+   if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
 diff --git a/ios/RNSScreenStackHeaderConfig.mm b/ios/RNSScreenStackHeaderConfig.mm
-index f7ec74678166f485a58ff3b8053a63befad14cfe..92adfb2874e027686c9bea82e5107c568bf5816f 100644
+index f7ec74678166f485a58ff3b8053a63befad14cfe..c8fe04b7779e8d72300df036c61b88f3dd38e554 100644
 --- a/ios/RNSScreenStackHeaderConfig.mm
 +++ b/ios/RNSScreenStackHeaderConfig.mm
-@@ -511,8 +511,13 @@ namespace react = facebook::react;
+@@ -511,8 +511,18 @@ namespace react = facebook::react;
                                                                               action:nil];
    [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
  
-+  auto isBackButtonCustomized = !isBackTitleBlank || config.disableBackButtonMenu || NO;
++  // See: https://github.com/software-mansion/react-native-screens/pull/2105
++  auto isBackButtonCustomized = !isBackTitleBlank || config.disableBackButtonMenu;
 +
    if (config.isBackTitleVisible) {
 -    if (config.backTitleFontFamily || config.backTitleFontSize) {
 +    if ((config.backTitleFontFamily &&
++         // While being used by react-navigation, the `backTitleFontFamily` will
++         // be set to "System" by default - which is the system default font.
++         // To avoid always considering the font as customized, we need to have an additional check.
++         // See: https://github.com/software-mansion/react-native-screens/pull/2105#discussion_r1565222738
 +         ![config.backTitleFontFamily isEqual:@"System"]) ||
 +        config.backTitleFontSize) {
 +      isBackButtonCustomized = YES;
        NSMutableDictionary *attrs = [NSMutableDictionary new];
        NSNumber *size = config.backTitleFontSize ?: @17;
        if (config.backTitleFontFamily) {
-@@ -535,9 +540,17 @@ namespace react = facebook::react;
+@@ -535,9 +545,17 @@ namespace react = facebook::react;
      // When backBarButtonItem's title is null, back menu will use value
      // of backButtonTitle
      [backBarButtonItem setTitle:nil];
