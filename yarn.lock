@@ -3527,12 +3527,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/datetimepicker@npm:^7":
-  version: 7.6.2
-  resolution: "@react-native-community/datetimepicker@npm:7.6.2"
+"@react-native-community/datetimepicker@npm:^8":
+  version: 8.0.0
+  resolution: "@react-native-community/datetimepicker@npm:8.0.0"
   dependencies:
     invariant: "npm:^2.2.4"
-  checksum: 10c0/717ab53e9d842d9c7cc5cdd12b348da94b843de45c7e3ad7d5f1bc55e6d26849f0a54afd9b13ce717e311ad6d2770a5b48c47bdebdc6db5ce41e6d70c580a4e2
+  peerDependencies:
+    react: "*"
+    react-native: ^0.73.0
+    react-native-windows: ^0.73.0
+  peerDependenciesMeta:
+    react-native-windows:
+      optional: true
+  checksum: 10c0/63a4fbee8a2f4bf14e2cdb79b9ce70df8aaac396cc0f000b84f02fbe11ae8e0c40352c91ab3073d4bf72e9e7bccc6dec34d2f8d5e82cba6f76e664842231a123
   languageName: node
   linkType: hard
 
@@ -15550,7 +15557,7 @@ __metadata:
     "@babel/runtime": "npm:7.23.9"
     "@expo/config-plugins": "npm:^7.8.4"
     "@react-native-async-storage/async-storage": "npm:^1"
-    "@react-native-community/datetimepicker": "npm:^7"
+    "@react-native-community/datetimepicker": "npm:^8"
     "@react-native-community/slider": "npm:^4"
     "@react-native-picker/picker": "npm:^2"
     "@react-native-segmented-control/segmented-control": "npm:2.4.1"

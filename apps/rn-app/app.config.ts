@@ -52,13 +52,14 @@ export default ({ config }: ConfigContext): ExpoConfig =>
         'expo-build-properties',
         {
           ios: {
-            // Header `blurEffect` of react-native-screens (used by @react-navigation/native-stack) is not supported in the new architecture yet.
-            // See: https://github.com/software-mansion/react-native-screens/blob/421e22c61243a8c0761c786ccb68c3b209aa1131/ios/RNSScreenStackHeaderConfig.mm#L385-L387
+            // Header `blurEffect` of react-native-screens (used by @react-navigation/native-stack) is not supported in the new architecture yet. See: https://github.com/software-mansion/react-native-screens/blob/421e22c61243a8c0761c786ccb68c3b209aa1131/ios/RNSScreenStackHeaderConfig.mm#L385-L387.
+            // `react-native-segmented-control` does not support the new architecture for the iOS native component yet. See: https://github.com/react-native-segmented-control/segmented-control/pull/761.
+            // Seems that `react-native-sfsymbols` does not support the new architecture yet.
             newArchEnabled: false,
           },
           android: {
-            // `@react-navigation/native-stack` isn't working with the new architecture on some Android devices.
-            newArchEnabled: false,
+            // `@react-navigation/native-stack` isn't working with the new architecture on some Android devices. But we are not currently using `@react-navigation/native-stack` on Android.
+            newArchEnabled: true,
           },
         },
       ],
