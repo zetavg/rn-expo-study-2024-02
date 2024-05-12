@@ -10,7 +10,7 @@ export const ColorSchemeTypeContext = createContext<'dark' | 'light'>(
 );
 
 /**
- * Returns a set of iOS UI colors.
+ * Returns the type of the current color scheme.
  */
 export function useColorSchemeType(): 'dark' | 'light' {
   return useContext(ColorSchemeTypeContext);

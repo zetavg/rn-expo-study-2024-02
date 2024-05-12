@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { Animated, Pressable, StyleSheet } from 'react-native';
 
 import { useUIColors } from '../../../../contexts';
+import { useColorSchemeType } from '../../../../contexts/tokens/ColorSchemeTypeContext';
 import { CONTENT_CONTAINER_GAP } from '../consts';
 import { useBackgroundColor } from '../hooks';
 import type { Props as ListItemProps } from '../ListItem';
@@ -82,6 +83,8 @@ export const ContentContainer = ({
 
   const wrapperStyle = [styles.wrapper, contentContainerWrapperStyle];
 
+  const colorSchemeType = useColorSchemeType();
+
   if ((onPress || onLongPress) && !dragActive) {
     return (
       <AnimatedPressable
@@ -95,7 +98,13 @@ export const ContentContainer = ({
           <Animated.View
             style={[
               containerStyle,
-              { backgroundColor: pressed ? uiColors.systemGray5 : bgc },
+              {
+                backgroundColor: pressed
+                  ? colorSchemeType === 'dark'
+                    ? uiColors.systemGray4
+                    : uiColors.systemGray5
+                  : bgc,
+              },
             ]}
           >
             {children}
