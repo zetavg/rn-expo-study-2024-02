@@ -132,12 +132,22 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
               iconInset += size * defn.additionalPaddingRatio;
             }
 
+            const style = defn.adjustments
+              ? Object.fromEntries(
+                  Object.entries(defn.adjustments).map(([k, v]) => [
+                    k,
+                    typeof v === 'number' ? v * size : v,
+                  ]),
+                )
+              : undefined;
+
             if (defn.opacityFix) {
               return (
                 <SFSymbol
                   name={defn.name}
                   size={size - iconInset}
                   color={iconColor}
+                  style={style}
                 />
               );
             }
@@ -148,6 +158,7 @@ export const IconRN = forwardRef<any, IconProps>(function IconRN(
                 size={size - iconInset}
                 renderingMode="monochrome"
                 colors={[iconColor]}
+                style={style}
               />
             );
           }

@@ -246,6 +246,9 @@ export const IconDefinitions = makeIconDefinitions({
           iOS: 13,
           macOS: 11,
         },
+        adjustments: {
+          marginTop: -0.1,
+        },
       },
     ],
   }),

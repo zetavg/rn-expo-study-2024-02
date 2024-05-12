@@ -18,6 +18,8 @@ export type Props = Pick<
   | 'headerLargeTitle'
   | 'headerBackTitle'
   | 'headerBackTitleVisible'
+  | 'modalCloseButtonType'
+  | 'modalCloseTitle'
   | 'headerTitleContent'
   | 'headerLeadingContent'
   | 'headerTrailingContent'
@@ -42,6 +44,8 @@ export function useHeaderProps(p: StackScreenContentProps): Props {
     headerLargeTitle: p.headerLargeTitle,
     headerBackTitle: p.headerBackTitle,
     headerBackTitleVisible: p.headerBackTitleVisible,
+    modalCloseButtonType: p.modalCloseButtonType,
+    modalCloseTitle: p.modalCloseTitle,
     headerSearchBarOptions: memoizedHeaderSearchBarOptions,
     headerTitleContent: p.headerTitleContent,
     headerLeadingContent: p.headerLeadingContent,

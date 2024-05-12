@@ -48,6 +48,11 @@ export type Props = {
    */
   headerBackTitleVisible?: boolean;
 
+  /** The type of close button to show if the screen is shown as a modal. Default: `'close'`. Only has effect on iOS, on Android, the "×" icon button will always be used. */
+  modalCloseButtonType?: 'close' | 'done' | 'cancel';
+  /** The title of the close button to show if the screen is shown as a modal. Only has effect on iOS, on Android, the "×" icon button will always be used without a label. */
+  modalCloseTitle?: string;
+
   /** Options to render a search bar on the header. **Note that this should not be changed during the component's lifecycle.** */
   headerSearchBarOptions?: HeaderSearchBarOptions;
 

@@ -42,6 +42,7 @@ export default function ExamplePreventCloseStackScreen({
   return (
     <StackScreenContent
       title="Prevent Close"
+      modalCloseButtonType="cancel"
       headerTrailingContent={
         <StackScreenContent.HeaderControlButton
           label="Save"
@@ -51,14 +52,6 @@ export default function ExamplePreventCloseStackScreen({
             await new Promise((resolve) => setTimeout(resolve, 1000));
             // Assume we have the changes saved...
             isSavedRef.current = true;
-            navigation.goBack();
-          }}
-        />
-      }
-      headerLeadingContent={
-        <StackScreenContent.HeaderControlButton
-          label="Cancel"
-          onPress={() => {
             navigation.goBack();
           }}
         />

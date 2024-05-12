@@ -1,13 +1,20 @@
-import React, { memo, useCallback, useLayoutEffect, useRef } from 'react';
+import React, {
+  memo,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 import {
   Animated,
   LayoutChangeEvent,
   Platform,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import { SearchBarProps as RNScreensSearchBarProps } from 'react-native-screens';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import {
   SegmentedControlProps,
@@ -17,12 +24,15 @@ import {
   useIOSUIColors,
   useIsElevatedBackground,
 } from '@rnstudy/react-native-ui';
+import { NavigationBarCloseButton } from '@rnstudy/react-native-ui-ios';
 import { getPerformanceEyeAttractorDummyComponent } from '@rnstudy/react-utils';
 
 import {
   getHeaderTitleStyleIOS,
   getScreenOptionsForHeaderBackgroundAndBorderIOS,
 } from '../../../hooks/useStackNavigatorScreenOptions';
+import { ModalContentContext } from '../../contexts';
+import HeaderControlButton from '../../HeaderControlButton';
 
 import type { Props } from './Header';
 
@@ -41,6 +51,8 @@ export const HeaderIOS = memo(function HeaderIOS({
   headerLargeTitle,
   headerBackTitle,
   headerBackTitleVisible,
+  modalCloseButtonType,
+  modalCloseTitle,
   headerTitleContent,
   headerLeadingContent,
   headerTrailingContent,
@@ -49,6 +61,9 @@ export const HeaderIOS = memo(function HeaderIOS({
   elevatedBg,
 }: Props) {
   const navigation = useNavigation();
+  const route = useRoute();
+
+  const { fontScale } = useWindowDimensions();
 
   const colorScheme = useColorScheme();
   const backgroundColor = useBackgroundColor({
@@ -59,6 +74,64 @@ export const HeaderIOS = memo(function HeaderIOS({
 
   const headerSearchBarEnabled =
     headerSearchBarOptions && headerSearchBarOptions.enable !== false;
+
+  const modalContentContextValue = useContext(ModalContentContext);
+  const isFirstScreenInStack =
+    route.key === navigation.getState()?.routes[0]?.key;
+  const isFirstScreenInModal =
+    !!modalContentContextValue && isFirstScreenInStack;
+
+  if (isFirstScreenInModal) {
+    const getCloseButton = (
+      props?: Partial<React.ComponentProps<typeof HeaderControlButton>>,
+    ) => {
+      switch (modalCloseButtonType) {
+        case 'done': {
+          return (
+            <HeaderControlButton
+              label={modalCloseTitle || 'Done' /* TODO: I18n. */}
+              primary
+              onPress={navigation.goBack}
+              {...props}
+            />
+          );
+        }
+        case 'cancel': {
+          return (
+            <HeaderControlButton
+              label={modalCloseTitle || 'Cancel' /* TODO: I18n. */}
+              onPress={navigation.goBack}
+              {...props}
+            />
+          );
+        }
+        case 'close':
+        default: {
+          if (modalCloseTitle) {
+            return (
+              <HeaderControlButton
+                label={modalCloseTitle}
+                primary
+                onPress={navigation.goBack}
+                {...props}
+              />
+            );
+          }
+
+          return <NavigationBarCloseButton onPress={navigation.goBack} />;
+        }
+      }
+    };
+
+    if (!headerTrailingContent) {
+      headerTrailingContent = getCloseButton();
+    } else if (!headerLeadingContent) {
+      headerLeadingContent = getCloseButton({
+        // The close button should always be considered non-primary if placed on the leading side, as by convention, the primary button should be on the trailing side.
+        primary: false,
+      });
+    }
+  }
 
   useLayoutEffect(() => {
     const processedHeaderSearchBarOptions: RNScreensSearchBarProps | undefined =
@@ -100,7 +173,10 @@ export const HeaderIOS = memo(function HeaderIOS({
       ...(() => {
         if (headerTitleVisible)
           return {
-            headerTitleStyle: getHeaderTitleStyleIOS({ iosUIColors }),
+            headerTitleStyle: getHeaderTitleStyleIOS({
+              iosUIColors,
+              fontScale,
+            }),
           };
 
         return {
@@ -167,6 +243,7 @@ export const HeaderIOS = memo(function HeaderIOS({
     navigation,
     showHeader,
     title,
+    fontScale,
   ]);
 
   // On iOS, we rely on react-navigation to render the header natively, so nothing is actually rendered here.
@@ -180,6 +257,8 @@ function HeaderTrailingContentContainer({
 }: {
   children: React.ReactNode;
 }) {
+  const { fontScale } = useWindowDimensions();
+
   /** The content of headerRight will have trouble laying out in the correct position if it's rendered with a larger width before and has been re-rendered with a smaller width. To workaround this, we need to keep track of the maximum width that has been rendered and set the minWidth of the container to that value. */
   const minWidthAnim = useRef(new Animated.Value(0)).current;
   const maxRenderedWidthRef = React.useRef<number>(0);
@@ -204,6 +283,7 @@ function HeaderTrailingContentContainer({
         styles.headerTrailingContentContainer,
         {
           minWidth: minWidthAnim,
+          gap: 28 * Math.max(fontScale, 1),
         },
       ]}
     >
@@ -217,11 +297,16 @@ function HeaderLeadingContentContainer({
 }: {
   children: React.ReactNode;
 }) {
+  const { fontScale } = useWindowDimensions();
+
   return (
     <View
       style={[
         styles.headerLeadingAndTrailingContentContainer,
         styles.headerLeadingContentContainer,
+        {
+          gap: 28 * Math.max(fontScale, 1),
+        },
       ]}
     >
       {children}
@@ -245,7 +330,6 @@ const styles = StyleSheet.create({
     height: 44,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
   },
   headerTrailingContentContainer: {
     flexDirection: 'row',

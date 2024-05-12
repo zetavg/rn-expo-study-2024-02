@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedbackProps,
+  useWindowDimensions,
 } from 'react-native';
 import { Appbar, Button as RNPButton } from 'react-native-paper';
 
@@ -28,6 +29,10 @@ export const HeaderControlButton = memo(function HeaderControlButton({
   disabled,
   ...restProps
 }: Props) {
+  const { fontScale: nativeFontScale } = useWindowDimensions();
+
+  const fontScale = Math.max(nativeFontScale, 1);
+
   const iosUIColors = useIOSUIColors();
 
   const iosTintColor = disabled
@@ -43,14 +48,14 @@ export const HeaderControlButton = memo(function HeaderControlButton({
       return (
         <TouchableOpacity disabled={disabled} {...restProps}>
           {icon ? (
-            <Icon name={icon} color={iosTintColor} size={25} />
+            <Icon name={icon} color={iosTintColor} size={25 * fontScale} />
           ) : (
             <Text
               allowFontScaling={false}
               style={[
                 styles.labelTextIOS,
                 primary && styles.labelTextIOS_mandatory,
-                { color: iosTintColor },
+                { color: iosTintColor, fontSize: 17 * fontScale },
               ]}
             >
               {label}

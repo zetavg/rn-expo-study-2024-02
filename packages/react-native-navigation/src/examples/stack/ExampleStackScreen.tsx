@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Alert, LayoutChangeEvent } from 'react-native';
 
 import { ScrollViewRef } from '@rnstudy/react-native-lists/src';
@@ -19,7 +25,15 @@ import {
   StackScreenContent,
   StackScreenContentProps,
 } from '../../screen-contents';
+import { ModalContentContext } from '../../screen-contents/contexts';
 import { StackScreenProps } from '../../types';
+
+const MODAL_CLOSE_BUTTON_TYPE_OPTIONS = {
+  undefined: { label: 'undefined' },
+  close: { label: 'close' },
+  done: { label: 'done' },
+  cancel: { label: 'cancel' },
+} as const;
 
 const EXAMPLE_ON_PRESS_HANDLER = () => {
   Alert.alert('Pressed');
@@ -289,6 +303,12 @@ export default function ExampleStackScreen({
   headerTrailingContentExamplesToShowRef.current =
     headerTrailingContentExamplesToShow;
 
+  const modalContentContextValue = useContext(ModalContentContext);
+  const isFirstScreenInStack =
+    route.key === navigation.getState()?.routes[0]?.key;
+  const isFirstScreenInModal =
+    !!modalContentContextValue && isFirstScreenInStack;
+
   const [tmpSearchBarCancelButtonText, setTmpSearchBarCancelButtonText] =
     useState<string | null>(null);
 
@@ -348,26 +368,28 @@ export default function ExampleStackScreen({
       }, [headerLeadingContentExamplesToShow, headerLeadingContentExamples])}
       // eslint-disable-next-line react/no-unstable-nested-components
       headerTrailingContent={useMemo(() => {
-        return (
-          <>
-            {Object.keys(headerTrailingContentExamples)
-              .filter(
-                (key) =>
-                  headerTrailingContentExamplesToShow[
-                    key as keyof typeof headerTrailingContentExamples
-                  ],
-              )
-              .map((key) => (
-                <React.Fragment key={key}>
-                  {
-                    headerTrailingContentExamples[
-                      key as keyof typeof headerTrailingContentExamples
-                    ].content
-                  }
-                </React.Fragment>
-              ))}
-          </>
-        );
+        const elements = Object.keys(headerTrailingContentExamples)
+          .filter(
+            (key) =>
+              headerTrailingContentExamplesToShow[
+                key as keyof typeof headerTrailingContentExamples
+              ],
+          )
+          .map((key) => (
+            <React.Fragment key={key}>
+              {
+                headerTrailingContentExamples[
+                  key as keyof typeof headerTrailingContentExamples
+                ].content
+              }
+            </React.Fragment>
+          ));
+
+        if (elements.length > 0) {
+          return <>{elements}</>;
+        }
+
+        return undefined;
       }, [headerTrailingContentExamplesToShow, headerTrailingContentExamples])}
     >
       <StackScreenContent.ScrollView ref={scrollViewRef}>
@@ -499,65 +521,110 @@ export default function ExampleStackScreen({
           />
         </FormGroup>
 
-        <FormGroup
-          footerText={
-            'Only works on iOS. On Android, the back icon "←" will always be shown without a title.'
-          }
-        >
-          <Form.TextInput
-            label="Header Back Title"
-            placeholder="Back"
-            clearButtonMode="while-editing"
-            value={stackScreenContentProps.headerBackTitle || ''}
-            onValueChangeIsStable
-            onValueChange={(headerBackTitle) => {
-              if (headerBackTitle || uiPlatformRef.current !== 'ios') {
-                setStackScreenContentProps((s) => ({ ...s, headerBackTitle }));
-              } else {
-                // This cannot be reset dynamically on iOS, so we need to navigate to a new screen with the value reset.
-                navigation.push(route.name, {
-                  stackScreenContentProps: {
-                    ...stackScreenContentPropsRef.current,
-                    headerBackTitle: undefined,
-                  },
-                  headerTitleContentExampleToShow:
-                    headerTitleContentExampleToShowRef.current,
-                  headerTrailingContentExamplesToShow:
-                    headerTrailingContentExamplesToShowRef.current,
-                  headerLeadingContentExamplesToShow:
-                    headerLeadingContentExamplesToShowRef.current,
-                });
+        {!isFirstScreenInModal ? (
+          <FormGroup
+            footerText={
+              'Only works on iOS. On Android, the back icon "←" will always be shown without a title.'
+            }
+          >
+            <Form.TextInput
+              label="Header Back Title"
+              placeholder="Back"
+              clearButtonMode="while-editing"
+              value={stackScreenContentProps.headerBackTitle || ''}
+              onValueChangeIsStable
+              onValueChange={(headerBackTitle) => {
+                if (headerBackTitle || uiPlatformRef.current !== 'ios') {
+                  setStackScreenContentProps((s) => ({
+                    ...s,
+                    headerBackTitle,
+                  }));
+                } else {
+                  // This cannot be reset dynamically on iOS, so we need to navigate to a new screen with the value reset.
+                  navigation.push(route.name, {
+                    stackScreenContentProps: {
+                      ...stackScreenContentPropsRef.current,
+                      headerBackTitle: undefined,
+                    },
+                    headerTitleContentExampleToShow:
+                      headerTitleContentExampleToShowRef.current,
+                    headerTrailingContentExamplesToShow:
+                      headerTrailingContentExamplesToShowRef.current,
+                    headerLeadingContentExamplesToShow:
+                      headerLeadingContentExamplesToShowRef.current,
+                  });
+                }
+              }}
+            />
+            <Form.Switch
+              label="Header Back Title Visible"
+              value={stackScreenContentProps.headerBackTitleVisible}
+              onValueChangeIsStable
+              onValueChange={(headerBackTitleVisible) => {
+                if (
+                  !headerBackTitleVisible ||
+                  uiPlatformRef.current !== 'ios'
+                ) {
+                  setStackScreenContentProps((s) => ({
+                    ...s,
+                    headerBackTitleVisible,
+                  }));
+                } else {
+                  // This cannot be reset dynamically on iOS, so we need to navigate to a new screen with the value reset.
+                  navigation.push(route.name, {
+                    stackScreenContentProps: {
+                      ...stackScreenContentPropsRef.current,
+                      headerBackTitleVisible: true,
+                    },
+                    headerTitleContentExampleToShow:
+                      headerTitleContentExampleToShowRef.current,
+                    headerTrailingContentExamplesToShow:
+                      headerTrailingContentExamplesToShowRef.current,
+                    headerLeadingContentExamplesToShow:
+                      headerLeadingContentExamplesToShowRef.current,
+                  });
+                }
+              }}
+            />
+          </FormGroup>
+        ) : (
+          <FormGroup
+            footerText={
+              'Only works on iOS. On Android, the "×" icon button will always be used without a label.'
+            }
+          >
+            <Form.Select
+              label="Modal Close Button Type"
+              options={MODAL_CLOSE_BUTTON_TYPE_OPTIONS}
+              value={
+                stackScreenContentProps.modalCloseButtonType || 'undefined'
               }
-            }}
-          />
-          <Form.Switch
-            label="Header Back Title Visible"
-            value={stackScreenContentProps.headerBackTitleVisible}
-            onValueChangeIsStable
-            onValueChange={(headerBackTitleVisible) => {
-              if (!headerBackTitleVisible || uiPlatformRef.current !== 'ios') {
+              onValueChangeIsStable
+              onValueChange={(modalCloseButtonType) =>
                 setStackScreenContentProps((s) => ({
                   ...s,
-                  headerBackTitleVisible,
-                }));
-              } else {
-                // This cannot be reset dynamically on iOS, so we need to navigate to a new screen with the value reset.
-                navigation.push(route.name, {
-                  stackScreenContentProps: {
-                    ...stackScreenContentPropsRef.current,
-                    headerBackTitleVisible: true,
-                  },
-                  headerTitleContentExampleToShow:
-                    headerTitleContentExampleToShowRef.current,
-                  headerTrailingContentExamplesToShow:
-                    headerTrailingContentExamplesToShowRef.current,
-                  headerLeadingContentExamplesToShow:
-                    headerLeadingContentExamplesToShowRef.current,
-                });
+                  modalCloseButtonType:
+                    modalCloseButtonType === 'undefined'
+                      ? undefined
+                      : modalCloseButtonType,
+                }))
               }
-            }}
-          />
-        </FormGroup>
+            />
+            <Form.TextInput
+              label="Modal Close Title"
+              placeholder="undefined"
+              clearButtonMode="while-editing"
+              value={stackScreenContentProps.modalCloseTitle || ''}
+              onValueChangeIsStable
+              onValueChange={(modalCloseTitle) =>
+                setStackScreenContentProps((s) => ({
+                  ...s,
+                  modalCloseTitle: modalCloseTitle || undefined,
+                }))
+              }
+            />
+          </FormGroup>
+        )}
 
         <FormGroup footerText="Choose from a set of predefined examples. In a real app, you can use any arbitrary element.">
           <Form.Select

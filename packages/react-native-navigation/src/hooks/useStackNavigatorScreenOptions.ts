@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useWindowDimensions } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TransitionPresets } from '@react-navigation/stack';
 
@@ -14,6 +15,8 @@ type ScreenOptions = React.ComponentProps<
 >['screenOptions'];
 
 export function useStackNavigatorScreenOptions(): ScreenOptions {
+  const { fontScale } = useWindowDimensions();
+
   const uiPlatform = useUIPlatform();
 
   const colorScheme = useColorScheme();
@@ -34,7 +37,10 @@ export function useStackNavigatorScreenOptions(): ScreenOptions {
           case 'ios': {
             return {
               headerTintColor: iosUIColors.tintColor,
-              headerTitleStyle: getHeaderTitleStyleIOS({ iosUIColors }),
+              headerTitleStyle: getHeaderTitleStyleIOS({
+                iosUIColors,
+                fontScale,
+              }),
               ...getScreenOptionsForHeaderBackgroundAndBorderIOS({
                 colorScheme,
               }),
@@ -58,7 +64,7 @@ export function useStackNavigatorScreenOptions(): ScreenOptions {
         }
       })(),
     }),
-    [uiPlatform, colorScheme, backgroundColor, iosUIColors],
+    [backgroundColor, uiPlatform, iosUIColors, fontScale, colorScheme],
   );
 
   // To have a clean reset of screen options when `uiPlatform` changes.
@@ -82,11 +88,16 @@ export function useStackNavigatorScreenOptions(): ScreenOptions {
 
 export function getHeaderTitleStyleIOS({
   iosUIColors,
+  fontScale: nativeFontScale,
 }: {
   iosUIColors: ReturnType<typeof useIOSUIColors>;
+  fontScale: number;
 }) {
+  const fontScale = Math.max(nativeFontScale, 1);
+
   return {
     color: iosUIColors.label,
+    fontSize: 16 * fontScale,
   };
 }
 
