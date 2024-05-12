@@ -13,28 +13,31 @@ export default function ExamplePreventCloseStackScreen({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(
     route.params?.preventClose ?? true,
   );
-  const hasUnsavedChangesRef = useRef(hasUnsavedChanges);
-  hasUnsavedChangesRef.current = hasUnsavedChanges;
 
   const [isSaving, setIsSaving] = useState(false);
+  const isSavedRef = useRef(false);
 
   const { showActionSheet } = useActionSheet();
 
-  usePreventClose(hasUnsavedChangesRef, (confirmClose) => {
-    showActionSheet(
-      [
+  usePreventClose(
+    hasUnsavedChanges,
+    (confirmClose) => {
+      showActionSheet(
+        [
+          {
+            name: 'Discard Changes',
+            destructive: true,
+            onSelect: confirmClose,
+          },
+        ],
         {
-          name: 'Discard Changes',
-          destructive: true,
-          onSelect: confirmClose,
+          title: 'Are you sure you want to discard your changes?',
+          cancelText: 'Keep Editing',
         },
-      ],
-      {
-        title: 'Are you sure you want to discard your changes?',
-        cancelText: 'Keep Editing',
-      },
-    );
-  });
+      );
+    },
+    isSavedRef,
+  );
 
   return (
     <StackScreenContent
@@ -47,7 +50,7 @@ export default function ExamplePreventCloseStackScreen({
             setIsSaving(true);
             await new Promise((resolve) => setTimeout(resolve, 1000));
             // Assume we have the changes saved...
-            hasUnsavedChangesRef.current = false;
+            isSavedRef.current = true;
             navigation.goBack();
           }}
         />
